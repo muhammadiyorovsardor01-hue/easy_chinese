@@ -1,0 +1,442 @@
+[
+  {
+    "id": 1,
+    "hsk": 1,
+    "lesson": 1,
+    "hanzi": "你好",
+    "pinyin": "nǐ hǎo",
+    "uzbek": "Salom"
+  },
+  {
+    "id": 2,
+    "hsk": 1,
+    "lesson": 1,
+    "hanzi": "我",
+    "pinyin": "wǒ",
+    "uzbek": "Men"
+  },
+  {
+    "id": 3,
+    "hsk": 1,
+    "lesson": 1,
+    "hanzi": "你",
+    "pinyin": "nǐ",
+    "uzbek": "Siz"
+  },
+  {
+    "id": 4,
+    "hsk": 1,
+    "lesson": 1,
+    "hanzi": "他",
+    "pinyin": "tā",
+    "uzbek": "U"
+  },
+  {
+    "id": 5,
+    "hsk": 1,
+    "lesson": 1,
+    "hanzi": "她",
+    "pinyin": "tā",
+    "uzbek": "U"
+  },
+  {
+    "id": 6,
+    "hsk": 1,
+    "lesson": 2,
+    "hanzi": "好",
+    "pinyin": "hǎo",
+    "uzbek": "Yaxshi"
+  },
+  {
+    "id": 7,
+    "hsk": 1,
+    "lesson": 2,
+    "hanzi": "不",
+    "pinyin": "bù",
+    "uzbek": "Yo'q"
+  },
+  {
+    "id": 8,
+    "hsk": 1,
+    "lesson": 2,
+    "hanzi": "是",
+    "pinyin": "shì",
+    "uzbek": "Bo'lmoq"
+  },
+  {
+    "id": 9,
+    "hsk": 1,
+    "lesson": 2,
+    "hanzi": "的",
+    "pinyin": "de",
+    "uzbek": "Belgish"
+  },
+  {
+    "id": 10,
+    "hsk": 1,
+    "lesson": 2,
+    "hanzi": "了",
+    "pinyin": "le",
+    "uzbek": "Zamon qo'shimchasi"
+  },
+  {
+    "id": 11,
+    "hsk": 1,
+    "lesson": 3,
+    "hanzi": "人",
+    "pinyin": "rén",
+    "uzbek": "Odamlar"
+  },
+  {
+    "id": 12,
+    "hsk": 1,
+    "lesson": 3,
+    "hanzi": "在",
+    "pinyin": "zài",
+    "uzbek": "Joylashmoq"
+  },
+  {
+    "id": 13,
+    "hsk": 1,
+    "lesson": 3,
+    "hanzi": "有",
+    "pinyin": "yǒu",
+    "uzbek": "Bormoq"
+  },
+  {
+    "id": 14,
+    "hsk": 1,
+    "lesson": 3,
+    "hanzi": "来",
+    "pinyin": "lái",
+    "uzbek": "Kelmoq"
+  },
+  {
+    "id": 15,
+    "hsk": 1,
+    "lesson": 3,
+    "hanzi": "去",
+    "pinyin": "qù",
+    "uzbek": "Ketmoq"
+  },
+  {
+    "id": 16,
+    "hsk": 2,
+    "lesson": 1,
+    "hanzi": "爱",
+    "pinyin": "ài",
+    "uzbek": "Sevgi"
+  },
+  {
+    "id": 17,
+    "hsk": 2,
+    "lesson": 1,
+    "hanzi": "八",
+    "pinyin": "bā",
+    "uzbek": "Sakkiz"
+  },
+  {
+    "id": 18,
+    "hsk": 2,
+    "lesson": 1,
+    "hanzi": "爸爸",
+    "pinyin": "bà ba",
+    "uzbek": "Otasi"
+  },
+  {
+    "id": 19,
+    "hsk": 2,
+    "lesson": 1,
+    "hanzi": "朋友",
+    "pinyin": "péng you",
+    "uzbek": "Do'st"
+  },
+  {
+    "id": 20,
+    "hsk": 2,
+    "lesson": 1,
+    "hanzi": "吃",
+    "pinyin": "chī",
+    "uzbek": "Yemoq"
+  },
+  {
+    "id": 21,
+    "hsk": 2,
+    "lesson": 2,
+    "hanzi": "车",
+    "pinyin": "chē",
+    "uzbek": "Mashina"
+  },
+  {
+    "id": 22,
+    "hsk": 2,
+    "lesson": 2,
+    "hanzi": "出",
+    "pinyin": "chū",
+    "uzbek": "Chiqmoq"
+  },
+  {
+    "id": 23,
+    "hsk": 2,
+    "lesson": 2,
+    "hanzi": "大",
+    "pinyin": "dà",
+    "uzbek": "Katta"
+  },
+  {
+    "id": 24,
+    "hsk": 2,
+    "lesson": 2,
+    "hanzi": "的",
+    "pinyin": "de",
+    "uzbek": "Belgish"
+  },
+  {
+    "id": 25,
+    "hsk": 2,
+    "lesson": 2,
+    "hanzi": "点",
+    "pinyin": "diǎn",
+    "uzbek": "Nuqta"
+  },
+  {
+    "id": 26,
+    "hsk": 3,
+    "lesson": 1,
+    "hanzi": "安静",
+    "pinyin": "ān jìng",
+    "uzbek": "Tinch"
+  },
+  {
+    "id": 27,
+    "hsk": 3,
+    "lesson": 1,
+    "hanzi": "把",
+    "pinyin": "bǎ",
+    "uzbek": "Olmoq"
+  },
+  {
+    "id": 28,
+    "hsk": 3,
+    "lesson": 1,
+    "hanzi": "办公室",
+    "pinyin": "bàn gōng shì",
+    "uzbek": "Ofis"
+  },
+  {
+    "id": 29,
+    "hsk": 3,
+    "lesson": 1,
+    "hanzi": "帮助",
+    "pinyin": "bāng zhù",
+    "uzbek": "Yordam"
+  },
+  {
+    "id": 30,
+    "hsk": 3,
+    "lesson": 1,
+    "hanzi": "报纸",
+    "pinyin": "bào zhǐ",
+    "uzbek": "Gazeta"
+  },
+  {
+    "id": 31,
+    "hsk": 3,
+    "lesson": 2,
+    "hanzi": "比如",
+    "pinyin": "bǐ rú",
+    "uzbek": "Masalan"
+  },
+  {
+    "id": 32,
+    "hsk": 3,
+    "lesson": 2,
+    "hanzi": "变化",
+    "pinyin": "biàn huà",
+    "uzbek": "O'zgarish"
+  },
+  {
+    "id": 33,
+    "hsk": 3,
+    "lesson": 2,
+    "hanzi": "别",
+    "pinyin": "bié",
+    "uzbek": "Boshqa"
+  },
+  {
+    "id": 34,
+    "hsk": 3,
+    "lesson": 2,
+    "hanzi": "病",
+    "pinyin": "bìng",
+    "uzbek": "Kasal"
+  },
+  {
+    "id": 35,
+    "hsk": 3,
+    "lesson": 2,
+    "hanzi": "参观",
+    "pinyin": "cān guān",
+    "uzbek": "Tashrif buyurmoq"
+  },
+  {
+    "id": 36,
+    "hsk": 4,
+    "lesson": 1,
+    "hanzi": "按照",
+    "pinyin": "àn zhào",
+    "uzbek": "Bo'yicha"
+  },
+  {
+    "id": 37,
+    "hsk": 4,
+    "lesson": 1,
+    "hanzi": "奥秘",
+    "pinyin": "ào mì",
+    "uzbek": "Sir"
+  },
+  {
+    "id": 38,
+    "hsk": 4,
+    "lesson": 1,
+    "hanzi": "把",
+    "pinyin": "bǎ",
+    "uzbek": "Olmoq"
+  },
+  {
+    "id": 39,
+    "hsk": 4,
+    "lesson": 1,
+    "hanzi": "罢工",
+    "pinyin": "bà gōng",
+    "uzbek": "Ish tashlash"
+  },
+  {
+    "id": 40,
+    "hsk": 4,
+    "lesson": 1,
+    "hanzi": "摆",
+    "pinyin": "bǎi",
+    "uzbek": "Qo'yish"
+  },
+  {
+    "id": 41,
+    "hsk": 4,
+    "lesson": 2,
+    "hanzi": "拜访",
+    "pinyin": "bài fǎng",
+    "uzbek": "Tashrif"
+  },
+  {
+    "id": 42,
+    "hsk": 4,
+    "lesson": 2,
+    "hanzi": "搬",
+    "pinyin": "bān",
+    "uzbek": "Ko'chirmoq"
+  },
+  {
+    "id": 43,
+    "hsk": 4,
+    "lesson": 2,
+    "hanzi": "办法",
+    "pinyin": "bàn fǎ",
+    "uzbek": "Usul"
+  },
+  {
+    "id": 44,
+    "hsk": 4,
+    "lesson": 2,
+    "hanzi": "半",
+    "pinyin": "bàn",
+    "uzbek": "Yarim"
+  },
+  {
+    "id": 45,
+    "hsk": 4,
+    "lesson": 2,
+    "hanzi": "帮忙",
+    "pinyin": "bāng máng",
+    "uzbek": "Yordam"
+  },
+  {
+    "id": 46,
+    "hsk": 5,
+    "lesson": 1,
+    "hanzi": "爱不释手",
+    "pinyin": "ài bù shì shǒu",
+    "uzbek": "Juda yoqtirib qolmoq"
+  },
+  {
+    "id": 47,
+    "hsk": 5,
+    "lesson": 1,
+    "hanzi": "爱戴",
+    "pinyin": "ài dài",
+    "uzbek": "Hurmat qilmoq"
+  },
+  {
+    "id": 48,
+    "hsk": 5,
+    "lesson": 1,
+    "hanzi": "爱抚",
+    "pinyin": "ài fǔ",
+    "uzbek": "Sevgi bilan silash"
+  },
+  {
+    "id": 49,
+    "hsk": 5,
+    "lesson": 1,
+    "hanzi": "爱好",
+    "pinyin": "ài hào",
+    "uzbek": "Qiziqish"
+  },
+  {
+    "id": 50,
+    "hsk": 5,
+    "lesson": 1,
+    "hanzi": "爱护",
+    "pinyin": "ài hù",
+    "uzbek": "Asrash"
+  },
+  {
+    "id": 51,
+    "hsk": 5,
+    "lesson": 2,
+    "hanzi": "安插",
+    "pinyin": "ān chā",
+    "uzbek": "Joylashtirmoq"
+  },
+  {
+    "id": 52,
+    "hsk": 5,
+    "lesson": 2,
+    "hanzi": "安定",
+    "pinyin": "ān dìng",
+    "uzbek": "Tinch"
+  },
+  {
+    "id": 53,
+    "hsk": 5,
+    "lesson": 2,
+    "hanzi": "安顿",
+    "pinyin": "ān dùn",
+    "uzbek": "Joylashtirmoq"
+  },
+  {
+    "id": 54,
+    "hsk": 5,
+    "lesson": 2,
+    "hanzi": "安放",
+    "pinyin": "ān fàng",
+    "uzbek": "Qo'yish"
+  },
+  {
+    "id": 55,
+    "hsk": 5,
+    "lesson": 2,
+    "hanzi": "安家",
+    "pinyin": "ān jiā",
+    "uzbek": "Oila qurmoq"
+  }
+]
