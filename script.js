@@ -207,6 +207,8 @@ let flashcardIndex = 0;
 let quizIndex = 0;
 let quizScore = 0;
 let quizAnswered = false;
+let hanziWriter = null;
+let learnedWords = JSON.parse(localStorage.getItem('learnedWords')) || [];
 
 // DOM Elements
 const themeToggle = document.getElementById('themeToggle');
@@ -235,6 +237,11 @@ const currentQuestion = document.getElementById('currentQuestion');
 const totalQuestions = document.getElementById('totalQuestions');
 const tabBtns = document.querySelectorAll('.tab-btn');
 const modeContents = document.querySelectorAll('.mode-content');
+const audioBtn = document.getElementById('audioBtn');
+const strokeBtn = document.getElementById('strokeBtn');
+const strokeOrderTarget = document.getElementById('strokeOrderTarget');
+const markLearned = document.getElementById('markLearned');
+const learnedCount = document.getElementById('learnedCount');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -276,6 +283,18 @@ function setupEventListeners() {
     prevCard.addEventListener('click', () => navigateFlashcard(-1));
     nextCard.addEventListener('click', () => navigateFlashcard(1));
     shuffleCards.addEventListener('click', shuffleFlashcards);
+    audioBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        playPronunciation();
+    });
+    strokeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showStrokeOrder();
+    });
+    markLearned.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleLearned();
+    });
 
     // Quiz controls
     nextQuizQuestion.addEventListener('click', nextQuiz);
@@ -369,6 +388,114 @@ function updateFlashcard() {
     
     // Reset flip state
     flashcard.classList.remove('flipped');
+    
+    // Clear stroke order
+    strokeOrderTarget.innerHTML = '';
+    if (hanziWriter) {
+        hanziWriter = null;
+    }
+    
+    // Update learned button state
+    updateLearnedButton();
+    updateLearnedCount();
+}
+
+// Web Speech API for Chinese pronunciation
+function playPronunciation() {
+    if (currentWords.length === 0) return;
+    
+    const word = currentWords[flashcardIndex];
+    
+    if ('speechSynthesis' in window) {
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(word.hanzi);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 0.8;
+        utterance.pitch = 1;
+        
+        window.speechSynthesis.speak(utterance);
+    } else {
+        alert('Text-to-speech not supported in this browser.');
+    }
+}
+
+// HanziWriter stroke order animation
+function showStrokeOrder() {
+    if (currentWords.length === 0) return;
+    
+    const word = currentWords[flashcardIndex];
+    const hanzi = word.hanzi;
+    
+    // Clear previous animation
+    strokeOrderTarget.innerHTML = '';
+    
+    // For multi-character words, show the first character
+    const targetChar = hanzi.charAt(0);
+    
+    try {
+        hanziWriter = HanziWriter.create('strokeOrderTarget', targetChar, {
+            width: 150,
+            height: 150,
+            padding: 5,
+            strokeAnimationSpeed: 1,
+            delayBetweenStrokes: 200,
+            showOutline: true,
+            strokeColor: '#e63946',
+            outlineColor: '#ddd'
+        });
+        
+        hanziWriter.animateCharacter();
+    } catch (error) {
+        console.error('Error creating HanziWriter:', error);
+        strokeOrderTarget.innerHTML = '<p style="font-size: 0.8rem; color: #666;">Stroke data not available</p>';
+    }
+}
+
+// Progress tracking functions
+function toggleLearned() {
+    if (currentWords.length === 0) return;
+    
+    const word = currentWords[flashcardIndex];
+    const wordId = word.id;
+    
+    const index = learnedWords.indexOf(wordId);
+    if (index > -1) {
+        learnedWords.splice(index, 1);
+    } else {
+        learnedWords.push(wordId);
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('learnedWords', JSON.stringify(learnedWords));
+    
+    // Update UI
+    updateLearnedButton();
+    updateLearnedCount();
+}
+
+function updateLearnedButton() {
+    if (currentWords.length === 0) return;
+    
+    const word = currentWords[flashcardIndex];
+    const wordId = word.id;
+    
+    if (learnedWords.includes(wordId)) {
+        markLearned.classList.add('learned');
+        markLearned.textContent = '✓ Learned';
+    } else {
+        markLearned.classList.remove('learned');
+        markLearned.textContent = 'Mark as Learned';
+    }
+}
+
+function updateLearnedCount() {
+    const currentLessonLearned = currentWords.filter(word => 
+        learnedWords.includes(word.id)
+    ).length;
+    
+    learnedCount.textContent = currentLessonLearned;
 }
 
 function navigateFlashcard(direction) {

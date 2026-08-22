@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Easy Chinese - Learn HSK Vocabulary</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 </head>
 <body>
     <header class="header">
@@ -69,10 +70,15 @@
                         <div class="flashcard-front">
                             <div class="hanzi" id="flashcardHanzi">你好</div>
                             <div class="tap-hint">Tap to flip</div>
+                            <button class="audio-btn" id="audioBtn" aria-label="Play pronunciation">🔊</button>
                         </div>
                         <div class="flashcard-back">
                             <div class="pinyin" id="flashcardPinyin">nǐ hǎo</div>
                             <div class="uzbek" id="flashcardUzbek">Salom</div>
+                            <div class="stroke-order-container">
+                                <div id="strokeOrderTarget"></div>
+                                <button class="stroke-btn" id="strokeBtn">Show Stroke Order</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -80,9 +86,11 @@
                     <button class="control-btn" id="prevCard">Previous</button>
                     <button class="control-btn" id="shuffleCards">Shuffle</button>
                     <button class="control-btn" id="nextCard">Next</button>
+                    <button class="control-btn" id="markLearned">Mark as Learned</button>
                 </div>
                 <div class="card-counter">
                     <span id="currentCard">1</span> / <span id="totalCards">5</span>
+                    <span class="learned-counter">Learned: <span id="learnedCount">0</span></span>
                 </div>
             </div>
 
