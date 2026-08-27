@@ -247,6 +247,14 @@ const learnedCount = document.getElementById('learnedCount');
 document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
     setupEventListeners();
+    
+    // Load voices for speech synthesis
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.getVoices();
+        };
+    }
 });
 
 // Theme toggle
@@ -410,10 +418,40 @@ function playPronunciation() {
         // Cancel any ongoing speech
         window.speechSynthesis.cancel();
         
+        // Resume speech synthesis if it was paused
+        window.speechSynthesis.resume();
+        
         const utterance = new SpeechSynthesisUtterance(word.hanzi);
         utterance.lang = 'zh-CN';
         utterance.rate = 0.8;
         utterance.pitch = 1;
+        utterance.volume = 1;
+        
+        // Try to get Chinese voice for better pronunciation
+        const voices = window.speechSynthesis.getVoices();
+        const chineseVoice = voices.find(voice => 
+            voice.lang.includes('zh') || voice.lang.includes('Chinese')
+        );
+        
+        if (chineseVoice) {
+            utterance.voice = chineseVoice;
+        }
+        
+        // Handle errors
+        utterance.onerror = (event) => {
+            console.error('Speech synthesis error:', event.error);
+            if (event.error === 'not-allowed') {
+                alert('Microphone or speech permission denied. Please check browser settings.');
+            } else if (event.error === 'canceled') {
+                // Speech was canceled, this is normal
+            } else {
+                alert('Error playing pronunciation. Please try again.');
+            }
+        };
+        
+        utterance.onend = () => {
+            console.log('Speech synthesis completed');
+        };
         
         window.speechSynthesis.speak(utterance);
     } else {
