@@ -414,49 +414,58 @@ function playPronunciation() {
     
     const word = currentWords[flashcardIndex];
     
-    if ('speechSynthesis' in window) {
-        // Cancel any ongoing speech
-        window.speechSynthesis.cancel();
-        
-        // Resume speech synthesis if it was paused
-        window.speechSynthesis.resume();
-        
-        const utterance = new SpeechSynthesisUtterance(word.hanzi);
-        utterance.lang = 'zh-CN';
-        utterance.rate = 0.8;
-        utterance.pitch = 1;
-        utterance.volume = 1;
-        
-        // Try to get Chinese voice for better pronunciation
-        const voices = window.speechSynthesis.getVoices();
-        const chineseVoice = voices.find(voice => 
-            voice.lang.includes('zh') || voice.lang.includes('Chinese')
-        );
-        
-        if (chineseVoice) {
-            utterance.voice = chineseVoice;
-        }
-        
-        // Handle errors
-        utterance.onerror = (event) => {
-            console.error('Speech synthesis error:', event.error);
-            if (event.error === 'not-allowed') {
-                alert('Microphone or speech permission denied. Please check browser settings.');
-            } else if (event.error === 'canceled') {
-                // Speech was canceled, this is normal
-            } else {
-                alert('Error playing pronunciation. Please try again.');
-            }
-        };
-        
-        utterance.onend = () => {
-            console.log('Speech synthesis completed');
-        };
-        
-        window.speechSynthesis.speak(utterance);
-    } else {
-        alert('Text-to-speech not supported in this browser.');
+    if (!('speechSynthesis' in window)) {
+        console.error('Text-to-speech not supported in this browser.');
+        return;
     }
+    
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
+    
+    // Small delay to ensure cancellation is complete
+    setTimeout(() => {
+        try {
+            const utterance = new SpeechSynthesisUtterance(word.hanzi);
+            utterance.lang = 'zh-CN';
+            utterance.rate = 0.8;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            
+            // Get available voices
+            const voices = window.speechSynthesis.getVoices();
+            
+            // Try to find Chinese voice (prefer zh-CN, then any zh)
+            let chineseVoice = voices.find(voice => voice.lang === 'zh-CN');
+            if (!chineseVoice) {
+                chineseVoice = voices.find(voice => voice.lang.startsWith('zh'));
+            }
+            
+            // Set voice if found, otherwise use default
+            if (chineseVoice) {
+                utterance.voice = chineseVoice;
+                console.log('Using Chinese voice:', chineseVoice.name, chineseVoice.lang);
+            } else {
+                console.log('No Chinese voice found, using default with zh-CN lang');
+            }
+            
+            // Handle errors
+            utterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event.error);
+                // Only show alert for actual errors, not cancellations
+                if (event.error !== 'canceled' && event.error !== 'interrupted') {
+                    console.warn('Speech error:', event.error);
+                }
+            };
+            
+            utterance.onend = () => {
+                console.log('Speech synthesis completed');
+            };
+            
+            window.speechSynthesis.speak(utterance);
+        } catch (error) {
+            console.error('Error in speech synthesis:', error);
+        }
+    }, 100);
 }
 
 // HanziWriter stroke order animation
