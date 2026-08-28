@@ -422,6 +422,12 @@ function playPronunciation() {
     // Cancel any ongoing speech
     window.speechSynthesis.cancel();
     
+    // For iOS/Android mobile compatibility
+    // Resume speech synthesis if it was paused (mobile browsers often pause it)
+    if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+    }
+    
     // Small delay to ensure cancellation is complete
     setTimeout(() => {
         try {
@@ -430,6 +436,10 @@ function playPronunciation() {
             utterance.rate = 0.8;
             utterance.pitch = 1;
             utterance.volume = 1;
+            
+            // Mobile-specific settings
+            utterance.rate = 0.9; // Slightly faster for mobile
+            utterance.pitch = 1;
             
             // Get available voices
             const voices = window.speechSynthesis.getVoices();
@@ -459,9 +469,27 @@ function playPronunciation() {
             
             utterance.onend = () => {
                 console.log('Speech synthesis completed');
+                // For iOS: ensure speech synthesis is not paused after completion
+                if (window.speechSynthesis.paused) {
+                    window.speechSynthesis.resume();
+                }
             };
             
+            // For iOS: ensure speech synthesis is active before speaking
             window.speechSynthesis.speak(utterance);
+            
+            // For iOS: keep speech synthesis alive (iOS bug workaround)
+            const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (iOS) {
+                const interval = setInterval(() => {
+                    if (!window.speechSynthesis.speaking) {
+                        clearInterval(interval);
+                    } else {
+                        window.speechSynthesis.pause();
+                        window.speechSynthesis.resume();
+                    }
+                }, 10000);
+            }
         } catch (error) {
             console.error('Error in speech synthesis:', error);
         }
