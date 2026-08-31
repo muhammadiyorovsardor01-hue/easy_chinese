@@ -540,6 +540,13 @@ let quizScore = 0;
 let quizAnswered = false;
 let hanziWriter = null;
 let learnedWords = JSON.parse(localStorage.getItem('learnedWords')) || [];
+let currentHSKFilter = 'all';
+let searchQuery = '';
+let streakData = JSON.parse(localStorage.getItem('streakData')) || {
+    streak: 0,
+    lastLoginDate: null,
+    totalLearned: 0
+};
 
 // DOM Elements
 const themeToggle = document.getElementById('themeToggle');
@@ -573,11 +580,18 @@ const strokeBtn = document.getElementById('strokeBtn');
 const strokeOrderTarget = document.getElementById('strokeOrderTarget');
 const markLearned = document.getElementById('markLearned');
 const learnedCount = document.getElementById('learnedCount');
+const hskFilterBtns = document.querySelectorAll('.hsk-filter-btn');
+const searchInput = document.getElementById('searchInput');
+const searchClear = document.getElementById('searchClear');
+const streakCount = document.getElementById('streakCount');
+const totalLearned = document.getElementById('totalLearned');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
     setupEventListeners();
+    updateStreak();
+    updateTotalLearned();
     
     // Load voices for speech synthesis
     if ('speechSynthesis' in window) {
@@ -611,6 +625,31 @@ function setupEventListeners() {
             currentHSK = parseInt(btn.dataset.hsk);
             showLessonsView();
         });
+    });
+
+    // HSK filter buttons
+    hskFilterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentHSKFilter = btn.dataset.hsk;
+            hskFilterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            filterAndSearchLessons();
+        });
+    });
+
+    // Search input
+    searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase();
+        searchClear.classList.toggle('visible', searchQuery.length > 0);
+        filterAndSearchLessons();
+    });
+
+    // Search clear button
+    searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchQuery = '';
+        searchClear.classList.remove('visible');
+        filterAndSearchLessons();
     });
 
     // Back buttons
@@ -656,6 +695,14 @@ function showDashboard() {
 
 function showLessonsView() {
     lessonsTitle.textContent = `HSK ${currentHSK} Lessons`;
+    // Reset filter and search when entering lessons view
+    currentHSKFilter = 'all';
+    searchQuery = '';
+    searchInput.value = '';
+    searchClear.classList.remove('visible');
+    hskFilterBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.hsk === 'all');
+    });
     generateLessonsGrid();
     showView(lessons);
 }
@@ -688,30 +735,43 @@ function generateLessonsGrid() {
     lessonsGrid.innerHTML = '';
     
     // Get all unique lessons for current HSK level
-    const lessons = [...new Set(
-        vocabularyData
-            .filter(word => word.hsk === currentHSK)
-            .map(word => word.lesson)
-    )].sort((a, b) => a - b);
+    let filteredWords = vocabularyData.filter(word => word.hsk === currentHSK);
     
-    // If no lessons found, create 15 placeholder lessons
-    if (lessons.length === 0) {
-        for (let i = 1; i <= 15; i++) {
-            const lessonBtn = document.createElement('button');
-            lessonBtn.className = 'lesson-btn';
-            lessonBtn.textContent = `Lesson ${i}`;
-            lessonBtn.addEventListener('click', () => showLessonView(i));
-            lessonsGrid.appendChild(lessonBtn);
-        }
-    } else {
-        lessons.forEach(lessonNum => {
-            const lessonBtn = document.createElement('button');
-            lessonBtn.className = 'lesson-btn';
-            lessonBtn.textContent = `Lesson ${lessonNum}`;
-            lessonBtn.addEventListener('click', () => showLessonView(lessonNum));
-            lessonsGrid.appendChild(lessonBtn);
-        });
+    // Apply HSK filter
+    if (currentHSKFilter !== 'all') {
+        filteredWords = filteredWords.filter(word => word.hsk === parseInt(currentHSKFilter));
     }
+    
+    // Apply search filter
+    if (searchQuery) {
+        filteredWords = filteredWords.filter(word => 
+            word.hanzi.toLowerCase().includes(searchQuery) ||
+            word.pinyin.toLowerCase().includes(searchQuery) ||
+            word.uzbek.toLowerCase().includes(searchQuery)
+        );
+    }
+    
+    // Get unique lessons from filtered words
+    const lessons = [...new Set(filteredWords.map(word => word.lesson))].sort((a, b) => a - b);
+    
+    // If no lessons found, show message
+    if (lessons.length === 0) {
+        lessonsGrid.innerHTML = '<p class="no-results">No lessons found matching your criteria.</p>';
+        return;
+    }
+    
+    lessons.forEach(lessonNum => {
+        const lessonBtn = document.createElement('button');
+        lessonBtn.className = 'lesson-btn';
+        lessonBtn.textContent = `Lesson ${lessonNum}`;
+        lessonBtn.addEventListener('click', () => showLessonView(lessonNum));
+        lessonsGrid.appendChild(lessonBtn);
+    });
+}
+
+// Filter and search lessons
+function filterAndSearchLessons() {
+    generateLessonsGrid();
 }
 
 // Flashcard functions
@@ -879,6 +939,7 @@ function toggleLearned() {
     // Update UI
     updateLearnedButton();
     updateLearnedCount();
+    updateTotalLearned();
 }
 
 function updateLearnedButton() {
@@ -902,6 +963,43 @@ function updateLearnedCount() {
     ).length;
     
     learnedCount.textContent = currentLessonLearned;
+}
+
+// Streak tracking functions
+function updateStreak() {
+    const today = new Date().toDateString();
+    const lastLogin = streakData.lastLoginDate;
+    
+    if (lastLogin === null) {
+        // First time user
+        streakData.streak = 1;
+        streakData.lastLoginDate = today;
+    } else if (lastLogin === today) {
+        // Already logged in today, do nothing
+    } else {
+        const lastDate = new Date(lastLogin);
+        const currentDate = new Date(today);
+        const diffTime = currentDate - lastDate;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+            // Consecutive day
+            streakData.streak++;
+        } else if (diffDays > 1) {
+            // Streak broken
+            streakData.streak = 1;
+        }
+        streakData.lastLoginDate = today;
+    }
+    
+    localStorage.setItem('streakData', JSON.stringify(streakData));
+    streakCount.textContent = streakData.streak;
+}
+
+function updateTotalLearned() {
+    streakData.totalLearned = learnedWords.length;
+    localStorage.setItem('streakData', JSON.stringify(streakData));
+    totalLearned.textContent = streakData.totalLearned;
 }
 
 function navigateFlashcard(direction) {

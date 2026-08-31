@@ -13,6 +13,18 @@
     <header class="header">
         <div class="header-content">
             <h1 class="app-title">Easy Chinese</h1>
+            <div class="header-stats">
+                <div class="streak-tracker">
+                    <span class="streak-icon">🔥</span>
+                    <span class="streak-count" id="streakCount">0</span>
+                    <span class="streak-label">day streak</span>
+                </div>
+                <div class="progress-tracker">
+                    <span class="progress-icon">📚</span>
+                    <span class="progress-count" id="totalLearned">0</span>
+                    <span class="progress-label">learned</span>
+                </div>
+            </div>
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
                 <span class="sun-icon">☀️</span>
                 <span class="moon-icon">🌙</span>
@@ -52,6 +64,21 @@
         <section id="lessons" class="view">
             <button class="back-btn" id="backToDashboard">← Back to Dashboard</button>
             <h2 class="section-title" id="lessonsTitle">HSK 1 Lessons</h2>
+            
+            <!-- HSK Level Filters -->
+            <div class="hsk-filters">
+                <button class="hsk-filter-btn active" data-hsk="all">All Levels</button>
+                <button class="hsk-filter-btn" data-hsk="1">HSK 1</button>
+                <button class="hsk-filter-btn" data-hsk="2">HSK 2</button>
+                <button class="hsk-filter-btn" data-hsk="3">HSK 3</button>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by Uzbek, Pinyin, or Hanzi...">
+                <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
+            </div>
+            
             <div class="lessons-grid" id="lessonsGrid"></div>
         </section>
 
