@@ -807,84 +807,94 @@ function playPronunciation() {
     
     if (!('speechSynthesis' in window)) {
         console.error('Text-to-speech not supported in this browser.');
+        alert('Text-to-speech is not supported in your browser.');
         return;
     }
     
-    // Cancel any ongoing speech
+    // Cancel any ongoing speech immediately
     window.speechSynthesis.cancel();
     
-    // For iOS/Android mobile compatibility
-    // Resume speech synthesis if it was paused (mobile browsers often pause it)
+    // For iOS/Android mobile compatibility - resume if paused
     if (window.speechSynthesis.paused) {
         window.speechSynthesis.resume();
     }
     
-    // Small delay to ensure cancellation is complete
-    setTimeout(() => {
-        try {
-            const utterance = new SpeechSynthesisUtterance(word.hanzi);
-            utterance.lang = 'zh-CN';
-            utterance.rate = 0.8;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            
-            // Mobile-specific settings
-            utterance.rate = 0.9; // Slightly faster for mobile
-            utterance.pitch = 1;
-            
-            // Get available voices
-            const voices = window.speechSynthesis.getVoices();
-            
-            // Try to find Chinese voice (prefer zh-CN, then any zh)
-            let chineseVoice = voices.find(voice => voice.lang === 'zh-CN');
-            if (!chineseVoice) {
-                chineseVoice = voices.find(voice => voice.lang.startsWith('zh'));
+    try {
+        const utterance = new SpeechSynthesisUtterance(word.hanzi);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 0.8;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+        
+        // Get available voices immediately
+        const voices = window.speechSynthesis.getVoices();
+        
+        // Try to find Chinese voice with fallback hierarchy
+        let chineseVoice = voices.find(voice => voice.lang === 'zh-CN');
+        if (!chineseVoice) {
+            chineseVoice = voices.find(voice => voice.lang === 'zh-TW');
+        }
+        if (!chineseVoice) {
+            chineseVoice = voices.find(voice => voice.lang.startsWith('zh'));
+        }
+        if (!chineseVoice) {
+            // Fallback: try any Asian language voice
+            chineseVoice = voices.find(voice => 
+                voice.lang.startsWith('ja') || voice.lang.startsWith('ko')
+            );
+        }
+        
+        // Set voice if found
+        if (chineseVoice) {
+            utterance.voice = chineseVoice;
+            utterance.lang = chineseVoice.lang; // Use the voice's actual language
+            console.log('Using voice:', chineseVoice.name, chineseVoice.lang);
+        } else {
+            console.warn('No Chinese voice available, using default with zh-CN lang');
+            // Show user-friendly message on mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                console.warn('Chinese voice pack may not be installed on this device');
             }
-            
-            // Set voice if found, otherwise use default
-            if (chineseVoice) {
-                utterance.voice = chineseVoice;
-                console.log('Using Chinese voice:', chineseVoice.name, chineseVoice.lang);
-            } else {
-                console.log('No Chinese voice found, using default with zh-CN lang');
-            }
-            
-            // Handle errors
-            utterance.onerror = (event) => {
-                console.error('Speech synthesis error:', event.error);
-                // Only show alert for actual errors, not cancellations
-                if (event.error !== 'canceled' && event.error !== 'interrupted') {
-                    console.warn('Speech error:', event.error);
+        }
+        
+        // Handle errors with user feedback
+        utterance.onerror = (event) => {
+            console.error('Speech synthesis error:', event.error);
+            if (event.error !== 'canceled' && event.error !== 'interrupted') {
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                if (isMobile) {
+                    console.warn('Audio playback failed. Chinese voice pack may not be installed.');
                 }
-            };
-            
-            utterance.onend = () => {
-                console.log('Speech synthesis completed');
-                // For iOS: ensure speech synthesis is not paused after completion
-                if (window.speechSynthesis.paused) {
+            }
+        };
+        
+        utterance.onend = () => {
+            console.log('Speech synthesis completed');
+            if (window.speechSynthesis.paused) {
+                window.speechSynthesis.resume();
+            }
+        };
+        
+        // Speak immediately (no delay for mobile compatibility)
+        window.speechSynthesis.speak(utterance);
+        
+        // iOS-specific workaround to keep speech synthesis alive
+        const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (iOS) {
+            const interval = setInterval(() => {
+                if (!window.speechSynthesis.speaking) {
+                    clearInterval(interval);
+                } else {
+                    window.speechSynthesis.pause();
                     window.speechSynthesis.resume();
                 }
-            };
-            
-            // For iOS: ensure speech synthesis is active before speaking
-            window.speechSynthesis.speak(utterance);
-            
-            // For iOS: keep speech synthesis alive (iOS bug workaround)
-            const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            if (iOS) {
-                const interval = setInterval(() => {
-                    if (!window.speechSynthesis.speaking) {
-                        clearInterval(interval);
-                    } else {
-                        window.speechSynthesis.pause();
-                        window.speechSynthesis.resume();
-                    }
-                }, 10000);
-            }
-        } catch (error) {
-            console.error('Error in speech synthesis:', error);
+            }, 10000);
         }
-    }, 100);
+    } catch (error) {
+        console.error('Error in speech synthesis:', error);
+        alert('Unable to play audio. Please check your device settings.');
+    }
 }
 
 // HanziWriter stroke order animation
