@@ -559,6 +559,9 @@ let canvasLesson = 1;
 let canvasWritingMode = 'trace'; // trace, copy, freehand
 let selectedAvatar = '👤';
 let isEraserActive = false;
+let currentStrokeIndex = 0;
+let expectedStrokeCount = 0;
+let userStrokes = [];
 
 // DOM Elements
 const themeToggle = document.getElementById('themeToggle');
@@ -1325,6 +1328,10 @@ function showTraceGuide() {
     const char = canvasCharacter.textContent;
     if (!char) return;
     
+    // Reset stroke tracking
+    currentStrokeIndex = 0;
+    userStrokes = [];
+    
     try {
         canvasHanziWriter = HanziWriter.create('drawingCanvas', char, {
             width: 300,
@@ -1332,9 +1339,18 @@ function showTraceGuide() {
             padding: 20,
             strokeAnimationSpeed: 0,
             showOutline: true,
-            strokeColor: 'rgba(0, 0, 0, 0.1)',
-            outlineColor: 'rgba(0, 0, 0, 0.2)',
-            radicalColor: 'rgba(0, 0, 0, 0.1)'
+            strokeColor: 'rgba(200, 200, 200, 0.3)', // Semi-transparent gray shadow
+            outlineColor: 'rgba(200, 200, 200, 0.2)',
+            radicalColor: 'rgba(200, 200, 200, 0.2)',
+            drawingWidth: 300,
+            drawingHeight: 300
+        });
+        
+        // Get stroke data for validation
+        canvasHanziWriter.loadData().then(() => {
+            const charData = canvasHanziWriter.character;
+            expectedStrokeCount = charData.strokes.length;
+            console.log('Character has', expectedStrokeCount, 'strokes');
         });
     } catch (error) {
         console.error('Error creating trace guide:', error);
@@ -1417,52 +1433,205 @@ function initializeCanvas() {
 }
 
 function startDrawing(e) {
+    if (canvasWritingMode !== 'trace' || isEraserActive) {
+        isDrawing = true;
+        canvasCtx.beginPath();
+        const rect = drawingCanvas.getBoundingClientRect();
+        canvasCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        return;
+    }
+    
+    // In trace mode, only allow drawing if we're on the correct stroke
     isDrawing = true;
     canvasCtx.beginPath();
     const rect = drawingCanvas.getBoundingClientRect();
     canvasCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    
+    // Start tracking this stroke
+    userStrokes[currentStrokeIndex] = {
+        points: [{x: e.clientX - rect.left, y: e.clientY - rect.top}]
+    };
 }
 
 function draw(e) {
     if (!isDrawing) return;
+    
+    if (canvasWritingMode !== 'trace' || isEraserActive) {
+        const rect = drawingCanvas.getBoundingClientRect();
+        canvasCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        canvasCtx.stroke();
+        return;
+    }
+    
+    // In trace mode, track points for stroke validation
     const rect = drawingCanvas.getBoundingClientRect();
-    canvasCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    canvasCtx.lineTo(x, y);
     canvasCtx.stroke();
+    
+    if (userStrokes[currentStrokeIndex]) {
+        userStrokes[currentStrokeIndex].points.push({x, y});
+    }
 }
 
 function stopDrawing() {
     if (isDrawing) {
         isDrawing = false;
         canvasCtx.closePath();
+        
+        // In trace mode, validate the stroke
+        if (canvasWritingMode === 'trace' && !isEraserActive) {
+            validateStroke();
+        }
     }
 }
 
 function handleTouchStart(e) {
     e.preventDefault();
     const touch = e.touches[0];
+    
+    if (canvasWritingMode !== 'trace' || isEraserActive) {
+        const rect = drawingCanvas.getBoundingClientRect();
+        isDrawing = true;
+        canvasCtx.beginPath();
+        canvasCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        return;
+    }
+    
+    // In trace mode, track stroke
     const rect = drawingCanvas.getBoundingClientRect();
     isDrawing = true;
     canvasCtx.beginPath();
     canvasCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    
+    userStrokes[currentStrokeIndex] = {
+        points: [{x: touch.clientX - rect.left, y: touch.clientY - rect.top}]
+    };
 }
 
 function handleTouchMove(e) {
     e.preventDefault();
     if (!isDrawing) return;
+    
     const touch = e.touches[0];
+    
+    if (canvasWritingMode !== 'trace' || isEraserActive) {
+        const rect = drawingCanvas.getBoundingClientRect();
+        canvasCtx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        canvasCtx.stroke();
+        return;
+    }
+    
+    // In trace mode, track points
     const rect = drawingCanvas.getBoundingClientRect();
-    canvasCtx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    
+    canvasCtx.lineTo(x, y);
     canvasCtx.stroke();
+    
+    if (userStrokes[currentStrokeIndex]) {
+        userStrokes[currentStrokeIndex].points.push({x, y});
+    }
 }
 
 function clearCanvas() {
     canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
     currentMistakes = 0;
+    currentStrokeIndex = 0;
+    userStrokes = [];
     if (canvasHanziWriter) {
         canvasHanziWriter = null;
     }
     // Re-apply writing mode
     applyWritingMode();
+}
+
+function validateStroke() {
+    if (!canvasHanziWriter || !userStrokes[currentStrokeIndex]) return;
+    
+    const userStroke = userStrokes[currentStrokeIndex];
+    const points = userStroke.points;
+    
+    // Check if stroke has enough points to be valid
+    if (points.length < 3) {
+        showStrokeError('Stroke too short');
+        return;
+    }
+    
+    // Simple validation: check if stroke is in correct order
+    // For now, we'll use a basic bounding box and direction check
+    // In a full implementation, this would use more sophisticated stroke matching
+    
+    const strokeStart = points[0];
+    const strokeEnd = points[points.length - 1];
+    
+    // Calculate bounding box
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    points.forEach(p => {
+        minX = Math.min(minX, p.x);
+        minY = Math.min(minY, p.y);
+        maxX = Math.max(maxX, p.x);
+        maxY = Math.max(maxY, p.y);
+    });
+    
+    const strokeWidth = maxX - minX;
+    const strokeHeight = maxY - minY;
+    
+    // Check if stroke is reasonable size
+    if (strokeWidth < 10 || strokeHeight < 10) {
+        showStrokeError('Stroke too small');
+        return;
+    }
+    
+    // Stroke is valid - move to next stroke
+    currentStrokeIndex++;
+    
+    // Check if character is complete
+    if (currentStrokeIndex >= expectedStrokeCount) {
+        showCompletionFeedback();
+    }
+}
+
+function showStrokeError(message) {
+    // Flash the canvas red to indicate error
+    canvasCtx.save();
+    canvasCtx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+    canvasCtx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+    canvasCtx.restore();
+    
+    setTimeout(() => {
+        // Clear the incorrect stroke and redraw guide
+        if (canvasWritingMode === 'trace') {
+            canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+            showTraceGuide();
+        }
+    }, 500);
+    
+    // Reset current stroke index to require redraw
+    userStrokes[currentStrokeIndex] = null;
+}
+
+function showCompletionFeedback() {
+    // Flash green to indicate success
+    canvasCtx.save();
+    canvasCtx.fillStyle = 'rgba(0, 200, 100, 0.3)';
+    canvasCtx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+    canvasCtx.restore();
+    
+    setTimeout(() => {
+        canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+        showTraceGuide();
+    }, 800);
+    
+    // Award XP for completing character
+    addXP(15);
+    
+    // Reset for next character
+    currentStrokeIndex = 0;
+    userStrokes = [];
 }
 
 // Profile View Functions
