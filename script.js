@@ -545,7 +545,8 @@ let searchQuery = '';
 let streakData = JSON.parse(localStorage.getItem('streakData')) || {
     streak: 0,
     lastLoginDate: null,
-    totalLearned: 0
+    totalLearned: 0,
+    xp: 0
 };
 
 // DOM Elements
@@ -585,6 +586,8 @@ const searchInput = document.getElementById('searchInput');
 const searchClear = document.getElementById('searchClear');
 const streakCount = document.getElementById('streakCount');
 const totalLearned = document.getElementById('totalLearned');
+const xpCount = document.getElementById('xpCount');
+const navItems = document.querySelectorAll('.nav-item');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -592,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     updateStreak();
     updateTotalLearned();
+    updateXP();
     
     // Load voices for speech synthesis
     if ('speechSynthesis' in window) {
@@ -650,6 +654,16 @@ function setupEventListeners() {
         searchQuery = '';
         searchClear.classList.remove('visible');
         filterAndSearchLessons();
+    });
+
+    // Bottom navigation
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const nav = item.dataset.nav;
+            handleNavigation(nav);
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+        });
     });
 
     // Back buttons
@@ -941,6 +955,7 @@ function toggleLearned() {
         learnedWords.splice(index, 1);
     } else {
         learnedWords.push(wordId);
+        addXP(10); // Award 10 XP for learning a word
     }
     
     // Save to localStorage
@@ -1010,6 +1025,37 @@ function updateTotalLearned() {
     streakData.totalLearned = learnedWords.length;
     localStorage.setItem('streakData', JSON.stringify(streakData));
     totalLearned.textContent = streakData.totalLearned;
+}
+
+function updateXP() {
+    xpCount.textContent = streakData.xp;
+}
+
+function addXP(amount) {
+    streakData.xp += amount;
+    localStorage.setItem('streakData', JSON.stringify(streakData));
+    updateXP();
+}
+
+function handleNavigation(nav) {
+    switch(nav) {
+        case 'home':
+            showDashboard();
+            break;
+        case 'practice':
+            // Navigate to lessons view with current HSK
+            showLessonsView();
+            break;
+        case 'canvas':
+            // Navigate to canvas/stroke practice view
+            // For now, show lessons view (can be expanded later)
+            showLessonsView();
+            break;
+        case 'profile':
+            // Show profile/stats view (can be expanded later)
+            alert('Profile feature coming soon!');
+            break;
+    }
 }
 
 function navigateFlashcard(direction) {
