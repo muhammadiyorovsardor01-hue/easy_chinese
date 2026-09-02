@@ -100,24 +100,40 @@
                         <div class="flashcard-front">
                             <div class="hanzi" id="flashcardHanzi">你好</div>
                             <div class="tap-hint">Tap to flip</div>
-                            <button class="audio-btn" id="audioBtn" aria-label="Play pronunciation">🔊</button>
                         </div>
                         <div class="flashcard-back">
                             <div class="pinyin" id="flashcardPinyin">nǐ hǎo</div>
                             <div class="uzbek" id="flashcardUzbek">Salom</div>
                             <div class="stroke-order-container">
                                 <div id="strokeOrderTarget"></div>
-                                <button class="stroke-btn" id="strokeBtn">Show Stroke Order</button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-controls">
-                    <button class="control-btn" id="prevCard">Previous</button>
-                    <button class="control-btn" id="shuffleCards">Shuffle</button>
-                    <button class="control-btn" id="nextCard">Next</button>
-                    <button class="control-btn" id="markLearned">Mark as Learned</button>
+                
+                <!-- Main Action Buttons (Audio, Draw, Next) -->
+                <div class="action-buttons">
+                    <button class="action-btn audio-action-btn" id="audioBtn" aria-label="Play pronunciation">
+                        <span class="btn-icon">🔊</span>
+                        <span class="btn-label">Audio</span>
+                    </button>
+                    <button class="action-btn draw-action-btn" id="strokeBtn" aria-label="Show stroke order">
+                        <span class="btn-icon">✏️</span>
+                        <span class="btn-label">Draw</span>
+                    </button>
+                    <button class="action-btn next-action-btn" id="nextCard" aria-label="Next card">
+                        <span class="btn-icon">➡️</span>
+                        <span class="btn-label">Next</span>
+                    </button>
                 </div>
+                
+                <!-- Secondary Controls -->
+                <div class="secondary-controls">
+                    <button class="secondary-btn" id="prevCard">← Previous</button>
+                    <button class="secondary-btn" id="shuffleCards">🔀 Shuffle</button>
+                    <button class="secondary-btn" id="markLearned">⭐ Mark Learned</button>
+                </div>
+                
                 <div class="card-counter">
                     <span id="currentCard">1</span> / <span id="totalCards">5</span>
                     <span class="learned-counter">Learned: <span id="learnedCount">0</span></span>
