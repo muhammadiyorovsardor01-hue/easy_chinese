@@ -163,6 +163,138 @@
                 </div>
             </div>
         </section>
+
+        <!-- Canvas View -->
+        <section id="canvas" class="view">
+            <button class="back-btn" id="backToLessonsFromCanvas">← Back to Lessons</button>
+            <h2 class="section-title">Character Practice</h2>
+            
+            <div class="canvas-controls-top">
+                <div class="current-character-display">
+                    <span class="char-label">Practice:</span>
+                    <span class="char-display" id="canvasCharacter">你</span>
+                </div>
+                <div class="mistake-counter">
+                    <span class="mistake-label">Mistakes:</span>
+                    <span class="mistake-count" id="mistakeCount">0</span>/3
+                </div>
+            </div>
+            
+            <div class="canvas-wrapper">
+                <canvas id="drawingCanvas" class="drawing-canvas"></canvas>
+            </div>
+            
+            <div class="canvas-actions">
+                <button class="canvas-action-btn clear-btn" id="clearCanvas">🗑️ Clear</button>
+                <button class="canvas-action-btn hint-btn" id="showHint">💡 Yordam (Hint)</button>
+            </div>
+            
+            <div class="canvas-instructions">
+                <p>Draw the character above. Use the hint button if you need help with stroke order.</p>
+            </div>
+        </section>
+
+        <!-- Profile View -->
+        <section id="profile" class="view">
+            <h2 class="section-title">My Profile</h2>
+            
+            <div class="profile-header">
+                <div class="avatar">
+                    <span class="avatar-emoji">👤</span>
+                </div>
+                <div class="profile-info">
+                    <h3 class="username">Chinese Learner</h3>
+                    <p class="level-badge">Level <span id="userLevel">1</span></p>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">🔥</span>
+                    <span class="stat-value" id="profileStreak">0</span>
+                    <span class="stat-label">Day Streak</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📚</span>
+                    <span class="stat-value" id="profileLearned">0</span>
+                    <span class="stat-label">Words Learned</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value" id="profileXP">0</span>
+                    <span class="stat-label">Total XP</span>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <h3 class="progress-title">HSK Progress</h3>
+                <div class="hsk-progress-bars">
+                    <div class="hsk-progress-item">
+                        <div class="hsk-progress-label">
+                            <span>HSK 1</span>
+                            <span class="hsk-progress-percent" id="hsk1Percent">0%</span>
+                        </div>
+                        <div class="hsk-progress-bar">
+                            <div class="hsk-progress-fill" id="hsk1Fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="hsk-progress-item">
+                        <div class="hsk-progress-label">
+                            <span>HSK 2</span>
+                            <span class="hsk-progress-percent" id="hsk2Percent">0%</span>
+                        </div>
+                        <div class="hsk-progress-bar">
+                            <div class="hsk-progress-fill" id="hsk2Fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="hsk-progress-item">
+                        <div class="hsk-progress-label">
+                            <span>HSK 3</span>
+                            <span class="hsk-progress-percent" id="hsk3Percent">0%</span>
+                        </div>
+                        <div class="hsk-progress-bar">
+                            <div class="hsk-progress-fill" id="hsk3Fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="achievements-section">
+                <h3 class="achievements-title">Achievements</h3>
+                <div class="achievements-grid" id="achievementsGrid">
+                    <div class="achievement-badge locked" data-achievement="first-word">
+                        <span class="badge-icon">🎯</span>
+                        <span class="badge-name">First Word</span>
+                        <span class="badge-desc">Learn your first word</span>
+                    </div>
+                    <div class="achievement-badge locked" data-achievement="streak-3">
+                        <span class="badge-icon">🔥</span>
+                        <span class="badge-name">3-Day Streak</span>
+                        <span class="badge-desc">Practice for 3 days</span>
+                    </div>
+                    <div class="achievement-badge locked" data-achievement="streak-7">
+                        <span class="badge-icon">⚡</span>
+                        <span class="badge-name">Week Warrior</span>
+                        <span class="badge-desc">7-day streak</span>
+                    </div>
+                    <div class="achievement-badge locked" data-achievement="words-50">
+                        <span class="badge-icon">📚</span>
+                        <span class="badge-name">Bookworm</span>
+                        <span class="badge-desc">Learn 50 words</span>
+                    </div>
+                    <div class="achievement-badge locked" data-achievement="words-100">
+                        <span class="badge-icon">🎓</span>
+                        <span class="badge-name">Scholar</span>
+                        <span class="badge-desc">Learn 100 words</span>
+                    </div>
+                    <div class="achievement-badge locked" data-achievement="xp-100">
+                        <span class="badge-icon">⭐</span>
+                        <span class="badge-name">Rising Star</span>
+                        <span class="badge-desc">Earn 100 XP</span>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Bottom Navigation Bar -->

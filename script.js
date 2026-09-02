@@ -549,6 +549,12 @@ let streakData = JSON.parse(localStorage.getItem('streakData')) || {
     xp: 0
 };
 
+// Canvas state
+let canvasCtx = null;
+let isDrawing = false;
+let currentMistakes = 0;
+let canvasHanziWriter = null;
+
 // DOM Elements
 const themeToggle = document.getElementById('themeToggle');
 const dashboard = document.getElementById('dashboard');
@@ -588,6 +594,25 @@ const streakCount = document.getElementById('streakCount');
 const totalLearned = document.getElementById('totalLearned');
 const xpCount = document.getElementById('xpCount');
 const navItems = document.querySelectorAll('.nav-item');
+const canvasView = document.getElementById('canvas');
+const profileView = document.getElementById('profile');
+const backToLessonsFromCanvas = document.getElementById('backToLessonsFromCanvas');
+const drawingCanvas = document.getElementById('drawingCanvas');
+const clearCanvasBtn = document.getElementById('clearCanvas');
+const showHintBtn = document.getElementById('showHint');
+const canvasCharacter = document.getElementById('canvasCharacter');
+const mistakeCount = document.getElementById('mistakeCount');
+const profileStreak = document.getElementById('profileStreak');
+const profileLearned = document.getElementById('profileLearned');
+const profileXP = document.getElementById('profileXP');
+const userLevel = document.getElementById('userLevel');
+const hsk1Percent = document.getElementById('hsk1Percent');
+const hsk2Percent = document.getElementById('hsk2Percent');
+const hsk3Percent = document.getElementById('hsk3Percent');
+const hsk1Fill = document.getElementById('hsk1Fill');
+const hsk2Fill = document.getElementById('hsk2Fill');
+const hsk3Fill = document.getElementById('hsk3Fill');
+const achievementsGrid = document.getElementById('achievementsGrid');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -669,6 +694,11 @@ function setupEventListeners() {
     // Back buttons
     backToDashboard.addEventListener('click', showDashboard);
     backToLessons.addEventListener('click', showLessonsView);
+    backToLessonsFromCanvas.addEventListener('click', showLessonsView);
+
+    // Canvas controls
+    clearCanvasBtn.addEventListener('click', clearCanvas);
+    showHintBtn.addEventListener('click', showCanvasHint);
 
     // Flashcard controls
     flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
@@ -1047,13 +1077,10 @@ function handleNavigation(nav) {
             showLessonsView();
             break;
         case 'canvas':
-            // Navigate to canvas/stroke practice view
-            // For now, show lessons view (can be expanded later)
-            showLessonsView();
+            showCanvasView();
             break;
         case 'profile':
-            // Show profile/stats view (can be expanded later)
-            alert('Profile feature coming soon!');
+            showProfileView();
             break;
     }
 }
@@ -1166,8 +1193,205 @@ function nextQuiz() {
 // Mode switching
 function switchMode(mode) {
     tabBtns.forEach(btn => btn.classList.remove('active'));
-    modeContents.forEach(content => content.classList.remove('active'));
-    
     document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+
+    document.querySelectorAll('.mode-content').forEach(content => content.classList.remove('active'));
     document.getElementById(`${mode}Mode`).classList.add('active');
+
+    if (mode === 'quiz') {
+        quizIndex = 0;
+        quizScore = 0;
+        updateQuiz();
+    }
+}
+
+// Canvas View Functions
+function showCanvasView() {
+    showView(canvasView);
+    initializeCanvas();
+    // Set current character from current flashcard if available
+    if (currentWords.length > 0) {
+        const word = currentWords[flashcardIndex];
+        const targetChar = word.hanzi.charAt(0);
+        canvasCharacter.textContent = targetChar;
+        currentMistakes = 0;
+        mistakeCount.textContent = '0';
+    }
+}
+
+function initializeCanvas() {
+    canvasCtx = drawingCanvas.getContext('2d');
+    drawingCanvas.width = 300;
+    drawingCanvas.height = 300;
+    
+    // Set up drawing styles
+    canvasCtx.strokeStyle = '#000';
+    canvasCtx.lineWidth = 4;
+    canvasCtx.lineCap = 'round';
+    canvasCtx.lineJoin = 'round';
+    
+    // Mouse events
+    drawingCanvas.addEventListener('mousedown', startDrawing);
+    drawingCanvas.addEventListener('mousemove', draw);
+    drawingCanvas.addEventListener('mouseup', stopDrawing);
+    drawingCanvas.addEventListener('mouseout', stopDrawing);
+    
+    // Touch events
+    drawingCanvas.addEventListener('touchstart', handleTouchStart);
+    drawingCanvas.addEventListener('touchmove', handleTouchMove);
+    drawingCanvas.addEventListener('touchend', stopDrawing);
+}
+
+function startDrawing(e) {
+    isDrawing = true;
+    canvasCtx.beginPath();
+    const rect = drawingCanvas.getBoundingClientRect();
+    canvasCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+}
+
+function draw(e) {
+    if (!isDrawing) return;
+    const rect = drawingCanvas.getBoundingClientRect();
+    canvasCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    canvasCtx.stroke();
+}
+
+function stopDrawing() {
+    if (isDrawing) {
+        isDrawing = false;
+        canvasCtx.closePath();
+    }
+}
+
+function handleTouchStart(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = drawingCanvas.getBoundingClientRect();
+    isDrawing = true;
+    canvasCtx.beginPath();
+    canvasCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+}
+
+function handleTouchMove(e) {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const touch = e.touches[0];
+    const rect = drawingCanvas.getBoundingClientRect();
+    canvasCtx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    canvasCtx.stroke();
+}
+
+function clearCanvas() {
+    canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+    currentMistakes = 0;
+    mistakeCount.textContent = '0';
+    if (canvasHanziWriter) {
+        canvasHanziWriter = null;
+    }
+}
+
+function showCanvasHint() {
+    const char = canvasCharacter.textContent;
+    if (!char) return;
+    
+    // Clear canvas
+    canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+    
+    // Use HanziWriter to show stroke order
+    try {
+        canvasHanziWriter = HanziWriter.create('drawingCanvas', char, {
+            width: 300,
+            height: 300,
+            padding: 20,
+            strokeAnimationSpeed: 1,
+            delayBetweenStrokes: 300,
+            showOutline: true,
+            strokeColor: '#e63946',
+            outlineColor: '#ddd',
+            radicalColor: '#e63946'
+        });
+        
+        canvasHanziWriter.animateCharacter();
+    } catch (error) {
+        console.error('Error creating HanziWriter for hint:', error);
+    }
+}
+
+// Profile View Functions
+function showProfileView() {
+    showView(profileView);
+    updateProfileStats();
+    updateHSKProgress();
+    updateAchievements();
+}
+
+function updateProfileStats() {
+    profileStreak.textContent = streakData.streak;
+    profileLearned.textContent = streakData.totalLearned;
+    profileXP.textContent = streakData.xp;
+    
+    // Calculate user level based on XP
+    const level = Math.floor(streakData.xp / 100) + 1;
+    userLevel.textContent = level;
+}
+
+function updateHSKProgress() {
+    // Calculate progress for each HSK level
+    const hsk1Words = vocabularyData.filter(w => w.hsk === 1).length;
+    const hsk2Words = vocabularyData.filter(w => w.hsk === 2).length;
+    const hsk3Words = vocabularyData.filter(w => w.hsk === 3).length;
+    
+    const hsk1Learned = vocabularyData.filter(w => w.hsk === 1 && learnedWords.includes(w.id)).length;
+    const hsk2Learned = vocabularyData.filter(w => w.hsk === 2 && learnedWords.includes(w.id)).length;
+    const hsk3Learned = vocabularyData.filter(w => w.hsk === 3 && learnedWords.includes(w.id)).length;
+    
+    const hsk1PercentVal = hsk1Words > 0 ? Math.round((hsk1Learned / hsk1Words) * 100) : 0;
+    const hsk2PercentVal = hsk2Words > 0 ? Math.round((hsk2Learned / hsk2Words) * 100) : 0;
+    const hsk3PercentVal = hsk3Words > 0 ? Math.round((hsk3Learned / hsk3Words) * 100) : 0;
+    
+    hsk1Percent.textContent = `${hsk1PercentVal}%`;
+    hsk2Percent.textContent = `${hsk2PercentVal}%`;
+    hsk3Percent.textContent = `${hsk3PercentVal}%`;
+    
+    hsk1Fill.style.width = `${hsk1PercentVal}%`;
+    hsk2Fill.style.width = `${hsk2PercentVal}%`;
+    hsk3Fill.style.width = `${hsk3PercentVal}%`;
+}
+
+function updateAchievements() {
+    const achievements = achievementsGrid.querySelectorAll('.achievement-badge');
+    
+    achievements.forEach(badge => {
+        const achievementType = badge.dataset.achievement;
+        let unlocked = false;
+        
+        switch(achievementType) {
+            case 'first-word':
+                unlocked = streakData.totalLearned >= 1;
+                break;
+            case 'streak-3':
+                unlocked = streakData.streak >= 3;
+                break;
+            case 'streak-7':
+                unlocked = streakData.streak >= 7;
+                break;
+            case 'words-50':
+                unlocked = streakData.totalLearned >= 50;
+                break;
+            case 'words-100':
+                unlocked = streakData.totalLearned >= 100;
+                break;
+            case 'xp-100':
+                unlocked = streakData.xp >= 100;
+                break;
+        }
+        
+        if (unlocked) {
+            badge.classList.remove('locked');
+            badge.classList.add('unlocked');
+        } else {
+            badge.classList.add('locked');
+            badge.classList.remove('unlocked');
+        }
+    });
 }
