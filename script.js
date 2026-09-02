@@ -1332,18 +1332,24 @@ function showTraceGuide() {
     currentStrokeIndex = 0;
     userStrokes = [];
     
+    // Clear canvas
+    canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+    
     try {
+        // Use HanziWriter quiz mode for stroke order practice
         canvasHanziWriter = HanziWriter.create('drawingCanvas', char, {
-            width: 300,
-            height: 300,
+            width: drawingCanvas.width,
+            height: drawingCanvas.height,
             padding: 20,
             strokeAnimationSpeed: 0,
             showOutline: true,
             strokeColor: 'rgba(200, 200, 200, 0.3)', // Semi-transparent gray shadow
             outlineColor: 'rgba(200, 200, 200, 0.2)',
             radicalColor: 'rgba(200, 200, 200, 0.2)',
-            drawingWidth: 300,
-            drawingHeight: 300
+            drawingWidth: drawingCanvas.width,
+            drawingHeight: drawingCanvas.height,
+            showCharacter: true,
+            quiz: true // Enable quiz mode for stroke order validation
         });
         
         // Get stroke data for validation
@@ -1351,6 +1357,19 @@ function showTraceGuide() {
             const charData = canvasHanziWriter.character;
             expectedStrokeCount = charData.strokes.length;
             console.log('Character has', expectedStrokeCount, 'strokes');
+            
+            // Add quiz event listeners
+            canvasHanziWriter.on('quizComplete', () => {
+                showCompletionFeedback();
+            });
+            
+            canvasHanziWriter.on('correctStroke', (data) => {
+                currentStrokeIndex++;
+            });
+            
+            canvasHanziWriter.on('incorrectStroke', (data) => {
+                showStrokeError('Incorrect stroke');
+            });
         });
     } catch (error) {
         console.error('Error creating trace guide:', error);
@@ -1411,8 +1430,9 @@ function checkCanvasDrawing() {
 
 function initializeCanvas() {
     canvasCtx = drawingCanvas.getContext('2d');
-    drawingCanvas.width = 300;
-    drawingCanvas.height = 300;
+    
+    // Dynamic canvas sizing based on screen width
+    resizeCanvas();
     
     // Set up drawing styles
     canvasCtx.strokeStyle = '#000';
@@ -1427,9 +1447,28 @@ function initializeCanvas() {
     drawingCanvas.addEventListener('mouseout', stopDrawing);
     
     // Touch events
-    drawingCanvas.addEventListener('touchstart', handleTouchStart);
-    drawingCanvas.addEventListener('touchmove', handleTouchMove);
+    drawingCanvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    drawingCanvas.addEventListener('touchmove', handleTouchMove, { passive: false });
     drawingCanvas.addEventListener('touchend', stopDrawing);
+    
+    // Resize canvas on window resize
+    window.addEventListener('resize', resizeCanvas);
+}
+
+function resizeCanvas() {
+    const container = document.querySelector('.canvas-wrapper');
+    const containerWidth = container.offsetWidth - 32; // Account for padding
+    
+    // Calculate appropriate canvas size (max 300px, min 200px)
+    const canvasSize = Math.min(Math.max(containerWidth, 200), 300);
+    
+    drawingCanvas.width = canvasSize;
+    drawingCanvas.height = canvasSize;
+    
+    // Re-apply writing mode after resize
+    if (canvasWritingMode === 'trace' && canvasCharacter.textContent) {
+        showTraceGuide();
+    }
 }
 
 function startDrawing(e) {
