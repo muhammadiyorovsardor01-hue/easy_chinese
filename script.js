@@ -554,6 +554,11 @@ let canvasCtx = null;
 let isDrawing = false;
 let currentMistakes = 0;
 let canvasHanziWriter = null;
+let canvasHSK = 1;
+let canvasLesson = 1;
+let canvasWritingMode = 'trace'; // trace, copy, freehand
+let selectedAvatar = '👤';
+let isEraserActive = false;
 
 // DOM Elements
 const themeToggle = document.getElementById('themeToggle');
@@ -598,10 +603,7 @@ const canvasView = document.getElementById('canvas');
 const profileView = document.getElementById('profile');
 const backToLessonsFromCanvas = document.getElementById('backToLessonsFromCanvas');
 const drawingCanvas = document.getElementById('drawingCanvas');
-const clearCanvasBtn = document.getElementById('clearCanvas');
-const showHintBtn = document.getElementById('showHint');
 const canvasCharacter = document.getElementById('canvasCharacter');
-const mistakeCount = document.getElementById('mistakeCount');
 const profileStreak = document.getElementById('profileStreak');
 const profileLearned = document.getElementById('profileLearned');
 const profileXP = document.getElementById('profileXP');
@@ -613,6 +615,24 @@ const hsk1Fill = document.getElementById('hsk1Fill');
 const hsk2Fill = document.getElementById('hsk2Fill');
 const hsk3Fill = document.getElementById('hsk3Fill');
 const achievementsGrid = document.getElementById('achievementsGrid');
+const canvasLessonSelector = document.getElementById('canvasLessonSelector');
+const hskOptions = document.querySelectorAll('.hsk-option');
+const modeOptions = document.querySelectorAll('.mode-option');
+const canvasAudioBtn = document.getElementById('canvasAudioBtn');
+const canvasEraserBtn = document.getElementById('canvasEraserBtn');
+const canvasCheckBtn = document.getElementById('canvasCheckBtn');
+const modeInstructions = document.getElementById('modeInstructions');
+const profileUsername = document.getElementById('profileUsername');
+const profileAvatar = document.getElementById('profileAvatar');
+const dailyGoalDisplay = document.getElementById('dailyGoalDisplay');
+const editProfileBtn = document.getElementById('editProfileBtn');
+const editProfileModal = document.getElementById('editProfileModal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+const cancelModalBtn = document.getElementById('cancelModalBtn');
+const saveProfileBtn = document.getElementById('saveProfileBtn');
+const usernameInput = document.getElementById('usernameInput');
+const dailyGoalInput = document.getElementById('dailyGoalInput');
+const avatarOptions = document.querySelectorAll('.avatar-option');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -621,6 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateStreak();
     updateTotalLearned();
     updateXP();
+    loadProfileData();
     
     // Load voices for speech synthesis
     if ('speechSynthesis' in window) {
@@ -696,9 +717,50 @@ function setupEventListeners() {
     backToLessons.addEventListener('click', showLessonsView);
     backToLessonsFromCanvas.addEventListener('click', showLessonsView);
 
-    // Canvas controls
-    clearCanvasBtn.addEventListener('click', clearCanvas);
-    showHintBtn.addEventListener('click', showCanvasHint);
+    // Canvas sidebar controls
+    hskOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            hskOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            canvasHSK = parseInt(option.dataset.hsk);
+            updateCanvasLessonSelector();
+            loadCanvasCharacter();
+        });
+    });
+
+    canvasLessonSelector.addEventListener('change', (e) => {
+        canvasLesson = parseInt(e.target.value);
+        loadCanvasCharacter();
+    });
+
+    modeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            modeOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            canvasWritingMode = option.dataset.mode;
+            updateModeInstructions();
+            applyWritingMode();
+        });
+    });
+
+    // Canvas action buttons
+    canvasAudioBtn.addEventListener('click', playCanvasAudio);
+    canvasEraserBtn.addEventListener('click', toggleEraser);
+    canvasCheckBtn.addEventListener('click', checkCanvasDrawing);
+
+    // Profile modal controls
+    editProfileBtn.addEventListener('click', openProfileModal);
+    closeModalBtn.addEventListener('click', closeProfileModal);
+    cancelModalBtn.addEventListener('click', closeProfileModal);
+    saveProfileBtn.addEventListener('click', saveProfile);
+
+    avatarOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            avatarOptions.forEach(opt => opt.classList.remove('selected'));
+            option.classList.add('selected');
+            selectedAvatar = option.dataset.avatar;
+        });
+    });
 
     // Flashcard controls
     flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
@@ -1209,14 +1271,126 @@ function switchMode(mode) {
 function showCanvasView() {
     showView(canvasView);
     initializeCanvas();
-    // Set current character from current flashcard if available
-    if (currentWords.length > 0) {
-        const word = currentWords[flashcardIndex];
+    updateCanvasLessonSelector();
+    loadCanvasCharacter();
+    updateModeInstructions();
+}
+
+function updateCanvasLessonSelector() {
+    const lessons = [...new Set(vocabularyData.filter(w => w.hsk === canvasHSK).map(w => w.lesson))].sort((a, b) => a - b);
+    canvasLessonSelector.innerHTML = lessons.map(lesson => 
+        `<option value="${lesson}" ${lesson === canvasLesson ? 'selected' : ''}>Lesson ${lesson}</option>`
+    ).join('');
+}
+
+function loadCanvasCharacter() {
+    const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.lesson === canvasLesson);
+    if (words.length > 0) {
+        const word = words[0]; // Get first word from lesson
         const targetChar = word.hanzi.charAt(0);
         canvasCharacter.textContent = targetChar;
-        currentMistakes = 0;
-        mistakeCount.textContent = '0';
+        clearCanvas();
     }
+}
+
+function updateModeInstructions() {
+    const instructions = {
+        'trace': 'Trace the character by following the guide dots.',
+        'copy': 'Copy the character by looking at the reference above.',
+        'freehand': 'Practice writing the character freely.'
+    };
+    modeInstructions.textContent = instructions[canvasWritingMode];
+}
+
+function applyWritingMode() {
+    clearCanvas();
+    
+    switch(canvasWritingMode) {
+        case 'trace':
+            // Show faint character outline for tracing
+            showTraceGuide();
+            break;
+        case 'copy':
+            // Show reference character above canvas
+            canvasCharacter.style.display = 'block';
+            break;
+        case 'freehand':
+            // No guide, just blank canvas
+            canvasCharacter.style.display = 'block';
+            break;
+    }
+}
+
+function showTraceGuide() {
+    const char = canvasCharacter.textContent;
+    if (!char) return;
+    
+    try {
+        canvasHanziWriter = HanziWriter.create('drawingCanvas', char, {
+            width: 300,
+            height: 300,
+            padding: 20,
+            strokeAnimationSpeed: 0,
+            showOutline: true,
+            strokeColor: 'rgba(0, 0, 0, 0.1)',
+            outlineColor: 'rgba(0, 0, 0, 0.2)',
+            radicalColor: 'rgba(0, 0, 0, 0.1)'
+        });
+    } catch (error) {
+        console.error('Error creating trace guide:', error);
+    }
+}
+
+function playCanvasAudio() {
+    const char = canvasCharacter.textContent;
+    if (!char) return;
+    
+    if (!('speechSynthesis' in window)) {
+        alert('Text-to-speech not supported');
+        return;
+    }
+    
+    window.speechSynthesis.cancel();
+    
+    try {
+        const utterance = new SpeechSynthesisUtterance(char);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 0.8;
+        utterance.pitch = 1;
+        
+        const voices = window.speechSynthesis.getVoices();
+        let chineseVoice = voices.find(voice => voice.lang === 'zh-CN');
+        if (!chineseVoice) {
+            chineseVoice = voices.find(voice => voice.lang.startsWith('zh'));
+        }
+        
+        if (chineseVoice) {
+            utterance.voice = chineseVoice;
+        }
+        
+        window.speechSynthesis.speak(utterance);
+    } catch (error) {
+        console.error('Error playing audio:', error);
+    }
+}
+
+function toggleEraser() {
+    isEraserActive = !isEraserActive;
+    canvasEraserBtn.classList.toggle('active', isEraserActive);
+    
+    if (isEraserActive) {
+        canvasCtx.strokeStyle = '#fff';
+        canvasCtx.lineWidth = 20;
+    } else {
+        canvasCtx.strokeStyle = '#000';
+        canvasCtx.lineWidth = 4;
+    }
+}
+
+function checkCanvasDrawing() {
+    // Simple feedback - in a real app, this would use stroke recognition
+    alert('Great practice! Keep working on your stroke order.');
+    addXP(5); // Award 5 XP for practice
 }
 
 function initializeCanvas() {
@@ -1284,37 +1458,11 @@ function handleTouchMove(e) {
 function clearCanvas() {
     canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
     currentMistakes = 0;
-    mistakeCount.textContent = '0';
     if (canvasHanziWriter) {
         canvasHanziWriter = null;
     }
-}
-
-function showCanvasHint() {
-    const char = canvasCharacter.textContent;
-    if (!char) return;
-    
-    // Clear canvas
-    canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-    
-    // Use HanziWriter to show stroke order
-    try {
-        canvasHanziWriter = HanziWriter.create('drawingCanvas', char, {
-            width: 300,
-            height: 300,
-            padding: 20,
-            strokeAnimationSpeed: 1,
-            delayBetweenStrokes: 300,
-            showOutline: true,
-            strokeColor: '#e63946',
-            outlineColor: '#ddd',
-            radicalColor: '#e63946'
-        });
-        
-        canvasHanziWriter.animateCharacter();
-    } catch (error) {
-        console.error('Error creating HanziWriter for hint:', error);
-    }
+    // Re-apply writing mode
+    applyWritingMode();
 }
 
 // Profile View Functions
@@ -1333,6 +1481,61 @@ function updateProfileStats() {
     // Calculate user level based on XP
     const level = Math.floor(streakData.xp / 100) + 1;
     userLevel.textContent = level;
+}
+
+function loadProfileData() {
+    const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+        username: 'Chinese Learner',
+        avatar: '👤',
+        dailyGoal: 10
+    };
+    
+    profileUsername.textContent = profileData.username;
+    profileAvatar.textContent = profileData.avatar;
+    dailyGoalDisplay.textContent = profileData.dailyGoal;
+    selectedAvatar = profileData.avatar;
+}
+
+function openProfileModal() {
+    const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+        username: 'Chinese Learner',
+        avatar: '👤',
+        dailyGoal: 10
+    };
+    
+    usernameInput.value = profileData.username;
+    dailyGoalInput.value = profileData.dailyGoal;
+    selectedAvatar = profileData.avatar;
+    
+    // Update avatar selection
+    avatarOptions.forEach(option => {
+        option.classList.remove('selected');
+        if (option.dataset.avatar === selectedAvatar) {
+            option.classList.add('selected');
+        }
+    });
+    
+    editProfileModal.classList.add('active');
+}
+
+function closeProfileModal() {
+    editProfileModal.classList.remove('active');
+}
+
+function saveProfile() {
+    const profileData = {
+        username: usernameInput.value || 'Chinese Learner',
+        avatar: selectedAvatar,
+        dailyGoal: parseInt(dailyGoalInput.value) || 10
+    };
+    
+    localStorage.setItem('profileData', JSON.stringify(profileData));
+    
+    profileUsername.textContent = profileData.username;
+    profileAvatar.textContent = profileData.avatar;
+    dailyGoalDisplay.textContent = profileData.dailyGoal;
+    
+    closeProfileModal();
 }
 
 function updateHSKProgress() {

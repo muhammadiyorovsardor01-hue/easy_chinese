@@ -169,28 +169,62 @@
             <button class="back-btn" id="backToLessonsFromCanvas">← Back to Lessons</button>
             <h2 class="section-title">Character Practice</h2>
             
-            <div class="canvas-controls-top">
-                <div class="current-character-display">
-                    <span class="char-label">Practice:</span>
-                    <span class="char-display" id="canvasCharacter">你</span>
+            <div class="canvas-layout">
+                <!-- Side Menu -->
+                <div class="canvas-sidebar">
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">HSK Level</h3>
+                        <div class="hsk-selector">
+                            <button class="hsk-option active" data-hsk="1">HSK 1</button>
+                            <button class="hsk-option" data-hsk="2">HSK 2</button>
+                            <button class="hsk-option" data-hsk="3">HSK 3</button>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Lesson</h3>
+                        <select class="lesson-selector" id="canvasLessonSelector">
+                            <option value="1">Lesson 1</option>
+                            <option value="2">Lesson 2</option>
+                            <option value="3">Lesson 3</option>
+                        </select>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Writing Mode</h3>
+                        <div class="mode-selector">
+                            <button class="mode-option active" data-mode="trace">Trace</button>
+                            <button class="mode-option" data-mode="copy">Copy</button>
+                            <button class="mode-option" data-mode="freehand">Freehand</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="mistake-counter">
-                    <span class="mistake-label">Mistakes:</span>
-                    <span class="mistake-count" id="mistakeCount">0</span>/3
+                
+                <!-- Main Canvas Area -->
+                <div class="canvas-main">
+                    <div class="canvas-character-display">
+                        <span class="char-display" id="canvasCharacter">你</span>
+                    </div>
+                    
+                    <div class="canvas-wrapper">
+                        <canvas id="drawingCanvas" class="drawing-canvas"></canvas>
+                        
+                        <!-- Round Action Buttons -->
+                        <button class="round-action-btn audio-round-btn" id="canvasAudioBtn" aria-label="Play audio">
+                            <span>🔊</span>
+                        </button>
+                        <button class="round-action-btn eraser-round-btn" id="canvasEraserBtn" aria-label="Eraser">
+                            <span>🧹</span>
+                        </button>
+                        <button class="round-action-btn check-round-btn" id="canvasCheckBtn" aria-label="Check">
+                            <span>✓</span>
+                        </button>
+                    </div>
+                    
+                    <div class="canvas-instructions">
+                        <p id="modeInstructions">Trace the character by following the guide dots.</p>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="canvas-wrapper">
-                <canvas id="drawingCanvas" class="drawing-canvas"></canvas>
-            </div>
-            
-            <div class="canvas-actions">
-                <button class="canvas-action-btn clear-btn" id="clearCanvas">🗑️ Clear</button>
-                <button class="canvas-action-btn hint-btn" id="showHint">💡 Yordam (Hint)</button>
-            </div>
-            
-            <div class="canvas-instructions">
-                <p>Draw the character above. Use the hint button if you need help with stroke order.</p>
             </div>
         </section>
 
@@ -200,12 +234,14 @@
             
             <div class="profile-header">
                 <div class="avatar">
-                    <span class="avatar-emoji">👤</span>
+                    <span class="avatar-emoji" id="profileAvatar">👤</span>
                 </div>
                 <div class="profile-info">
-                    <h3 class="username">Chinese Learner</h3>
+                    <h3 class="username" id="profileUsername">Chinese Learner</h3>
                     <p class="level-badge">Level <span id="userLevel">1</span></p>
+                    <p class="daily-goal">Daily Goal: <span id="dailyGoalDisplay">10</span> words</p>
                 </div>
+                <button class="edit-profile-btn" id="editProfileBtn">✏️ Edit Profile</button>
             </div>
             
             <div class="stats-grid">
@@ -296,6 +332,43 @@
             </div>
         </section>
     </main>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <button class="modal-close" id="closeModalBtn">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="usernameInput">Display Name</label>
+                    <input type="text" id="usernameInput" class="form-input" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="avatarInput">Avatar Emoji</label>
+                    <div class="avatar-selector">
+                        <button class="avatar-option" data-avatar="👤">👤</button>
+                        <button class="avatar-option" data-avatar="😊">😊</button>
+                        <button class="avatar-option" data-avatar="🎓">🎓</button>
+                        <button class="avatar-option" data-avatar="🌟">🌟</button>
+                        <button class="avatar-option" data-avatar="🐼">🐼</button>
+                        <button class="avatar-option" data-avatar="🎮">🎮</button>
+                        <button class="avatar-option" data-avatar="📖">📖</button>
+                        <button class="avatar-option" data-avatar="🎨">🎨</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dailyGoalInput">Daily Goal (words)</label>
+                    <input type="number" id="dailyGoalInput" class="form-input" min="1" max="50" value="10">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel-btn" id="cancelModalBtn">Cancel</button>
+                <button class="modal-btn save-btn" id="saveProfileBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
