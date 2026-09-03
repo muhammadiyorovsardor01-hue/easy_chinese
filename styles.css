@@ -153,6 +153,46 @@ body {
     display: inline;
 }
 
+/* Keep the theme control compact and readable beside the header stats. */
+.header-stats .theme-toggle {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    padding: 0;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    font-size: 1.15rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.header-stats .theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.header-stats .theme-toggle:active {
+    transform: scale(0.94);
+}
+
+[data-theme="light"] .header-stats .theme-toggle {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+[data-theme="dark"] .header-stats .theme-toggle {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #2c2410;
+}
+
 .main-content {
     max-width: 1200px;
     margin: 2rem auto;
