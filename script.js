@@ -1447,6 +1447,9 @@ function checkCanvasDrawing() {
 }
 
 function initializeCanvas() {
+    if (canvasCtx) {
+        canvasCtx.lineWidth = 14;
+    }
     resizeCanvas();
 }
 
