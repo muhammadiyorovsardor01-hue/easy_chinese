@@ -9,7 +9,7 @@
     <title>Easy Chinese - Learn HSK Vocabulary</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
-    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
 <body>
     <header class="header">
@@ -26,6 +26,10 @@
                     <span class="xp-icon">⭐</span>
                     <span class="xp-count" id="xpCount">0</span>
                     <span class="xp-label">XP</span>
+                </div>
+                <div class="learned-tracker">
+                    <span class="learned-label">Learned</span>
+                    <span class="learned-count" id="totalLearned">0</span>
                 </div>
             </div>
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
@@ -208,7 +212,7 @@
                     </div>
                     
                     <div class="canvas-wrapper">
-                        <canvas id="drawingCanvas" class="drawing-canvas"></canvas>
+                        <div id="hanziWriterCanvas" class="drawing-canvas" aria-label="Chinese character writing practice"></div>
                         
                         <!-- Round Action Buttons -->
                         <button class="round-action-btn audio-round-btn" id="canvasAudioBtn" aria-label="Play audio">
@@ -224,6 +228,11 @@
                     
                     <div class="canvas-instructions">
                         <p id="modeInstructions">Trace the character by following the guide dots.</p>
+                        <p id="canvasFeedback" class="canvas-feedback" role="status" aria-live="polite"></p>
+                        <div class="canvas-progress">
+                            <span>Points: <strong id="canvasScore">0</strong></span>
+                            <button class="control-btn next-word-btn" id="nextCanvasWord" type="button" disabled>Next Word</button>
+                        </div>
                     </div>
                 </div>
             </div>

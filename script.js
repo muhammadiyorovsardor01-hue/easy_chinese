@@ -556,6 +556,8 @@ let currentMistakes = 0;
 let canvasHanziWriter = null;
 let canvasHSK = 1;
 let canvasLesson = 1;
+let canvasWordIndex = 0;
+let canvasScore = 0;
 let canvasWritingMode = 'trace'; // trace, copy, freehand
 let selectedAvatar = '👤';
 let isEraserActive = false;
@@ -605,7 +607,7 @@ const navItems = document.querySelectorAll('.nav-item');
 const canvasView = document.getElementById('canvas');
 const profileView = document.getElementById('profile');
 const backToLessonsFromCanvas = document.getElementById('backToLessonsFromCanvas');
-const drawingCanvas = document.getElementById('drawingCanvas');
+const drawingCanvas = document.getElementById('hanziWriterCanvas');
 const canvasCharacter = document.getElementById('canvasCharacter');
 const profileStreak = document.getElementById('profileStreak');
 const profileLearned = document.getElementById('profileLearned');
@@ -625,6 +627,9 @@ const canvasAudioBtn = document.getElementById('canvasAudioBtn');
 const canvasEraserBtn = document.getElementById('canvasEraserBtn');
 const canvasCheckBtn = document.getElementById('canvasCheckBtn');
 const modeInstructions = document.getElementById('modeInstructions');
+const canvasFeedback = document.getElementById('canvasFeedback');
+const canvasScoreElement = document.getElementById('canvasScore');
+const nextCanvasWord = document.getElementById('nextCanvasWord');
 const profileUsername = document.getElementById('profileUsername');
 const profileAvatar = document.getElementById('profileAvatar');
 const dailyGoalDisplay = document.getElementById('dailyGoalDisplay');
@@ -726,6 +731,7 @@ function setupEventListeners() {
             hskOptions.forEach(opt => opt.classList.remove('active'));
             option.classList.add('active');
             canvasHSK = parseInt(option.dataset.hsk);
+            canvasWordIndex = 0;
             updateCanvasLessonSelector();
             loadCanvasCharacter();
         });
@@ -733,6 +739,7 @@ function setupEventListeners() {
 
     canvasLessonSelector.addEventListener('change', (e) => {
         canvasLesson = parseInt(e.target.value);
+        canvasWordIndex = 0;
         loadCanvasCharacter();
     });
 
@@ -750,6 +757,7 @@ function setupEventListeners() {
     canvasAudioBtn.addEventListener('click', playCanvasAudio);
     canvasEraserBtn.addEventListener('click', toggleEraser);
     canvasCheckBtn.addEventListener('click', checkCanvasDrawing);
+    nextCanvasWord.addEventListener('click', nextCanvasCharacter);
 
     // Profile modal controls
     editProfileBtn.addEventListener('click', openProfileModal);
@@ -1289,11 +1297,22 @@ function updateCanvasLessonSelector() {
 function loadCanvasCharacter() {
     const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.lesson === canvasLesson);
     if (words.length > 0) {
-        const word = words[0]; // Get first word from lesson
+        canvasWordIndex %= words.length;
+        const word = words[canvasWordIndex];
         const targetChar = word.hanzi.charAt(0);
         canvasCharacter.textContent = targetChar;
-        clearCanvas();
+        canvasFeedback.textContent = '';
+        canvasFeedback.className = 'canvas-feedback';
+        nextCanvasWord.disabled = true;
+        showTraceGuide();
     }
+}
+
+function nextCanvasCharacter() {
+    const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.lesson === canvasLesson);
+    if (!words.length) return;
+    canvasWordIndex = (canvasWordIndex + 1) % words.length;
+    loadCanvasCharacter();
 }
 
 function updateModeInstructions() {
@@ -1306,70 +1325,48 @@ function updateModeInstructions() {
 }
 
 function applyWritingMode() {
-    clearCanvas();
-    
-    switch(canvasWritingMode) {
-        case 'trace':
-            // Show faint character outline for tracing
-            showTraceGuide();
-            break;
-        case 'copy':
-            // Show reference character above canvas
-            canvasCharacter.style.display = 'block';
-            break;
-        case 'freehand':
-            // No guide, just blank canvas
-            canvasCharacter.style.display = 'block';
-            break;
-    }
+    showTraceGuide();
 }
 
 function showTraceGuide() {
     const char = canvasCharacter.textContent;
-    if (!char) return;
+    if (!char || !drawingCanvas || typeof HanziWriter === 'undefined') return;
     
     // Reset stroke tracking
     currentStrokeIndex = 0;
     userStrokes = [];
     
-    // Clear canvas
-    canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-    
     try {
-        // Use HanziWriter quiz mode for stroke order practice
-        canvasHanziWriter = HanziWriter.create('drawingCanvas', char, {
-            width: drawingCanvas.width,
-            height: drawingCanvas.height,
+        if (canvasHanziWriter) {
+            canvasHanziWriter.cancelQuiz();
+        }
+        drawingCanvas.innerHTML = '';
+        resizeCanvas();
+        canvasHanziWriter = HanziWriter.create(drawingCanvas, char, {
+            width: drawingCanvas.clientWidth || 280,
+            height: drawingCanvas.clientWidth || 280,
             padding: 20,
-            strokeAnimationSpeed: 0,
             showOutline: true,
-            strokeColor: 'rgba(200, 200, 200, 0.3)', // Semi-transparent gray shadow
-            outlineColor: 'rgba(200, 200, 200, 0.2)',
-            radicalColor: 'rgba(200, 200, 200, 0.2)',
-            drawingWidth: drawingCanvas.width,
-            drawingHeight: drawingCanvas.height,
-            showCharacter: true,
-            quiz: true // Enable quiz mode for stroke order validation
+            showCharacter: false,
+            strokeColor: '#c41e3a',
+            outlineColor: 'rgba(128, 128, 128, 0.2)',
+            radicalColor: 'rgba(128, 128, 128, 0.18)'
         });
-        
-        // Get stroke data for validation
-        canvasHanziWriter.loadData().then(() => {
-            const charData = canvasHanziWriter.character;
-            expectedStrokeCount = charData.strokes.length;
-            console.log('Character has', expectedStrokeCount, 'strokes');
-            
-            // Add quiz event listeners
-            canvasHanziWriter.on('quizComplete', () => {
-                showCompletionFeedback();
-            });
-            
-            canvasHanziWriter.on('correctStroke', (data) => {
-                currentStrokeIndex++;
-            });
-            
-            canvasHanziWriter.on('incorrectStroke', (data) => {
-                showStrokeError('Incorrect stroke');
-            });
+        canvasHanziWriter.quiz({
+            showHintAfterMisses: 2,
+            highlightOnComplete: true,
+            onMistake: () => {
+                canvasFeedback.textContent = 'Almost. Follow the pale outline and try again.';
+                canvasFeedback.className = 'canvas-feedback';
+            },
+            onComplete: () => {
+                canvasScore += 10;
+                canvasScoreElement.textContent = canvasScore;
+                canvasFeedback.textContent = 'Great work! Character complete. +10 points';
+                canvasFeedback.className = 'canvas-feedback success';
+                nextCanvasWord.disabled = false;
+                addXP(10);
+            }
         });
     } catch (error) {
         console.error('Error creating trace guide:', error);
@@ -1412,57 +1409,29 @@ function playCanvasAudio() {
 function toggleEraser() {
     isEraserActive = !isEraserActive;
     canvasEraserBtn.classList.toggle('active', isEraserActive);
-    
-    if (isEraserActive) {
-        canvasCtx.strokeStyle = '#fff';
-        canvasCtx.lineWidth = 20;
-    } else {
-        canvasCtx.strokeStyle = '#000';
-        canvasCtx.lineWidth = 4;
-    }
+    canvasFeedback.textContent = 'HanziWriter controls the writing strokes directly.';
 }
 
 function checkCanvasDrawing() {
-    // Simple feedback - in a real app, this would use stroke recognition
-    alert('Great practice! Keep working on your stroke order.');
-    addXP(5); // Award 5 XP for practice
+    canvasFeedback.textContent = 'Complete the guided strokes to earn points.';
+    canvasFeedback.className = 'canvas-feedback';
 }
 
 function initializeCanvas() {
-    canvasCtx = drawingCanvas.getContext('2d');
-    
-    // Dynamic canvas sizing based on screen width
     resizeCanvas();
-    
-    // Set up drawing styles
-    canvasCtx.strokeStyle = '#000';
-    canvasCtx.lineWidth = 4;
-    canvasCtx.lineCap = 'round';
-    canvasCtx.lineJoin = 'round';
-    
-    // Mouse events
-    drawingCanvas.addEventListener('mousedown', startDrawing);
-    drawingCanvas.addEventListener('mousemove', draw);
-    drawingCanvas.addEventListener('mouseup', stopDrawing);
-    drawingCanvas.addEventListener('mouseout', stopDrawing);
-    
-    // Touch events
-    drawingCanvas.addEventListener('touchstart', handleTouchStart, { passive: false });
-    drawingCanvas.addEventListener('touchmove', handleTouchMove, { passive: false });
-    drawingCanvas.addEventListener('touchend', stopDrawing);
-    
 }
 
 function resizeCanvas() {
-  const canvas = document.getElementById('drawingCanvas');
-  if (!canvas) return;
-  
-  const container = canvas.parentElement;
-  const rect = container.getBoundingClientRect();
-  const size = Math.min(rect.width - 32, 320);
+  const canvas = document.getElementById('hanziWriterCanvas');
+  if (!canvas || !canvas.parentElement) return;
 
-  canvas.width = size;
-  canvas.height = size;
+  const containerWidth = canvas.parentElement.getBoundingClientRect().width;
+  const size = Math.min(Math.max(containerWidth - 32, 0), 320);
+  canvas.style.width = `${size}px`;
+  canvas.style.height = `${size}px`;
+    if (canvasHanziWriter && size > 0) {
+            canvasHanziWriter.updateDimensions({ width: size, height: size });
+    }
 }
 
 window.addEventListener('resize', resizeCanvas);
