@@ -621,8 +621,11 @@ const hsk2Fill = document.getElementById('hsk2Fill');
 const hsk3Fill = document.getElementById('hsk3Fill');
 const achievementsGrid = document.getElementById('achievementsGrid');
 const canvasLessonSelector = document.getElementById('canvasLessonSelector');
+const canvasMobileHskSelector = document.getElementById('canvasMobileHskSelector');
+const canvasMobileLessonSelector = document.getElementById('canvasMobileLessonSelector');
 const hskOptions = document.querySelectorAll('.hsk-option');
 const modeOptions = document.querySelectorAll('.mode-option');
+const mobileModeOptions = document.querySelectorAll('.mobile-mode-option');
 const canvasAudioBtn = document.getElementById('canvasAudioBtn');
 const canvasEraserBtn = document.getElementById('canvasEraserBtn');
 const canvasCheckBtn = document.getElementById('canvasCheckBtn');
@@ -743,9 +746,32 @@ function setupEventListeners() {
         loadCanvasCharacter();
     });
 
+    canvasMobileHskSelector.addEventListener('change', (e) => {
+        canvasHSK = parseInt(e.target.value);
+        canvasWordIndex = 0;
+        updateCanvasLessonSelector();
+        loadCanvasCharacter();
+    });
+
+    canvasMobileLessonSelector.addEventListener('change', (e) => {
+        canvasLesson = parseInt(e.target.value);
+        canvasWordIndex = 0;
+        loadCanvasCharacter();
+    });
+
     modeOptions.forEach(option => {
         option.addEventListener('click', () => {
             modeOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            canvasWritingMode = option.dataset.mode;
+            updateModeInstructions();
+            applyWritingMode();
+        });
+    });
+
+    mobileModeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            mobileModeOptions.forEach(opt => opt.classList.remove('active'));
             option.classList.add('active');
             canvasWritingMode = option.dataset.mode;
             updateModeInstructions();
@@ -1292,6 +1318,8 @@ function updateCanvasLessonSelector() {
     canvasLessonSelector.innerHTML = lessons.map(lesson => 
         `<option value="${lesson}" ${lesson === canvasLesson ? 'selected' : ''}>Lesson ${lesson}</option>`
     ).join('');
+    canvasMobileLessonSelector.innerHTML = canvasLessonSelector.innerHTML;
+    canvasMobileHskSelector.value = String(canvasHSK);
 }
 
 function loadCanvasCharacter() {
@@ -1407,9 +1435,10 @@ function playCanvasAudio() {
 }
 
 function toggleEraser() {
-    isEraserActive = !isEraserActive;
-    canvasEraserBtn.classList.toggle('active', isEraserActive);
-    canvasFeedback.textContent = 'HanziWriter controls the writing strokes directly.';
+    isEraserActive = false;
+    canvasEraserBtn.classList.remove('active');
+    canvasFeedback.textContent = 'Canvas cleared. Start the character again.';
+    showTraceGuide();
 }
 
 function checkCanvasDrawing() {

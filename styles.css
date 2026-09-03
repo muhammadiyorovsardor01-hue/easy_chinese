@@ -1951,3 +1951,119 @@ body {
 }
 
 }
+
+.canvas-mobile-controls {
+    display: none;
+}
+
+.canvas-wrapper {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.canvas-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.canvas-action-btn {
+    min-height: 44px;
+    padding: 0.65rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    font-weight: 600;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.canvas-action-btn.primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
+
+.canvas-action-btn:active,
+.canvas-action-btn.active,
+.mobile-mode-option:active {
+    transform: scale(0.96);
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-bottom: calc(92px + env(safe-area-inset-bottom));
+    }
+
+    .canvas-sidebar {
+        display: none;
+    }
+
+    .canvas-mobile-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .canvas-mobile-select,
+    .mobile-mode-option {
+        min-height: 44px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        background: var(--card-bg);
+        color: var(--text-color);
+        font-weight: 600;
+        touch-action: manipulation;
+    }
+
+    .canvas-mobile-select {
+        min-width: 92px;
+        padding: 0.55rem 0.65rem;
+    }
+
+    .canvas-mobile-modes {
+        display: flex;
+        flex: 1 1 220px;
+        gap: 0.35rem;
+    }
+
+    .mobile-mode-option {
+        flex: 1;
+        padding: 0.5rem;
+        cursor: pointer;
+    }
+
+    .mobile-mode-option.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #fff;
+    }
+
+    .canvas-wrapper {
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+        padding: 16px;
+        box-sizing: border-box;
+    }
+
+    .canvas-actions {
+        width: 100%;
+        max-width: 320px;
+        margin: 1rem auto 0;
+    }
+
+    .canvas-action-btn {
+        flex: 1 1 90px;
+    }
+}
