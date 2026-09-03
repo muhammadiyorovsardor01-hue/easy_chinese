@@ -1456,20 +1456,21 @@ function initializeCanvas() {
 }
 
 function resizeCanvas() {
-    const container = document.querySelector('.canvas-wrapper');
-    const containerWidth = container.offsetWidth - 32; // Account for padding
-    
-    // Calculate appropriate canvas size (max 300px, min 200px)
-    const canvasSize = Math.min(Math.max(containerWidth, 200), 300);
-    
-    drawingCanvas.width = canvasSize;
-    drawingCanvas.height = canvasSize;
-    
-    // Re-apply writing mode after resize
-    if (canvasWritingMode === 'trace' && canvasCharacter.textContent) {
-        showTraceGuide();
-    }
+  const canvas = document.getElementById('drawingCanvas');
+  if (!canvas) return;
+  
+  const container = canvas.parentElement;
+  const rect = container.getBoundingClientRect();
+  const size = Math.min(rect.width - 32, 320);
+
+  canvas.width = size;
+  canvas.height = size;
 }
+
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('orientationchange', resizeCanvas);
+    
+
 
 function startDrawing(e) {
     if (canvasWritingMode !== 'trace' || isEraserActive) {
