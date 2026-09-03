@@ -1451,8 +1451,6 @@ function initializeCanvas() {
     drawingCanvas.addEventListener('touchmove', handleTouchMove, { passive: false });
     drawingCanvas.addEventListener('touchend', stopDrawing);
     
-    // Resize canvas on window resize
-    window.addEventListener('resize', resizeCanvas);
 }
 
 function resizeCanvas() {

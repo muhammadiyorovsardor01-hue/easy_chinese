@@ -1837,7 +1837,7 @@ body {
 .canvas-wrapper {
   width: 100%;
   max-width: 100%;
-  padding: 0 16px;
+    padding: 16px;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -1851,5 +1851,7 @@ body {
   height: auto !important;
   aspect-ratio: 1 / 1;
   border-radius: 12px;
+
+}
 
 }
