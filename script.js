@@ -538,6 +538,7 @@ let flashcardIndex = 0;
 let quizIndex = 0;
 let quizScore = 0;
 let quizAnswered = false;
+let quizType = 'meaning';
 let hanziWriter = null;
 let learnedWords = JSON.parse(localStorage.getItem('learnedWords')) || [];
 let currentHSKFilter = 'all';
@@ -548,6 +549,15 @@ let streakData = JSON.parse(localStorage.getItem('streakData')) || {
     totalLearned: 0,
     xp: 0
 };
+let dailyProgress = JSON.parse(localStorage.getItem('dailyProgress')) || {
+    date: new Date().toDateString(),
+    traces: 0,
+    xp: 0
+};
+if (dailyProgress.date !== new Date().toDateString()) {
+    dailyProgress = { date: new Date().toDateString(), traces: 0, xp: 0 };
+    localStorage.setItem('dailyProgress', JSON.stringify(dailyProgress));
+}
 
 // Canvas state
 let canvasCtx = null;
@@ -577,6 +587,7 @@ const lessonsGrid = document.getElementById('lessonsGrid');
 const lessonTitle = document.getElementById('lessonTitle');
 const flashcard = document.getElementById('flashcard');
 const flashcardHanzi = document.getElementById('flashcardHanzi');
+const flashcardAudioBtn = document.getElementById('flashcardAudioBtn');
 const flashcardPinyin = document.getElementById('flashcardPinyin');
 const flashcardUzbek = document.getElementById('flashcardUzbek');
 const prevCard = document.getElementById('prevCard');
@@ -588,6 +599,8 @@ const quizHanzi = document.getElementById('quizHanzi');
 const quizOptions = document.getElementById('quizOptions');
 const quizScoreElement = document.getElementById('quizScore');
 const nextQuizQuestion = document.getElementById('nextQuizQuestion');
+const quizPrompt = document.getElementById('quizPrompt');
+const quizTypeBtns = document.querySelectorAll('.quiz-type-btn');
 const currentQuestion = document.getElementById('currentQuestion');
 const totalQuestions = document.getElementById('totalQuestions');
 const tabBtns = document.querySelectorAll('.tab-btn');
@@ -621,6 +634,7 @@ const hsk1Fill = document.getElementById('hsk1Fill');
 const hsk2Fill = document.getElementById('hsk2Fill');
 const hsk3Fill = document.getElementById('hsk3Fill');
 const achievementsGrid = document.getElementById('achievementsGrid');
+const dailyQuests = document.getElementById('dailyQuests');
 const canvasLessonSelector = document.getElementById('canvasLessonSelector');
 const canvasMobileHskSelector = document.getElementById('canvasMobileHskSelector');
 const canvasMobileLessonSelector = document.getElementById('canvasMobileLessonSelector');
@@ -657,6 +671,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTotalLearned();
     updateXP();
     loadProfileData();
+    loadExternalVocabulary();
+    updateDailyQuests();
     
     // Load voices for speech synthesis
     if ('speechSynthesis' in window) {
@@ -824,6 +840,10 @@ function setupEventListeners() {
         e.stopPropagation();
         playPronunciation();
     });
+    flashcardAudioBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        playPronunciation();
+    });
     strokeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         showStrokeOrder();
@@ -836,10 +856,33 @@ function setupEventListeners() {
     // Quiz controls
     nextQuizQuestion.addEventListener('click', nextQuiz);
 
+    quizTypeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            quizType = btn.dataset.quizType;
+            quizTypeBtns.forEach(option => option.classList.toggle('active', option === btn));
+            updateQuiz();
+        });
+    });
+
     // Mode tabs
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => switchMode(btn.dataset.mode));
     });
+}
+
+function loadExternalVocabulary() {
+    fetch('words.json')
+        .then(response => {
+            if (!response.ok) throw new Error(`Vocabulary request failed: ${response.status}`);
+            return response.json();
+        })
+        .then(words => {
+            const additions = words.filter(word => word.hsk <= 3 && !vocabularyData.some(existing =>
+                existing.hanzi === word.hanzi && existing.hsk === word.hsk
+            ));
+            vocabularyData.push(...additions);
+        })
+        .catch(error => console.warn('Using built-in vocabulary:', error.message));
 }
 
 function populateLeaderboard() {
@@ -1220,8 +1263,28 @@ function updateXP() {
 
 function addXP(amount) {
     streakData.xp += amount;
+    dailyProgress.xp += amount;
     localStorage.setItem('streakData', JSON.stringify(streakData));
+    localStorage.setItem('dailyProgress', JSON.stringify(dailyProgress));
     updateXP();
+    updateDailyQuests();
+    updateAchievements();
+}
+
+function updateDailyQuests() {
+    if (!dailyQuests) return;
+
+    const values = {
+        traces: Math.min(dailyProgress.traces, 3),
+        xp: Math.min(dailyProgress.xp, 50)
+    };
+    dailyQuests.querySelectorAll('.quest-item').forEach(quest => {
+        const value = values[quest.dataset.quest];
+        const target = quest.dataset.quest === 'traces' ? 3 : 50;
+        quest.querySelector('.quest-progress').textContent = value;
+        quest.querySelector('.quest-status').textContent = `${Math.round((value / target) * 100)}%`;
+        quest.classList.toggle('complete', value >= target);
+    });
 }
 
 function handleNavigation(nav) {
@@ -1271,7 +1334,9 @@ function updateQuiz() {
     nextQuizQuestion.disabled = true;
     
     const word = currentWords[quizIndex];
-    quizHanzi.textContent = word.hanzi;
+    const question = quizType === 'meaning' ? word.hanzi : quizType === 'pinyin' ? word.uzbek : word.pinyin;
+    quizHanzi.textContent = question;
+    quizPrompt.textContent = quizType === 'meaning' ? 'What does this mean?' : quizType === 'pinyin' ? 'Choose the correct Pinyin.' : 'Choose the correct Hanzi.';
     quizScoreElement.textContent = quizScore;
     currentQuestion.textContent = quizIndex + 1;
     totalQuestions.textContent = currentWords.length;
@@ -1283,7 +1348,8 @@ function updateQuiz() {
     options.forEach((option, index) => {
         const optionBtn = document.createElement('button');
         optionBtn.className = 'quiz-option';
-        optionBtn.textContent = option.uzbek;
+        optionBtn.textContent = quizType === 'meaning' ? option.uzbek : quizType === 'pinyin' ? option.pinyin : option.hanzi;
+        optionBtn.dataset.wordId = option.id;
         optionBtn.addEventListener('click', () => checkAnswer(optionBtn, option.id === word.id));
         quizOptions.appendChild(optionBtn);
     });
@@ -1325,7 +1391,7 @@ function checkAnswer(selectedBtn, isCorrect) {
         const correctWord = currentWords[quizIndex];
         const options = quizOptions.querySelectorAll('.quiz-option');
         options.forEach(option => {
-            if (option.textContent === correctWord.uzbek) {
+            if (option.dataset.wordId === String(correctWord.id)) {
                 option.classList.add('correct');
             }
         });
@@ -1454,6 +1520,10 @@ function showTraceGuide() {
             onComplete: () => {
                 canvasScore += 10;
                 canvasScoreElement.textContent = canvasScore;
+                dailyProgress.traces += 1;
+                localStorage.setItem('dailyProgress', JSON.stringify(dailyProgress));
+                updateDailyQuests();
+                updateAchievements();
                 canvasFeedback.textContent = 'Great work! Character complete. +10 points';
                 canvasFeedback.className = 'canvas-feedback success';
                 nextCanvasWord.disabled = false;
@@ -1708,6 +1778,12 @@ function updateAchievements() {
                 break;
             case 'xp-100':
                 unlocked = streakData.xp >= 100;
+                break;
+            case 'first-100-xp':
+                unlocked = streakData.xp >= 100;
+                break;
+            case 'master-calligrapher':
+                unlocked = dailyProgress.traces >= 3;
                 break;
         }
         

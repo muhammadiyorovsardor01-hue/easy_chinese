@@ -92,7 +92,10 @@
                 <div class="flashcard-container">
                     <div class="flashcard" id="flashcard">
                         <div class="flashcard-front">
-                            <div class="hanzi" id="flashcardHanzi">你好</div>
+                            <div class="hanzi-row">
+                                <div class="hanzi" id="flashcardHanzi">你好</div>
+                                <button class="word-audio-btn" id="flashcardAudioBtn" type="button" aria-label="Pronounce word">🔊</button>
+                            </div>
                             <div class="tap-hint">Tap to flip</div>
                         </div>
                         <div class="flashcard-back">
@@ -140,11 +143,16 @@
                     <div class="score-tracker">
                         Score: <span id="quizScore">0</span>
                     </div>
+                    <div class="quiz-type-selector" role="group" aria-label="Quiz type">
+                        <button class="quiz-type-btn active" data-quiz-type="meaning" type="button">Hanzi to Meaning</button>
+                        <button class="quiz-type-btn" data-quiz-type="pinyin" type="button">Meaning to Pinyin</button>
+                        <button class="quiz-type-btn" data-quiz-type="hanzi" type="button">Pinyin to Hanzi</button>
+                    </div>
                 </div>
                 <div class="quiz-container">
                     <div class="quiz-question">
                         <div class="quiz-hanzi" id="quizHanzi">你好</div>
-                        <p class="quiz-prompt">What does this mean?</p>
+                        <p class="quiz-prompt" id="quizPrompt">What does this mean?</p>
                     </div>
                     <div class="quiz-options" id="quizOptions"></div>
                 </div>
@@ -299,6 +307,22 @@
                     </div>
                 </div>
             </div>
+
+            <div class="quests-section">
+                <h3 class="progress-title">Daily Quests</h3>
+                <div class="quests-list" id="dailyQuests">
+                    <div class="quest-item" data-quest="traces">
+                        <span class="quest-icon">✍️</span>
+                        <span class="quest-copy"><strong>Complete 3 Hanzi traces</strong><small><span class="quest-progress">0</span>/3 complete</small></span>
+                        <span class="quest-status">0%</span>
+                    </div>
+                    <div class="quest-item" data-quest="xp">
+                        <span class="quest-icon">⭐</span>
+                        <span class="quest-copy"><strong>Earn 50 XP today</strong><small><span class="quest-progress">0</span>/50 XP</small></span>
+                        <span class="quest-status">0%</span>
+                    </div>
+                </div>
+            </div>
             
             <div class="achievements-section">
                 <h3 class="achievements-title">Achievements</h3>
@@ -332,6 +356,16 @@
                         <span class="badge-icon">⭐</span>
                         <span class="badge-name">Rising Star</span>
                         <span class="badge-desc">Earn 100 XP</span>
+                    </div>
+                    <div class="achievement-badge locked" data-achievement="first-100-xp">
+                        <span class="badge-icon">🏆</span>
+                        <span class="badge-name">First 100 XP</span>
+                        <span class="badge-desc">Earn 100 XP total</span>
+                    </div>
+                    <div class="achievement-badge locked" data-achievement="master-calligrapher">
+                        <span class="badge-icon">🖌️</span>
+                        <span class="badge-name">Master Calligrapher</span>
+                        <span class="badge-desc">Complete 3 Hanzi traces</span>
                     </div>
                 </div>
             </div>

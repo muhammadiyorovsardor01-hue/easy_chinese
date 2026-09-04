@@ -1,7 +1,10 @@
 {
   "name": "EasyChinese",
   "short_name": "EasyChinese",
+  "id": "/",
+  "scope": "/",
   "start_url": "/",
+  "description": "Practice HSK Chinese vocabulary, pronunciation, quizzes, and Hanzi writing offline.",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",

@@ -834,6 +834,30 @@ body {
     margin-bottom: 2rem;
 }
 
+.quiz-type-selector {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.quiz-type-btn {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.55rem 0.8rem;
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.quiz-type-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
 .score-tracker {
     font-size: 1.3rem;
     font-weight: 700;
@@ -860,6 +884,29 @@ body {
     font-weight: 700;
     color: var(--text-color);
     margin-bottom: 1rem;
+}
+
+.hanzi-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.word-audio-btn {
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--secondary-color);
+    border-radius: 50%;
+    background: var(--card-bg);
+    color: var(--secondary-color);
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.word-audio-btn:hover {
+    background: var(--secondary-color);
+    color: white;
 }
 
 .quiz-prompt {
@@ -1558,6 +1605,51 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 1rem;
+}
+
+.quests-section {
+    margin: 2rem 0;
+}
+
+.quests-list {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.quest-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-color);
+}
+
+.quest-item.complete {
+    border-color: var(--secondary-color);
+    background: rgba(0, 168, 107, 0.12);
+}
+
+.quest-icon {
+    font-size: 1.5rem;
+}
+
+.quest-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.quest-copy small {
+    color: var(--text-secondary);
+}
+
+.quest-status {
+    color: var(--primary-color);
+    font-weight: 700;
 }
 
 .achievement-badge {
