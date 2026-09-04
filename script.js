@@ -603,6 +603,10 @@ const searchClear = document.getElementById('searchClear');
 const streakCount = document.getElementById('streakCount');
 const totalLearned = document.getElementById('totalLearned');
 const xpCount = document.getElementById('xpCount');
+const leaderboardBtn = document.getElementById('leaderboard-btn');
+const leaderboardModal = document.getElementById('leaderboardModal');
+const leaderboardList = document.getElementById('leaderboardList');
+const closeLeaderboard = document.getElementById('closeLeaderboard');
 const navItems = document.querySelectorAll('.nav-item');
 const canvasView = document.getElementById('canvas');
 const profileView = document.getElementById('profile');
@@ -647,10 +651,6 @@ const avatarOptions = document.querySelectorAll('.avatar-option');
 const successModal = document.getElementById('successModal');
 const closeSuccessModal = document.getElementById('closeSuccessModal');
 const nextWordFromModal = document.getElementById('nextWordFromModal');
-const leaderboardModal = document.getElementById('leaderboard-modal');
-const closeLeaderboardModal = document.getElementById('closeLeaderboardModal');
-const leaderboardList = document.getElementById('leaderboardList');
-const leaderboardBtn = document.getElementById('leaderboard-btn');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -660,6 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTotalLearned();
     updateXP();
     loadProfileData();
+    populateLeaderboard();
     
     // Load voices for speech synthesis
     if ('speechSynthesis' in window) {
@@ -686,6 +687,8 @@ function toggleTheme(savedTheme) {
 // Event listeners
 function setupEventListeners() {
     themeToggle.addEventListener('click', toggleTheme);
+    document.getElementById('leaderboard-btn').addEventListener('click', () => document.getElementById('leaderboardModal').classList.remove('hidden'));
+    document.getElementById('closeLeaderboard').addEventListener('click', () => document.getElementById('leaderboardModal').classList.add('hidden'));
     
     // HSK level buttons
     document.querySelectorAll('.hsk-btn').forEach(btn => {
@@ -813,15 +816,6 @@ function setupEventListeners() {
         nextCanvasCharacter();
     });
 
-    // Leaderboard modal controls
-    closeLeaderboardModal.addEventListener('click', hideLeaderboardModal);
-    
-    // Direct event listener for leaderboard button
-    document.getElementById('leaderboard-btn').addEventListener('click', () => {
-        document.getElementById('leaderboard-modal').classList.remove('hidden');
-        showLeaderboard();
-    });
-
     // Flashcard controls
     flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
     prevCard.addEventListener('click', () => navigateFlashcard(-1));
@@ -847,6 +841,33 @@ function setupEventListeners() {
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => switchMode(btn.dataset.mode));
     });
+}
+
+function populateLeaderboard() {
+    const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+        username: 'Chinese Learner'
+    };
+    const bots = [
+        { name: 'StudyBot', xp: 980 },
+        { name: 'HanziHero', xp: 860 },
+        { name: 'MandarinMaster', xp: 740 },
+        { name: 'PinyinPro', xp: 625 },
+        { name: 'DragonLearner', xp: 510 },
+        { name: 'WordWise', xp: 455 },
+        { name: 'TeaAndTones', xp: 390 },
+        { name: 'CharacterChamp', xp: 320 },
+        { name: 'DailyDiligence', xp: 245 },
+        { name: '你好Bot', xp: 180 }
+    ];
+    const entries = [...bots, { name: profileData.username, xp: streakData.xp, currentUser: true }]
+        .sort((a, b) => b.xp - a.xp);
+
+    leaderboardList.replaceChildren(...entries.map((entry, index) => {
+        const row = document.createElement('div');
+        row.className = entry.currentUser ? 'leaderboard-entry current-user' : 'leaderboard-entry';
+        row.textContent = `${index + 1}. ${entry.name} - ${entry.xp} XP`;
+        return row;
+    }));
 }
 
 // View navigation
@@ -1552,53 +1573,6 @@ function playSuccessSound() {
     } catch (error) {
         console.error('Error playing success sound:', error);
     }
-}
-
-// Leaderboard Functions
-const mockLeaderboard = [
-    { name: 'Alex_HSK', xp: 850 },
-    { name: 'PandaMaster', xp: 720 },
-    { name: 'LiWei_99', xp: 650 },
-    { name: 'DragonLearner', xp: 580 },
-    { name: 'ZenMaster', xp: 520 },
-    { name: 'ChinesePro', xp: 480 },
-    { name: 'MandarinKing', xp: 420 },
-    { name: 'HanziHero', xp: 380 },
-    { name: 'CalligraphyMaster', xp: 350 },
-    { name: 'StrokeWizard', xp: 310 }
-];
-
-function showLeaderboard() {
-    updateLeaderboard();
-    leaderboardModal.classList.add('active');
-}
-
-function hideLeaderboard() {
-    leaderboardModal.classList.remove('active');
-}
-
-function hideLeaderboardModal() {
-    hideLeaderboard();
-}
-
-function updateLeaderboard() {
-    const currentUserXP = streakData.xp;
-    const currentUser = { name: 'You', xp: currentUserXP, isUser: true };
-    
-    // Combine mock users with current user
-    const allUsers = [...mockLeaderboard, currentUser];
-    
-    // Sort by XP descending
-    allUsers.sort((a, b) => b.xp - a.xp);
-    
-    // Generate leaderboard HTML
-    leaderboardList.innerHTML = allUsers.map((user, index) => `
-        <div class="leaderboard-item ${user.isUser ? 'current-user' : ''}">
-            <span class="rank">${index + 1}</span>
-            <span class="username">${user.name}</span>
-            <span class="xp">${user.xp} XP</span>
-        </div>
-    `).join('');
 }
 
 // Profile View Functions
