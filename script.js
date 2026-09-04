@@ -1025,6 +1025,8 @@ function showStrokeOrder() {
             height: 150,
             padding: 5,
             strokeAnimationSpeed: 1,
+            strokeWidth: 14,
+            outlineWidth: 2,
             delayBetweenStrokes: 200,
             showOutline: true,
             strokeColor: '#e63946',
@@ -1341,7 +1343,9 @@ function showTraceGuide() {
             width: drawingCanvas.width,
             height: drawingCanvas.height,
             padding: 20,
-            strokeAnimationSpeed: 0,
+            strokeAnimationSpeed: 1,
+            strokeWidth: 14,
+            outlineWidth: 2,
             showOutline: true,
             strokeColor: 'rgba(200, 200, 200, 0.3)', // Semi-transparent gray shadow
             outlineColor: 'rgba(200, 200, 200, 0.2)',
@@ -1418,7 +1422,7 @@ function toggleEraser() {
         canvasCtx.lineWidth = 20;
     } else {
         canvasCtx.strokeStyle = '#000';
-        canvasCtx.lineWidth = 4;
+        canvasCtx.lineWidth = 14;
     }
 }
 
@@ -1434,9 +1438,9 @@ function initializeCanvas() {
     // Dynamic canvas sizing based on screen width
     resizeCanvas();
     
-    // Set up drawing styles
+    // Set up drawing styles with bold, mobile-friendly 14px stroke
     canvasCtx.strokeStyle = '#000';
-    canvasCtx.lineWidth = 4;
+    canvasCtx.lineWidth = 14;
     canvasCtx.lineCap = 'round';
     canvasCtx.lineJoin = 'round';
     
