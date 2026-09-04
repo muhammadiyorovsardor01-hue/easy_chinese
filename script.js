@@ -1496,25 +1496,37 @@ function startHanziQuiz(character) {
 
     try {
         if (canvasHanziWriter) {
-            canvasHanziWriter.cancelQuiz();
+            if (typeof canvasHanziWriter.destroy === 'function') {
+                canvasHanziWriter.destroy();
+            } else {
+                canvasHanziWriter.cancelQuiz();
+            }
+            canvasHanziWriter = null;
         }
         drawingCanvas.innerHTML = '';
         resizeCanvas();
         canvasHanziWriter = HanziWriter.create(drawingCanvas, character, {
             width: 280,
             height: 280,
-            padding: 15,
-            drawingWidth: 20,
+            padding: 10,
             showOutline: true,
+            showCharacter: false,
             strokeColor: '#C41E3A',
+            radicalColor: '#C41E3A',
+            outlineColor: '#E0E0E0',
+            drawingWidth: 20,
             highlightColor: '#C41E3A',
-            strokeTolerance: 1.5
+            strokeTolerance: 1.8,
+            showHintAfterMisses: 1
         });
         canvasHanziWriter.quiz({
             strokeColor: '#C41E3A',
-            outlineColor: '#DDD',
-            strokeTolerance: 1.5,
+            radicalColor: '#C41E3A',
+            outlineColor: '#E0E0E0',
+            strokeTolerance: 1.8,
             showOutline: true,
+            showCharacter: false,
+            showHintAfterMisses: 1,
             highlightOnComplete: true,
             onCorrectStroke: (strokeData) => {
                 requestAnimationFrame(() => {
