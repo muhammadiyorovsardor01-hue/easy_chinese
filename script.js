@@ -647,10 +647,10 @@ const avatarOptions = document.querySelectorAll('.avatar-option');
 const successModal = document.getElementById('successModal');
 const closeSuccessModal = document.getElementById('closeSuccessModal');
 const nextWordFromModal = document.getElementById('nextWordFromModal');
-const leaderboardModal = document.getElementById('leaderboardModal');
+const leaderboardModal = document.getElementById('leaderboard-modal');
 const closeLeaderboardModal = document.getElementById('closeLeaderboardModal');
 const leaderboardList = document.getElementById('leaderboardList');
-const leaderboardBtn = document.getElementById('leaderboardBtn');
+const leaderboardBtn = document.getElementById('leaderboard-btn');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -815,7 +815,12 @@ function setupEventListeners() {
 
     // Leaderboard modal controls
     closeLeaderboardModal.addEventListener('click', hideLeaderboardModal);
-    leaderboardBtn.addEventListener('click', showLeaderboard);
+    
+    // Direct event listener for leaderboard button
+    document.getElementById('leaderboard-btn').addEventListener('click', () => {
+        document.getElementById('leaderboard-modal').classList.remove('hidden');
+        showLeaderboard();
+    });
 
     // Flashcard controls
     flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
