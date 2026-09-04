@@ -1551,11 +1551,16 @@ function playSuccessSound() {
 
 // Leaderboard Functions
 const mockLeaderboard = [
-    { name: 'Alex_HSK', xp: 450 },
-    { name: 'PandaMaster', xp: 320 },
-    { name: 'LiWei_99', xp: 210 },
-    { name: 'DragonLearner', xp: 180 },
-    { name: 'ZenMaster', xp: 150 }
+    { name: 'Alex_HSK', xp: 850 },
+    { name: 'PandaMaster', xp: 720 },
+    { name: 'LiWei_99', xp: 650 },
+    { name: 'DragonLearner', xp: 580 },
+    { name: 'ZenMaster', xp: 520 },
+    { name: 'ChinesePro', xp: 480 },
+    { name: 'MandarinKing', xp: 420 },
+    { name: 'HanziHero', xp: 380 },
+    { name: 'CalligraphyMaster', xp: 350 },
+    { name: 'StrokeWizard', xp: 310 }
 ];
 
 function showLeaderboard() {
