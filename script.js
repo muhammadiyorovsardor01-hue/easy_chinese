@@ -617,6 +617,8 @@ const leaderboardBtn = document.getElementById('leaderboard-btn');
 const leaderboardModal = document.getElementById('leaderboardModal');
 const leaderboardList = document.getElementById('leaderboardList');
 const closeLeaderboard = document.getElementById('closeLeaderboard');
+const toast = document.getElementById('toast');
+let toastTimer = null;
 const navItems = document.querySelectorAll('.nav-item');
 const canvasView = document.getElementById('canvas');
 const profileView = document.getElementById('profile');
@@ -1537,7 +1539,7 @@ function showTraceGuide() {
                 canvasFeedback.textContent = 'Almost. Follow the pale outline and try again.';
                 canvasFeedback.className = 'canvas-feedback';
             },
-            onComplete: () => {
+            onComplete: function(summary) {
                 canvasScore += 10;
                 canvasScoreElement.textContent = canvasScore;
                 dailyProgress.traces += 1;
@@ -1548,12 +1550,28 @@ function showTraceGuide() {
                 canvasFeedback.className = 'canvas-feedback success';
                 nextCanvasWord.disabled = false;
                 addXP(10);
-                showSuccessModal();
+                updateStreak();
+                showToast('Great Job! +10 XP 🚀');
+
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                    loadNextWord();
+                }, 1500);
             }
         });
     } catch (error) {
         console.error('Error creating trace guide:', error);
     }
+}
+
+function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('show');
+}
+
+function loadNextWord() {
+    nextCanvasCharacter();
 }
 
 function playCanvasAudio() {
