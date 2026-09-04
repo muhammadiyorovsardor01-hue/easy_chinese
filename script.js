@@ -600,9 +600,6 @@ const learnedCount = document.getElementById('learnedCount');
 const hskFilterBtns = document.querySelectorAll('.hsk-filter-btn');
 const searchInput = document.getElementById('searchInput');
 const searchClear = document.getElementById('searchClear');
-const streakCount = document.getElementById('streakCount');
-const totalLearned = document.getElementById('totalLearned');
-const xpCount = document.getElementById('xpCount');
 const leaderboardBtn = document.getElementById('leaderboard-btn');
 const leaderboardModal = document.getElementById('leaderboardModal');
 const leaderboardList = document.getElementById('leaderboardList');
@@ -660,7 +657,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTotalLearned();
     updateXP();
     loadProfileData();
-    populateLeaderboard();
     
     // Load voices for speech synthesis
     if ('speechSynthesis' in window) {
@@ -687,7 +683,10 @@ function toggleTheme(savedTheme) {
 // Event listeners
 function setupEventListeners() {
     themeToggle.addEventListener('click', toggleTheme);
-    document.getElementById('leaderboard-btn').addEventListener('click', () => document.getElementById('leaderboardModal').classList.remove('hidden'));
+    document.getElementById('leaderboard-btn').addEventListener('click', () => {
+        populateLeaderboard();
+        document.getElementById('leaderboardModal').classList.remove('hidden');
+    });
     document.getElementById('closeLeaderboard').addEventListener('click', () => document.getElementById('leaderboardModal').classList.add('hidden'));
     
     // HSK level buttons
@@ -848,24 +847,37 @@ function populateLeaderboard() {
         username: 'Chinese Learner'
     };
     const bots = [
-        { name: 'StudyBot', xp: 980 },
-        { name: 'HanziHero', xp: 860 },
-        { name: 'MandarinMaster', xp: 740 },
-        { name: 'PinyinPro', xp: 625 },
-        { name: 'DragonLearner', xp: 510 },
-        { name: 'WordWise', xp: 455 },
-        { name: 'TeaAndTones', xp: 390 },
-        { name: 'CharacterChamp', xp: 320 },
-        { name: 'DailyDiligence', xp: 245 },
-        { name: '你好Bot', xp: 180 }
+        { avatar: '🐼', name: 'PandaMaster_99', xp: 980 },
+        { avatar: '🐉', name: 'LiWei_HSK', xp: 860 },
+        { avatar: '🎓', name: 'MandarinMaster', xp: 740 },
+        { avatar: '✍️', name: 'PinyinPro', xp: 625 },
+        { avatar: '🏮', name: 'DragonLearner', xp: 510 },
+        { avatar: '📚', name: 'WordWise', xp: 455 },
+        { avatar: '🍵', name: 'TeaAndTones', xp: 390 },
+        { avatar: '🖌️', name: 'CharacterChamp', xp: 320 },
+        { avatar: '🌟', name: 'DailyDiligence', xp: 245 },
+        { avatar: '你好', name: 'HelloBot', xp: 180 }
     ];
-    const entries = [...bots, { name: profileData.username, xp: streakData.xp, currentUser: true }]
+    const entries = [...bots, { avatar: profileData.avatar || '👤', name: profileData.username, xp: streakData.xp, currentUser: true }]
         .sort((a, b) => b.xp - a.xp);
 
     leaderboardList.replaceChildren(...entries.map((entry, index) => {
         const row = document.createElement('div');
         row.className = entry.currentUser ? 'leaderboard-entry current-user' : 'leaderboard-entry';
-        row.textContent = `${index + 1}. ${entry.name} - ${entry.xp} XP`;
+        const rank = document.createElement('span');
+        rank.className = 'leaderboard-rank';
+        rank.textContent = index + 1;
+        const avatar = document.createElement('span');
+        avatar.className = 'leaderboard-avatar';
+        avatar.setAttribute('aria-hidden', 'true');
+        avatar.textContent = entry.avatar;
+        const name = document.createElement('span');
+        name.className = 'leaderboard-name';
+        name.textContent = entry.name;
+        const xp = document.createElement('span');
+        xp.className = 'leaderboard-xp';
+        xp.textContent = `${entry.xp} XP`;
+        row.append(rank, avatar, name, xp);
         return row;
     }));
 }
@@ -1193,17 +1205,17 @@ function updateStreak() {
     }
     
     localStorage.setItem('streakData', JSON.stringify(streakData));
-    streakCount.textContent = streakData.streak;
+    profileStreak.textContent = streakData.streak;
 }
 
 function updateTotalLearned() {
     streakData.totalLearned = learnedWords.length;
     localStorage.setItem('streakData', JSON.stringify(streakData));
-    totalLearned.textContent = streakData.totalLearned;
+    profileLearned.textContent = streakData.totalLearned;
 }
 
 function updateXP() {
-    xpCount.textContent = streakData.xp;
+    profileXP.textContent = streakData.xp;
 }
 
 function addXP(amount) {
