@@ -644,6 +644,13 @@ const saveProfileBtn = document.getElementById('saveProfileBtn');
 const usernameInput = document.getElementById('usernameInput');
 const dailyGoalInput = document.getElementById('dailyGoalInput');
 const avatarOptions = document.querySelectorAll('.avatar-option');
+const successModal = document.getElementById('successModal');
+const closeSuccessModal = document.getElementById('closeSuccessModal');
+const nextWordFromModal = document.getElementById('nextWordFromModal');
+const leaderboardModal = document.getElementById('leaderboardModal');
+const closeLeaderboardModal = document.getElementById('closeLeaderboardModal');
+const leaderboardList = document.getElementById('leaderboardList');
+const leaderboardBtn = document.getElementById('leaderboardBtn');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -798,6 +805,17 @@ function setupEventListeners() {
             selectedAvatar = option.dataset.avatar;
         });
     });
+
+    // Success modal controls
+    closeSuccessModal.addEventListener('click', hideSuccessModal);
+    nextWordFromModal.addEventListener('click', () => {
+        hideSuccessModal();
+        nextCanvasCharacter();
+    });
+
+    // Leaderboard modal controls
+    closeLeaderboardModal.addEventListener('click', hideLeaderboardModal);
+    leaderboardBtn.addEventListener('click', showLeaderboard);
 
     // Flashcard controls
     flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
@@ -1383,8 +1401,10 @@ function showTraceGuide() {
             showOutline: true,
             showCharacter: false,
             strokeColor: '#C8102E',
-            outlineColor: '#DDD',
-            radicalColor: '#DDD'
+            drawingColor: '#C8102E',
+            highlightColor: '#C8102E',
+            outlineColor: '#E0E0E0',
+            radicalColor: '#E0E0E0'
         });
         canvasHanziWriter.quiz({
             showHintAfterMisses: 2,
@@ -1400,6 +1420,7 @@ function showTraceGuide() {
                 canvasFeedback.className = 'canvas-feedback success';
                 nextCanvasWord.disabled = false;
                 addXP(10);
+                showSuccessModal();
             }
         });
     } catch (error) {
@@ -1494,6 +1515,81 @@ function clearCanvas() {
 // validateStroke function removed - HanziWriter quiz mode handles stroke validation natively
 // showStrokeError function removed - HanziWriter quiz mode handles error feedback natively
 // showCompletionFeedback function removed - HanziWriter quiz mode handles completion feedback natively
+
+// Success Modal Functions
+function showSuccessModal() {
+    successModal.classList.add('active');
+    // Play success sound if available
+    playSuccessSound();
+}
+
+function hideSuccessModal() {
+    successModal.classList.remove('active');
+}
+
+function playSuccessSound() {
+    // Create a simple success sound using Web Audio API
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 523.25; // C5
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (error) {
+        console.error('Error playing success sound:', error);
+    }
+}
+
+// Leaderboard Functions
+const mockLeaderboard = [
+    { name: 'Alex_HSK', xp: 450 },
+    { name: 'PandaMaster', xp: 320 },
+    { name: 'LiWei_99', xp: 210 },
+    { name: 'DragonLearner', xp: 180 },
+    { name: 'ZenMaster', xp: 150 }
+];
+
+function showLeaderboard() {
+    updateLeaderboard();
+    leaderboardModal.classList.add('active');
+}
+
+function hideLeaderboard() {
+    leaderboardModal.classList.remove('active');
+}
+
+function hideLeaderboardModal() {
+    hideLeaderboard();
+}
+
+function updateLeaderboard() {
+    const currentUserXP = streakData.xp;
+    const currentUser = { name: 'You', xp: currentUserXP, isUser: true };
+    
+    // Combine mock users with current user
+    const allUsers = [...mockLeaderboard, currentUser];
+    
+    // Sort by XP descending
+    allUsers.sort((a, b) => b.xp - a.xp);
+    
+    // Generate leaderboard HTML
+    leaderboardList.innerHTML = allUsers.map((user, index) => `
+        <div class="leaderboard-item ${user.isUser ? 'current-user' : ''}">
+            <span class="rank">${index + 1}</span>
+            <span class="username">${user.name}</span>
+            <span class="xp">${user.xp} XP</span>
+        </div>
+    `).join('');
+}
 
 // Profile View Functions
 function showProfileView() {

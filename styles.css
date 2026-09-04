@@ -1708,23 +1708,109 @@ body {
 }
 
 .modal-close {
-    background: transparent;
+    background: none;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: var(--text-secondary);
+    color: #666;
+    padding: 0.5rem;
     transition: var(--transition);
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
 }
 
 .modal-close:hover {
     background: var(--border-color);
     color: var(--text-color);
+}
+
+/* Success Modal Styles */
+.success-modal {
+    text-align: center;
+}
+
+.success-animation {
+    font-size: 4rem;
+    animation: bounce 0.5s ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.success-message {
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    color: var(--text-color);
+}
+
+.xp-earned {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #C8102E;
+    margin: 0.5rem 0;
+}
+
+/* Leaderboard Modal Styles */
+.leaderboard-modal {
+    max-width: 400px;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.leaderboard-item.current-user {
+    background: rgba(200, 16, 46, 0.1);
+    border-color: #C8102E;
+    font-weight: bold;
+}
+
+.leaderboard-item .rank {
+    font-weight: bold;
+    width: 30px;
+    color: #C8102E;
+}
+
+.leaderboard-item .username {
+    flex: 1;
+    text-align: left;
+}
+
+.leaderboard-item .xp {
+    font-weight: bold;
+    color: #C8102E;
+}
+
+/* Leaderboard Button */
+.leaderboard-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-right: 12px;
+}
+
+.leaderboard-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
 }
 
 .modal-body {
