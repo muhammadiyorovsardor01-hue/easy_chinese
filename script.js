@@ -1485,40 +1485,36 @@ function applyWritingMode() {
 function showTraceGuide() {
     const char = canvasCharacter.textContent;
     if (!char || !drawingCanvas || typeof HanziWriter === 'undefined') return;
-    
+
+    startHanziQuiz(char);
+}
+
+function startHanziQuiz(character) {
     // Reset stroke tracking
     currentStrokeIndex = 0;
     userStrokes = [];
-    
+
     try {
         if (canvasHanziWriter) {
             canvasHanziWriter.cancelQuiz();
         }
         drawingCanvas.innerHTML = '';
         resizeCanvas();
-        canvasHanziWriter = HanziWriter.create(drawingCanvas, char, {
-            width: drawingCanvas.clientWidth || 280,
-            height: drawingCanvas.clientWidth || 280,
-            padding: 20,
-            strokeAnimationSpeed: 1,
-            strokeWidth: 14,
+        canvasHanziWriter = HanziWriter.create(drawingCanvas, character, {
+            width: 280,
+            height: 280,
+            padding: 15,
             drawingWidth: 20,
-            outlineWidth: 2,
             showOutline: true,
-            showCharacter: false,
             strokeColor: '#C41E3A',
-            drawingColor: '#C41E3A',
             highlightColor: '#C41E3A',
-            outlineColor: '#DDD',
-            radicalColor: '#E0E0E0'
+            strokeTolerance: 1.5
         });
         canvasHanziWriter.quiz({
             strokeColor: '#C41E3A',
             outlineColor: '#DDD',
             strokeTolerance: 1.5,
-            showHintAfterMisses: 2,
             showOutline: true,
-            showCharacter: false,
             highlightOnComplete: true,
             onCorrectStroke: (strokeData) => {
                 requestAnimationFrame(() => {
@@ -1551,23 +1547,27 @@ function showTraceGuide() {
                 nextCanvasWord.disabled = false;
                 addXP(10);
                 updateStreak();
-                showToast('Great Job! +10 XP 🚀');
+                showToast('Ajoyib! +10 XP');
 
                 clearTimeout(toastTimer);
                 toastTimer = setTimeout(() => {
-                    toast.classList.remove('show');
+                    hideToast();
                     loadNextWord();
-                }, 1500);
+                }, 1200);
             }
         });
     } catch (error) {
-        console.error('Error creating trace guide:', error);
+        console.error('Error starting Hanzi quiz:', error);
     }
 }
 
 function showToast(message) {
     toast.textContent = message;
     toast.classList.add('show');
+}
+
+function hideToast() {
+    toast.classList.remove('show');
 }
 
 function loadNextWord() {
