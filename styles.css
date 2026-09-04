@@ -1286,7 +1286,8 @@ body {
     color: var(--primary-color);
 }
 
-.canvas-wrapper {
+.canvas-wrapper,
+.canvas-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1318,10 +1319,16 @@ body {
     height: auto;
 }
 
-.drawing-canvas svg {
+.drawing-canvas svg,
+.canvas-container svg {
     display: block;
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.drawing-canvas svg path,
+.canvas-container svg path {
+    opacity: 1 !important;
 }
 
 .canvas-feedback {
@@ -2195,7 +2202,8 @@ body {
 
 #hanziWriterCanvas,
 #hanziWriterCanvas svg,
-.drawing-canvas svg {
+.drawing-canvas svg,
+.canvas-container svg {
     width: 100% !important;
     height: 100% !important;
     touch-action: none;

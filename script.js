@@ -1504,14 +1504,16 @@ function showTraceGuide() {
             outlineWidth: 2,
             showOutline: true,
             showCharacter: false,
-            strokeColor: '#C8102E',
-            drawingColor: '#C8102E',
-            highlightColor: '#C8102E',
-            outlineColor: '#E0E0E0',
+            strokeColor: '#C41E3A',
+            drawingColor: '#C41E3A',
+            highlightColor: '#C41E3A',
+            outlineColor: '#DDD',
             radicalColor: '#E0E0E0'
         });
         canvasHanziWriter.quiz({
-            strokeTolerance: 1.8,
+            strokeColor: '#C41E3A',
+            outlineColor: '#DDD',
+            strokeTolerance: 1.5,
             showHintAfterMisses: 2,
             showOutline: true,
             showCharacter: false,
@@ -1519,8 +1521,15 @@ function showTraceGuide() {
             onCorrectStroke: (strokeData) => {
                 requestAnimationFrame(() => {
                     canvasHanziWriter.highlightStroke(strokeData.strokeNum, {
-                        strokeColor: '#C8102E',
-                        duration: 150
+                        strokeColor: '#C41E3A',
+                        duration: 0
+                    });
+                    drawingCanvas.querySelectorAll('svg path').forEach(path => {
+                        path.style.opacity = '1';
+                        if (path.dataset.strokeNum === String(strokeData.strokeNum)) {
+                            path.style.fill = '#C41E3A';
+                            path.style.stroke = '#C41E3A';
+                        }
                     });
                 });
             },
