@@ -2188,9 +2188,17 @@ body {
   touch-action: none;
   width: 100% !important;
   max-width: 320px;
-  height: auto !important;
+    height: 100% !important;
   aspect-ratio: 1 / 1;
   border-radius: 12px;
+}
+
+#hanziWriterCanvas,
+#hanziWriterCanvas svg,
+.drawing-canvas svg {
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none;
 }
 
 }

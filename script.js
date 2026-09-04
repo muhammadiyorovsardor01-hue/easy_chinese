@@ -1500,7 +1500,7 @@ function showTraceGuide() {
             padding: 20,
             strokeAnimationSpeed: 1,
             strokeWidth: 14,
-            drawingWidth: 14,
+            drawingWidth: 20,
             outlineWidth: 2,
             showOutline: true,
             showCharacter: false,
@@ -1511,8 +1511,19 @@ function showTraceGuide() {
             radicalColor: '#E0E0E0'
         });
         canvasHanziWriter.quiz({
+            strokeTolerance: 1.8,
             showHintAfterMisses: 2,
+            showOutline: true,
+            showCharacter: false,
             highlightOnComplete: true,
+            onCorrectStroke: (strokeData) => {
+                requestAnimationFrame(() => {
+                    canvasHanziWriter.highlightStroke(strokeData.strokeNum, {
+                        strokeColor: '#C8102E',
+                        duration: 150
+                    });
+                });
+            },
             onMistake: () => {
                 canvasFeedback.textContent = 'Almost. Follow the pale outline and try again.';
                 canvasFeedback.className = 'canvas-feedback';
