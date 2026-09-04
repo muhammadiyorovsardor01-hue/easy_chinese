@@ -1461,7 +1461,10 @@ function checkCanvasDrawing() {
 
 function initializeCanvas() {
     if (canvasCtx) {
+        // Force 14px line width and round caps
         canvasCtx.lineWidth = 14;
+        canvasCtx.lineCap = 'round';
+        canvasCtx.lineJoin = 'round';
     }
     resizeCanvas();
 }
@@ -1507,6 +1510,11 @@ function startDrawing(e) {
 
 function draw(e) {
     if (!isDrawing) return;
+    
+    // Force 14px line width and round caps
+    canvasCtx.lineWidth = 14;
+    canvasCtx.lineCap = 'round';
+    canvasCtx.lineJoin = 'round';
     
     if (canvasWritingMode !== 'trace' || isEraserActive) {
         const rect = drawingCanvas.getBoundingClientRect();
@@ -1566,6 +1574,11 @@ function handleTouchStart(e) {
 function handleTouchMove(e) {
     e.preventDefault();
     if (!isDrawing) return;
+    
+    // Force 14px line width and round caps
+    canvasCtx.lineWidth = 14;
+    canvasCtx.lineCap = 'round';
+    canvasCtx.lineJoin = 'round';
     
     const touch = e.touches[0];
     
