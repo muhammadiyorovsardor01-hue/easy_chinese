@@ -9,7 +9,7 @@
     <title>Easy Chinese - Learn HSK Vocabulary</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
-    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
 <body>
     <header class="header">
@@ -27,9 +27,13 @@
                     <span class="xp-count" id="xpCount">0</span>
                     <span class="xp-label">XP</span>
                 </div>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                    <span class="sun-icon">☀️</span>
-                    <span class="moon-icon">🌙</span>
+                <div class="learned-tracker">
+                    <span class="learned-label">Learned</span>
+                    <span class="learned-count" id="totalLearned">0</span>
+                </div>
+                <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+                    <span class="sun-icon" aria-hidden="true">☀️</span>
+                    <span class="moon-icon" aria-hidden="true">🌙</span>
                 </button>
             </div>
         </div>
@@ -203,27 +207,40 @@
                 
                 <!-- Main Canvas Area -->
                 <div class="canvas-main">
+                    <div class="canvas-mobile-controls" aria-label="Canvas controls">
+                        <select class="canvas-mobile-select" id="canvasMobileHskSelector" aria-label="HSK level">
+                            <option value="1">HSK 1</option>
+                            <option value="2">HSK 2</option>
+                            <option value="3">HSK 3</option>
+                        </select>
+                        <select class="canvas-mobile-select" id="canvasMobileLessonSelector" aria-label="Lesson"></select>
+                        <div class="canvas-mobile-modes" role="group" aria-label="Writing mode">
+                            <button class="mobile-mode-option active" data-mode="trace" type="button">Trace</button>
+                            <button class="mobile-mode-option" data-mode="copy" type="button">Copy</button>
+                            <button class="mobile-mode-option" data-mode="freehand" type="button">Freehand</button>
+                        </div>
+                    </div>
                     <div class="canvas-character-display">
                         <span class="char-display" id="canvasCharacter">你</span>
                     </div>
                     
                     <div class="canvas-wrapper">
-                        <canvas id="drawingCanvas" class="drawing-canvas"></canvas>
+                        <div id="hanziWriterCanvas" class="drawing-canvas" aria-label="Chinese character writing practice"></div>
                         
-                        <!-- Round Action Buttons -->
-                        <button class="round-action-btn audio-round-btn" id="canvasAudioBtn" aria-label="Play audio">
-                            <span>🔊</span>
-                        </button>
-                        <button class="round-action-btn eraser-round-btn" id="canvasEraserBtn" aria-label="Eraser">
-                            <span>🧹</span>
-                        </button>
-                        <button class="round-action-btn check-round-btn" id="canvasCheckBtn" aria-label="Check">
-                            <span>✓</span>
-                        </button>
+                    </div>
+                    <div class="canvas-actions" aria-label="Canvas actions">
+                        <button class="canvas-action-btn" id="canvasEraserBtn" type="button"><span aria-hidden="true">🧹</span> Clear</button>
+                        <button class="canvas-action-btn" id="canvasAudioBtn" type="button"><span aria-hidden="true">🔊</span> Audio</button>
+                        <button class="canvas-action-btn primary" id="canvasCheckBtn" type="button"><span aria-hidden="true">✓</span> Check</button>
                     </div>
                     
                     <div class="canvas-instructions">
                         <p id="modeInstructions">Trace the character by following the guide dots.</p>
+                        <p id="canvasFeedback" class="canvas-feedback" role="status" aria-live="polite"></p>
+                        <div class="canvas-progress">
+                            <span>Points: <strong id="canvasScore">0</strong></span>
+                            <button class="control-btn next-word-btn" id="nextCanvasWord" type="button" disabled>Next Word</button>
+                        </div>
                     </div>
                 </div>
             </div>
