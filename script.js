@@ -1378,12 +1378,13 @@ function showTraceGuide() {
             padding: 20,
             strokeAnimationSpeed: 1,
             strokeWidth: 14,
+            drawingWidth: 14,
             outlineWidth: 2,
             showOutline: true,
             showCharacter: false,
-            strokeColor: '#c41e3a',
-            outlineColor: 'rgba(128, 128, 128, 0.2)',
-            radicalColor: 'rgba(128, 128, 128, 0.18)'
+            strokeColor: '#C8102E',
+            outlineColor: '#DDD',
+            radicalColor: '#DDD'
         });
         canvasHanziWriter.quiz({
             showHintAfterMisses: 2,
@@ -1440,15 +1441,10 @@ function playCanvasAudio() {
 }
 
 function toggleEraser() {
-    isEraserActive = !isEraserActive;
-    canvasEraserBtn.classList.toggle('active', isEraserActive);
-    
-    if (isEraserActive) {
-        canvasCtx.strokeStyle = '#fff';
-        canvasCtx.lineWidth = 20;
-    } else {
-        canvasCtx.strokeStyle = '#000';
-        canvasCtx.lineWidth = 14;
+    // Eraser functionality handled by HanziWriter quiz mode
+    // Reset the quiz to start over
+    if (canvasHanziWriter) {
+        canvasHanziWriter.cancelQuiz();
         canvasFeedback.textContent = 'Canvas cleared. Start the character again.';
         showTraceGuide();
     }
@@ -1460,12 +1456,8 @@ function checkCanvasDrawing() {
 }
 
 function initializeCanvas() {
-    if (canvasCtx) {
-        // Force 14px line width and round caps
-        canvasCtx.lineWidth = 14;
-        canvasCtx.lineCap = 'round';
-        canvasCtx.lineJoin = 'round';
-    }
+    // HanziWriter handles all touch/mouse events natively via quiz mode
+    // No custom canvas context or event listeners needed
     resizeCanvas();
 }
 
@@ -1484,220 +1476,24 @@ function resizeCanvas() {
 
 window.addEventListener('resize', resizeCanvas);
 window.addEventListener('orientationchange', resizeCanvas);
-    
 
-
-function startDrawing(e) {
-    if (canvasWritingMode !== 'trace' || isEraserActive) {
-        isDrawing = true;
-        canvasCtx.beginPath();
-        const rect = drawingCanvas.getBoundingClientRect();
-        canvasCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-        return;
-    }
-    
-    // In trace mode, only allow drawing if we're on the correct stroke
-    isDrawing = true;
-    canvasCtx.beginPath();
-    const rect = drawingCanvas.getBoundingClientRect();
-    canvasCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-    
-    // Start tracking this stroke
-    userStrokes[currentStrokeIndex] = {
-        points: [{x: e.clientX - rect.left, y: e.clientY - rect.top}]
-    };
-}
-
-function draw(e) {
-    if (!isDrawing) return;
-    
-    // Force 14px line width and round caps
-    canvasCtx.lineWidth = 14;
-    canvasCtx.lineCap = 'round';
-    canvasCtx.lineJoin = 'round';
-    
-    if (canvasWritingMode !== 'trace' || isEraserActive) {
-        const rect = drawingCanvas.getBoundingClientRect();
-        canvasCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-        canvasCtx.stroke();
-        return;
-    }
-    
-    // In trace mode, track points for stroke validation
-    const rect = drawingCanvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    canvasCtx.lineTo(x, y);
-    canvasCtx.stroke();
-    
-    if (userStrokes[currentStrokeIndex]) {
-        userStrokes[currentStrokeIndex].points.push({x, y});
-    }
-}
-
-function stopDrawing() {
-    if (isDrawing) {
-        isDrawing = false;
-        canvasCtx.closePath();
-        
-        // In trace mode, validate the stroke
-        if (canvasWritingMode === 'trace' && !isEraserActive) {
-            validateStroke();
-        }
-    }
-}
-
-function handleTouchStart(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
-    
-    if (canvasWritingMode !== 'trace' || isEraserActive) {
-        const rect = drawingCanvas.getBoundingClientRect();
-        isDrawing = true;
-        canvasCtx.beginPath();
-        canvasCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-        return;
-    }
-    
-    // In trace mode, track stroke
-    const rect = drawingCanvas.getBoundingClientRect();
-    isDrawing = true;
-    canvasCtx.beginPath();
-    canvasCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-    
-    userStrokes[currentStrokeIndex] = {
-        points: [{x: touch.clientX - rect.left, y: touch.clientY - rect.top}]
-    };
-}
-
-function handleTouchMove(e) {
-    e.preventDefault();
-    if (!isDrawing) return;
-    
-    // Force 14px line width and round caps
-    canvasCtx.lineWidth = 14;
-    canvasCtx.lineCap = 'round';
-    canvasCtx.lineJoin = 'round';
-    
-    const touch = e.touches[0];
-    
-    if (canvasWritingMode !== 'trace' || isEraserActive) {
-        const rect = drawingCanvas.getBoundingClientRect();
-        canvasCtx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-        canvasCtx.stroke();
-        return;
-    }
-    
-    // In trace mode, track points
-    const rect = drawingCanvas.getBoundingClientRect();
-    const x = touch.clientX - rect.left;
-    const y = touch.clientY - rect.top;
-    
-    canvasCtx.lineTo(x, y);
-    canvasCtx.stroke();
-    
-    if (userStrokes[currentStrokeIndex]) {
-        userStrokes[currentStrokeIndex].points.push({x, y});
-    }
-}
+// Custom canvas drawing functions removed - HanziWriter quiz mode handles all touch/mouse events natively
 
 function clearCanvas() {
-    canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+    // HanziWriter handles canvas clearing via cancelQuiz()
     currentMistakes = 0;
     currentStrokeIndex = 0;
     userStrokes = [];
     if (canvasHanziWriter) {
-        canvasHanziWriter = null;
+        canvasHanziWriter.cancelQuiz();
     }
     // Re-apply writing mode
     applyWritingMode();
 }
 
-function validateStroke() {
-    if (!canvasHanziWriter || !userStrokes[currentStrokeIndex]) return;
-    
-    const userStroke = userStrokes[currentStrokeIndex];
-    const points = userStroke.points;
-    
-    // Check if stroke has enough points to be valid
-    if (points.length < 3) {
-        showStrokeError('Stroke too short');
-        return;
-    }
-    
-    // Simple validation: check if stroke is in correct order
-    // For now, we'll use a basic bounding box and direction check
-    // In a full implementation, this would use more sophisticated stroke matching
-    
-    const strokeStart = points[0];
-    const strokeEnd = points[points.length - 1];
-    
-    // Calculate bounding box
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-    points.forEach(p => {
-        minX = Math.min(minX, p.x);
-        minY = Math.min(minY, p.y);
-        maxX = Math.max(maxX, p.x);
-        maxY = Math.max(maxY, p.y);
-    });
-    
-    const strokeWidth = maxX - minX;
-    const strokeHeight = maxY - minY;
-    
-    // Check if stroke is reasonable size
-    if (strokeWidth < 10 || strokeHeight < 10) {
-        showStrokeError('Stroke too small');
-        return;
-    }
-    
-    // Stroke is valid - move to next stroke
-    currentStrokeIndex++;
-    
-    // Check if character is complete
-    if (currentStrokeIndex >= expectedStrokeCount) {
-        showCompletionFeedback();
-    }
-}
-
-function showStrokeError(message) {
-    // Flash the canvas red to indicate error
-    canvasCtx.save();
-    canvasCtx.fillStyle = 'rgba(255, 0, 0, 0.3)';
-    canvasCtx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-    canvasCtx.restore();
-    
-    setTimeout(() => {
-        // Clear the incorrect stroke and redraw guide
-        if (canvasWritingMode === 'trace') {
-            canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-            showTraceGuide();
-        }
-    }, 500);
-    
-    // Reset current stroke index to require redraw
-    userStrokes[currentStrokeIndex] = null;
-}
-
-function showCompletionFeedback() {
-    // Flash green to indicate success
-    canvasCtx.save();
-    canvasCtx.fillStyle = 'rgba(0, 200, 100, 0.3)';
-    canvasCtx.fillRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-    canvasCtx.restore();
-    
-    setTimeout(() => {
-        canvasCtx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
-        showTraceGuide();
-    }, 800);
-    
-    // Award XP for completing character
-    addXP(15);
-    
-    // Reset for next character
-    currentStrokeIndex = 0;
-    userStrokes = [];
-}
+// validateStroke function removed - HanziWriter quiz mode handles stroke validation natively
+// showStrokeError function removed - HanziWriter quiz mode handles error feedback natively
+// showCompletionFeedback function removed - HanziWriter quiz mode handles completion feedback natively
 
 // Profile View Functions
 function showProfileView() {
