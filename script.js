@@ -1518,6 +1518,10 @@ function startHanziQuiz(character) {
             canvasHanziWriter = null;
         }
         // Clear innerHTML to prevent duplicate SVG layers
+        const characterTarget = document.getElementById('character-target');
+        if (characterTarget) {
+            characterTarget.innerHTML = '';
+        }
         drawingCanvas.innerHTML = '';
         resizeCanvas();
         canvasHanziWriter = HanziWriter.create(drawingCanvas, char, {
@@ -1580,7 +1584,7 @@ function startHanziQuiz(character) {
                 showSuccessModal();
                 // Auto-advance to next word after 1.2 seconds
                 setTimeout(() => {
-                    nextCanvasCharacter();
+                    loadNextWord();
                 }, 1200);
             }
         });
