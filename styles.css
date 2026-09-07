@@ -55,7 +55,13 @@ body {
 .header {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
     color: white;
-    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem 1rem;
+    overflow: hidden;
     box-shadow: var(--shadow);
     position: sticky;
     top: 0;
@@ -70,7 +76,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.25rem 0;
+    width: 100%;
     gap: 1rem;
 }
 
@@ -80,39 +86,8 @@ body {
 
 .header-stats {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     align-items: center;
-    margin-right: 12px;
-}
-
-.streak-tracker,
-.xp-tracker {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 0.4rem 0.8rem;
-    border-radius: 50px;
-    font-size: 0.85rem;
-    backdrop-filter: blur(5px);
-}
-
-.streak-icon,
-.xp-icon {
-    font-size: 1.1rem;
-}
-
-.streak-count,
-.xp-count {
-    font-weight: 700;
-    font-size: 1rem;
-    color: #FFE66D;
-}
-
-.xp-label {
-    font-size: 0.75rem;
-    opacity: 0.9;
-    margin-left: 0.2rem;
 }
 
 .app-title {
@@ -136,7 +111,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-right: 25px !important;
+    margin-right: 0;
 }
 
 .theme-toggle:hover {
@@ -859,6 +834,30 @@ body {
     margin-bottom: 2rem;
 }
 
+.quiz-type-selector {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.quiz-type-btn {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.55rem 0.8rem;
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.quiz-type-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
 .score-tracker {
     font-size: 1.3rem;
     font-weight: 700;
@@ -885,6 +884,29 @@ body {
     font-weight: 700;
     color: var(--text-color);
     margin-bottom: 1rem;
+}
+
+.hanzi-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.word-audio-btn {
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--secondary-color);
+    border-radius: 50%;
+    background: var(--card-bg);
+    color: var(--secondary-color);
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.word-audio-btn:hover {
+    background: var(--secondary-color);
+    color: white;
 }
 
 .quiz-prompt {
@@ -1264,7 +1286,8 @@ body {
     color: var(--primary-color);
 }
 
-.canvas-wrapper {
+.canvas-wrapper,
+.canvas-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1296,7 +1319,8 @@ body {
     height: auto;
 }
 
-.drawing-canvas svg {
+.drawing-canvas svg,
+.canvas-container svg {
     display: block;
     width: 100% !important;
     height: 100% !important;
@@ -1315,6 +1339,11 @@ body {
     touch-action: none;
 }
 
+.drawing-canvas svg path,
+.canvas-container svg path {
+    opacity: 1 !important;
+}
+
 .canvas-feedback {
     min-height: 1.5rem;
     margin: 0.25rem 0;
@@ -1323,6 +1352,27 @@ body {
 
 .canvas-feedback.success {
     color: var(--secondary-color);
+}
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 6rem;
+    z-index: 10001;
+    padding: 0.85rem 1.25rem;
+    border-radius: 10px;
+    background: var(--text-color);
+    color: var(--card-bg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 1rem);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
 }
 
 .canvas-progress {
@@ -1431,11 +1481,13 @@ body {
 .header {
     background: var(--card-bg);
     border-bottom: 2px solid var(--border-color);
-    padding: 1rem 1.5rem;
-    padding-top: env(safe-area-inset-top); /* iOS safe area */
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem 1rem;
+    overflow: hidden;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -1465,35 +1517,6 @@ body {
     display: flex;
     gap: 0.75rem;
     align-items: center;
-}
-
-.streak-tracker,
-.xp-tracker {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--bg-gradient);
-    padding: 0.5rem 0.75rem;
-    border-radius: 20px;
-    font-weight: 600;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    min-width: 70px;
-}
-
-.streak-icon,
-.xp-icon {
-    font-size: 1.2rem;
-}
-
-.streak-count,
-.xp-count {
-    font-size: 1rem;
-    color: var(--text-color);
-}
-
-.xp-label {
-    font-size: 0.8rem;
-    color: var(--text-secondary);
 }
 
 .theme-toggle {
@@ -1625,6 +1648,51 @@ body {
     gap: 1rem;
 }
 
+.quests-section {
+    margin: 2rem 0;
+}
+
+.quests-list {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.quest-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-color);
+}
+
+.quest-item.complete {
+    border-color: var(--secondary-color);
+    background: rgba(0, 168, 107, 0.12);
+}
+
+.quest-icon {
+    font-size: 1.5rem;
+}
+
+.quest-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.quest-copy small {
+    color: var(--text-secondary);
+}
+
+.quest-status {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
 .achievement-badge {
     background: var(--bg-gradient);
     border: 2px solid var(--border-color);
@@ -1678,6 +1746,80 @@ body {
     align-items: center;
     justify-content: center;
     backdrop-filter: blur(5px);
+}
+
+#leaderboardModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#leaderboardModal.hidden {
+    display: none !important;
+}
+
+.leaderboard-btn {
+    border: 0;
+    border-radius: 10px;
+    padding: 0.5rem 0.7rem;
+    background: rgba(255, 255, 255, 0.18);
+    color: white;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.leaderboard-entry {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1.5rem;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color);
+}
+
+.leaderboard-entry.current-user {
+    background: rgba(255, 215, 0, 0.25);
+    font-weight: 700;
+}
+
+#leaderboardList {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.75rem 1.5rem;
+    background: var(--card-bg);
+}
+
+.leaderboard-rank {
+    width: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 700;
+    text-align: center;
+}
+
+.leaderboard-avatar {
+    width: 2rem;
+    text-align: center;
+    font-size: 1.25rem;
+}
+
+.leaderboard-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.leaderboard-xp {
+    color: var(--primary-color);
+    font-weight: 700;
+    white-space: nowrap;
 }
 
 .modal.active {
@@ -2087,9 +2229,24 @@ body {
   touch-action: none;
   width: 100% !important;
   max-width: 320px;
-  height: auto !important;
+    height: 100% !important;
   aspect-ratio: 1 / 1;
   border-radius: 12px;
+}
+
+#character-target {
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+}
+
+#hanziWriterCanvas,
+#hanziWriterCanvas svg,
+.drawing-canvas svg,
+.canvas-container svg {
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none;
 }
 
 }
@@ -2211,12 +2368,22 @@ body {
 }
 
 /* Final responsive overrides for the active header and Canvas markup. */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem 1rem;
+    overflow: hidden;
+}
+
 .header-content {
-    padding-right: 16px;
+    padding-right: 0;
 }
 
 .header-stats {
-    margin-right: 12px;
+    margin-right: 0;
 }
 
 .app-title {

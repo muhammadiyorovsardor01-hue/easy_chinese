@@ -8,6 +8,246 @@
     "uzbek": "Salom"
   },
   {
+    "id": 56,
+    "hsk": 1,
+    "lesson": 3,
+    "hanzi": "谢谢",
+    "pinyin": "xièxie",
+    "uzbek": "Rahmat"
+  },
+  {
+    "id": 57,
+    "hsk": 1,
+    "lesson": 3,
+    "hanzi": "再见",
+    "pinyin": "zàijiàn",
+    "uzbek": "Xayr"
+  },
+  {
+    "id": 58,
+    "hsk": 1,
+    "lesson": 3,
+    "hanzi": "请",
+    "pinyin": "qǐng",
+    "uzbek": "Marhamat"
+  },
+  {
+    "id": 59,
+    "hsk": 1,
+    "lesson": 4,
+    "hanzi": "朋友",
+    "pinyin": "péngyou",
+    "uzbek": "Do'st"
+  },
+  {
+    "id": 60,
+    "hsk": 1,
+    "lesson": 4,
+    "hanzi": "学生",
+    "pinyin": "xuésheng",
+    "uzbek": "Talaba"
+  },
+  {
+    "id": 61,
+    "hsk": 1,
+    "lesson": 4,
+    "hanzi": "老师",
+    "pinyin": "lǎoshī",
+    "uzbek": "O'qituvchi"
+  },
+  {
+    "id": 62,
+    "hsk": 1,
+    "lesson": 4,
+    "hanzi": "家",
+    "pinyin": "jiā",
+    "uzbek": "Uy, oila"
+  },
+  {
+    "id": 63,
+    "hsk": 1,
+    "lesson": 4,
+    "hanzi": "吃",
+    "pinyin": "chī",
+    "uzbek": "Yemoq"
+  },
+  {
+    "id": 64,
+    "hsk": 1,
+    "lesson": 4,
+    "hanzi": "喝",
+    "pinyin": "hē",
+    "uzbek": "Ichmoq"
+  },
+  {
+    "id": 65,
+    "hsk": 1,
+    "lesson": 4,
+    "hanzi": "茶",
+    "pinyin": "chá",
+    "uzbek": "Choy"
+  },
+  {
+    "id": 66,
+    "hsk": 2,
+    "lesson": 3,
+    "hanzi": "开始",
+    "pinyin": "kāishǐ",
+    "uzbek": "Boshlamoq"
+  },
+  {
+    "id": 67,
+    "hsk": 2,
+    "lesson": 3,
+    "hanzi": "已经",
+    "pinyin": "yǐjīng",
+    "uzbek": "Allaqachon"
+  },
+  {
+    "id": 68,
+    "hsk": 2,
+    "lesson": 3,
+    "hanzi": "所以",
+    "pinyin": "suǒyǐ",
+    "uzbek": "Shuning uchun"
+  },
+  {
+    "id": 69,
+    "hsk": 2,
+    "lesson": 3,
+    "hanzi": "虽然",
+    "pinyin": "suīrán",
+    "uzbek": "Garchi"
+  },
+  {
+    "id": 70,
+    "hsk": 2,
+    "lesson": 3,
+    "hanzi": "但是",
+    "pinyin": "dànshì",
+    "uzbek": "Ammo"
+  },
+  {
+    "id": 71,
+    "hsk": 2,
+    "lesson": 3,
+    "hanzi": "需要",
+    "pinyin": "xūyào",
+    "uzbek": "Kerak bo'lmoq"
+  },
+  {
+    "id": 72,
+    "hsk": 2,
+    "lesson": 3,
+    "hanzi": "问题",
+    "pinyin": "wèntí",
+    "uzbek": "Savol, muammo"
+  },
+  {
+    "id": 73,
+    "hsk": 2,
+    "lesson": 3,
+    "hanzi": "希望",
+    "pinyin": "xīwàng",
+    "uzbek": "Umid qilmoq"
+  },
+  {
+    "id": 74,
+    "hsk": 2,
+    "lesson": 3,
+    "hanzi": "准备",
+    "pinyin": "zhǔnbèi",
+    "uzbek": "Tayyorlamoq"
+  },
+  {
+    "id": 75,
+    "hsk": 2,
+    "lesson": 3,
+    "hanzi": "特别",
+    "pinyin": "tèbié",
+    "uzbek": "Alohida, juda"
+  },
+  {
+    "id": 76,
+    "hsk": 3,
+    "lesson": 3,
+    "hanzi": "安排",
+    "pinyin": "ānpái",
+    "uzbek": "Rejalashtirmoq"
+  },
+  {
+    "id": 77,
+    "hsk": 3,
+    "lesson": 3,
+    "hanzi": "保护",
+    "pinyin": "bǎohù",
+    "uzbek": "Himoya qilmoq"
+  },
+  {
+    "id": 78,
+    "hsk": 3,
+    "lesson": 3,
+    "hanzi": "表示",
+    "pinyin": "biǎoshì",
+    "uzbek": "Bildirmoq"
+  },
+  {
+    "id": 79,
+    "hsk": 3,
+    "lesson": 3,
+    "hanzi": "参加",
+    "pinyin": "cānjiā",
+    "uzbek": "Qatnashmoq"
+  },
+  {
+    "id": 80,
+    "hsk": 3,
+    "lesson": 3,
+    "hanzi": "成功",
+    "pinyin": "chénggōng",
+    "uzbek": "Muvaffaqiyat"
+  },
+  {
+    "id": 81,
+    "hsk": 3,
+    "lesson": 3,
+    "hanzi": "除了",
+    "pinyin": "chúle",
+    "uzbek": "Dan tashqari"
+  },
+  {
+    "id": 82,
+    "hsk": 3,
+    "lesson": 3,
+    "hanzi": "发生",
+    "pinyin": "fāshēng",
+    "uzbek": "Sodir bo'lmoq"
+  },
+  {
+    "id": 83,
+    "hsk": 3,
+    "lesson": 3,
+    "hanzi": "发现",
+    "pinyin": "fāxiàn",
+    "uzbek": "Kashf qilmoq"
+  },
+  {
+    "id": 84,
+    "hsk": 3,
+    "lesson": 3,
+    "hanzi": "放心",
+    "pinyin": "fàngxīn",
+    "uzbek": "Xotirjam bo'lmoq"
+  },
+  {
+    "id": 85,
+    "hsk": 3,
+    "lesson": 3,
+    "hanzi": "负责",
+    "pinyin": "fùzé",
+    "uzbek": "Mas'ul bo'lmoq"
+  },
+  {
     "id": 2,
     "hsk": 1,
     "lesson": 1,
