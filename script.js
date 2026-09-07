@@ -813,6 +813,9 @@ function setupEventListeners() {
         nextCanvasCharacter();
     });
 
+    // Canvas controls - fallback Next Word button
+    nextCanvasWord.addEventListener('click', nextCanvasCharacter);
+
     // Leaderboard modal controls
     closeLeaderboardModal.addEventListener('click', hideLeaderboardModal);
     
@@ -1393,6 +1396,7 @@ function showTraceGuide() {
         if (canvasHanziWriter) {
             canvasHanziWriter.cancelQuiz();
         }
+        // Clear innerHTML to prevent duplicate SVG layers
         drawingCanvas.innerHTML = '';
         resizeCanvas();
         canvasHanziWriter = HanziWriter.create(drawingCanvas, char, {
@@ -1401,15 +1405,16 @@ function showTraceGuide() {
             padding: 20,
             strokeAnimationSpeed: 1,
             strokeWidth: 14,
-            drawingWidth: 14,
+            drawingWidth: 20,
             outlineWidth: 2,
+            strokeTolerance: 1.8,
             showOutline: true,
             showCharacter: false,
-            strokeColor: '#C8102E',
-            drawingColor: '#C8102E',
-            highlightColor: '#C8102E',
-            outlineColor: '#E0E0E0',
-            radicalColor: '#E0E0E0'
+            strokeColor: '#C41E3A',
+            drawingColor: '#C41E3A',
+            highlightColor: '#C41E3A',
+            radicalColor: '#C41E3A',
+            outlineColor: '#E0E0E0'
         });
         canvasHanziWriter.quiz({
             showHintAfterMisses: 2,
@@ -1426,6 +1431,10 @@ function showTraceGuide() {
                 nextCanvasWord.disabled = false;
                 addXP(10);
                 showSuccessModal();
+                // Auto-advance to next word after 1.2 seconds
+                setTimeout(() => {
+                    nextCanvasCharacter();
+                }, 1200);
             }
         });
     } catch (error) {
