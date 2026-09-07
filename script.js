@@ -744,6 +744,8 @@ function setupEventListeners() {
     navItems.forEach(item => {
         item.addEventListener('click', () => {
             const nav = item.dataset.nav;
+            // Clear all active modals/overlays before navigation
+            hideAllModals();
             handleNavigation(nav);
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
@@ -833,7 +835,6 @@ function setupEventListeners() {
         nextCanvasCharacter();
     });
 
-<<<<<<< HEAD
     // Canvas controls - fallback Next Word button
     nextCanvasWord.addEventListener('click', nextCanvasCharacter);
 
@@ -846,8 +847,6 @@ function setupEventListeners() {
         showLeaderboard();
     });
 
-=======
->>>>>>> 0d9a19561e0ba3a1c27d966f894ac77975d24795
     // Flashcard controls
     flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
     prevCard.addEventListener('click', () => navigateFlashcard(-1));
@@ -1577,20 +1576,11 @@ function startHanziQuiz(character) {
                 canvasFeedback.className = 'canvas-feedback success';
                 nextCanvasWord.disabled = false;
                 addXP(10);
-<<<<<<< HEAD
+                updateStreak();
                 showSuccessModal();
                 // Auto-advance to next word after 1.2 seconds
                 setTimeout(() => {
                     nextCanvasCharacter();
-=======
-                updateStreak();
-                showToast('Ajoyib! +10 XP');
-
-                clearTimeout(toastTimer);
-                toastTimer = setTimeout(() => {
-                    hideToast();
-                    loadNextWord();
->>>>>>> 0d9a19561e0ba3a1c27d966f894ac77975d24795
                 }, 1200);
             }
         });
@@ -1709,6 +1699,16 @@ function showSuccessModal() {
 
 function hideSuccessModal() {
     successModal.classList.remove('active');
+}
+
+// Hide all modals function for navigation
+function hideAllModals() {
+    // Hide success modal
+    if (successModal) successModal.classList.remove('active');
+    // Hide leaderboard modal
+    if (leaderboardModal) leaderboardModal.classList.remove('active');
+    // Hide edit profile modal
+    if (editProfileModal) editProfileModal.classList.remove('active');
 }
 
 function playSuccessSound() {
