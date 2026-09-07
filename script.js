@@ -645,6 +645,7 @@ const modeOptions = document.querySelectorAll('.mode-option');
 const mobileModeOptions = document.querySelectorAll('.mobile-mode-option');
 const canvasAudioBtn = document.getElementById('canvasAudioBtn');
 const canvasEraserBtn = document.getElementById('canvasEraserBtn');
+const canvasHintBtn = document.getElementById('canvasHintBtn');
 const canvasCheckBtn = document.getElementById('canvasCheckBtn');
 const modeInstructions = document.getElementById('modeInstructions');
 const canvasFeedback = document.getElementById('canvasFeedback');
@@ -837,6 +838,13 @@ function setupEventListeners() {
 
     // Canvas controls - fallback Next Word button
     nextCanvasWord.addEventListener('click', nextCanvasCharacter);
+
+    // Canvas Hint button
+    canvasHintBtn.addEventListener('click', () => {
+        if (canvasHanziWriter) {
+            canvasHanziWriter.animateCharacter();
+        }
+    });
 
     // Leaderboard modal controls
     closeLeaderboardModal.addEventListener('click', hideLeaderboardModal);
@@ -1530,7 +1538,7 @@ function startHanziQuiz(character) {
             padding: 20,
             strokeAnimationSpeed: 1,
             strokeWidth: 14,
-            drawingWidth: 20,
+            drawingWidth: 24,
             outlineWidth: 2,
             strokeTolerance: 1.8,
             showOutline: true,
@@ -1584,7 +1592,13 @@ function startHanziQuiz(character) {
                 showSuccessModal();
                 // Auto-advance to next word after 1.2 seconds
                 setTimeout(() => {
-                    loadNextWord();
+                    const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.lesson === canvasLesson);
+                    if (words.length > 0 && canvasWordIndex < words.length - 1) {
+                        loadNextWord();
+                    } else {
+                        canvasFeedback.textContent = '🎉 Lesson complete! Great job!';
+                        canvasFeedback.className = 'canvas-feedback success';
+                    }
                 }, 1200);
             }
         });
