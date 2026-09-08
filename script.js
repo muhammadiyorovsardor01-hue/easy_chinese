@@ -844,12 +844,6 @@ function setupEventListeners() {
 
     // Leaderboard modal controls
     closeLeaderboard.addEventListener('click', hideLeaderboardModal);
-    
-    // Direct event listener for leaderboard button
-    document.getElementById('leaderboard-btn').addEventListener('click', () => {
-        document.getElementById('leaderboardModal').classList.remove('hidden');
-        showLeaderboard();
-    });
 
     // Flashcard controls
     flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
