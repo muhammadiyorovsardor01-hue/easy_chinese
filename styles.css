@@ -1393,27 +1393,23 @@ body {
     width: 100% !important;
     height: 100% !important;
     touch-action: none;
-    pointer-events: none;
 }
 
 #character-target svg {
     width: 100% !important;
     height: 100% !important;
     touch-action: none;
-    pointer-events: none;
 }
 
 #hanziWriterCanvas svg {
     width: 100% !important;
     height: 100% !important;
     touch-action: none;
-    pointer-events: none;
 }
 
 .drawing-canvas svg path,
 .canvas-container svg path {
     opacity: 1 !important;
-    pointer-events: none;
 }
 
 /* Ensure modals don't block underlying interactions when hidden */
