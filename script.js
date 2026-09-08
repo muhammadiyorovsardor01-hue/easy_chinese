@@ -1559,16 +1559,16 @@ function startHanziQuiz(character) {
             strokeTolerance: strokeTolerance,
             showOutline: showOutline,
             showCharacter: showCharacter,
-            strokeColor: '#C41E3A',
-            drawingColor: '#C41E3A',
-            highlightColor: '#C41E3A',
-            radicalColor: '#C41E3A',
-            outlineColor: '#E0E0E0'
+            strokeColor: '#22A559',
+            drawingColor: '#2D6CDF',
+            highlightColor: '#22A559',
+            radicalColor: '#DDDDDD',
+            outlineColor: '#DDDDDD'
         });
         canvasHanziWriter.quiz({
-            strokeColor: '#C41E3A',
-            radicalColor: '#C41E3A',
-            outlineColor: '#E0E0E0',
+            strokeColor: '#22A559',
+            radicalColor: '#DDDDDD',
+            outlineColor: '#DDDDDD',
             strokeTolerance: strokeTolerance,
             showOutline: showOutline,
             showCharacter: showCharacter,
@@ -1577,14 +1577,14 @@ function startHanziQuiz(character) {
             onCorrectStroke: (strokeData) => {
                 requestAnimationFrame(() => {
                     canvasHanziWriter.highlightStroke(strokeData.strokeNum, {
-                        strokeColor: '#C41E3A',
+                        strokeColor: '#22A559',
                         duration: 0
                     });
                     drawingCanvas.querySelectorAll('svg path').forEach(path => {
                         path.style.opacity = '1';
                         if (path.dataset.strokeNum === String(strokeData.strokeNum)) {
-                            path.style.fill = '#C41E3A';
-                            path.style.stroke = '#C41E3A';
+                            path.style.fill = '#22A559';
+                            path.style.stroke = '#22A559';
                         }
                     });
                 });
