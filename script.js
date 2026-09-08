@@ -574,6 +574,7 @@ let isEraserActive = false;
 let currentStrokeIndex = 0;
 let expectedStrokeCount = 0;
 let userStrokes = [];
+let autoAdvanceTimer = null;
 
 // DOM Elements
 const themeToggle = document.getElementById('themeToggle');
@@ -835,9 +836,6 @@ function setupEventListeners() {
         hideSuccessModal();
         nextCanvasCharacter();
     });
-
-    // Canvas controls - fallback Next Word button
-    nextCanvasWord.addEventListener('click', nextCanvasCharacter);
 
     // Canvas Hint button
     canvasHintBtn.addEventListener('click', () => {
@@ -1485,6 +1483,11 @@ function loadCanvasCharacter() {
 }
 
 function nextCanvasCharacter() {
+    // Clear any pending auto-advance timer to prevent double-advance
+    if (autoAdvanceTimer) {
+        clearTimeout(autoAdvanceTimer);
+        autoAdvanceTimer = null;
+    }
     const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.lesson === canvasLesson);
     if (!words.length) return;
     canvasWordIndex = (canvasWordIndex + 1) % words.length;
@@ -1532,6 +1535,23 @@ function startHanziQuiz(character) {
         }
         drawingCanvas.innerHTML = '';
         resizeCanvas();
+        
+        // Configure quiz options based on writing mode
+        let showOutline, showCharacter, strokeTolerance;
+        if (canvasWritingMode === 'trace') {
+            showOutline = true;
+            showCharacter = false;
+            strokeTolerance = 1.8;
+        } else if (canvasWritingMode === 'copy') {
+            showOutline = true;
+            showCharacter = false;
+            strokeTolerance = 2.5; // More lenient for copy mode
+        } else if (canvasWritingMode === 'freehand') {
+            showOutline = false;
+            showCharacter = false;
+            strokeTolerance = 1.8;
+        }
+        
         canvasHanziWriter = HanziWriter.create(drawingCanvas, char, {
             width: drawingCanvas.clientWidth || 280,
             height: drawingCanvas.clientWidth || 280,
@@ -1540,9 +1560,9 @@ function startHanziQuiz(character) {
             strokeWidth: 14,
             drawingWidth: 24,
             outlineWidth: 2,
-            strokeTolerance: 1.8,
-            showOutline: true,
-            showCharacter: false,
+            strokeTolerance: strokeTolerance,
+            showOutline: showOutline,
+            showCharacter: showCharacter,
             strokeColor: '#C41E3A',
             drawingColor: '#C41E3A',
             highlightColor: '#C41E3A',
@@ -1553,9 +1573,9 @@ function startHanziQuiz(character) {
             strokeColor: '#C41E3A',
             radicalColor: '#C41E3A',
             outlineColor: '#E0E0E0',
-            strokeTolerance: 1.8,
-            showOutline: true,
-            showCharacter: false,
+            strokeTolerance: strokeTolerance,
+            showOutline: showOutline,
+            showCharacter: showCharacter,
             showHintAfterMisses: 1,
             highlightOnComplete: true,
             onCorrectStroke: (strokeData) => {
@@ -1591,7 +1611,7 @@ function startHanziQuiz(character) {
                 updateStreak();
                 showSuccessModal();
                 // Auto-advance to next word after 1.2 seconds
-                setTimeout(() => {
+                autoAdvanceTimer = setTimeout(() => {
                     const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.lesson === canvasLesson);
                     if (words.length > 0 && canvasWordIndex < words.length - 1) {
                         loadNextWord();
