@@ -575,6 +575,7 @@ let currentStrokeIndex = 0;
 let expectedStrokeCount = 0;
 let userStrokes = [];
 let autoAdvanceTimer = null;
+let quizSessionId = 0;
 
 // DOM Elements
 const themeToggle = document.getElementById('themeToggle');
@@ -1515,6 +1516,9 @@ function showTraceGuide() {
 }
 
 function startHanziQuiz(character) {
+    // Increment session ID to prevent stale callbacks from previous characters
+    const sessionId = ++quizSessionId;
+    
     // Reset stroke tracking
     currentStrokeIndex = 0;
     userStrokes = [];
@@ -1576,6 +1580,9 @@ function startHanziQuiz(character) {
             highlightOnComplete: true,
             onCorrectStroke: (strokeData) => {
                 requestAnimationFrame(() => {
+                    // Ignore stale callbacks from previous character sessions
+                    if (sessionId !== quizSessionId) return;
+                    
                     canvasHanziWriter.highlightStroke(strokeData.strokeNum, {
                         strokeColor: '#22A559',
                         duration: 0
