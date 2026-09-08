@@ -647,7 +647,6 @@ const mobileModeOptions = document.querySelectorAll('.mobile-mode-option');
 const canvasAudioBtn = document.getElementById('canvasAudioBtn');
 const canvasEraserBtn = document.getElementById('canvasEraserBtn');
 const canvasHintBtn = document.getElementById('canvasHintBtn');
-const canvasCheckBtn = document.getElementById('canvasCheckBtn');
 const modeInstructions = document.getElementById('modeInstructions');
 const canvasFeedback = document.getElementById('canvasFeedback');
 const canvasScoreElement = document.getElementById('canvasScore');
@@ -813,7 +812,6 @@ function setupEventListeners() {
     // Canvas action buttons
     canvasAudioBtn.addEventListener('click', playCanvasAudio);
     canvasEraserBtn.addEventListener('click', toggleEraser);
-    canvasCheckBtn.addEventListener('click', checkCanvasDrawing);
     nextCanvasWord.addEventListener('click', nextCanvasCharacter);
 
     // Profile modal controls
@@ -845,11 +843,11 @@ function setupEventListeners() {
     });
 
     // Leaderboard modal controls
-    closeLeaderboardModal.addEventListener('click', hideLeaderboardModal);
+    closeLeaderboard.addEventListener('click', hideLeaderboardModal);
     
     // Direct event listener for leaderboard button
     document.getElementById('leaderboard-btn').addEventListener('click', () => {
-        document.getElementById('leaderboard-modal').classList.remove('hidden');
+        document.getElementById('leaderboardModal').classList.remove('hidden');
         showLeaderboard();
     });
 
@@ -905,6 +903,14 @@ function loadExternalVocabulary() {
             vocabularyData.push(...additions);
         })
         .catch(error => console.warn('Using built-in vocabulary:', error.message));
+}
+
+function showLeaderboard() {
+    populateLeaderboard();
+}
+
+function hideLeaderboardModal() {
+    leaderboardModal.classList.add('hidden');
 }
 
 function populateLeaderboard() {
@@ -1529,10 +1535,6 @@ function startHanziQuiz(character) {
             canvasHanziWriter = null;
         }
         // Clear innerHTML to prevent duplicate SVG layers
-        const characterTarget = document.getElementById('character-target');
-        if (characterTarget) {
-            characterTarget.innerHTML = '';
-        }
         drawingCanvas.innerHTML = '';
         resizeCanvas();
         
@@ -1552,7 +1554,7 @@ function startHanziQuiz(character) {
             strokeTolerance = 1.8;
         }
         
-        canvasHanziWriter = HanziWriter.create(drawingCanvas, char, {
+        canvasHanziWriter = HanziWriter.create(drawingCanvas, character, {
             width: drawingCanvas.clientWidth || 280,
             height: drawingCanvas.clientWidth || 280,
             padding: 20,
@@ -1683,10 +1685,6 @@ function toggleEraser() {
     }
 }
 
-function checkCanvasDrawing() {
-    canvasFeedback.textContent = 'Complete the guided strokes to earn points.';
-    canvasFeedback.className = 'canvas-feedback';
-}
 
 function initializeCanvas() {
     // HanziWriter handles all touch/mouse events natively via quiz mode
