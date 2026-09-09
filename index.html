@@ -168,7 +168,6 @@
         <!-- Canvas View -->
         <section id="canvas" class="view">
             <button class="back-btn" id="backToLessonsFromCanvas">← Back to Lessons</button>
-            <h2 class="section-title">Character Practice</h2>
             
             <div class="canvas-layout">
                 <!-- Side Menu -->
@@ -216,19 +215,59 @@
                             <button class="mobile-mode-option" data-mode="freehand" type="button">Freehand</button>
                         </div>
                     </div>
-                    <div class="canvas-character-display">
-                        <span class="char-display" id="canvasCharacter">你</span>
+                    
+                    <!-- New Duolingo-style Canvas Header -->
+                    <div class="canvas-header">
+                        <div class="canvas-category">Trace Practice</div>
+                        <div class="canvas-prompt-row">
+                            <div class="canvas-meaning" id="canvasMeaning">You</div>
+                            <button class="canvas-audio-btn" id="canvasAudioBtn" type="button" aria-label="Play pronunciation">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="canvas-pinyin" id="canvasPinyin">nǐ</div>
                     </div>
                     
+                    <!-- Tianzige Grid Canvas -->
                     <div class="canvas-wrapper">
+                        <div class="tianzige-grid">
+                            <div class="diagonal-1"></div>
+                            <div class="diagonal-2"></div>
+                        </div>
                         <div id="hanziWriterCanvas" class="drawing-canvas" aria-label="Chinese character writing practice"></div>
-                        
+                        <div class="combo-display" id="comboDisplay">
+                            <span class="combo-text">Combo x2</span>
+                            <span class="combo-sparkle">✨</span>
+                        </div>
                     </div>
-                    <div class="canvas-actions" aria-label="Canvas actions">
-                        <button class="canvas-action-btn" id="canvasHintBtn" type="button"><span aria-hidden="true">💡</span> Hint</button>
-                        <button class="canvas-action-btn" id="canvasEraserBtn" type="button"><span aria-hidden="true">🧹</span> Clear</button>
-                        <button class="canvas-action-btn" id="canvasAudioBtn" type="button"><span aria-hidden="true">🔊</span> Audio</button>
+                    
+                    <!-- Icon-only Control Buttons -->
+                    <div class="canvas-controls" aria-label="Canvas controls">
+                        <button class="canvas-control-btn" id="canvasPlayBtn" type="button" aria-label="Play stroke animation">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                        </button>
+                        <button class="canvas-control-btn" id="canvasClearBtn" type="button" aria-label="Clear canvas">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                        </button>
+                        <button class="canvas-control-btn" id="canvasHintBtn" type="button" aria-label="Show hint">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
                     </div>
+                    
+                    <!-- Continue Button -->
+                    <button class="canvas-continue-btn" id="canvasContinueBtn" type="button" style="display: none;">Continue</button>
                     
                     <div class="canvas-instructions">
                         <p id="modeInstructions">Trace the character by following the guide dots.</p>

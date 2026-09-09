@@ -576,6 +576,7 @@ let expectedStrokeCount = 0;
 let userStrokes = [];
 let autoAdvanceTimer = null;
 let quizSessionId = 0;
+let comboCount = 0;
 
 // DOM Elements
 const themeToggle = document.getElementById('themeToggle');
@@ -648,6 +649,12 @@ const mobileModeOptions = document.querySelectorAll('.mobile-mode-option');
 const canvasAudioBtn = document.getElementById('canvasAudioBtn');
 const canvasEraserBtn = document.getElementById('canvasEraserBtn');
 const canvasHintBtn = document.getElementById('canvasHintBtn');
+const canvasPlayBtn = document.getElementById('canvasPlayBtn');
+const canvasClearBtn = document.getElementById('canvasClearBtn');
+const canvasContinueBtn = document.getElementById('canvasContinueBtn');
+const canvasMeaning = document.getElementById('canvasMeaning');
+const canvasPinyin = document.getElementById('canvasPinyin');
+const comboDisplay = document.getElementById('comboDisplay');
 const modeInstructions = document.getElementById('modeInstructions');
 const canvasFeedback = document.getElementById('canvasFeedback');
 const canvasScoreElement = document.getElementById('canvasScore');
@@ -813,6 +820,16 @@ function setupEventListeners() {
     // Canvas action buttons
     canvasAudioBtn.addEventListener('click', playCanvasAudio);
     canvasEraserBtn.addEventListener('click', toggleEraser);
+    canvasPlayBtn.addEventListener('click', () => {
+        if (canvasHanziWriter) {
+            canvasHanziWriter.animateCharacter();
+        }
+    });
+    canvasClearBtn.addEventListener('click', toggleEraser);
+    canvasContinueBtn.addEventListener('click', () => {
+        canvasContinueBtn.style.display = 'none';
+        nextCanvasCharacter();
+    });
     nextCanvasWord.addEventListener('click', nextCanvasCharacter);
 
     // Profile modal controls
@@ -1476,9 +1493,13 @@ function loadCanvasCharacter() {
         const word = words[canvasWordIndex];
         const targetChar = word.hanzi.charAt(0);
         canvasCharacter.textContent = targetChar;
+        canvasMeaning.textContent = word.uzbek;
+        canvasPinyin.textContent = word.pinyin;
         canvasFeedback.textContent = '';
         canvasFeedback.className = 'canvas-feedback';
         nextCanvasWord.disabled = true;
+        canvasContinueBtn.style.display = 'none';
+        hideComboDisplay();
         showTraceGuide();
     }
 }
@@ -1599,6 +1620,9 @@ function startHanziQuiz(character) {
             onMistake: () => {
                 canvasFeedback.textContent = 'Almost. Follow the pale outline and try again.';
                 canvasFeedback.className = 'canvas-feedback';
+                // Reset combo on mistake
+                comboCount = 0;
+                hideComboDisplay();
             },
             onComplete: function(summary) {
                 canvasScore += 10;
@@ -1612,6 +1636,16 @@ function startHanziQuiz(character) {
                 nextCanvasWord.disabled = false;
                 addXP(10);
                 updateStreak();
+                
+                // Increment combo
+                comboCount++;
+                if (comboCount >= 2) {
+                    showComboDisplay(comboCount);
+                }
+                
+                // Show continue button
+                canvasContinueBtn.style.display = 'block';
+                
                 showSuccessModal();
                 // Auto-advance to next word after 1.2 seconds
                 autoAdvanceTimer = setTimeout(() => {
@@ -1684,6 +1718,20 @@ function toggleEraser() {
         canvasFeedback.textContent = 'Canvas cleared. Start the character again.';
         showTraceGuide();
     }
+}
+
+function showComboDisplay(count) {
+    comboDisplay.querySelector('.combo-text').textContent = `Combo x${count}`;
+    comboDisplay.classList.add('show');
+    
+    // Hide after 1.5 seconds
+    setTimeout(() => {
+        hideComboDisplay();
+    }, 1500);
+}
+
+function hideComboDisplay() {
+    comboDisplay.classList.remove('show');
 }
 
 
