@@ -194,8 +194,8 @@
                         <h3 class="sidebar-title">Writing Mode</h3>
                         <div class="mode-selector">
                             <button class="mode-option active" data-mode="trace">Trace</button>
-                            <button class="mode-option" data-mode="copy">Copy</button>
-                            <button class="mode-option" data-mode="freehand">Freehand</button>
+                            <button class="mode-option" data-mode="write">Write</button>
+                            <button class="mode-option" data-mode="test">Test</button>
                         </div>
                     </div>
                 </div>
@@ -211,8 +211,8 @@
                         <select class="canvas-mobile-select" id="canvasMobileLessonSelector" aria-label="Lesson"></select>
                         <div class="canvas-mobile-modes" role="group" aria-label="Writing mode">
                             <button class="mobile-mode-option active" data-mode="trace" type="button">Trace</button>
-                            <button class="mobile-mode-option" data-mode="copy" type="button">Copy</button>
-                            <button class="mobile-mode-option" data-mode="freehand" type="button">Freehand</button>
+                            <button class="mobile-mode-option" data-mode="write" type="button">Write</button>
+                            <button class="mobile-mode-option" data-mode="test" type="button">Test</button>
                         </div>
                     </div>
                     
@@ -259,6 +259,7 @@
                                 <line x1="10" y1="14" x2="21" y2="3"></line>
                             </svg>
                         </button>
+                        <button class="canvas-check-btn" id="canvasCheckBtn" type="button">Check</button>
                         <button class="canvas-control-btn" id="canvasHintBtn" type="button" aria-label="Show hint">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -268,14 +269,14 @@
                     </div>
                     
                     <!-- Continue Button -->
-                    <button class="canvas-continue-btn" id="canvasContinueBtn" type="button" style="display: none;">Continue</button>
+                    <button class="canvas-continue-btn" id="canvasContinueBtn" type="button" style="display: none;">Next Word →</button>
                     
                     <div class="canvas-instructions">
                         <p id="modeInstructions">Trace the character by following the guide dots.</p>
                         <p id="canvasFeedback" class="canvas-feedback" role="status" aria-live="polite"></p>
                         <div class="canvas-progress">
                             <span>Points: <strong id="canvasScore">0</strong></span>
-                            <button class="control-btn next-word-btn" id="nextCanvasWord" type="button" disabled>Next Word</button>
+                            <button class="control-btn next-word-btn" id="nextCanvasWord" type="button" disabled>Next Word →</button>
                         </div>
                     </div>
                 </div>

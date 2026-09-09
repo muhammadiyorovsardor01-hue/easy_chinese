@@ -568,7 +568,7 @@ let canvasHSK = 1;
 let canvasLesson = 1;
 let canvasWordIndex = 0;
 let canvasScore = 0;
-let canvasWritingMode = 'trace'; // trace, copy, freehand
+let canvasWritingMode = 'trace'; // trace, write, test
 let selectedAvatar = '👤';
 let isEraserActive = false;
 let currentStrokeIndex = 0;
@@ -650,7 +650,9 @@ const canvasAudioBtn = document.getElementById('canvasAudioBtn');
 const canvasHintBtn = document.getElementById('canvasHintBtn');
 const canvasPlayBtn = document.getElementById('canvasPlayBtn');
 const canvasClearBtn = document.getElementById('canvasClearBtn');
+const canvasCheckBtn = document.getElementById('canvasCheckBtn');
 const canvasContinueBtn = document.getElementById('canvasContinueBtn');
+const canvasCategory = document.querySelector('.canvas-category');
 const canvasMeaning = document.getElementById('canvasMeaning');
 const canvasPinyin = document.getElementById('canvasPinyin');
 const comboDisplay = document.getElementById('comboDisplay');
@@ -824,6 +826,7 @@ function setupEventListeners() {
         }
     });
     canvasClearBtn.addEventListener('click', toggleEraser);
+    canvasCheckBtn.addEventListener('click', checkCanvasDrawing);
     canvasContinueBtn.addEventListener('click', () => {
         canvasContinueBtn.style.display = 'none';
         nextCanvasCharacter();
@@ -1496,6 +1499,7 @@ function loadCanvasCharacter() {
         canvasFeedback.textContent = '';
         canvasFeedback.className = 'canvas-feedback';
         nextCanvasWord.disabled = true;
+        nextCanvasWord.style.display = 'none';
         canvasContinueBtn.style.display = 'none';
         hideComboDisplay();
         showTraceGuide();
@@ -1517,10 +1521,12 @@ function nextCanvasCharacter() {
 function updateModeInstructions() {
     const instructions = {
         'trace': 'Trace the character by following the guide dots.',
-        'copy': 'Copy the character by looking at the reference above.',
-        'freehand': 'Practice writing the character freely.'
+        'write': 'Write the character by looking at the reference above.',
+        'test': 'Write the character from memory.'
     };
     modeInstructions.textContent = instructions[canvasWritingMode];
+    canvasCategory.textContent = `${canvasWritingMode.charAt(0).toUpperCase()}${canvasWritingMode.slice(1)} Practice`;
+    canvasCharacter.classList.toggle('reference-hidden', canvasWritingMode === 'test');
 }
 
 function applyWritingMode() {
@@ -1558,7 +1564,7 @@ function startHanziQuiz(character) {
         const showStrokeGuide = canvasWritingMode === 'trace';
         const guideColor = 'rgba(28, 176, 246, 0.24)';
         const drawingColor = '#1CB0F6';
-        const strokeTolerance = canvasWritingMode === 'copy' ? 2.5 : 1.8;
+        const strokeTolerance = canvasWritingMode === 'write' ? 2.5 : 1.8;
         let quizCompleted = false;
         const showNextStrokeGuide = (strokeNum) => {
             if (!showStrokeGuide || !canvasHanziWriter) return;
@@ -1598,13 +1604,17 @@ function startHanziQuiz(character) {
             showHintAfterMisses: showStrokeGuide ? 1 : Infinity,
             highlightOnComplete: true,
             onCorrectStroke: (strokeData) => {
+                const completedStrokes = strokeData.strokeNum + 1;
+                const totalStrokes = completedStrokes + strokeData.strokesRemaining;
+                canvasFeedback.textContent = `Good stroke! ${completedStrokes} / ${totalStrokes} strokes`;
+                canvasFeedback.className = 'canvas-feedback success';
                 setTimeout(() => {
                     if (sessionId !== quizSessionId || quizCompleted) return;
                     showNextStrokeGuide(strokeData.strokeNum + 1);
                 }, 0);
             },
             onMistake: () => {
-                canvasFeedback.textContent = 'Almost. Follow the pale outline and try again.';
+                canvasFeedback.textContent = 'Not quite. Try that stroke again.';
                 canvasFeedback.className = 'canvas-feedback';
                 // Reset combo on mistake
                 comboCount = 0;
@@ -1621,6 +1631,7 @@ function startHanziQuiz(character) {
                 canvasFeedback.textContent = 'Great work! Character complete. +10 points';
                 canvasFeedback.className = 'canvas-feedback success';
                 nextCanvasWord.disabled = false;
+                nextCanvasWord.style.display = 'inline-flex';
                 addXP(10);
                 updateStreak();
                 
@@ -1634,16 +1645,6 @@ function startHanziQuiz(character) {
                 canvasContinueBtn.style.display = 'block';
                 
                 showSuccessModal();
-                // Auto-advance to next word after 1.2 seconds
-                autoAdvanceTimer = setTimeout(() => {
-                    const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.lesson === canvasLesson);
-                    if (words.length > 0 && canvasWordIndex < words.length - 1) {
-                        loadNextWord();
-                    } else {
-                        canvasFeedback.textContent = '🎉 Lesson complete! Great job!';
-                        canvasFeedback.className = 'canvas-feedback success';
-                    }
-                }, 1200);
             }
         });
         if (typeof canvasHanziWriter.hideOutline === 'function') {
@@ -1711,6 +1712,17 @@ function toggleEraser() {
     }
 }
 
+function checkCanvasDrawing() {
+    if (!canvasHanziWriter) return;
+    if (nextCanvasWord.disabled) {
+        canvasFeedback.textContent = 'Keep writing until all strokes are complete.';
+        canvasFeedback.className = 'canvas-feedback';
+    } else {
+        canvasFeedback.textContent = 'Character complete. You can continue to the next word.';
+        canvasFeedback.className = 'canvas-feedback success';
+    }
+}
+
 function showComboDisplay(count) {
     comboDisplay.querySelector('.combo-text').textContent = `Combo x${count}`;
     comboDisplay.classList.add('show');
@@ -1733,15 +1745,26 @@ function initializeCanvas() {
 }
 
 function resizeCanvas() {
-  const canvas = document.getElementById('hanziWriterCanvas');
-  if (!canvas || !canvas.parentElement) return;
+        const canvas = document.getElementById('hanziWriterCanvas');
+        if (!canvas || !canvas.parentElement) return;
 
-  const containerWidth = canvas.parentElement.getBoundingClientRect().width;
-  const size = Math.min(Math.max(containerWidth - 32, 0), 320);
-  canvas.style.width = `${size}px`;
-  canvas.style.height = `${size}px`;
+        const wrapper = canvas.parentElement;
+        const wrapperStyles = getComputedStyle(wrapper);
+        const horizontalPadding = parseFloat(wrapperStyles.paddingLeft) + parseFloat(wrapperStyles.paddingRight);
+        const availableWidth = wrapper.getBoundingClientRect().width - horizontalPadding;
+        const availableHeight = window.innerHeight - 300;
+        const compactViewport = window.innerWidth <= 768 && window.innerHeight >= 600;
+        const compactHeightLimit = window.innerHeight - 600;
+        const heightLimit = compactViewport
+            ? Math.max(220, compactHeightLimit)
+            : window.innerHeight >= 600
+                ? availableHeight
+                : Number.POSITIVE_INFINITY;
+        const size = Math.max(0, Math.min(availableWidth, heightLimit, 560));
+        canvas.style.width = `${size}px`;
+        canvas.style.height = `${size}px`;
     if (canvasHanziWriter && size > 0) {
-            canvasHanziWriter.updateDimensions({ width: size, height: size });
+                canvasHanziWriter.updateDimensions({ width: size, height: size });
     }
 }
 
