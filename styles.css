@@ -1572,11 +1572,6 @@ body {
     touch-action: none;
 }
 
-.drawing-canvas svg path,
-.canvas-container svg path {
-    opacity: 1 !important;
-}
-
 /* Ensure modals don't block underlying interactions when hidden */
 .modal {
     pointer-events: none;

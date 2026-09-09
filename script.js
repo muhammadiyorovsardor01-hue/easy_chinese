@@ -647,7 +647,6 @@ const hskOptions = document.querySelectorAll('.hsk-option');
 const modeOptions = document.querySelectorAll('.mode-option');
 const mobileModeOptions = document.querySelectorAll('.mobile-mode-option');
 const canvasAudioBtn = document.getElementById('canvasAudioBtn');
-const canvasEraserBtn = document.getElementById('canvasEraserBtn');
 const canvasHintBtn = document.getElementById('canvasHintBtn');
 const canvasPlayBtn = document.getElementById('canvasPlayBtn');
 const canvasClearBtn = document.getElementById('canvasClearBtn');
@@ -819,7 +818,6 @@ function setupEventListeners() {
 
     // Canvas action buttons
     canvasAudioBtn.addEventListener('click', playCanvasAudio);
-    canvasEraserBtn.addEventListener('click', toggleEraser);
     canvasPlayBtn.addEventListener('click', () => {
         if (canvasHanziWriter) {
             canvasHanziWriter.animateCharacter();
@@ -1557,22 +1555,16 @@ function startHanziQuiz(character) {
         drawingCanvas.innerHTML = '';
         resizeCanvas();
         
-        // Configure quiz options based on writing mode
-        let showOutline, showCharacter, strokeTolerance;
-        if (canvasWritingMode === 'trace') {
-            showOutline = true;
-            showCharacter = false;
-            strokeTolerance = 1.8;
-        } else if (canvasWritingMode === 'copy') {
-            showOutline = true;
-            showCharacter = false;
-            strokeTolerance = 2.5; // More lenient for copy mode
-        } else if (canvasWritingMode === 'freehand') {
-            showOutline = false;
-            showCharacter = false;
-            strokeTolerance = 1.8;
-        }
-        
+        const showStrokeGuide = canvasWritingMode === 'trace';
+        const guideColor = 'rgba(28, 176, 246, 0.24)';
+        const drawingColor = '#1CB0F6';
+        const strokeTolerance = canvasWritingMode === 'copy' ? 2.5 : 1.8;
+        let quizCompleted = false;
+        const showNextStrokeGuide = (strokeNum) => {
+            if (!showStrokeGuide || !canvasHanziWriter) return;
+            canvasHanziWriter.highlightStroke(strokeNum);
+        };
+
         canvasHanziWriter = HanziWriter.create(drawingCanvas, character, {
             width: 300,
             height: 300,
@@ -1581,44 +1573,35 @@ function startHanziQuiz(character) {
             strokeWidth: 14,
             drawingWidth: 26,
             outlineWidth: 2,
-            strokeTolerance: strokeTolerance,
-            showOutline: true,
-            showCharacter: showCharacter,
+            strokeTolerance,
+            showOutline: false,
+            showCharacter: false,
             strokeColor: '#3C3C3C',
-            drawingColor: '#1CB0F6',
-            highlightColor: '#22A559',
+            drawingColor,
+            highlightColor: guideColor,
             radicalColor: '#58CC02',
-            outlineColor: '#E5E5E5'
+            outlineColor: 'rgba(229, 229, 229, 0)',
+            showHintAfterMisses: showStrokeGuide ? 1 : Infinity
         });
         canvasHanziWriter.quiz({
+            drawingColor,
             strokeColor: '#3C3C3C',
             radicalColor: '#58CC02',
-            outlineColor: '#E5E5E5',
-            strokeTolerance: 1.8,
-            showOutline: showOutline,
-            showCharacter: showCharacter,
+            outlineColor: 'rgba(229, 229, 229, 0)',
+            strokeTolerance,
+            showOutline: false,
+            showCharacter: false,
+            highlightColor: guideColor,
             strokeAnimationSpeed: 1,
             delayBetweenStrokes: 150,
             strokeHighlightSpeed: 2,
-            showHintAfterMisses: 2,
+            showHintAfterMisses: showStrokeGuide ? 1 : Infinity,
             highlightOnComplete: true,
             onCorrectStroke: (strokeData) => {
-                requestAnimationFrame(() => {
-                    // Ignore stale callbacks from previous character sessions
-                    if (sessionId !== quizSessionId) return;
-                    
-                    canvasHanziWriter.highlightStroke(strokeData.strokeNum, {
-                        strokeColor: '#22A559',
-                        duration: 0
-                    });
-                    drawingCanvas.querySelectorAll('svg path').forEach(path => {
-                        path.style.opacity = '1';
-                        if (path.dataset.strokeNum === String(strokeData.strokeNum)) {
-                            path.style.fill = '#22A559';
-                            path.style.stroke = '#22A559';
-                        }
-                    });
-                });
+                setTimeout(() => {
+                    if (sessionId !== quizSessionId || quizCompleted) return;
+                    showNextStrokeGuide(strokeData.strokeNum + 1);
+                }, 0);
             },
             onMistake: () => {
                 canvasFeedback.textContent = 'Almost. Follow the pale outline and try again.';
@@ -1628,6 +1611,7 @@ function startHanziQuiz(character) {
                 hideComboDisplay();
             },
             onComplete: function(summary) {
+                quizCompleted = true;
                 canvasScore += 10;
                 canvasScoreElement.textContent = canvasScore;
                 dailyProgress.traces += 1;
@@ -1662,6 +1646,10 @@ function startHanziQuiz(character) {
                 }, 1200);
             }
         });
+        if (typeof canvasHanziWriter.hideOutline === 'function') {
+            canvasHanziWriter.hideOutline({ duration: 0 });
+        }
+        showNextStrokeGuide(0);
     } catch (error) {
         console.error('Error starting Hanzi quiz:', error);
     }
