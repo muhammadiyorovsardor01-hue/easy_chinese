@@ -1336,25 +1336,25 @@ body {
 }
 
 .canvas-audio-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: #FFB020;
-    border: none;
-    color: #1a1a1a;
-    cursor: pointer;
+    padding: 12px 20px;
+    border-radius: 12px;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #FFB020;
+    border: none;
+    color: #1a1a1a;
+    cursor: pointer;
     transition: transform 0.2s ease;
 }
 
 .canvas-audio-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .canvas-audio-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
 }
 
 .canvas-pinyin {
@@ -1547,10 +1547,9 @@ body {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
-    width: 100%;
-    max-width: 320px;
-    aspect-ratio: 1 / 1;
-    height: auto;
+    width: 300px;
+    height: 300px;
+    max-width: 100%;
 }
 
 .drawing-canvas svg,

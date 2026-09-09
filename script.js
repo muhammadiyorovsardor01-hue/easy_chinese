@@ -1574,8 +1574,8 @@ function startHanziQuiz(character) {
         }
         
         canvasHanziWriter = HanziWriter.create(drawingCanvas, character, {
-            width: drawingCanvas.clientWidth || 280,
-            height: drawingCanvas.clientWidth || 280,
+            width: 300,
+            height: 300,
             padding: 20,
             strokeAnimationSpeed: 1,
             strokeWidth: 14,
