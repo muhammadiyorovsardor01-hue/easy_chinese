@@ -3297,8 +3297,8 @@ body {
 }
 
 #canvas {
-    min-height: calc(100vh - var(--bottom-nav-space));
-    padding-bottom: calc(var(--bottom-nav-space) + env(safe-area-inset-bottom));
+    min-height: 0;
+    padding-bottom: 1rem;
 }
 
 #canvas .canvas-main {
@@ -3312,10 +3312,6 @@ body {
 @media (max-height: 600px) {
     body {
         overflow-y: auto;
-    }
-
-    #canvas {
-        min-height: max(100vh, 760px);
     }
 
     #canvas .canvas-layout {
@@ -3436,8 +3432,100 @@ body {
 
 @media (max-width: 768px) {
     #canvas .drawing-canvas {
-        width: min(100%, clamp(220px, calc(100vh - 600px), 560px)) !important;
+        width: min(100%, 560px, max(220px, calc(100svh - 430px))) !important;
         height: auto !important;
         aspect-ratio: 1;
+    }
+}
+
+/* Keep the exercise fluid without forcing a viewport-height panel. */
+#canvas .canvas-layout {
+    width: 100%;
+    max-width: 1200px;
+    margin-top: clamp(1rem, 2vw, 2rem);
+}
+
+#canvas .canvas-wrapper {
+    min-height: 0;
+}
+
+#canvas .drawing-canvas {
+    width: min(100%, 560px, calc(100vh - 70px)) !important;
+    height: auto !important;
+    aspect-ratio: 1;
+}
+
+@media (max-width: 960px) and (min-width: 769px) {
+    #canvas .canvas-layout {
+        grid-template-columns: 1fr;
+    }
+
+    #canvas .canvas-sidebar {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    #canvas .sidebar-section,
+    #canvas .sidebar-section:last-child {
+        margin-bottom: 0;
+    }
+
+    #canvas .mode-selector {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    #canvas .canvas-layout {
+        grid-template-columns: 1fr;
+    }
+
+    #canvas .canvas-wrapper {
+        width: 100%;
+        max-width: 560px !important;
+        padding: clamp(0.5rem, 2vw, 0.75rem);
+    }
+}
+
+@media (max-height: 600px) {
+    #canvas .drawing-canvas {
+        width: min(100%, 320px) !important;
+    }
+}
+
+@media (min-width: 961px) and (min-height: 601px) and (max-height: 800px) {
+    #canvas {
+        padding-bottom: 0;
+    }
+
+    #canvas .canvas-layout {
+        grid-template-columns: minmax(13rem, 14rem) minmax(0, 1fr);
+    }
+
+    #canvas .canvas-header {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    #canvas .canvas-category {
+        margin-bottom: 0.4rem;
+    }
+
+    #canvas .canvas-prompt-row {
+        margin-bottom: 0.25rem;
+    }
+
+    #canvas .canvas-wrapper {
+        padding: 0.25rem;
+    }
+
+    #canvas .drawing-canvas {
+        width: min(100%, 420px) !important;
+    }
+
+    #canvas .canvas-controls {
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
     }
 }
