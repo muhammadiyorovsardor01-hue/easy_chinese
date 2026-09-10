@@ -541,7 +541,11 @@ let quizAnswered = false;
 let quizType = 'meaning';
 let hanziWriter = null;
 let learnedWords = JSON.parse(localStorage.getItem('learnedWords')) || [];
-let currentHSKFilter = 'all';
+const lessonTracks = {
+    classic: { minLesson: 1, maxLesson: 15 },
+    new: { minLesson: 16, maxLesson: 30 }
+};
+let currentLessonTrack = 'classic';
 let searchQuery = '';
 let streakData = JSON.parse(localStorage.getItem('streakData')) || {
     streak: 0,
@@ -725,10 +729,10 @@ function setupEventListeners() {
         });
     });
 
-    // HSK filter buttons
+    // HSK 1 lesson version buttons
     hskFilterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-            currentHSKFilter = btn.dataset.hsk;
+            currentLessonTrack = btn.dataset.track;
             hskFilterBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             filterAndSearchLessons();
@@ -979,12 +983,12 @@ function showDashboard() {
 function showLessonsView() {
     lessonsTitle.textContent = `HSK ${currentHSK} Lessons`;
     // Reset filter and search when entering lessons view
-    currentHSKFilter = 'all';
+    currentLessonTrack = 'classic';
     searchQuery = '';
     searchInput.value = '';
     searchClear.classList.remove('visible');
     hskFilterBtns.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.hsk === 'all');
+        btn.classList.toggle('active', btn.dataset.track === currentLessonTrack);
     });
     generateLessonsGrid();
     showView(lessons);
@@ -1017,12 +1021,15 @@ function showLessonView(lessonNumber) {
 function generateLessonsGrid() {
     lessonsGrid.innerHTML = '';
     
-    // Get all unique lessons for current HSK level
+    const selectedTrack = lessonTracks[currentLessonTrack];
+
+    // Get lessons for the selected HSK version.
     let filteredWords = vocabularyData.filter(word => word.hsk === currentHSK);
-    
-    // Apply HSK filter
-    if (currentHSKFilter !== 'all') {
-        filteredWords = filteredWords.filter(word => word.hsk === parseInt(currentHSKFilter));
+
+    if (selectedTrack) {
+        filteredWords = filteredWords.filter(word =>
+            word.lesson >= selectedTrack.minLesson && word.lesson <= selectedTrack.maxLesson
+        );
     }
     
     // Apply search filter
