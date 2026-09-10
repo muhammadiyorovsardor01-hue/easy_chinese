@@ -3451,8 +3451,8 @@ body {
 
 #canvas .drawing-canvas {
     width: min(100%, 560px, calc(100vh - 70px)) !important;
-    height: auto !important;
-    aspect-ratio: 1;
+    height: 520px !important;
+    aspect-ratio: auto;
 }
 
 @media (max-width: 960px) and (min-width: 769px) {
@@ -3522,10 +3522,18 @@ body {
 
     #canvas .drawing-canvas {
         width: min(100%, 420px) !important;
+        height: 360px !important;
     }
 
     #canvas .canvas-controls {
         margin-top: 0.5rem;
         margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    #canvas .drawing-canvas {
+        height: auto !important;
+        aspect-ratio: 1;
     }
 }
