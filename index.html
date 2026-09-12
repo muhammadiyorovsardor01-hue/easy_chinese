@@ -132,6 +132,7 @@
                 <div class="card-counter">
                     <span id="currentCard">1</span> / <span id="totalCards">5</span>
                     <span class="learned-counter">Learned: <span id="learnedCount">0</span></span>
+                    <span class="word-progress" id="wordProgress" aria-live="polite">Word 1 of 5</span>
                 </div>
             </div>
 
@@ -188,6 +189,14 @@
                         </select>
                     </div>
                     
+                    <div class="sidebar-section" id="canvasTrackSection">
+                        <h3 class="sidebar-title">Version</h3>
+                        <select class="lesson-selector" id="canvasTrackSelector" aria-label="Curriculum version">
+                            <option value="classic">Classic HSK</option>
+                            <option value="new">New HSK 3.0</option>
+                        </select>
+                    </div>
+                    
                     <div class="sidebar-section">
                         <h3 class="sidebar-title">Writing Mode</h3>
                         <div class="mode-selector">
@@ -205,6 +214,10 @@
                             <option value="1">HSK 1</option>
                             <option value="2">HSK 2</option>
                             <option value="3">HSK 3</option>
+                        </select>
+                        <select class="canvas-mobile-select" id="canvasMobileTrackSelector" aria-label="Curriculum version">
+                            <option value="classic">Classic HSK</option>
+                            <option value="new">New HSK 3.0</option>
                         </select>
                         <select class="canvas-mobile-select" id="canvasMobileLessonSelector" aria-label="Lesson"></select>
                         <div class="canvas-mobile-modes" role="group" aria-label="Writing mode">
@@ -325,6 +338,15 @@
                         </div>
                         <div class="hsk-progress-bar">
                             <div class="hsk-progress-fill" id="hsk1Fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="hsk-progress-item">
+                        <div class="hsk-progress-label">
+                            <span>New HSK 3.0</span>
+                            <span class="hsk-progress-percent" id="newHskPercent">0%</span>
+                        </div>
+                        <div class="hsk-progress-bar">
+                            <div class="hsk-progress-fill" id="newHskFill" style="width: 0%"></div>
                         </div>
                     </div>
                     <div class="hsk-progress-item">
