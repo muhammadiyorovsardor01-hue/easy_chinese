@@ -662,6 +662,8 @@ const hsk1Fill = document.getElementById('hsk1Fill');
 const hsk2Fill = document.getElementById('hsk2Fill');
 const hsk3Fill = document.getElementById('hsk3Fill');
 const newHskFill = document.getElementById('newHskFill');
+const hsk1Count = document.getElementById('hsk1Count');
+const newHskCount = document.getElementById('newHskCount');
 const achievementsGrid = document.getElementById('achievementsGrid');
 const dailyQuests = document.getElementById('dailyQuests');
 const canvasLessonSelector = document.getElementById('canvasLessonSelector');
@@ -1376,6 +1378,8 @@ function updateDailyQuests() {
         const target = quest.dataset.quest === 'traces' ? 3 : 50;
         quest.querySelector('.quest-progress').textContent = value;
         quest.querySelector('.quest-status').textContent = `${Math.round((value / target) * 100)}%`;
+        // Feed the same percentage to the card's mini progress bar (display only).
+        quest.style.setProperty('--quest-progress', `${Math.round((value / target) * 100)}%`);
         quest.classList.toggle('complete', value >= target);
     });
 }
@@ -2000,6 +2004,11 @@ function updateHSKProgress() {
     hsk2Percent.textContent = `${hsk2PercentVal}%`;
     hsk3Percent.textContent = `${hsk3PercentVal}%`;
     newHskPercent.textContent = `${newHskPercentVal}%`;
+    
+    // Learned / total word counts for the two active tracks (display only —
+    // the progress calculation above is unchanged).
+    hsk1Count.textContent = `${hsk1Learned} / ${hsk1Words} words`;
+    newHskCount.textContent = `${newHskLearned} / ${newHskWords} words`;
     
     hsk1Fill.style.width = `${hsk1PercentVal}%`;
     hsk2Fill.style.width = `${hsk2PercentVal}%`;
