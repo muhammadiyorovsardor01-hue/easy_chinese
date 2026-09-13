@@ -592,6 +592,7 @@ let canvasWordIndex = 0;
 let canvasScore = 0;
 let canvasWritingMode = 'trace'; // trace, write, test
 let selectedAvatar = '👤';
+let selectedAvatarPref = 'emoji'; // 'emoji' or 'google' (Google photo, Phase 1 auth)
 let isEraserActive = false;
 let currentStrokeIndex = 0;
 let expectedStrokeCount = 0;
@@ -700,6 +701,8 @@ const saveProfileBtn = document.getElementById('saveProfileBtn');
 const usernameInput = document.getElementById('usernameInput');
 const dailyGoalInput = document.getElementById('dailyGoalInput');
 const avatarOptions = document.querySelectorAll('.avatar-option');
+const avatarPrefOptions = document.querySelectorAll('.avatar-pref-option');
+const avatarPrefHint = document.getElementById('avatarPrefHint');
 const successModal = document.getElementById('successModal');
 const closeSuccessModal = document.getElementById('closeSuccessModal');
 const nextWordFromModal = document.getElementById('nextWordFromModal');
@@ -894,6 +897,18 @@ function setupEventListeners() {
             avatarOptions.forEach(opt => opt.classList.remove('selected'));
             option.classList.add('selected');
             selectedAvatar = option.dataset.avatar;
+            // Picking an emoji avatar also switches the preference to emoji
+            selectedAvatarPref = 'emoji';
+            syncAvatarPrefUI();
+        });
+    });
+
+    // Avatar preference (Google photo vs emoji) — Phase 1 auth
+    avatarPrefOptions.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (btn.disabled) return;
+            selectedAvatarPref = btn.dataset.pref;
+            syncAvatarPrefUI();
         });
     });
 
@@ -1927,28 +1942,54 @@ function updateProfileStats() {
 }
 
 function loadProfileData() {
-    const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+    let profileData = JSON.parse(localStorage.getItem('profileData')) || {
         username: 'Chinese Learner',
         avatar: '👤',
         dailyGoal: 10
     };
+    if (window.EasyAuth && window.EasyAuth.normalizeProfile) {
+        profileData = EasyAuth.normalizeProfile(profileData);
+    }
     
     profileUsername.textContent = profileData.username;
     profileAvatar.textContent = profileData.avatar;
     dailyGoalDisplay.textContent = profileData.dailyGoal;
     selectedAvatar = profileData.avatar;
+    
+    // Phase 1 auth: if signed in with Google, re-render the identity
+    // (display name and profile photo) on top of the stored profile.
+    if (window.EasyAuth && window.EasyAuth.available) {
+        window.EasyAuth.refreshIdentity();
+    }
 }
 
 function openProfileModal() {
-    const profileData = JSON.parse(localStorage.getItem('profileData')) || {
+    let profileData = JSON.parse(localStorage.getItem('profileData')) || {
         username: 'Chinese Learner',
         avatar: '👤',
-        dailyGoal: 10
+        dailyGoal: 10,
+        nickname: '',
+        avatarPref: 'emoji'
     };
+    if (window.EasyAuth && window.EasyAuth.normalizeProfile) {
+        profileData = EasyAuth.normalizeProfile(profileData);
+    }
     
-    usernameInput.value = profileData.username;
-    dailyGoalInput.value = profileData.dailyGoal;
+    // The input edits the Easy Chinese nickname only (never the Google name).
+    usernameInput.value = profileData.nickname || '';
     selectedAvatar = profileData.avatar;
+    selectedAvatarPref = profileData.avatarPref === 'google' ? 'google' : 'emoji';
+    
+    // Daily Goal: keep a previously stored value selectable even if it is
+    // not one of the four preset options.
+    const goalValue = String(profileData.dailyGoal);
+    if (dailyGoalInput && !dailyGoalInput.querySelector('option[value="' + goalValue + '"]')) {
+        const goalOption = document.createElement('option');
+        goalOption.value = goalValue;
+        goalOption.textContent = goalValue + ' words';
+        dailyGoalInput.appendChild(goalOption);
+    }
+    if (dailyGoalInput) dailyGoalInput.value = goalValue;
     
     // Update avatar selection
     avatarOptions.forEach(option => {
@@ -1958,7 +1999,31 @@ function openProfileModal() {
         }
     });
     
+    syncAvatarPrefUI();
+    
     editProfileModal.classList.add('active');
+}
+
+// Keeps the avatar-preference buttons (Google photo vs emoji) in sync with
+// the current selection and sign-in state.
+function syncAvatarPrefUI() {
+    if (!avatarPrefOptions || avatarPrefOptions.length === 0) return;
+    const authUser = (window.EasyAuth && window.EasyAuth.available) ? window.EasyAuth.getUser() : null;
+    const googleReady = !!(authUser && authUser.photoURL);
+    const effectivePref = (selectedAvatarPref === 'google' && googleReady) ? 'google' : 'emoji';
+    
+    avatarPrefOptions.forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.pref === effectivePref);
+        if (btn.dataset.pref === 'google') {
+            btn.disabled = !googleReady;
+        }
+    });
+    
+    if (avatarPrefHint) {
+        avatarPrefHint.textContent = googleReady
+            ? 'Show your Google profile photo or an emoji inside Easy Chinese.'
+            : 'Sign in with Google to use your profile photo.';
+    }
 }
 
 function closeProfileModal() {
@@ -1966,9 +2031,18 @@ function closeProfileModal() {
 }
 
 function saveProfile() {
+    // Phase 1 auth: the nickname only affects Easy Chinese, never the
+    // Google account. Signed-in users fall back to their Google name
+    // when no custom nickname is set.
+    const authUser = (window.EasyAuth && window.EasyAuth.available) ? window.EasyAuth.getUser() : null;
+    const nickname = (usernameInput.value || '').trim();
+    const googlePhotoOk = !!(authUser && authUser.photoURL);
+    
     const profileData = {
-        username: usernameInput.value || 'Chinese Learner',
+        username: nickname || (authUser && authUser.displayName) || 'Chinese Learner',
+        nickname: nickname,
         avatar: selectedAvatar,
+        avatarPref: (selectedAvatarPref === 'google' && googlePhotoOk) ? 'google' : 'emoji',
         dailyGoal: parseInt(dailyGoalInput.value) || 10
     };
     
@@ -1977,6 +2051,10 @@ function saveProfile() {
     profileUsername.textContent = profileData.username;
     profileAvatar.textContent = profileData.avatar;
     dailyGoalDisplay.textContent = profileData.dailyGoal;
+    
+    if (window.EasyAuth && window.EasyAuth.available) {
+        window.EasyAuth.refreshIdentity();
+    }
     
     closeProfileModal();
 }
