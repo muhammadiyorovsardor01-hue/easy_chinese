@@ -564,7 +564,10 @@
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script defer src="firebase-auth.js"></script>
+    <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
+    <script defer src="cloud-sync.js"></script>
     <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js');

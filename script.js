@@ -1301,6 +1301,10 @@ function toggleLearned() {
     // Save to localStorage
     localStorage.setItem('learnedWords', JSON.stringify(learnedWords));
     
+    // Phase 2A cloud sync: mirror this single word's new state (guarded
+    // no-op for guests/offline). Cloud failure never undoes the local action.
+    notifyWordToggled(wordId);
+    
     // Update UI
     updateLearnedButton();
     updateLearnedCount();
@@ -1358,6 +1362,10 @@ function updateStreak() {
     }
     
     localStorage.setItem('streakData', JSON.stringify(streakData));
+    
+    // Phase 2A cloud sync: mirror streak/XP state (guarded no-op for guests).
+    notifyStatsChanged();
+    
     profileStreak.textContent = streakData.streak;
 }
 
@@ -1371,11 +1379,64 @@ function updateXP() {
     profileXP.textContent = streakData.xp;
 }
 
+// ---------- Phase 2A cloud-sync bridge (additive, guarded) ----------
+// cloud-sync.js (window.EasyCloud) mirrors already-persisted local state to
+// Firestore and, on sign-in, merges cloud progress into localStorage. The
+// runtime variables (learnedWords / streakData / dailyProgress) live in this
+// script's scope, so the sync layer calls this bridge to apply merged values
+// and refresh read-only UI. It never awards XP, never increments a streak,
+// and never changes lesson/canvas/scoring behavior.
+window.EasyCloudApplyMergedState = function (merged) {
+    if (!merged || typeof merged !== 'object') return;
+    if (Array.isArray(merged.learnedWords)) {
+        learnedWords = merged.learnedWords
+            .map(id => parseInt(id, 10))
+            .filter(id => Number.isFinite(id));
+    }
+    if (merged.streakData && typeof merged.streakData === 'object') {
+        streakData = Object.assign({}, streakData, merged.streakData);
+    }
+    if (merged.dailyProgress && typeof merged.dailyProgress === 'object') {
+        dailyProgress = Object.assign({}, merged.dailyProgress);
+    }
+    // Read-only refresh only (updateStreak is intentionally NOT called).
+    updateLearnedButton();
+    updateLearnedCount();
+    updateTotalLearned();   // re-mirrors streakData.totalLearned = learnedWords.length
+    updateXP();
+    updateDailyQuests();
+    updateAchievements();
+    updateProfileStats();
+    updateHSKProgress();
+};
+
+// Guarded cloud-sync hooks. No-ops for guests, offline, or when the sync
+// layer is unavailable; they never block or break the local action.
+function notifyWordToggled(wordId) {
+    try {
+        if (window.EasyCloud && typeof window.EasyCloud.syncLearnedWord === 'function') {
+            window.EasyCloud.syncLearnedWord(wordId, learnedWords.includes(wordId));
+        }
+    } catch (err) { /* cloud sync must never break the app */ }
+}
+
+function notifyStatsChanged() {
+    try {
+        if (window.EasyCloud && typeof window.EasyCloud.pushStats === 'function') {
+            window.EasyCloud.pushStats();
+        }
+    } catch (err) { /* cloud sync must never break the app */ }
+}
+
 function addXP(amount) {
     streakData.xp += amount;
     dailyProgress.xp += amount;
     localStorage.setItem('streakData', JSON.stringify(streakData));
     localStorage.setItem('dailyProgress', JSON.stringify(dailyProgress));
+    
+    // Phase 2A cloud sync: mirror XP state (guarded no-op for guests).
+    notifyStatsChanged();
+    
     updateXP();
     updateDailyQuests();
     updateAchievements();
@@ -1710,6 +1771,12 @@ function startHanziQuiz(character) {
                 canvasScoreElement.textContent = canvasScore;
                 dailyProgress.traces += 1;
                 localStorage.setItem('dailyProgress', JSON.stringify(dailyProgress));
+                
+                // Phase 2A cloud sync: mirror today's trace counter (guarded
+                // no-op for guests/offline). addXP()/updateStreak() below push
+                // the rest; the sync layer debounces into one cloud write.
+                notifyStatsChanged();
+                
                 updateDailyQuests();
                 updateAchievements();
                 canvasFeedback.textContent = 'Great work! Character complete. +10 points';
