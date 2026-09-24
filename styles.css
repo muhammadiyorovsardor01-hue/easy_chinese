@@ -107,6 +107,13 @@ body::before {
     opacity: 0.9;
 }
 
+/* Ink decor stays faint in dark theme, never milky */
+[data-theme="dark"] body::before { opacity: 0.55; }
+[data-theme="dark"] .hero-art::before { color: rgba(240, 234, 226, 0.06); }
+[data-theme="dark"] #canvas .canvas-main::after { color: rgba(240, 234, 226, 0.06); }
+[data-theme="dark"] .ls-motto { color: rgba(240, 234, 226, 0.08); }
+[data-theme="dark"] #profile::after { opacity: 0.08; }
+
 .main-content {
     position: relative;
     z-index: 1;
@@ -318,6 +325,47 @@ button {
     }
 }
 
+/* ===== Ink-wash background system (decorative only) =====
+   CSS washes + existing aria-hidden scenery hooks. All pointer-events:none,
+   low opacity, below interactive content. No layout/JS/HanziWriter change. */
+#dashboard { position: relative; isolation: isolate; }
+
+#dashboard::before {
+    content: '';
+    position: absolute;
+    inset: -1.5rem -1rem 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(46% 120px at 12% 0%, rgba(185, 28, 44, 0.05), transparent 70%),
+        radial-gradient(60% 170px at 88% 4%, rgba(230, 184, 74, 0.08), transparent 70%),
+        radial-gradient(70% 220px at 50% 30%, rgba(111, 106, 100, 0.06), transparent 72%);
+    opacity: 0.9;
+}
+
+.hero-art::before {
+    content: '山水';
+    position: absolute;
+    right: 2%;
+    bottom: -4%;
+    font-size: 5.2rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    color: rgba(185, 28, 44, 0.06);
+    pointer-events: none;
+}
+
+.hero-art::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 70px;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 0%, rgba(111, 106, 100, 0.05) 78%, rgba(111, 106, 100, 0.09) 100%);
+}
+
 /* ===== Welcome hero ===== */
 .hero {
     position: relative;
@@ -344,7 +392,7 @@ button {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background: radial-gradient(circle at 42% 42%, rgba(230, 184, 74, 0.5), rgba(230, 184, 74, 0.14) 62%, transparent 72%);
+    background: radial-gradient(circle at 42% 42%, rgba(185, 28, 44, 0.22), rgba(230, 184, 74, 0.30) 46%, rgba(230, 184, 74, 0.10) 62%, transparent 72%);
 }
 
 .hero-mountain {
@@ -724,6 +772,64 @@ button {
     color: var(--text-secondary);
     font-size: 1.1rem;
 }
+
+/* ===== Lesson map scenery (decorative only, behind the path) ===== */
+#lessons { position: relative; isolation: isolate; }
+
+.lessons-scenery {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.lessons-scenery span { position: absolute; pointer-events: none; }
+
+.ls-sun {
+    top: 2%;
+    right: 10%;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 42% 42%, rgba(185, 28, 44, 0.10), rgba(230, 184, 74, 0.12) 55%, transparent 72%);
+}
+
+.ls-hill {
+    border-radius: 48% 52% 0 0 / 90% 100% 0 0;
+    background: linear-gradient(180deg, rgba(111, 106, 100, 0.10), rgba(111, 106, 100, 0.04));
+}
+
+.ls-hill-1 { left: -8%;  top: 12%; width: 56%; height: 150px; }
+.ls-hill-2 { left: 26%;  top: 22%; width: 60%; height: 200px; background: linear-gradient(180deg, rgba(47, 143, 114, 0.10), rgba(47, 143, 114, 0.04)); }
+.ls-hill-3 { right: -10%; top: 16%; width: 52%; height: 140px; }
+.ls-hill-b1 { left: -10%; bottom: -4%; width: 60%; height: 130px; opacity: 0.8; }
+.ls-hill-b2 { right: -12%; bottom: -6%; width: 58%; height: 110px; opacity: 0.7; }
+
+.ls-pagoda { top: 30%; left: 6%; font-size: 2rem; opacity: 0.10; filter: saturate(0.3) sepia(0.2); }
+.ls-blossom { font-size: 0.95rem; opacity: 0.12; filter: saturate(0.5) sepia(0.1); }
+.ls-blossom-1 { top: 8%;  left: 8%; }
+.ls-blossom-2 { top: 12%; right: 8%; font-size: 0.8rem; }
+.ls-blossom-3 { top: 44%; right: 5%; font-size: 0.75rem; opacity: 0.10; }
+
+.ls-motto {
+    top: 34%;
+    right: 2%;
+    writing-mode: vertical-rl;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.35em;
+    color: rgba(111, 106, 100, 0.12);
+}
+
+#lessons .back-btn,
+#lessons .lessons-kicker,
+#lessons .lessons-progress,
+#lessons .section-title,
+#lessons .hsk-filters,
+#lessons .search-container,
+#lessons .map-legend,
+#lessons .lessons-grid { position: relative; z-index: 1; }
 
 /* ===== Lesson game path (winding map, premium) ===== */
 .lessons-grid {
@@ -2423,6 +2529,41 @@ button {
     color: #fff;
 }
 
+/* Canvas: minimal ink-wash accents around the outer container only.
+   Never touches the tianzige grid or HanziWriter internals. */
+#canvas .canvas-main { position: relative; isolation: isolate; }
+
+#canvas .canvas-main::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    right: -10px;
+    width: 190px;
+    height: 130px;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(70% 90% at 70% 20%, rgba(111, 106, 100, 0.10), transparent 70%),
+        radial-gradient(50% 60% at 30% 80%, rgba(47, 143, 114, 0.08), transparent 70%);
+}
+
+#canvas .canvas-main::after {
+    content: '墨';
+    position: absolute;
+    left: 6px;
+    bottom: -6px;
+    z-index: 0;
+    pointer-events: none;
+    font-size: 3.4rem;
+    font-weight: 900;
+    color: rgba(37, 37, 37, 0.05);
+}
+
+#canvas .canvas-header,
+#canvas .canvas-wrapper,
+#canvas .canvas-instructions,
+#canvas .canvas-sidebar { position: relative; z-index: 1; }
+
 /* Canvas Header — warm editorial card */
 .canvas-header {
     background-color: var(--card-bg);
@@ -3014,6 +3155,40 @@ button {
 .theme-toggle:active {
     transform: scale(0.95);
 }
+
+/* Profile: faint landscape/branch accent; cards stay clean and readable */
+#profile { position: relative; isolation: isolate; }
+
+#profile::before {
+    content: '';
+    position: absolute;
+    inset: auto -1rem -1rem;
+    height: 320px;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(55% 100% at 12% 100%, rgba(111, 106, 100, 0.10), transparent 70%),
+        radial-gradient(50% 90% at 85% 100%, rgba(47, 143, 114, 0.09), transparent 70%),
+        radial-gradient(40% 70% at 55% 100%, rgba(185, 28, 44, 0.05), transparent 70%);
+}
+
+#profile::after {
+    content: '🌸';
+    position: absolute;
+    right: 2%;
+    bottom: 6%;
+    z-index: -1;
+    pointer-events: none;
+    font-size: 2.2rem;
+    opacity: 0.10;
+    filter: saturate(0.5) sepia(0.1);
+}
+
+#profile .profile-card,
+#profile .stats-grid,
+#profile .progress-section,
+#profile .quests-section,
+#profile .achievements-section { position: relative; z-index: 1; }
 
 /* Profile header card */
 .profile-card {
