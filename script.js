@@ -1069,6 +1069,29 @@ function showLessonView(lessonNumber) {
     showView(lesson);
 }
 
+// Lessons header: static kicker element + JS-owned progress line (additive only)
+function updateLessonsHeader() {
+    const kicker = document.getElementById('lessonsKicker');
+    const progress = document.getElementById('lessonsProgress');
+    const selectedTrack = lessonTracks[currentLessonTrack] || lessonTracks.classic;
+    const trackLabel = currentLessonTrack === 'new' ? 'New HSK 3.0 path' : 'Classic path';
+    const trackLessons = vocabularyData.filter(word =>
+        word.hsk === currentHSK && word.track === selectedTrack.dataTrack
+    );
+    const lessonNums = [...new Set(trackLessons.map(word => word.lesson))].sort((a, b) => a - b);
+    const completed = lessonNums.filter(num => isLessonComplete(num, selectedTrack.dataTrack)).length;
+    if (kicker) kicker.textContent = `HSK ${currentHSK} · ${trackLabel} — follow the winding route below`;
+    if (progress) progress.textContent = `${completed} of ${lessonNums.length} lessons complete`;
+}
+
+// A lesson counts as complete when every word id in it is in learnedWords
+function isLessonComplete(lessonNum, dataTrack) {
+    const ids = vocabularyData
+        .filter(word => word.hsk === currentHSK && word.track === dataTrack && word.lesson === lessonNum)
+        .map(word => word.id);
+    return ids.length > 0 && ids.every(id => learnedWords.includes(id));
+}
+
 // Generate lessons grid
 function generateLessonsGrid() {
     lessonsGrid.innerHTML = '';
@@ -1103,7 +1126,22 @@ function generateLessonsGrid() {
             word.hsk === currentHSK && word.track === selectedTrack.dataTrack && word.lesson === lessonNum
         ).length;
         const lessonBtn = document.createElement('button');
-        lessonBtn.className = 'lesson-btn';
+        // Additive state classes only — base 'lesson-btn' selector stays intact everywhere.
+        // NOTE: the grid-scope array is named `lessons` (const above), which
+        // shadows the global #lessons section element inside this function only.
+        // First INCOMPLETE lesson is the current one; completed lessons before
+        // it stay green, later lessons stay locked.
+        const done = isLessonComplete(lessonNum, selectedTrack.dataTrack);
+        const firstOpen = lessons.find(n => !isLessonComplete(n, selectedTrack.dataTrack));
+        const isCurrent = lessonNum === firstOpen;
+        lessonBtn.className = 'lesson-btn' + (done ? ' node-completed' : (isCurrent ? ' node-current' : ' node-locked'));
+        if (done) {
+            lessonBtn.setAttribute('aria-label', `Lesson ${lessonNum} completed, ${wordCount} words`);
+        } else if (isCurrent) {
+            lessonBtn.setAttribute('aria-label', `Lesson ${lessonNum} current, ${wordCount} words`);
+        } else {
+            lessonBtn.setAttribute('aria-label', `Lesson ${lessonNum} locked, ${wordCount} words`);
+        }
         const lessonLabel = document.createElement('span');
         lessonLabel.className = 'lesson-btn-title';
         lessonLabel.textContent = `Lesson ${lessonNum}`;
@@ -1115,6 +1153,7 @@ function generateLessonsGrid() {
         lessonBtn.addEventListener('click', () => showLessonView(lessonNum));
         lessonsGrid.appendChild(lessonBtn);
     });
+    updateLessonsHeader();
 }
 
 // Filter and search lessons
@@ -1309,6 +1348,7 @@ function toggleLearned() {
     updateLearnedButton();
     updateLearnedCount();
     updateTotalLearned();
+    if (typeof updateLessonsHeader === 'function') updateLessonsHeader();
 }
 
 function updateLearnedButton() {

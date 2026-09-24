@@ -5,8 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Learn Chinese HSK vocabulary with flashcards, quizzes, and stroke order animations">
-    <meta name="theme-color" content="#C41E3A">
+    <meta name="theme-color" content="#B91C2C">
     <title>Easy Chinese - Learn HSK Vocabulary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
@@ -30,40 +33,89 @@
     <main class="main-content">
         <!-- Dashboard View -->
         <section id="dashboard" class="view active">
+            <div class="hero" aria-hidden="false">
+                <div class="hero-art" aria-hidden="true">
+                    <span class="hero-sun"></span>
+                    <span class="hero-mountain hero-mountain-1"></span>
+                    <span class="hero-mountain hero-mountain-2"></span>
+                    <span class="hero-mountain hero-mountain-3"></span>
+                    <span class="hero-pagoda" aria-hidden="true">⛩️</span>
+                    <span class="hero-blossom hero-blossom-1" aria-hidden="true">🌸</span>
+                    <span class="hero-blossom hero-blossom-2" aria-hidden="true">🌸</span>
+                    <span class="hero-blossom hero-blossom-3" aria-hidden="true">🌸</span>
+                </div>
+                <div class="hero-inner">
+                    <span class="hero-kicker">汉语 · Learn Chinese</span>
+                    <h2 class="hero-title">Every character is a small door into a new world.</h2>
+                    <p class="hero-subtitle">Learn HSK vocabulary step by step — read, listen, write and remember with calm, focused practice.</p>
+                    <p class="hero-quote">« 千里之行，始于足下 » — a journey of a thousand miles begins with a single step.</p>
+                </div>
+            </div>
             <h2 class="section-title">Select HSK Level</h2>
             <div class="hsk-grid">
                 <button class="hsk-btn" data-hsk="1">
+                    <span class="hsk-level-badge">HSK</span>
                     <span class="hsk-number">1</span>
                     <span class="hsk-label">HSK 1</span>
+                    <span class="hsk-subtitle">Foundations</span>
+                    <span class="hsk-cta">Start Learning →</span>
                 </button>
                 <button class="hsk-btn" data-hsk="2">
+                    <span class="hsk-level-badge">HSK</span>
                     <span class="hsk-number">2</span>
                     <span class="hsk-label">HSK 2</span>
+                    <span class="hsk-subtitle">Elementary</span>
+                    <span class="hsk-cta">Continue →</span>
                 </button>
                 <button class="hsk-btn" data-hsk="3">
+                    <span class="hsk-level-badge">HSK</span>
                     <span class="hsk-number">3</span>
                     <span class="hsk-label">HSK 3</span>
+                    <span class="hsk-subtitle">Intermediate</span>
+                    <span class="hsk-cta">Continue →</span>
                 </button>
                 <button class="hsk-btn" data-hsk="4">
+                    <span class="hsk-level-badge">HSK</span>
                     <span class="hsk-number">4</span>
                     <span class="hsk-label">HSK 4</span>
+                    <span class="hsk-subtitle">Upper Intermediate</span>
+                    <span class="hsk-cta">Continue →</span>
                 </button>
                 <button class="hsk-btn" data-hsk="5">
+                    <span class="hsk-level-badge">HSK</span>
                     <span class="hsk-number">5</span>
                     <span class="hsk-label">HSK 5</span>
+                    <span class="hsk-subtitle">Advanced</span>
+                    <span class="hsk-cta">Continue →</span>
                 </button>
             </div>
         </section>
 
         <!-- Lessons View -->
         <section id="lessons" class="view">
+            <!-- Landscape atmosphere behind the winding path (decorative only) -->
+            <div class="lessons-scenery" aria-hidden="true">
+                <span class="ls-sun"></span>
+                <span class="ls-hill ls-hill-1"></span>
+                <span class="ls-hill ls-hill-2"></span>
+                <span class="ls-hill ls-hill-3"></span>
+                <span class="ls-pagoda">⛩️</span>
+                <span class="ls-blossom ls-blossom-1">🌸</span>
+                <span class="ls-blossom ls-blossom-2">🌸</span>
+                <span class="ls-blossom ls-blossom-3">🌸</span>
+                <span class="ls-motto">千里之行始于足下</span>
+                <span class="ls-hill ls-hill-b1"></span>
+                <span class="ls-hill ls-hill-b2"></span>
+            </div>
             <button class="back-btn" id="backToDashboard">← Back to Dashboard</button>
+            <p class="lessons-kicker" id="lessonsKicker">HSK 1 · Classic path — follow the winding route below</p>
+            <p class="lessons-progress" id="lessonsProgress" aria-live="polite">0 of 15 lessons complete</p>
             <h2 class="section-title" id="lessonsTitle">HSK 1 Lessons</h2>
             
-            <!-- HSK 1 lesson versions -->
+            <!-- HSK 1 lesson versions (JS toggles .active only — keep both track buttons) -->
             <div class="hsk-filters" aria-label="HSK 1 lesson version">
-                <button class="hsk-filter-btn active" data-track="classic" type="button">Classic HSK</button>
-                <button class="hsk-filter-btn" data-track="new" type="button">New HSK 3.0</button>
+                <button class="hsk-filter-btn active" data-track="classic" type="button">Classic HSK 1 · 15 lessons</button>
+                <button class="hsk-filter-btn" data-track="new" type="button">New HSK 3.0 · 15 lessons</button>
             </div>
             
             <!-- Search Bar -->
@@ -71,7 +123,14 @@
                 <input type="text" class="search-input" id="searchInput" placeholder="Search by Uzbek, Pinyin, or Hanzi...">
                 <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
             </div>
-            
+
+            <!-- Node-state legend: completed / current / locked -->
+            <div class="map-legend">
+                <span class="map-legend-item lg-completed">✓ 已完成 · Completed</span>
+                <span class="map-legend-item lg-current">● 进行中 · Current</span>
+                <span class="map-legend-item lg-locked">🔒 未解锁 · Locked</span>
+            </div>
+
             <div class="lessons-grid" id="lessonsGrid"></div>
         </section>
 
@@ -230,6 +289,7 @@
                     <!-- New Duolingo-style Canvas Header -->
                     <div class="canvas-header">
                         <div class="canvas-category">Trace Practice</div>
+                        <div class="canvas-cn-kicker">汉字练习 · Hanzi Practice</div>
                         <div class="canvas-prompt-row">
                             <div class="canvas-reference-character" id="canvasCharacter">你</div>
                             <div class="canvas-meaning" id="canvasMeaning">You</div>
@@ -296,6 +356,7 @@
 
         <!-- Profile View -->
         <section id="profile" class="view">
+            <span class="view-kicker">个人中心 · Personal Center</span>
             <h2 class="section-title">My Profile</h2>
             
             <div class="profile-card">
@@ -305,6 +366,11 @@
                 </div>
                 <div class="profile-info">
                     <h3 class="username" id="profileUsername">Chinese Learner</h3>
+                    <!-- Chinese identity: name seal + bilingual motto (never touched by JS) -->
+                    <div class="profile-cn-row">
+                        <span class="profile-seal" aria-hidden="true">学</span>
+                        <p class="profile-motto"><span class="motto-cn">每天进步一点点</span> · a little progress every day</p>
+                    </div>
                     <div class="profile-meta">
                         <span class="level-badge">Level <span id="userLevel">1</span></span>
                         <span class="daily-goal">🎯 Daily Goal: <span id="dailyGoalDisplay">10</span> words</span>
@@ -337,22 +403,22 @@
                 <div class="stat-card">
                     <span class="stat-icon">🔥</span>
                     <span class="stat-value" id="profileStreak">0</span>
-                    <span class="stat-label">Day Streak</span>
+                    <span class="stat-label">Day Streak <span class="stat-label-cn">连续天数</span></span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-icon">📚</span>
                     <span class="stat-value" id="profileLearned">0</span>
-                    <span class="stat-label">Words Learned</span>
+                    <span class="stat-label">Words Learned <span class="stat-label-cn">已学单词</span></span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-icon">⭐</span>
                     <span class="stat-value" id="profileXP">0</span>
-                    <span class="stat-label">Total XP</span>
+                    <span class="stat-label">Total XP <span class="stat-label-cn">总经验值</span></span>
                 </div>
             </div>
             
             <div class="progress-section">
-                <h3 class="progress-title">HSK Progress</h3>
+                <h3 class="progress-title">HSK Progress<span class="title-cn">学习进度</span></h3>
                 <div class="hsk-progress-bars">
                     <div class="hsk-progress-item">
                         <div class="hsk-progress-label">
@@ -398,7 +464,7 @@
             </div>
 
             <div class="quests-section">
-                <h3 class="progress-title">Daily Quests</h3>
+                <h3 class="progress-title">Daily Quests<span class="title-cn">每日任务</span></h3>
                 <div class="quests-list" id="dailyQuests">
                     <div class="quest-item" data-quest="traces">
                         <span class="quest-icon">✍️</span>
@@ -414,7 +480,7 @@
             </div>
             
             <div class="achievements-section">
-                <h3 class="achievements-title">Achievements</h3>
+                <h3 class="achievements-title">Achievements<span class="title-cn">成就勋章</span></h3>
                 <div class="achievements-grid" id="achievementsGrid">
                     <div class="achievement-badge locked" data-achievement="first-word">
                         <span class="badge-icon">🎯</span>

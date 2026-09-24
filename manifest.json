@@ -6,8 +6,8 @@
   "start_url": "/",
   "description": "Practice HSK Chinese vocabulary, pronunciation, quizzes, and Hanzi writing offline.",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#3b82f6",
+  "background_color": "#FAF8F4",
+  "theme_color": "#B91C2C",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3269/3269817.png",
