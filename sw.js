@@ -1,4 +1,4 @@
-const CACHE_NAME = 'easychinese-v4';
+const CACHE_NAME = 'easychinese-v6';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const CORE_ASSETS = [
   './script.js',
   './words.json',
   './manifest.json',
+  './assets/chinese-landscape.jpg',
   './assets/bg-landscape.svg',
   './assets/bg-landscape-lite.svg',
   './assets/blossom-accent.svg',

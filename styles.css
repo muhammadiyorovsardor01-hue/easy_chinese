@@ -23,7 +23,7 @@
     --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     --border-radius: 18px;
     --font-family: 'Nunito', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    --bottom-nav-space: 84px;
+    --bottom-nav-space: 118px;
     --depth-red: 4px solid var(--primary-dark);
     --depth-green: 4px solid var(--secondary-dark);
     --seal-red: #B91C2C;
@@ -497,6 +497,8 @@ button {
     max-width: 1120px;
     margin-left: auto;
     margin-right: auto;
+    /* Keep last HSK card action buttons clear of the fixed bottom nav */
+    padding-bottom: 1.25rem;
 }
 
 /* Premium course cards */
@@ -4214,7 +4216,7 @@ button {
 
 @media (max-width: 768px) {
     body {
-        --bottom-nav-space: 96px;
+        --bottom-nav-space: 128px;
         padding-bottom: calc(var(--bottom-nav-space) + env(safe-area-inset-bottom));
     }
 
@@ -4937,11 +4939,11 @@ select.form-input {
     }
 }
 
-/* ===== Reference-inspired ink landscape decor (additive, decorative only) =====
-   Painted SVGs in /assets/ sit behind content: full scene in the Home hero,
-   misty ranges behind the HSK cards and Lesson Map, blossom accents on
-   Canvas/Profile. All layers are pointer-events:none and never touch JS,
-   IDs, data-* attributes or HanziWriter internals. */
+/* ===== Reference watercolor landscape decor (additive, decorative only) =====
+   User-supplied ink-wash JPG in /assets/ sits behind content: full scene in
+   the Home hero, misty reduced-opacity bands behind the HSK cards and Lesson
+   Map, soft accent on Profile. All layers are pointer-events:none and never
+   touch JS, IDs, data-* attributes or HanziWriter internals. */
 .hero-sun,
 .hero-mountain,
 .hero-pagoda,
@@ -4951,17 +4953,17 @@ select.form-input {
 .ls-pagoda,
 .ls-blossom { display: none; }
 
-/* Home hero: painted scene + cream veil so the left text column stays readable */
+/* Home hero: watercolor scene + cream veil so the left text column stays readable */
 .hero-art {
     background-image:
-        linear-gradient(100deg, rgba(255, 253, 249, 0.9) 0%, rgba(255, 253, 249, 0.58) 34%, rgba(255, 253, 249, 0.14) 62%, rgba(255, 253, 249, 0) 80%),
-        url('assets/bg-landscape.svg');
+        linear-gradient(100deg, rgba(255, 253, 249, 0.92) 0%, rgba(255, 253, 249, 0.62) 34%, rgba(255, 253, 249, 0.18) 62%, rgba(255, 253, 249, 0) 80%),
+        url('assets/chinese-landscape.jpg');
     background-repeat: no-repeat, no-repeat;
     background-size: cover, cover;
     background-position: center, center 62%;
 }
 
-/* HSK section: lite ranges continue the landscape below the hero card.
+/* HSK section: watercolor ranges continue the landscape below the hero card.
    The mask dissolves the ridge line downwards so the picture never ends on a
    hard crop line behind the course cards. */
 #dashboard::after {
@@ -4970,33 +4972,31 @@ select.form-input {
     inset: -1.5rem -1rem 0;
     z-index: -1;
     pointer-events: none;
-    background: url('assets/bg-landscape-lite.svg') no-repeat center bottom;
+    background: url('assets/chinese-landscape.jpg') no-repeat center bottom;
     background-size: 100% auto;
-    opacity: 0.6;
+    opacity: 0.28;
     -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 230px), transparent 100%);
     mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 230px), transparent 100%);
 }
 
-/* Lesson Map: same landscape family, misty ranges above and below the path.
+/* Lesson Map: same watercolor family, misty ranges above and below the path.
    Each band is a fixed height so the gradient mask can dissolve the ridges
    into the page instead of ending on a hard picture edge. */
 .lessons-scenery::before,
 .lessons-scenery::after {
     content: '';
     position: absolute;
-    left: 0;
-    right: 0;
-    height: 300px;
+    inset: 0;
     pointer-events: none;
-    background: url('assets/bg-landscape-lite.svg') no-repeat center bottom;
-    background-size: 100% auto;
-    opacity: 0.55;
-    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 26%, #000 62%, transparent 100%);
-    mask-image: linear-gradient(180deg, transparent 0, #000 26%, #000 62%, transparent 100%);
+    background:
+        linear-gradient(180deg, rgba(255, 253, 249, 0.40), rgba(255, 253, 249, 0.30)),
+        url('assets/chinese-landscape.jpg') no-repeat center 32% / cover;
+    opacity: 0.68;
+    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, #000 8%, #000 92%, rgba(0, 0, 0, 0.85) 100%);
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, #000 8%, #000 92%, rgba(0, 0, 0, 0.85) 100%);
 }
 
-.lessons-scenery::before { top: 0; }
-.lessons-scenery::after { bottom: 0; }
+.lessons-scenery::after { display: none; }
 
 /* Canvas: blossom sprig leaning into the header card corner. The canvas cards
    carry `background: var(--card-bg) !important`, so the sprig has to be set
@@ -5005,23 +5005,54 @@ select.form-input {
     background: url('assets/blossom-accent.svg') no-repeat right -34px top -26px / 300px auto var(--card-bg) !important;
 }
 
-/* Profile: misty ridge strip along the existing bottom wash, faded at both
-   ends so the strip reads as haze rather than a cut-out picture */
+/* Profile: full-height watercolor wash, veiled so cards stay readable */
 #profile::before {
+    inset: 0 -1rem 0;
+    height: auto;
     background:
-        url('assets/bg-landscape-lite.svg') no-repeat bottom center / cover,
+        linear-gradient(180deg, rgba(255, 253, 249, 0.42), rgba(255, 253, 249, 0.32)),
+        url('assets/chinese-landscape.jpg') no-repeat center 35% / cover,
         radial-gradient(55% 100% at 12% 100%, rgba(111, 106, 100, 0.10), transparent 70%),
         radial-gradient(50% 90% at 85% 100%, rgba(47, 143, 114, 0.09), transparent 70%),
         radial-gradient(40% 70% at 55% 100%, rgba(185, 28, 44, 0.05), transparent 70%);
-    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 24%, #000 74%, transparent 100%);
-    mask-image: linear-gradient(180deg, transparent 0, #000 24%, #000 74%, transparent 100%);
+    opacity: 0.72;
+    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, #000 12%, #000 88%, rgba(0, 0, 0, 0.75) 100%);
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, #000 12%, #000 88%, rgba(0, 0, 0, 0.75) 100%);
 }
 
-/* Dark theme: ink decor stays faint, never milky */
-[data-theme="dark"] #dashboard::after { opacity: 0.32; }
+/* Canvas: scenery belongs to the outer page; the writing surface stays clean. */
+#canvas {
+    position: relative;
+    isolation: isolate;
+    background: var(--bg-color) !important;
+}
+
+#canvas::before {
+    content: '';
+    position: absolute;
+    inset: 0 -1rem;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(255, 253, 249, 0.44), rgba(255, 253, 249, 0.34)),
+        url('assets/chinese-landscape.jpg') no-repeat center 40% / cover;
+    opacity: 0.68;
+    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.88) 0%, #000 14%, #000 86%, rgba(0, 0, 0, 0.78) 100%);
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.88) 0%, #000 14%, #000 86%, rgba(0, 0, 0, 0.78) 100%);
+}
+
+/* Dark theme: watercolor decor stays faint, never milky */
+[data-theme="dark"] #dashboard::after { opacity: 0.18; }
+[data-theme="dark"] .lessons-scenery::before { opacity: 0.38; }
+[data-theme="dark"] #profile::before,
+[data-theme="dark"] #canvas::before { opacity: 0.35; }
 [data-theme="dark"] .lessons-scenery::before,
-[data-theme="dark"] .lessons-scenery::after { opacity: 0.3; }
-[data-theme="dark"] #profile::before { opacity: 0.5; }
+[data-theme="dark"] #profile::before,
+[data-theme="dark"] #canvas::before {
+    background:
+        linear-gradient(180deg, rgba(32, 29, 26, 0.68), rgba(32, 29, 26, 0.58)),
+        url('assets/chinese-landscape.jpg') no-repeat center 40% / cover;
+}
 
 /* The hero card keeps its light "paper" surface in both themes (see .hero
    background), so its one theme-variable headline also needs ink-dark text in
@@ -5049,13 +5080,13 @@ select.form-input {
 @media (max-width: 768px) {
     .hero-art {
         background-image:
-            linear-gradient(180deg, rgba(255, 253, 249, 0.85) 0%, rgba(255, 253, 249, 0.58) 60%, rgba(255, 253, 249, 0.35) 100%),
-            url('assets/bg-landscape.svg');
+            linear-gradient(180deg, rgba(255, 253, 249, 0.88) 0%, rgba(255, 253, 249, 0.62) 60%, rgba(255, 253, 249, 0.38) 100%),
+            url('assets/chinese-landscape.jpg');
         background-position: center, right center;
     }
     #dashboard::after { background-size: 160% auto; }
     .lessons-scenery::before,
-    .lessons-scenery::after { height: 220px; background-size: 150% auto; }
+    .lessons-scenery::after { background-size: auto 100%; }
     #canvas .canvas-header {
         background-position: right -22px top -22px !important;
         background-size: 200px auto !important;
@@ -5065,11 +5096,11 @@ select.form-input {
 @media (max-width: 480px) {
     .hero-art {
         background-image:
-            linear-gradient(180deg, rgba(255, 253, 249, 0.92) 0%, rgba(255, 253, 249, 0.88) 55%, rgba(255, 253, 249, 0.85) 100%),
-            url('assets/bg-landscape.svg');
+            linear-gradient(180deg, rgba(255, 253, 249, 0.94) 0%, rgba(255, 253, 249, 0.90) 55%, rgba(255, 253, 249, 0.87) 100%),
+            url('assets/chinese-landscape.jpg');
         background-position: center, 92% center;
     }
     .lessons-scenery::before,
-    .lessons-scenery::after { height: 170px; background-size: 190% auto; }
+    .lessons-scenery::after { background-size: auto 100%; }
 }
 
