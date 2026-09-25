@@ -4936,3 +4936,140 @@ select.form-input {
         padding: 0.4rem 0.8rem;
     }
 }
+
+/* ===== Reference-inspired ink landscape decor (additive, decorative only) =====
+   Painted SVGs in /assets/ sit behind content: full scene in the Home hero,
+   misty ranges behind the HSK cards and Lesson Map, blossom accents on
+   Canvas/Profile. All layers are pointer-events:none and never touch JS,
+   IDs, data-* attributes or HanziWriter internals. */
+.hero-sun,
+.hero-mountain,
+.hero-pagoda,
+.hero-blossom,
+.ls-sun,
+.ls-hill,
+.ls-pagoda,
+.ls-blossom { display: none; }
+
+/* Home hero: painted scene + cream veil so the left text column stays readable */
+.hero-art {
+    background-image:
+        linear-gradient(100deg, rgba(255, 253, 249, 0.9) 0%, rgba(255, 253, 249, 0.58) 34%, rgba(255, 253, 249, 0.14) 62%, rgba(255, 253, 249, 0) 80%),
+        url('assets/bg-landscape.svg');
+    background-repeat: no-repeat, no-repeat;
+    background-size: cover, cover;
+    background-position: center, center 62%;
+}
+
+/* HSK section: lite ranges continue the landscape below the hero card.
+   The mask dissolves the ridge line downwards so the picture never ends on a
+   hard crop line behind the course cards. */
+#dashboard::after {
+    content: '';
+    position: absolute;
+    inset: -1.5rem -1rem 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url('assets/bg-landscape-lite.svg') no-repeat center bottom;
+    background-size: 100% auto;
+    opacity: 0.6;
+    -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 230px), transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 230px), transparent 100%);
+}
+
+/* Lesson Map: same landscape family, misty ranges above and below the path.
+   Each band is a fixed height so the gradient mask can dissolve the ridges
+   into the page instead of ending on a hard picture edge. */
+.lessons-scenery::before,
+.lessons-scenery::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 300px;
+    pointer-events: none;
+    background: url('assets/bg-landscape-lite.svg') no-repeat center bottom;
+    background-size: 100% auto;
+    opacity: 0.55;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 26%, #000 62%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 26%, #000 62%, transparent 100%);
+}
+
+.lessons-scenery::before { top: 0; }
+.lessons-scenery::after { bottom: 0; }
+
+/* Canvas: blossom sprig leaning into the header card corner. The canvas cards
+   carry `background: var(--card-bg) !important`, so the sprig has to be set
+   with the same shorthand + !important (keeping the theme card colour). */
+#canvas .canvas-header {
+    background: url('assets/blossom-accent.svg') no-repeat right -34px top -26px / 300px auto var(--card-bg) !important;
+}
+
+/* Profile: misty ridge strip along the existing bottom wash, faded at both
+   ends so the strip reads as haze rather than a cut-out picture */
+#profile::before {
+    background:
+        url('assets/bg-landscape-lite.svg') no-repeat bottom center / cover,
+        radial-gradient(55% 100% at 12% 100%, rgba(111, 106, 100, 0.10), transparent 70%),
+        radial-gradient(50% 90% at 85% 100%, rgba(47, 143, 114, 0.09), transparent 70%),
+        radial-gradient(40% 70% at 55% 100%, rgba(185, 28, 44, 0.05), transparent 70%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 24%, #000 74%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 24%, #000 74%, transparent 100%);
+}
+
+/* Dark theme: ink decor stays faint, never milky */
+[data-theme="dark"] #dashboard::after { opacity: 0.32; }
+[data-theme="dark"] .lessons-scenery::before,
+[data-theme="dark"] .lessons-scenery::after { opacity: 0.3; }
+[data-theme="dark"] #profile::before { opacity: 0.5; }
+
+/* The hero card keeps its light "paper" surface in both themes (see .hero
+   background), so its one theme-variable headline also needs ink-dark text in
+   dark theme to stay readable. Pre-existing contrast gap, unrelated to the
+   artwork — drop this rule to return to the committed behaviour. */
+[data-theme="dark"] .hero-title { color: #2A2724; }
+
+/* Same gap on the subtitle: --text-secondary (#A39C93) only reaches ≈2.4-2.7:1
+   against the cream card. #68625A is the nearest warm gray to the light theme's
+   own subtitle tone that clears AA on every stop of the hero gradient
+   (5.93:1 on #FFFDF9, 5.60:1 on #FBF6EC, 5.27:1 on #F7EFDD). */
+[data-theme="dark"] .hero-subtitle { color: #68625A; }
+
+/* Same card, same problem on the quote: it reads --secondary-color, which is
+   tuned for light/dark surfaces rather than this always-cream card (#2F8F72 =
+   3.30-3.91:1, #4DB492 = 2.11-2.50:1), and at 0.88rem/700 italic it is
+   normal-size text, so it needs 4.5:1. #2C6F58 is the deeper jade of the same
+   family and clears AA on every stop of the hero gradient (5.87:1 on #FFFDF9,
+   5.54:1 on #FBF6EC, 5.21:1 on #F7EFDD, 4.95:1 on the #F2E9DA probe). One value
+   covers both themes because the card keeps the same cream surface in dark mode. */
+.hero-quote { color: #2C6F58; }
+
+/* Narrow screens: anchor the scene right so sun/pagoda survive the crop,
+   and strengthen the veil because hero text spans the full width there */
+@media (max-width: 768px) {
+    .hero-art {
+        background-image:
+            linear-gradient(180deg, rgba(255, 253, 249, 0.85) 0%, rgba(255, 253, 249, 0.58) 60%, rgba(255, 253, 249, 0.35) 100%),
+            url('assets/bg-landscape.svg');
+        background-position: center, right center;
+    }
+    #dashboard::after { background-size: 160% auto; }
+    .lessons-scenery::before,
+    .lessons-scenery::after { height: 220px; background-size: 150% auto; }
+    #canvas .canvas-header {
+        background-position: right -22px top -22px !important;
+        background-size: 200px auto !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-art {
+        background-image:
+            linear-gradient(180deg, rgba(255, 253, 249, 0.92) 0%, rgba(255, 253, 249, 0.88) 55%, rgba(255, 253, 249, 0.85) 100%),
+            url('assets/bg-landscape.svg');
+        background-position: center, 92% center;
+    }
+    .lessons-scenery::before,
+    .lessons-scenery::after { height: 170px; background-size: 190% auto; }
+}
+

@@ -6,6 +6,9 @@ const CORE_ASSETS = [
   './script.js',
   './words.json',
   './manifest.json',
+  './assets/bg-landscape.svg',
+  './assets/bg-landscape-lite.svg',
+  './assets/blossom-accent.svg',
   'https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js'
 ];
 
