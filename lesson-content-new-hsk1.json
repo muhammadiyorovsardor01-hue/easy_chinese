@@ -1,0 +1,847 @@
+{
+  "track": "new",
+  "hsk_level": 1,
+  "mappingType": "contextual-inferred",
+  "lessons": [
+    {
+      "lessonId": 1,
+      "title": "你好",
+      "vocabularyIds": [171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182],
+      "example_sentences": [
+        {
+          "chinese": "你好！",
+          "pinyin": "Nǐ hǎo!",
+          "uzbek": "Salom!",
+          "english": "Hello!"
+        },
+        {
+          "chinese": "大家好！",
+          "pinyin": "Dàjiā hǎo!",
+          "uzbek": "Hammaga salom!",
+          "english": "Hello everyone!"
+        },
+        {
+          "chinese": "老师好！",
+          "pinyin": "Lǎoshī hǎo!",
+          "uzbek": "O'qituvchi, salom!",
+          "english": "Hello teacher!"
+        },
+        {
+          "chinese": "谢谢！",
+          "pinyin": "Xièxie!",
+          "uzbek": "Rahmat!",
+          "english": "Thank you!"
+        },
+        {
+          "chinese": "不客气。",
+          "pinyin": "Bú kèqi.",
+          "uzbek": "Arzimaydi.",
+          "english": "You're welcome."
+        }
+      ],
+      "grammar": {
+        "point": "问候语",
+        "pattern": "你好 / 大家好 / 老师好",
+        "uzbek_explanation": "Xitoy tilida odamlar bilan salomlashish uchun '你好' ishlatiladi. '大家' 'hamma' degan ma'noni anglatadi. Hurmat bilan salomlashish uchun '老师' (o'qituvchi) so'zidan keyin '好' qo'shiladi.",
+        "examples": [
+          {
+            "chinese": "你好！",
+            "pinyin": "Nǐ hǎo!",
+            "uzbek": "Salom!",
+            "english": "Hello!"
+          },
+          {
+            "chinese": "老师好！",
+            "pinyin": "Lǎoshī hǎo!",
+            "uzbek": "O'qituvchi, salom!",
+            "english": "Hello teacher!"
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 2,
+      "title": "你叫什么名字",
+      "vocabularyIds": [183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197],
+      "example_sentences": [
+        {
+          "chinese": "请问，你叫什么名字？",
+          "pinyin": "Qǐngwèn, nǐ jiào shénme míngzi?",
+          "uzbek": "Savol berishga ruxsat, sizning ismingiz nima?",
+          "english": "May I ask, what is your name?"
+        },
+        {
+          "chinese": "我叫李明。",
+          "pinyin": "Wǒ jiào Lǐ Míng.",
+          "uzbek": "Mening ismim Li Ming.",
+          "english": "My name is Li Ming."
+        },
+        {
+          "chinese": "我很高兴认识你。",
+          "pinyin": "Wǒ hěn gāoxìng rènshi nǐ.",
+          "uzbek": "Men siz bilan tanishganimdan juda xursandman.",
+          "english": "I am very happy to meet you."
+        },
+        {
+          "chinese": "对不起。",
+          "pinyin": "Duìbuqǐ.",
+          "uzbek": "Kechirasiz.",
+          "english": "Sorry."
+        },
+        {
+          "chinese": "没关系。",
+          "pinyin": "Méi guānxi.",
+          "uzbek": "Hech gap emas.",
+          "english": "It's okay."
+        }
+      ],
+      "grammar": {
+        "point": "疑问句",
+        "pattern": "你叫什么名字？",
+        "uzbek_explanation": "Xitoy tilida savol berish uchun '什么' (nima) so'zidan foydalaniladi. '叫' so'zi 'chaqirmoq' yoki 'ismi... bo'lmoq' degan ma'noni beradi. '请问' 'savol berishga ruxsat' degan ma'noni anglatadi.",
+        "examples": [
+          {
+            "chinese": "你叫什么名字？",
+            "pinyin": "Nǐ jiào shénme míngzi?",
+            "uzbek": "Sizning ismingiz nima?",
+            "english": "What is your name?"
+          },
+          {
+            "chinese": "我叫李明。",
+            "pinyin": "Wǒ jiào Lǐ Míng.",
+            "uzbek": "Mening ismim Li Ming.",
+            "english": "My name is Li Ming."
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 3,
+      "title": "她是我的女朋友",
+      "vocabularyIds": [198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215],
+      "example_sentences": [
+        {
+          "chinese": "她是谁？",
+          "pinyin": "Tā shì shéi?",
+          "uzbek": "U kim?",
+          "english": "Who is she?"
+        },
+        {
+          "chinese": "她是我的女朋友。",
+          "pinyin": "Tā shì wǒ de nǚpéngyou.",
+          "uzbek": "U mening qizim.",
+          "english": "She is my girlfriend."
+        },
+        {
+          "chinese": "我们很高兴。",
+          "pinyin": "Wǒmen hěn gāoxìng.",
+          "uzbek": "Biz juda xursandmiz.",
+          "english": "We are very happy."
+        },
+        {
+          "chinese": "她工作很忙。",
+          "pinyin": "Tā gōngzuò hěn máng.",
+          "uzbek": "Uning ishi juda band.",
+          "english": "Her work is very busy."
+        },
+        {
+          "chinese": "我想去工作。",
+          "pinyin": "Wǒ xiǎng qù gōngzuò.",
+          "uzbek": "Men ishga ketmoqchiman.",
+          "english": "I want to go to work."
+        }
+      ],
+      "grammar": {
+        "point": "的 - possessive particle",
+        "pattern": "我的 / 你的 / 他的",
+        "uzbek_explanation": "'的' so'zi egalikni bildiradi. '我的' 'mening', '你的' 'sizning', '他的' 'uning' degan ma'noni beradi. Bu so'z ismdan keyin keladi.",
+        "examples": [
+          {
+            "chinese": "她是我的女朋友。",
+            "pinyin": "Tā shì wǒ de nǚpéngyou.",
+            "uzbek": "U mening qizim.",
+            "english": "She is my girlfriend."
+          },
+          {
+            "chinese": "这是你的女朋友吗？",
+            "pinyin": "Zhè shì nǐ de nǚpéngyou ma?",
+            "uzbek": "Bu sizning qizingizmi?",
+            "english": "Is this your girlfriend?"
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 4,
+      "title": "我家有五口人",
+      "vocabularyIds": [216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236],
+      "example_sentences": [
+        {
+          "chinese": "我家有五口人。",
+          "pinyin": "Wǒ jiā yǒu wǔ kǒu rén.",
+          "uzbek": "Mening oilamda besh kishi bor.",
+          "english": "My family has five people."
+        },
+        {
+          "chinese": "你有几个哥哥？",
+          "pinyin": "Nǐ yǒu jǐ gè gēge?",
+          "uzbek": "Sizda nechta akangiz bor?",
+          "english": "How many older brothers do you have?"
+        },
+        {
+          "chinese": "我有一个哥哥。",
+          "pinyin": "Wǒ yǒu yí gè gēge.",
+          "uzbek": "Menda bitta akam bor.",
+          "english": "I have one older brother."
+        },
+        {
+          "chinese": "他今年多大？",
+          "pinyin": "Tā jīnnián duō dà?",
+          "uzbek": "U bu yil nechta yoshda?",
+          "english": "How old is he this year?"
+        },
+        {
+          "chinese": "他今年二十岁。",
+          "pinyin": "Tā jīnnián èrshí suì.",
+          "uzbek": "U bu yil yigirma yoshda.",
+          "english": "He is twenty years old this year."
+        }
+      ],
+      "grammar": {
+        "point": "有 - to have",
+        "pattern": "我有... / 你有...",
+        "uzbek_explanation": "'有' so'zi 'bormoq' degan ma'noni beradi. Bu so'z oila a'zolari, narsalar va boshqa narsalarni sanash uchun ishlatiladi. '个' umumiy hisoblagich sifatida ishlatiladi.",
+        "examples": [
+          {
+            "chinese": "我家有五口人。",
+            "pinyin": "Wǒ jiā yǒu wǔ kǒu rén.",
+            "uzbek": "Mening oilamda besh kishi bor.",
+            "english": "My family has five people."
+          },
+          {
+            "chinese": "我有一个哥哥。",
+            "pinyin": "Wǒ yǒu yí gè gēge.",
+            "uzbek": "Menda bitta akam bor.",
+            "english": "I have one older brother."
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 5,
+      "title": "今天星期几",
+      "vocabularyIds": [237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258],
+      "example_sentences": [
+        {
+          "chinese": "今天星期几？",
+          "pinyin": "Jīntiān xīngqī jǐ?",
+          "uzbek": "Bugun haftaning nechchi kuni?",
+          "english": "What day of the week is today?"
+        },
+        {
+          "chinese": "今天星期天。",
+          "pinyin": "Jīntiān xīngqītiān.",
+          "uzbek": "Bugun yakshanba.",
+          "english": "Today is Sunday."
+        },
+        {
+          "chinese": "我会做饭。",
+          "pinyin": "Wǒ huì zuòfàn.",
+          "uzbek": "Men ovqat qila olaman.",
+          "english": "I can cook."
+        },
+        {
+          "chinese": "我喜欢吃饺子。",
+          "pinyin": "Wǒ xǐhuan chī jiǎozi.",
+          "uzbek": "Men chuchvara yemoqni yoqtiraman.",
+          "english": "I like eating dumplings."
+        },
+        {
+          "chinese": "这个电脑真好看。",
+          "pinyin": "Zhège diànnǎo zhēn hǎokàn.",
+          "uzbek": "Bu kompyuter haqiqatan chiroyli.",
+          "english": "This computer is really beautiful."
+        }
+      ],
+      "grammar": {
+        "point": "会 - ability",
+        "pattern": "我会... / 你会...",
+        "uzbek_explanation": "'会' so'zi qobiliyatni bildiradi - 'qila olmoq'. Bu so'z ish, harakat yoki mahoratni ifodalash uchun ishlatiladi.",
+        "examples": [
+          {
+            "chinese": "我会做饭。",
+            "pinyin": "Wǒ huì zuòfàn.",
+            "uzbek": "Men ovqat qila olaman.",
+            "english": "I can cook."
+          },
+          {
+            "chinese": "你会说中文吗？",
+            "pinyin": "Nǐ huì shuō Zhōngwén ma?",
+            "uzbek": "Siz xitoy tilida gapira olasizmi?",
+            "english": "Can you speak Chinese?"
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 6,
+      "title": "明天去哪儿",
+      "vocabularyIds": [259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280],
+      "example_sentences": [
+        {
+          "chinese": "明天去哪儿？",
+          "pinyin": "Míngtiān qù nǎr?",
+          "uzbek": "Ertaga qayerga ketasiz?",
+          "english": "Where are you going tomorrow?"
+        },
+        {
+          "chinese": "我想去超市。",
+          "pinyin": "Wǒ xiǎng qù chāoshì.",
+          "uzbek": "Men supermarketga ketmoqchiman.",
+          "english": "I want to go to the supermarket."
+        },
+        {
+          "chinese": "买一些东西。",
+          "pinyin": "Mǎi yìxiē dōngxi.",
+          "uzbek": "Bir necha narsa sotib olish.",
+          "english": "Buy some things."
+        },
+        {
+          "chinese": "这个包子非常好吃。",
+          "pinyin": "Zhège bāozi fēicháng hǎochī.",
+          "uzbek": "Bu manti juda mazali.",
+          "english": "This steamed bun is very delicious."
+        },
+        {
+          "chinese": "坐出租车回家。",
+          "pinyin": "Zuò chūzūchē huí jiā.",
+          "uzbek": "Taksida uyga qaytish.",
+          "english": "Go home by taxi."
+        }
+      ],
+      "grammar": {
+        "point": "想 - want to",
+        "pattern": "我想去... / 你想做...",
+        "uzbek_explanation": "'想' so'zi 'xohlamoq' degan ma'noni beradi. Bu so'z istak yoki reja bildirish uchun ishlatiladi va odatda harakat fe'ldan oldin keladi.",
+        "examples": [
+          {
+            "chinese": "我想去超市。",
+            "pinyin": "Wǒ xiǎng qù chāoshì.",
+            "uzbek": "Men supermarketga ketmoqchiman.",
+            "english": "I want to go to the supermarket."
+          },
+          {
+            "chinese": "你想吃什么？",
+            "pinyin": "Nǐ xiǎng chī shénme?",
+            "uzbek": "Siz nima yemoqchisiz?",
+            "english": "What do you want to eat?"
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 7,
+      "title": "现在几点",
+      "vocabularyIds": [281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307],
+      "example_sentences": [
+        {
+          "chinese": "现在几点？",
+          "pinyin": "Xiànzài jǐ diǎn?",
+          "uzbek": "Hozir soat nechada?",
+          "english": "What time is it now?"
+        },
+        {
+          "chinese": "现在八点半。",
+          "pinyin": "Xiànzài bā diǎn bàn.",
+          "uzbek": "Hozir soat sakkiz yarim.",
+          "english": "It is eight thirty now."
+        },
+        {
+          "chinese": "上午上课。",
+          "pinyin": "Shàngwǔ shàngkè.",
+          "uzbek": "Tushdan oldin dars.",
+          "english": "Class in the morning."
+        },
+        {
+          "chinese": "下午看电影吧。",
+          "pinyin": "Xiàwǔ kàn diànyǐng ba.",
+          "uzbek": "Tushdan keyin kino ko'raylik.",
+          "english": "Let's watch a movie in the afternoon."
+        },
+        {
+          "chinese": "晚上在家休息。",
+          "pinyin": "Wǎnshang zài jiā xiūxi.",
+          "uzbek": "Kechqurun uyda dam olish.",
+          "english": "Rest at home in the evening."
+        }
+      ],
+      "grammar": {
+        "point": "吧 - suggestion particle",
+        "pattern": "...吧",
+        "uzbek_explanation": "'吧' so'zi taklif yoki taklif bildiruvchi qo'shimcha sifatida ishlatiladi. Bu so'z gap oxirida kelib, 'buni qilaylik' degan ma'noni beradi.",
+        "examples": [
+          {
+            "chinese": "下午看电影吧。",
+            "pinyin": "Xiàwǔ kàn diànyǐng ba.",
+            "uzbek": "Tushdan keyin kino ko'raylik.",
+            "english": "Let's watch a movie in the afternoon."
+          },
+          {
+            "chinese": "我们吃饭吧。",
+            "pinyin": "Wǒmen chī fàn ba.",
+            "uzbek": "Biz taom yeyaylik.",
+            "english": "Let's eat."
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 8,
+      "title": "她在房间里",
+      "vocabularyIds": [308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330],
+      "example_sentences": [
+        {
+          "chinese": "她在房间里。",
+          "pinyin": "Tā zài fángjiān lǐ.",
+          "uzbek": "U xonada.",
+          "english": "She is in the room."
+        },
+        {
+          "chinese": "桌子下面有一只小猫。",
+          "pinyin": "Zhuōzi xiàmiàn yǒu yì zhī xiǎo māo.",
+          "uzbek": "Stol pastda bitta kichik mushuk bor.",
+          "english": "There is a small cat under the table."
+        },
+        {
+          "chinese": "我没看见它。",
+          "pinyin": "Wǒ méi kànjiàn tā.",
+          "uzbek": "Men uni ko'rmadim.",
+          "english": "I didn't see it."
+        },
+        {
+          "chinese": "这个学校很大。",
+          "pinyin": "Zhège xuéxiào hěn dà.",
+          "uzbek": "Bu maktab juda katta.",
+          "english": "This school is very big."
+        },
+        {
+          "chinese": "医生工作很忙。",
+          "pinyin": "Yīshēng gōngzuò hěn máng.",
+          "uzbek": "Shifokorning ishi juda band.",
+          "english": "The doctor's work is very busy."
+        }
+      ],
+      "grammar": {
+        "point": "在 - location",
+        "pattern": "在...里 / 在...下",
+        "uzbek_explanation": "'在' so'zi joylashuvni bildiradi. Bu so'z 'da' yoki 'ichida' degan ma'noni beradi va joy nomidan keyin keladi.",
+        "examples": [
+          {
+            "chinese": "她在房间里。",
+            "pinyin": "Tā zài fángjiān lǐ.",
+            "uzbek": "U xonada.",
+            "english": "She is in the room."
+          },
+          {
+            "chinese": "桌子下面有一只小猫。",
+            "pinyin": "Zhuōzi xiàmiàn yǒu yì zhī xiǎo māo.",
+            "uzbek": "Stol pastda bitta kichik mushuk bor.",
+            "english": "There is a small cat under the table."
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 9,
+      "title": "前边有一本书",
+      "vocabularyIds": [331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353],
+      "example_sentences": [
+        {
+          "chinese": "前边有一本书。",
+          "pinyin": "Qiánbian yǒu yì běn shū.",
+          "uzbek": "Oldinda bitta kitob bor.",
+          "english": "There is a book in front."
+        },
+        {
+          "chinese": "我和朋友一起学习。",
+          "pinyin": "Wǒ hé péngyou yìqǐ xuéxí.",
+          "uzbek": "Men do'stim bilan birgalikda o'qiyman.",
+          "english": "I study together with my friend."
+        },
+        {
+          "chinese": "白天读书。",
+          "pinyin": "Báitiān dúshū.",
+          "uzbek": "Kunduzi kitob o'qish.",
+          "english": "Read books during the day."
+        },
+        {
+          "chinese": "这首歌很好听。",
+          "pinyin": "Zhè shǒu gē hěn hǎotīng.",
+          "uzbek": "Bu qo'shiq juda yoqimli.",
+          "english": "This song sounds very good."
+        },
+        {
+          "chinese": "狗在外面玩。",
+          "pinyin": "Gǒu zài wàibian wán.",
+          "uzbek": "It tashqarida o'ynamoqda.",
+          "english": "The dog is playing outside."
+        }
+      ],
+      "grammar": {
+        "point": "方位词 - location words",
+        "pattern": "前边 / 后边 / 外边 / 里边",
+        "uzbek_explanation": "Xitoy tilida joylashuvni bildirish uchun '边' so'zi ishlatiladi. '前边' 'old tomon', '后边' 'orqa tomon', '外边' 'tashqarida', '里边' 'ichida' degan ma'noni beradi.",
+        "examples": [
+          {
+            "chinese": "前边有一本书。",
+            "pinyin": "Qiánbian yǒu yì běn shū.",
+            "uzbek": "Oldinda bitta kitob bor.",
+            "english": "There is a book in front."
+          },
+          {
+            "chinese": "狗在外面玩。",
+            "pinyin": "Gǒu zài wàibian wán.",
+            "uzbek": "It tashqarida o'ynamoqda.",
+            "english": "The dog is playing outside."
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 10,
+      "title": "这件衣服多少钱",
+      "vocabularyIds": [354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376],
+      "example_sentences": [
+        {
+          "chinese": "这件衣服多少钱？",
+          "pinyin": "Zhè jiàn yīfu duōshao qián?",
+          "uzbek": "Bu kiyim qancha pul?",
+          "english": "How much is this piece of clothing?"
+        },
+        {
+          "chinese": "这件衣服五十块。",
+          "pinyin": "Zhè jiàn yīfu wǔshí kuài.",
+          "uzbek": "Bu kiyim ellik yuan.",
+          "english": "This piece of clothing is fifty yuan."
+        },
+        {
+          "chinese": "这些苹果很便宜。",
+          "pinyin": "Zhèxiē píngguǒ hěn piányi.",
+          "uzbek": "Bu olmalar juda arzon.",
+          "english": "These apples are very cheap."
+        },
+        {
+          "chinese": "那边的水果怎么样？",
+          "pinyin": "Nàbiān de shuǐguǒ zěnmeyàng?",
+          "uzbek": "U tomondagi mevalar qanday?",
+          "english": "How are the fruits over there?"
+        },
+        {
+          "chinese": "这件衣服太贵了。",
+          "pinyin": "Zhè jiàn yīfu tài guì le.",
+          "uzbek": "Bu kiyim juda qimmat.",
+          "english": "This piece of clothing is too expensive."
+        }
+      ],
+      "grammar": {
+        "point": "多少钱 - how much",
+        "pattern": "...多少钱？",
+        "uzbek_explanation": "'多少钱' 'qancha pul' degan ma'noni beradi. Bu so'z narxni so'rash uchun ishlatiladi. '块' yuan pul birligi sifatida ishlatiladi.",
+        "examples": [
+          {
+            "chinese": "这件衣服多少钱？",
+            "pinyin": "Zhè jiàn yīfu duōshao qián?",
+            "uzbek": "Bu kiyim qancha pul?",
+            "english": "How much is this piece of clothing?"
+          },
+          {
+            "chinese": "这个苹果多少钱？",
+            "pinyin": "Zhège píngguǒ duōshao qián?",
+            "uzbek": "Bu olma qancha pul?",
+            "english": "How much is this apple?"
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 11,
+      "title": "他在开车",
+      "vocabularyIds": [377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401],
+      "example_sentences": [
+        {
+          "chinese": "他在开车。",
+          "pinyin": "Tā zài kāichē.",
+          "uzbek": "U mashina haydamoqda.",
+          "english": "He is driving a car."
+        },
+        {
+          "chinese": "大学生在大学读书。",
+          "pinyin": "Dàxuéshēng zài dàxué dúshū.",
+          "uzbek": "Universitet talabalari universitetda kitob o'qiydi.",
+          "english": "University students study at the university."
+        },
+        {
+          "chinese": "昨天他在哪里？",
+          "pinyin": "Zuótiān tā zài nǎlǐ?",
+          "uzbek": "Kecha u qayerda edi?",
+          "english": "Where was he yesterday?"
+        },
+        {
+          "chinese": "他正在睡觉。",
+          "pinyin": "Tā zhèngzài shuìjiào.",
+          "uzbek": "U ayni paytda uxlamoqda.",
+          "english": "He is sleeping right now."
+        },
+        {
+          "chinese": "小朋友在玩。",
+          "pinyin": "Xiǎopéngyou zài wán.",
+          "uzbek": "Bolalar o'ynamoqda.",
+          "english": "Children are playing."
+        }
+      ],
+      "grammar": {
+        "point": "正在 - progressive aspect",
+        "pattern": "正在...",
+        "uzbek_explanation": "'正在' so'zi hozirgi vaqtda davom etayotgan harakatni bildiradi. Bu so'z fe'ldan oldin keladi va '-moqda' degan ma'noni beradi.",
+        "examples": [
+          {
+            "chinese": "他正在开车。",
+            "pinyin": "Tā zhèngzài kāichē.",
+            "uzbek": "U ayni paytda mashina haydamoqda.",
+            "english": "He is driving right now."
+          },
+          {
+            "chinese": "我正在吃饭。",
+            "pinyin": "Wǒ zhèngzài chī fàn.",
+            "uzbek": "Men ayni paytda taom yeyapman.",
+            "english": "I am eating right now."
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 12,
+      "title": "今天天气怎么样",
+      "vocabularyIds": [402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425],
+      "example_sentences": [
+        {
+          "chinese": "今天天气怎么样？",
+          "pinyin": "Jīntiān tiānqì zěnmeyàng?",
+          "uzbek": "Bugun ob-havo qanday?",
+          "english": "How is the weather today?"
+        },
+        {
+          "chinese": "今天下雨了。",
+          "pinyin": "Jīntiān xiàyǔ le.",
+          "uzbek": "Bugun yomg'ir yog'di.",
+          "english": "It rained today."
+        },
+        {
+          "chinese": "我觉得有点儿冷。",
+          "pinyin": "Wǒ juéde yǒudiǎnr lěng.",
+          "uzbek": "Men ozgina sovuq deb o'ylayman.",
+          "english": "I feel a little cold."
+        },
+        {
+          "chinese": "下雪了。",
+          "pinyin": "Xià xuě le.",
+          "uzbek": "Qor yog'di.",
+          "english": "It snowed."
+        },
+        {
+          "chinese": "喝一点儿热水。",
+          "pinyin": "Hē yìdiǎnr rè shuǐ.",
+          "uzbek": "Bir oz issiq suv ichish.",
+          "english": "Drink a little hot water."
+        }
+      ],
+      "grammar": {
+        "point": "了 - change of state",
+        "pattern": "...了",
+        "uzbek_explanation": "'了' so'zi o'zgarishni bildiradi. Bu so'z gap oxirida kelib, holatning o'zgarishini ko'rsatadi.",
+        "examples": [
+          {
+            "chinese": "今天下雨了。",
+            "pinyin": "Jīntiān xiàyǔ le.",
+            "uzbek": "Bugun yomg'ir yog'di.",
+            "english": "It rained today."
+          },
+          {
+            "chinese": "下雪了。",
+            "pinyin": "Xià xuě le.",
+            "uzbek": "Qor yog'di.",
+            "english": "It snowed."
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 13,
+      "title": "我可以坐这儿吗",
+      "vocabularyIds": [426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445],
+      "example_sentences": [
+        {
+          "chinese": "我可以坐这儿吗？",
+          "pinyin": "Wǒ kěyǐ zuò zhèr ma?",
+          "uzbek": "Men bu yerga o'tira olamanmi?",
+          "english": "Can I sit here?"
+        },
+        {
+          "chinese": "请给我一杯茶。",
+          "pinyin": "Qǐng gěi wǒ yì bēi chá.",
+          "uzbek": "Marhamat, menga bir piola choy bering.",
+          "english": "Please give me a cup of tea."
+        },
+        {
+          "chinese": "这个面包多少钱？",
+          "pinyin": "Zhège miànbāo duōshao qián?",
+          "uzbek": "Bu non qancha pul?",
+          "english": "How much is this bread?"
+        },
+        {
+          "chinese": "我要一半。",
+          "pinyin": "Wǒ yào yíbàn.",
+          "uzbek": "Men yarmisini xohlayman.",
+          "english": "I want half."
+        },
+        {
+          "chinese": "先生，请坐。",
+          "pinyin": "Xiānsheng, qǐng zuò.",
+          "uzbek": "Janob, marhamat o'tiring.",
+          "english": "Sir, please sit down."
+        }
+      ],
+      "grammar": {
+        "point": "可以 - permission",
+        "pattern": "我可以...吗？",
+        "uzbek_explanation": "'可以' so'zi ruxsat yoki imkoniyatni bildiradi. Bu so'z 'bola oladi' yoki 'ruxsat bormi' degan ma'noni beradi.",
+        "examples": [
+          {
+            "chinese": "我可以坐这儿吗？",
+            "pinyin": "Wǒ kěyǐ zuò zhèr ma?",
+            "uzbek": "Men bu yerga o'tira olamanmi?",
+            "english": "Can I sit here?"
+          },
+          {
+            "chinese": "我可以进来吗？",
+            "pinyin": "Wǒ kěyǐ jìnlai ma?",
+            "uzbek": "Men kirishim mumkinmi?",
+            "english": "Can I come in?"
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 14,
+      "title": "他们都在学习",
+      "vocabularyIds": [446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470],
+      "example_sentences": [
+        {
+          "chinese": "他们都在学习。",
+          "pinyin": "Tāmen dōu zài xuéxí.",
+          "uzbek": "Ular hammasi o'qimoqda.",
+          "english": "They are all studying."
+        },
+        {
+          "chinese": "小学生去上学。",
+          "pinyin": "Xiǎoxuéshēng qù shàngxué.",
+          "uzbek": "Maktab o'quvchilari maktabga boradi.",
+          "english": "Primary school students go to school."
+        },
+        {
+          "chinese": "不要说话。",
+          "pinyin": "Búyào shuōhuà.",
+          "uzbek": "Gapirmang.",
+          "english": "Don't speak."
+        },
+        {
+          "chinese": "听见了吗？",
+          "pinyin": "Tīngjiàn le ma?",
+          "uzbek": "Tingladingizmi?",
+          "english": "Did you hear?"
+        },
+        {
+          "chinese": "明年上中学。",
+          "pinyin": "Míngnián shàng zhōngxué.",
+          "uzbek": "Kelgasi yil o'rta maktabga boraman.",
+          "english": "Go to middle school next year."
+        }
+      ],
+      "grammar": {
+        "point": "都 - all",
+        "pattern": "都...",
+        "uzbek_explanation": "'都' so'zi 'hammasi' degan ma'noni beradi. Bu so'z ko'chma ob'ektdan keyin keladi.",
+        "examples": [
+          {
+            "chinese": "他们都在学习。",
+            "pinyin": "Tāmen dōu zài xuéxí.",
+            "uzbek": "Ular hammasi o'qimoqda.",
+            "english": "They are all studying."
+          },
+          {
+            "chinese": "我们都喜欢这本书。",
+            "pinyin": "Wǒmen dōu xǐhuan zhè běn shū.",
+            "uzbek": "Biz hammasi bu kitobni yoqtiramiz.",
+            "english": "We all like this book."
+          }
+        ]
+      }
+    },
+    {
+      "lessonId": 15,
+      "title": "去年你做了什么",
+      "vocabularyIds": [471, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487],
+      "example_sentences": [
+        {
+          "chinese": "去年你做了什么？",
+          "pinyin": "Qùnián nǐ zuò le shénme?",
+          "uzbek": "O'tgan yil nima qildingiz?",
+          "english": "What did you do last year?"
+        },
+        {
+          "chinese": "我去机场接家人。",
+          "pinyin": "Wǒ qù jīchǎng jiē jiārén.",
+          "uzbek": "Men aeroportga oilamni kutib olishga bordim.",
+          "english": "I went to the airport to pick up my family."
+        },
+        {
+          "chinese": "坐飞机去北京。",
+          "pinyin": "Zuò fēijī qù Běijīng.",
+          "uzbek": "Samolyotda Pekingga borish.",
+          "english": "Go to Beijing by plane."
+        },
+        {
+          "chinese": "要几个小时？",
+          "pinyin": "Yào jǐ gè xiǎoshí?",
+          "uzbek": "Nechta soat kerak?",
+          "english": "How many hours does it take?"
+        },
+        {
+          "chinese": "早上去，晚上回来。",
+          "pinyin": "Zǎoshang qù, wǎnshang huílái.",
+          "uzbek": "Ertalab borish, kechqurun qaytish.",
+          "english": "Go in the morning, come back in the evening."
+        }
+      ],
+      "grammar": {
+        "point": "时间表达 - time expressions",
+        "pattern": "去年 / 明年 / 早上去",
+        "uzbek_explanation": "Xitoy tilida vaqt ifodalash uchun '年' (yil), '早' (erta), '晚' (kech) kabi so'zlar ishlatiladi. '去年' 'o'tgan yil', '明年' 'kelgasi yil' degan ma'noni beradi.",
+        "examples": [
+          {
+            "chinese": "去年你做了什么？",
+            "pinyin": "Qùnián nǐ zuò le shénme?",
+            "uzbek": "O'tgan yil nima qildingiz?",
+            "english": "What did you do last year?"
+          },
+          {
+            "chinese": "早上去，晚上回来。",
+            "pinyin": "Zǎoshang qù, wǎnshang huílái.",
+            "uzbek": "Ertalab borish, kechqurun qaytish.",
+            "english": "Go in the morning, come back in the evening."
+          }
+        ]
+      }
+    }
+  ]
+}

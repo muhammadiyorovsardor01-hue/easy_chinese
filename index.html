@@ -143,6 +143,7 @@
             <div class="mode-tabs">
                 <button class="tab-btn active" data-mode="flashcard">Flashcards</button>
                 <button class="tab-btn" data-mode="quiz">Quiz</button>
+                <button class="tab-btn" id="learningContentTab" data-mode="learning">Learning</button>
             </div>
 
             <!-- Flashcard Mode -->
@@ -220,6 +221,27 @@
                 </div>
                 <div class="quiz-counter">
                     Question: <span id="currentQuestion">1</span> / <span id="totalQuestions">5</span>
+                </div>
+            </div>
+
+            <!-- Learning Content Mode -->
+            <div id="learningMode" class="mode-content">
+                <div class="learning-content-container">
+                    <!-- Example Sentences Section -->
+                    <div class="learning-section">
+                        <h3 class="learning-section-title">Example Sentences</h3>
+                        <div id="exampleSentences" class="example-sentences-list">
+                            <p class="learning-placeholder">Loading learning content...</p>
+                        </div>
+                    </div>
+
+                    <!-- Grammar Note Section -->
+                    <div class="learning-section">
+                        <h3 class="learning-section-title">Grammar Note</h3>
+                        <div id="grammarNote" class="grammar-note-container">
+                            <p class="learning-placeholder">Loading learning content...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

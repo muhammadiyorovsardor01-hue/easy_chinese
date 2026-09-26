@@ -564,6 +564,8 @@ const lessonTracks = {
 };
 let currentLessonTrack = 'classic';
 let searchQuery = '';
+let lessonContentData = null; // Stores loaded Classic HSK lesson content
+let newHskLessonContentData = null; // Stores loaded New HSK 3.0 lesson content
 let streakData = JSON.parse(localStorage.getItem('streakData')) || {
     streak: 0,
     lastLoginDate: null,
@@ -970,6 +972,95 @@ function setupEventListeners() {
 
 function loadExternalVocabulary() {
     // words.json is a legacy partial set; the ordered inline dataset is canonical.
+}
+
+// Load enriched lesson content for Classic HSK 1
+async function loadLessonContent() {
+    if (lessonContentData !== null) return; // Already loaded
+
+    try {
+        const response = await fetch('lesson-content-classic-hsk1.json');
+        if (!response.ok) throw new Error('Failed to load lesson content');
+        lessonContentData = await response.json();
+    } catch (error) {
+        console.error('Error loading lesson content:', error);
+        lessonContentData = null; // Ensure null on failure
+    }
+}
+
+// Load enriched lesson content for New HSK 3.0
+async function loadNewHskLessonContent() {
+    if (newHskLessonContentData !== null) return; // Already loaded
+
+    try {
+        const response = await fetch('lesson-content-new-hsk1.json');
+        if (!response.ok) throw new Error('Failed to load New HSK lesson content');
+        newHskLessonContentData = await response.json();
+    } catch (error) {
+        console.error('Error loading New HSK lesson content:', error);
+        newHskLessonContentData = null; // Ensure null on failure
+    }
+}
+
+// Display learning content (example sentences and grammar)
+function displayLearningContent(lessonNumber, track) {
+    const exampleSentencesContainer = document.getElementById('exampleSentences');
+    const grammarNoteContainer = document.getElementById('grammarNote');
+
+    // Select the appropriate content data based on track
+    const contentData = track === 'classic' ? lessonContentData : newHskLessonContentData;
+
+    if (!contentData || !contentData.lessons) {
+        exampleSentencesContainer.innerHTML = '<p class="learning-placeholder">Learning content not available for this lesson.</p>';
+        grammarNoteContainer.innerHTML = '<p class="learning-placeholder">Learning content not available for this lesson.</p>';
+        return;
+    }
+
+    const lesson = contentData.lessons.find(l => l.lessonId === lessonNumber);
+    if (!lesson) {
+        exampleSentencesContainer.innerHTML = '<p class="learning-placeholder">No content for this lesson.</p>';
+        grammarNoteContainer.innerHTML = '<p class="learning-placeholder">No content for this lesson.</p>';
+        return;
+    }
+
+    // Display example sentences
+    exampleSentencesContainer.innerHTML = lesson.example_sentences.map(sentence => `
+        <div class="example-sentence-card">
+            <div class="sentence-chinese">${sentence.chinese}</div>
+            <div class="sentence-pinyin">${sentence.pinyin}</div>
+            <div class="sentence-uzbek">${sentence.uzbek}</div>
+            <div class="sentence-english">${sentence.english}</div>
+        </div>
+    `).join('');
+
+    // Display grammar note
+    if (lesson.grammar) {
+        grammarNoteContainer.innerHTML = `
+            <div class="grammar-content">
+                <h4 class="grammar-point">${lesson.grammar.point}</h4>
+                <div class="grammar-pattern">
+                    <strong>Pattern:</strong> ${lesson.grammar.pattern}
+                </div>
+                <div class="grammar-explanation">
+                    ${lesson.grammar.uzbek_explanation}
+                </div>
+                ${lesson.grammar.examples && lesson.grammar.examples.length > 0 ? `
+                    <div class="grammar-examples">
+                        ${lesson.grammar.examples.map(ex => `
+                            <div class="grammar-example">
+                                <div class="grammar-example-chinese">${ex.chinese}</div>
+                                <div class="grammar-example-pinyin">${ex.pinyin}</div>
+                                <div class="grammar-example-uzbek">${ex.uzbek}</div>
+                                <div class="grammar-example-english">${ex.english}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    } else {
+        grammarNoteContainer.innerHTML = '<p class="learning-placeholder">No grammar note for this lesson.</p>';
+    }
 }
 
 function showLeaderboard() {
@@ -1638,6 +1729,29 @@ function switchMode(mode) {
         quizIndex = 0;
         quizScore = 0;
         updateQuiz();
+    }
+
+    if (mode === 'learning') {
+        // Load and display enriched content based on track
+        if (currentLessonTrack === 'classic') {
+            loadLessonContent().then(() => {
+                if (currentHSK === 1) {
+                    displayLearningContent(currentLesson, 'classic');
+                } else {
+                    document.getElementById('exampleSentences').innerHTML = '<p class="learning-placeholder">Learning content is only available for HSK 1 lessons.</p>';
+                    document.getElementById('grammarNote').innerHTML = '<p class="learning-placeholder">Learning content is only available for HSK 1 lessons.</p>';
+                }
+            });
+        } else if (currentLessonTrack === 'new') {
+            loadNewHskLessonContent().then(() => {
+                if (currentHSK === 1) {
+                    displayLearningContent(currentLesson, 'new');
+                } else {
+                    document.getElementById('exampleSentences').innerHTML = '<p class="learning-placeholder">Learning content is only available for HSK 1 lessons.</p>';
+                    document.getElementById('grammarNote').innerHTML = '<p class="learning-placeholder">Learning content is only available for HSK 1 lessons.</p>';
+                }
+            });
+        }
     }
 }
 
