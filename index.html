@@ -139,11 +139,20 @@
         <section id="lesson" class="view">
             <button class="back-btn" id="backToLessons">← Back to Lessons</button>
             <h2 class="section-title" id="lessonTitle">Lesson 1</h2>
-            
+
+            <section class="lesson-flow-panel" aria-label="Lesson progress">
+                <ol class="lesson-flow-steps" id="lessonFlowSteps"></ol>
+                <div class="lesson-flow-action">
+                    <p id="lessonFlowStatus" aria-live="polite"></p>
+                    <button class="lesson-flow-continue" id="lessonFlowContinue" type="button">Continue</button>
+                </div>
+            </section>
+
             <div class="mode-tabs">
+                <button class="tab-btn" id="learningContentTab" data-mode="learning">Learning</button>
                 <button class="tab-btn active" data-mode="flashcard">Flashcards</button>
                 <button class="tab-btn" data-mode="quiz">Quiz</button>
-                <button class="tab-btn" id="learningContentTab" data-mode="learning">Learning</button>
+                <button class="tab-btn" id="writingTab" data-mode="writing">Writing</button>
             </div>
 
             <!-- Flashcard Mode -->
@@ -244,6 +253,8 @@
                     </div>
                 </div>
             </div>
+
+            <div id="writingMode" class="mode-content lesson-writing-mode"></div>
         </section>
 
         <!-- Canvas View -->
@@ -313,6 +324,10 @@
                     <div class="canvas-header">
                         <div class="canvas-category">Trace Practice</div>
                         <div class="canvas-cn-kicker">汉字练习 · Hanzi Practice</div>
+                        <div class="canvas-word-progress" aria-live="polite">
+                            <span>Word: <strong id="canvasWordLabel">你</strong></span>
+                            <span id="canvasCharacterPosition">Character 1 of 1</span>
+                        </div>
                         <div class="canvas-prompt-row">
                             <div class="canvas-reference-character" id="canvasCharacter">你</div>
                             <div class="canvas-meaning" id="canvasMeaning">You</div>

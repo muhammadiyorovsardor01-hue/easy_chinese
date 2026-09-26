@@ -558,6 +558,16 @@ let quizAnswered = false;
 let quizType = 'meaning';
 let hanziWriter = null;
 let learnedWords = JSON.parse(localStorage.getItem('learnedWords')) || [];
+const LESSON_FLOW_STORAGE_KEY = 'lessonFlowProgress';
+const LESSON_COMPLETION_XP = 25;
+const lessonFlowSteps = [
+    { id: 'learning', label: 'Learn' },
+    { id: 'flashcards', label: 'Flashcards' },
+    { id: 'quiz', label: 'Quiz' },
+    { id: 'writing', label: 'Writing' },
+    { id: 'complete', label: 'Complete' }
+];
+let lessonFlowProgress = loadLessonFlowProgress();
 const lessonTracks = {
     classic: { dataTrack: 'classic', minLesson: 1, maxLesson: 15 },
     new: { dataTrack: 'new', minLesson: 1, maxLesson: 15 }
@@ -591,6 +601,8 @@ let canvasHSK = 1;
 let canvasTrack = 'classic'; // classic | new (New HSK 3.0)
 let canvasLesson = 1;
 let canvasWordIndex = 0;
+let canvasCharacterIndex = 0;
+let currentCanvasCharacters = [];
 let canvasScore = 0;
 let canvasWritingMode = 'trace'; // trace, write, test
 let selectedAvatar = '👤';
@@ -602,6 +614,7 @@ let userStrokes = [];
 let autoAdvanceTimer = null;
 let quizSessionId = 0;
 let comboCount = 0;
+let canvasReturnToLesson = false;
 
 // DOM Elements
 const themeToggle = document.getElementById('themeToggle');
@@ -613,6 +626,9 @@ const backToLessons = document.getElementById('backToLessons');
 const lessonsTitle = document.getElementById('lessonsTitle');
 const lessonsGrid = document.getElementById('lessonsGrid');
 const lessonTitle = document.getElementById('lessonTitle');
+const lessonFlowStepsElement = document.getElementById('lessonFlowSteps');
+const lessonFlowStatus = document.getElementById('lessonFlowStatus');
+const lessonFlowContinue = document.getElementById('lessonFlowContinue');
 const flashcard = document.getElementById('flashcard');
 const flashcardHanzi = document.getElementById('flashcardHanzi');
 const flashcardAudioBtn = document.getElementById('flashcardAudioBtn');
@@ -649,10 +665,15 @@ const toast = document.getElementById('toast');
 let toastTimer = null;
 const navItems = document.querySelectorAll('.nav-item');
 const canvasView = document.getElementById('canvas');
+const canvasViewPlaceholder = document.createComment('standalone canvas mount point');
+canvasView.parentNode.insertBefore(canvasViewPlaceholder, canvasView);
+const lessonWritingMode = document.getElementById('writingMode');
 const profileView = document.getElementById('profile');
 const backToLessonsFromCanvas = document.getElementById('backToLessonsFromCanvas');
 const drawingCanvas = document.getElementById('hanziWriterCanvas');
 const canvasCharacter = document.getElementById('canvasCharacter');
+const canvasWordLabel = document.getElementById('canvasWordLabel');
+const canvasCharacterPosition = document.getElementById('canvasCharacterPosition');
 const profileStreak = document.getElementById('profileStreak');
 const profileLearned = document.getElementById('profileLearned');
 const profileXP = document.getElementById('profileXP');
@@ -798,7 +819,15 @@ function setupEventListeners() {
     // Back buttons
     backToDashboard.addEventListener('click', showDashboard);
     backToLessons.addEventListener('click', showLessonsView);
-    backToLessonsFromCanvas.addEventListener('click', showLessonsView);
+    backToLessonsFromCanvas.addEventListener('click', () => {
+        if (canvasReturnToLesson) {
+            canvasReturnToLesson = false;
+            showLessonView(currentLesson);
+        } else {
+            showLessonsView();
+        }
+    });
+    lessonFlowContinue.addEventListener('click', continueLessonFlow);
 
     // Canvas sidebar controls
     hskOptions.forEach(option => {
@@ -808,6 +837,7 @@ function setupEventListeners() {
             canvasHSK = parseInt(option.dataset.hsk);
             canvasTrack = 'classic'; // only HSK 1 has both curricula
             canvasWordIndex = 0;
+            canvasCharacterIndex = 0;
             updateCanvasLessonSelector();
             loadCanvasCharacter();
         });
@@ -818,6 +848,7 @@ function setupEventListeners() {
             canvasTrack = e.target.value;
             canvasLesson = 1;
             canvasWordIndex = 0;
+            canvasCharacterIndex = 0;
             updateCanvasLessonSelector();
             loadCanvasCharacter();
         });
@@ -828,6 +859,7 @@ function setupEventListeners() {
             canvasTrack = e.target.value;
             canvasLesson = 1;
             canvasWordIndex = 0;
+            canvasCharacterIndex = 0;
             updateCanvasLessonSelector();
             loadCanvasCharacter();
         });
@@ -836,6 +868,7 @@ function setupEventListeners() {
     canvasLessonSelector.addEventListener('change', (e) => {
         canvasLesson = parseInt(e.target.value);
         canvasWordIndex = 0;
+        canvasCharacterIndex = 0;
         loadCanvasCharacter();
     });
 
@@ -843,6 +876,7 @@ function setupEventListeners() {
         canvasHSK = parseInt(e.target.value);
         canvasTrack = 'classic';
         canvasWordIndex = 0;
+        canvasCharacterIndex = 0;
         updateCanvasLessonSelector();
         loadCanvasCharacter();
     });
@@ -850,6 +884,7 @@ function setupEventListeners() {
     canvasMobileLessonSelector.addEventListener('change', (e) => {
         canvasLesson = parseInt(e.target.value);
         canvasWordIndex = 0;
+        canvasCharacterIndex = 0;
         loadCanvasCharacter();
     });
 
@@ -1113,6 +1148,7 @@ function populateLeaderboard() {
 
 // View navigation
 function showView(viewToShow) {
+    if (canvasReturnToLesson && viewToShow !== lesson) restoreCanvasViewToStandalone();
     document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
     viewToShow.classList.add('active');
 }
@@ -1158,6 +1194,16 @@ function showLessonView(lessonNumber) {
     updateFlashcard();
     updateQuiz();
     showView(lesson);
+    const progress = getOrCreateLessonFlowRecord(currentLessonTrack, currentHSK, currentLesson);
+    const nextStep = getNextLessonFlowStep(progress);
+    if (nextStep && nextStep.id === 'writing') {
+        prepareLessonWritingCanvas();
+        switchMode('writing');
+    } else {
+        const nextMode = nextStep && nextStep.id === 'flashcards' ? 'flashcard' : nextStep && nextStep.id;
+        switchMode(nextMode || 'flashcard');
+    }
+    updateLessonFlowUI();
 }
 
 // Lessons header: static kicker element + JS-owned progress line (additive only)
@@ -1175,8 +1221,212 @@ function updateLessonsHeader() {
     if (progress) progress.textContent = `${completed} of ${lessonNums.length} lessons complete`;
 }
 
-// A lesson counts as complete when every word id in it is in learnedWords
+function loadLessonFlowProgress() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(LESSON_FLOW_STORAGE_KEY));
+        if (saved && saved.version === 1 && saved.lessons && typeof saved.lessons === 'object') return saved;
+    } catch (error) {
+        console.warn('Could not load lesson flow progress:', error);
+    }
+    return { version: 1, lessons: {} };
+}
+
+function lessonFlowKey(track, hskLevel, lessonNumber) {
+    return `${track}:${hskLevel}:${lessonNumber}`;
+}
+
+function getLessonFlowRecord(track, hskLevel, lessonNumber) {
+    return lessonFlowProgress.lessons[lessonFlowKey(track, hskLevel, lessonNumber)] || null;
+}
+
+function saveLessonFlowProgress() {
+    try {
+        localStorage.setItem(LESSON_FLOW_STORAGE_KEY, JSON.stringify(lessonFlowProgress));
+    } catch (error) {
+        console.warn('Could not save lesson flow progress:', error);
+    }
+    notifyLessonFlowChanged();
+}
+
+function getOrCreateLessonFlowRecord(track, hskLevel, lessonNumber) {
+    const key = lessonFlowKey(track, hskLevel, lessonNumber);
+    let progress = lessonFlowProgress.lessons[key];
+    if (progress) return progress;
+
+    const words = vocabularyData.filter(word => word.hsk === hskLevel && word.track === track && word.lesson === lessonNumber);
+    const legacyComplete = words.length > 0 && words.every(word => learnedWords.includes(word.id));
+    progress = {
+        track,
+        hskLevel,
+        lessonNumber,
+        completedSteps: legacyComplete ? lessonFlowSteps.filter(step => step.id !== 'complete').map(step => step.id) : [],
+        flashcardWordIds: legacyComplete ? words.map(word => word.id) : [],
+        writingWordIds: legacyComplete ? words.map(word => word.id) : [],
+        completed: legacyComplete,
+        xpAwarded: legacyComplete,
+        updatedAt: new Date().toISOString()
+    };
+    lessonFlowProgress.lessons[key] = progress;
+    saveLessonFlowProgress();
+    return progress;
+}
+
+function getNextLessonFlowStep(progress) {
+    return lessonFlowSteps.find(step => step.id !== 'complete' && !progress.completedSteps.includes(step.id)) || null;
+}
+
+function updateLessonFlowUI() {
+    if (!lessonFlowStepsElement) return;
+    const progress = getOrCreateLessonFlowRecord(currentLessonTrack, currentHSK, currentLesson);
+    const nextStep = getNextLessonFlowStep(progress);
+    const activeStep = nextStep ? nextStep.id : 'complete';
+    const isFlashcardModeActive = document.getElementById('flashcardMode').classList.contains('active');
+    const isWritingModeActive = lessonWritingMode.classList.contains('active');
+    const lessonWordIds = [...new Set(currentWords.filter(word => word.id !== 0).map(word => word.id))];
+    const viewedFlashcardIds = new Set(progress.flashcardWordIds.filter(id => lessonWordIds.includes(id)));
+
+    lessonFlowStepsElement.innerHTML = lessonFlowSteps.map((step, index) => {
+        const done = step.id === 'complete' ? progress.completed : progress.completedSteps.includes(step.id);
+        const current = !progress.completed && step.id === activeStep;
+        const stateClass = done ? ' is-complete' : (current ? ' is-current' : '');
+        return `<li class="lesson-flow-step${stateClass}"${current ? ' aria-current="step"' : ''}><span class="lesson-flow-number">${index + 1}</span><span>${step.label}</span></li>`;
+    }).join('');
+
+    if (progress.completed) {
+        lessonFlowStatus.textContent = 'Lesson complete. The next lesson is unlocked.';
+        lessonFlowContinue.textContent = 'Lesson Complete';
+        lessonFlowContinue.disabled = true;
+    } else if (nextStep) {
+        const labels = {
+            learning: 'Continue to Learning',
+            flashcards: 'Continue to Flashcards',
+            quiz: 'Continue to Quiz',
+            speaking: 'Continue to Speaking',
+            writing: 'Continue to Writing'
+        };
+        if (nextStep.id === 'flashcards' && isFlashcardModeActive) {
+            lessonFlowStatus.textContent = `Viewed ${viewedFlashcardIds.size} of ${lessonWordIds.length} flashcards. View each card to unlock Quiz.`;
+            lessonFlowContinue.textContent = 'Review Flashcards';
+        } else if (nextStep.id === 'writing' && isWritingModeActive) {
+            lessonFlowStatus.textContent = 'Writing is in progress. Complete every character in each lesson word.';
+            lessonFlowContinue.textContent = 'Writing In Progress';
+        } else {
+            lessonFlowStatus.textContent = `Next: ${labels[nextStep.id] || nextStep.label}`;
+            lessonFlowContinue.textContent = labels[nextStep.id] || 'Continue';
+        }
+        lessonFlowContinue.disabled = false;
+    } else {
+        lessonFlowStatus.textContent = 'All required steps complete. Finish the lesson to claim your XP.';
+        lessonFlowContinue.textContent = 'Finish Lesson';
+        lessonFlowContinue.disabled = false;
+    }
+}
+
+function completeLessonFlowStep(stepId) {
+    const progress = getOrCreateLessonFlowRecord(currentLessonTrack, currentHSK, currentLesson);
+    if (!progress.completedSteps.includes(stepId)) {
+        progress.completedSteps.push(stepId);
+        progress.updatedAt = new Date().toISOString();
+        saveLessonFlowProgress();
+    }
+    updateLessonFlowUI();
+}
+
+function continueLessonFlow() {
+    const progress = getOrCreateLessonFlowRecord(currentLessonTrack, currentHSK, currentLesson);
+    if (progress.completed) return;
+    const nextStep = getNextLessonFlowStep(progress);
+    if (!nextStep) {
+        completeCurrentLesson();
+        return;
+    }
+
+    if (nextStep.id === 'writing') {
+        prepareLessonWritingCanvas();
+        switchMode('writing');
+        return;
+    }
+    switchMode(nextStep.id === 'flashcards' ? 'flashcard' : nextStep.id);
+}
+
+function prepareLessonWritingCanvas() {
+    canvasHSK = currentHSK;
+    canvasTrack = currentLessonTrack;
+    canvasLesson = currentLesson;
+    const words = vocabularyData.filter(word => word.hsk === canvasHSK && word.track === canvasTrack && word.lesson === canvasLesson);
+    const progress = getOrCreateLessonFlowRecord(canvasTrack, canvasHSK, canvasLesson);
+    const nextWordIndex = words.findIndex(word => !progress.writingWordIds.includes(word.id));
+    canvasWordIndex = nextWordIndex === -1 ? 0 : nextWordIndex;
+    canvasCharacterIndex = 0;
+}
+
+function completeCurrentLesson() {
+    const progress = getOrCreateLessonFlowRecord(currentLessonTrack, currentHSK, currentLesson);
+    const requiredSteps = lessonFlowSteps.filter(step => step.id !== 'complete').map(step => step.id);
+    if (!requiredSteps.every(stepId => progress.completedSteps.includes(stepId))) return;
+
+    progress.completed = true;
+    const shouldAwardXP = !progress.xpAwarded;
+    progress.xpAwarded = true;
+    progress.updatedAt = new Date().toISOString();
+    saveLessonFlowProgress();
+    if (shouldAwardXP) addXP(LESSON_COMPLETION_XP);
+    updateLessonFlowUI();
+    if (lessons.classList.contains('active')) generateLessonsGrid();
+    showToast(`Lesson complete! +${shouldAwardXP ? LESSON_COMPLETION_XP : 0} XP`);
+}
+
+function registerFlashcardView() {
+    if (!currentWords.length) return;
+    const progress = getOrCreateLessonFlowRecord(currentLessonTrack, currentHSK, currentLesson);
+    const lessonWordIds = [...new Set(currentWords.filter(word => word.id !== 0).map(word => word.id))];
+    const viewedIds = new Set(progress.flashcardWordIds.filter(id => lessonWordIds.includes(id)));
+    const currentWord = currentWords[flashcardIndex];
+    if (currentWord && lessonWordIds.includes(currentWord.id)) viewedIds.add(currentWord.id);
+
+    const viewedIdsChanged = viewedIds.size !== progress.flashcardWordIds.length ||
+        progress.flashcardWordIds.some(id => !viewedIds.has(id));
+    if (viewedIdsChanged) {
+        progress.flashcardWordIds = [...viewedIds];
+        progress.updatedAt = new Date().toISOString();
+        saveLessonFlowProgress();
+    }
+
+    if (lessonWordIds.length > 0 && lessonWordIds.every(id => viewedIds.has(id))) {
+        completeLessonFlowStep('flashcards');
+    } else {
+        updateLessonFlowUI();
+    }
+}
+
+function recordCanvasWritingCompletion() {
+    if (!canvasReturnToLesson || canvasCharacterIndex !== currentCanvasCharacters.length - 1) return false;
+    const words = vocabularyData.filter(word => word.hsk === canvasHSK && word.track === canvasTrack && word.lesson === canvasLesson);
+    const word = words[canvasWordIndex];
+    if (!word || !words.length) return false;
+
+    const progress = getOrCreateLessonFlowRecord(canvasTrack, canvasHSK, canvasLesson);
+    if (!progress.writingWordIds.includes(word.id)) {
+        progress.writingWordIds.push(word.id);
+        progress.updatedAt = new Date().toISOString();
+        if (progress.writingWordIds.length >= words.length) {
+            if (!progress.completedSteps.includes('writing')) progress.completedSteps.push('writing');
+            saveLessonFlowProgress();
+            if (canvasReturnToLesson && canvasHSK === currentHSK && canvasTrack === currentLessonTrack && canvasLesson === currentLesson) {
+                updateLessonFlowUI();
+                canvasFeedback.textContent = 'Writing step complete. Return to your lesson to finish.';
+            }
+        } else {
+            saveLessonFlowProgress();
+        }
+    }
+    return progress.completedSteps.includes('writing');
+}
+
+// Legacy learned-word completion is retained as a one-way migration fallback.
 function isLessonComplete(lessonNum, dataTrack) {
+    const progress = getLessonFlowRecord(dataTrack, currentHSK, lessonNum);
+    if (progress) return Boolean(progress.completed);
     const ids = vocabularyData
         .filter(word => word.hsk === currentHSK && word.track === dataTrack && word.lesson === lessonNum)
         .map(word => word.id);
@@ -1530,6 +1780,16 @@ window.EasyCloudApplyMergedState = function (merged) {
     if (merged.dailyProgress && typeof merged.dailyProgress === 'object') {
         dailyProgress = Object.assign({}, merged.dailyProgress);
     }
+    if (merged.lessonFlowProgress && typeof merged.lessonFlowProgress === 'object' &&
+        merged.lessonFlowProgress.version === 1 && merged.lessonFlowProgress.lessons &&
+        typeof merged.lessonFlowProgress.lessons === 'object') {
+        lessonFlowProgress = merged.lessonFlowProgress;
+        try {
+            localStorage.setItem(LESSON_FLOW_STORAGE_KEY, JSON.stringify(lessonFlowProgress));
+        } catch (error) {
+            console.warn('Could not save synced lesson flow progress:', error);
+        }
+    }
     // Read-only refresh only (updateStreak is intentionally NOT called).
     updateLearnedButton();
     updateLearnedCount();
@@ -1539,6 +1799,8 @@ window.EasyCloudApplyMergedState = function (merged) {
     updateAchievements();
     updateProfileStats();
     updateHSKProgress();
+    if (lesson.classList.contains('active')) updateLessonFlowUI();
+    if (lessons.classList.contains('active')) generateLessonsGrid();
 };
 
 // Guarded cloud-sync hooks. No-ops for guests, offline, or when the sync
@@ -1552,6 +1814,14 @@ function notifyWordToggled(wordId) {
 }
 
 function notifyStatsChanged() {
+    try {
+        if (window.EasyCloud && typeof window.EasyCloud.pushStats === 'function') {
+            window.EasyCloud.pushStats();
+        }
+    } catch (err) { /* cloud sync must never break the app */ }
+}
+
+function notifyLessonFlowChanged() {
     try {
         if (window.EasyCloud && typeof window.EasyCloud.pushStats === 'function') {
             window.EasyCloud.pushStats();
@@ -1619,6 +1889,7 @@ function navigateFlashcard(direction) {
     }
     
     updateFlashcard();
+    if (document.getElementById('flashcardMode').classList.contains('active')) registerFlashcardView();
 }
 
 function shuffleFlashcards() {
@@ -1628,6 +1899,7 @@ function shuffleFlashcards() {
     }
     flashcardIndex = 0;
     updateFlashcard();
+    if (document.getElementById('flashcardMode').classList.contains('active')) registerFlashcardView();
 }
 
 // Quiz functions
@@ -1708,27 +1980,48 @@ function nextQuiz() {
     quizIndex++;
     
     if (quizIndex >= currentWords.length) {
-        // Quiz completed
+        const finalScore = quizScore;
+        const passingScore = Math.ceil(currentWords.length * 0.7);
+        if (finalScore >= passingScore) {
+            completeLessonFlowStep('quiz');
+            showToast(`Quiz passed: ${finalScore}/${currentWords.length}`);
+        } else {
+            showToast(`Quiz score ${finalScore}/${currentWords.length}. Try again to pass.`);
+        }
         quizIndex = 0;
         quizScore = 0;
-        alert(`Quiz completed! Your final score: ${quizScore}/${currentWords.length}`);
     }
     
     updateQuiz();
+    updateLessonFlowUI();
 }
 
 // Mode switching
 function switchMode(mode) {
     tabBtns.forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+    const activeTab = document.querySelector(`.tab-btn[data-mode="${mode}"]`);
+    if (!activeTab) return;
+    activeTab.classList.add('active');
 
     document.querySelectorAll('.mode-content').forEach(content => content.classList.remove('active'));
     document.getElementById(`${mode}Mode`).classList.add('active');
+
+    if (mode === 'learning') completeLessonFlowStep('learning');
+    if (mode === 'flashcard') registerFlashcardView();
 
     if (mode === 'quiz') {
         quizIndex = 0;
         quizScore = 0;
         updateQuiz();
+    }
+
+    if (mode === 'writing') {
+        if (!canvasReturnToLesson || canvasView.parentNode !== lessonWritingMode) {
+            prepareLessonWritingCanvas();
+            showCanvasView(true);
+        }
+        updateLessonFlowUI();
+        return;
     }
 
     if (mode === 'learning') {
@@ -1753,15 +2046,41 @@ function switchMode(mode) {
             });
         }
     }
+
+    updateLessonFlowUI();
 }
 
 // Canvas View Functions
-function showCanvasView() {
-    showView(canvasView);
+function showCanvasView(fromLessonFlow = false) {
+    canvasReturnToLesson = fromLessonFlow;
+    if (fromLessonFlow) {
+        if (canvasView.parentNode !== lessonWritingMode) lessonWritingMode.appendChild(canvasView);
+        canvasView.classList.remove('view', 'active');
+        canvasView.classList.add('lesson-writing-inline');
+        backToLessonsFromCanvas.hidden = true;
+        showView(lesson);
+        tabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.mode === 'writing'));
+        document.querySelectorAll('.mode-content').forEach(content => content.classList.remove('active'));
+        lessonWritingMode.classList.add('active');
+    } else {
+        restoreCanvasViewToStandalone();
+        backToLessonsFromCanvas.hidden = false;
+        backToLessonsFromCanvas.textContent = '← Back to Lessons';
+        showView(canvasView);
+    }
     initializeCanvas();
     updateCanvasLessonSelector();
     loadCanvasCharacter();
     updateModeInstructions();
+}
+
+function restoreCanvasViewToStandalone() {
+    if (canvasView.parentNode !== canvasViewPlaceholder.parentNode) {
+        canvasViewPlaceholder.parentNode.insertBefore(canvasView, canvasViewPlaceholder.nextSibling);
+    }
+    canvasView.classList.remove('lesson-writing-inline');
+    canvasView.classList.add('view');
+    canvasReturnToLesson = false;
 }
 
 function updateCanvasLessonSelector() {
@@ -1791,10 +2110,18 @@ function loadCanvasCharacter() {
     if (words.length > 0) {
         canvasWordIndex %= words.length;
         const word = words[canvasWordIndex];
-        const targetChar = word.hanzi.charAt(0);
+        currentCanvasCharacters = Array.from(word.hanzi);
+        canvasCharacterIndex = Math.min(canvasCharacterIndex, currentCanvasCharacters.length - 1);
+        const targetChar = currentCanvasCharacters[canvasCharacterIndex];
         canvasCharacter.textContent = targetChar;
+        canvasWordLabel.textContent = word.hanzi;
+        canvasCharacterPosition.textContent = `Character ${canvasCharacterIndex + 1} of ${currentCanvasCharacters.length}`;
         canvasMeaning.textContent = word.uzbek;
         canvasPinyin.textContent = word.pinyin;
+        const nextLabel = canvasCharacterIndex < currentCanvasCharacters.length - 1 ? 'Next Character →' : 'Next Word →';
+        canvasContinueBtn.textContent = nextLabel;
+        nextCanvasWord.textContent = nextLabel;
+        nextWordFromModal.textContent = nextLabel.replace(' →', '');
         canvasFeedback.textContent = '';
         canvasFeedback.className = 'canvas-feedback';
         nextCanvasWord.disabled = true;
@@ -1813,7 +2140,13 @@ function nextCanvasCharacter() {
     }
     const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.track === canvasTrack && w.lesson === canvasLesson);
     if (!words.length) return;
+    if (canvasCharacterIndex < currentCanvasCharacters.length - 1) {
+        canvasCharacterIndex++;
+        loadCanvasCharacter();
+        return;
+    }
     canvasWordIndex = (canvasWordIndex + 1) % words.length;
+    canvasCharacterIndex = 0;
     loadCanvasCharacter();
 }
 
@@ -1920,6 +2253,7 @@ function startHanziQuiz(character) {
                 hideComboDisplay();
             },
             onComplete: function(summary) {
+                if (sessionId !== quizSessionId) return;
                 quizCompleted = true;
                 canvasScore += 10;
                 canvasScoreElement.textContent = canvasScore;
@@ -1933,7 +2267,10 @@ function startHanziQuiz(character) {
                 
                 updateDailyQuests();
                 updateAchievements();
-                canvasFeedback.textContent = 'Great work! Character complete. +10 points';
+                const writingStepComplete = recordCanvasWritingCompletion();
+                canvasFeedback.textContent = writingStepComplete && canvasReturnToLesson
+                    ? 'Writing step complete. Return to your lesson to finish.'
+                    : 'Great work! Character complete. +10 points';
                 canvasFeedback.className = 'canvas-feedback success';
                 nextCanvasWord.disabled = false;
                 nextCanvasWord.style.display = 'inline-flex';
@@ -1951,12 +2288,6 @@ function startHanziQuiz(character) {
                 
                 showSuccessModal();
 
-                // Show lesson completion state when the last word in this lesson is done
-                const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.track === canvasTrack && w.lesson === canvasLesson);
-                if (words.length > 0 && canvasWordIndex >= words.length - 1) {
-                    canvasFeedback.textContent = `Lesson complete! You've finished all ${words.length} words in this lesson. Score: ${canvasScore} pts`;
-                    canvasFeedback.className = 'canvas-feedback success';
-                }
             }
         });
         if (typeof canvasHanziWriter.hideOutline === 'function') {

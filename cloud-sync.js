@@ -1,8 +1,8 @@
 // =============================================================
 // Easy Chinese — Firestore Progress Sync (Phase 2A)
 // =============================================================
-// Syncs ONLY: learnedWords, streakData.xp, streakData.streak,
-// streakData.lastLoginDate, dailyProgress. profileData, theme,
+// Syncs ONLY: learnedWords, lessonFlowProgress, streakData.xp,
+// streakData.streak, streakData.lastLoginDate, dailyProgress. profileData, theme,
 // quests, achievements, HSK percentages and the leaderboard stay
 // local in this phase (quests/achievements/percentages are derived
 // from the synced data and re-render locally).
@@ -18,6 +18,7 @@
 //   users/{uid}                    — { schemaVersion, stats, daily, updatedAt }
 //   users/{uid}/learned/{wordId}   — { learned: true|false, updatedAt }
 //   users/{uid}/backups/{id}       — raw pre-merge local snapshot
+//   users/{uid}.lessonFlowProgress — { version, lessons } (additive root field)
 //
 // Merge rules (Phase 2A spec):
 //   learnedWords : cloud is authoritative per word, INCLUDING
@@ -29,6 +30,11 @@
 //                  its streak value; same day → larger streak.
 //   daily        : same day → max per field; different day → newer
 //                  date wins completely; absent ≠ zero.
+//   lesson flow  : per lesson, union completed steps/word IDs and OR
+//                  completed/xpAwarded. This is monotonic because Phase 2A
+//                  has no reset operation; absent/empty cloud data never
+//                  erases local work. Incremental writes use a transaction
+//                  so a stale tab cannot replace newer cloud lesson progress.
 // =============================================================
 (function () {
     'use strict';
@@ -89,6 +95,99 @@
             traces: numOrNull(d && d.traces) || 0,
             xp: numOrNull(d && d.xp) || 0
         };
+    }
+
+    function normalizeLessonFlow(progress) {
+        if (!progress || typeof progress !== 'object' ||
+            (progress.version !== undefined && progress.version !== 1) ||
+            !progress.lessons || typeof progress.lessons !== 'object' || Array.isArray(progress.lessons)) {
+            return null;
+        }
+
+        var lessons = {};
+        Object.keys(progress.lessons).forEach(function (key) {
+            var record = progress.lessons[key];
+            if (!record || typeof record !== 'object') return;
+            var track = record.track;
+            var hskLevel = toIntOrNull(record.hskLevel);
+            var lessonNumber = toIntOrNull(record.lessonNumber);
+            if ((track !== 'classic' && track !== 'new') || hskLevel === null || hskLevel < 1 ||
+                lessonNumber === null || lessonNumber < 1 || key !== track + ':' + hskLevel + ':' + lessonNumber) return;
+
+            function uniqueStrings(values) {
+                var seen = {};
+                return (Array.isArray(values) ? values : []).filter(function (value) {
+                    if (typeof value !== 'string' || !value || seen[value]) return false;
+                    seen[value] = true;
+                    return true;
+                });
+            }
+            function uniqueIds(values) {
+                var seen = {};
+                return (Array.isArray(values) ? values : []).map(toIntOrNull).filter(function (id) {
+                    if (id === null || id < 0 || seen[id]) return false;
+                    seen[id] = true;
+                    return true;
+                });
+            }
+
+            lessons[key] = {
+                track: track,
+                hskLevel: hskLevel,
+                lessonNumber: lessonNumber,
+                completedSteps: uniqueStrings(record.completedSteps),
+                flashcardWordIds: uniqueIds(record.flashcardWordIds),
+                writingWordIds: uniqueIds(record.writingWordIds),
+                completed: record.completed === true,
+                xpAwarded: record.xpAwarded === true,
+                updatedAt: (typeof record.updatedAt === 'string') ? record.updatedAt : null
+            };
+        });
+        return { version: 1, lessons: lessons };
+    }
+
+    function mergeLessonFlow(local, cloud) {
+        var localFlow = normalizeLessonFlow(local);
+        var cloudFlow = normalizeLessonFlow(cloud);
+        if (!localFlow && !cloudFlow) return null;
+
+        var lessons = {};
+        var keys = {};
+        Object.keys((localFlow && localFlow.lessons) || {}).forEach(function (key) { keys[key] = true; });
+        Object.keys((cloudFlow && cloudFlow.lessons) || {}).forEach(function (key) { keys[key] = true; });
+        Object.keys(keys).forEach(function (key) {
+            var l = (localFlow && localFlow.lessons[key]) || null;
+            var c = (cloudFlow && cloudFlow.lessons[key]) || null;
+            var base = l || c;
+            function union(field) {
+                var out = [];
+                var seen = {};
+                [l && l[field], c && c[field]].forEach(function (values) {
+                    (values || []).forEach(function (value) {
+                        var identity = String(value);
+                        if (seen[identity]) return;
+                        seen[identity] = true;
+                        out.push(value);
+                    });
+                });
+                return out;
+            }
+            var completed = Boolean((l && l.completed) || (c && c.completed));
+            var localTime = dateOrNull(l && l.updatedAt);
+            var cloudTime = dateOrNull(c && c.updatedAt);
+            lessons[key] = {
+                track: base.track,
+                hskLevel: base.hskLevel,
+                lessonNumber: base.lessonNumber,
+                completedSteps: union('completedSteps'),
+                flashcardWordIds: union('flashcardWordIds'),
+                writingWordIds: union('writingWordIds'),
+                completed: completed,
+                xpAwarded: completed || Boolean((l && l.xpAwarded) || (c && c.xpAwarded)),
+                updatedAt: (localTime !== null && (cloudTime === null || localTime >= cloudTime)) ? l.updatedAt : (c && c.updatedAt) || (l && l.updatedAt) || null
+            };
+        });
+        return { version: 1, lessons: lessons };
     }
 
     // ---------- merge logic (pure functions, no I/O) ----------
@@ -212,6 +311,7 @@
         var localIds = Array.isArray(localLearned) ? localLearned : [];
         var localStreak = readLSJSON('streakData');
         var localDaily = readLSJSON('dailyProgress');
+        var localLessonFlow = readLSJSON('lessonFlowProgress');
 
         // 1) BACKUP the raw local snapshot BEFORE changing any local data.
         //    If the backup fails, the whole merge aborts and local data
@@ -221,6 +321,7 @@
             learnedWords: localIds,
             streakData: localStreak,
             dailyProgress: localDaily,
+            lessonFlowProgress: localLessonFlow,
             createdAt: serverTimestamp()
         }).then(function () {
             // 2) Read the cloud user document and learned subcollection.
@@ -228,6 +329,7 @@
                 var data = (userSnap && userSnap.exists) ? userSnap.data() : {};
                 var cloudStats = (data && data.stats) ? data.stats : null;
                 var cloudDaily = (data && data.daily) ? data.daily : null;
+                var cloudLessonFlow = (data && data.lessonFlowProgress) ? data.lessonFlowProgress : null;
                 return learnedCol(uid).get().then(function (learnedSnap) {
                     var cloudMap = {};
                     if (learnedSnap && typeof learnedSnap.forEach === 'function') {
@@ -235,7 +337,7 @@
                             cloudMap[String(doc.id)] = { learned: doc.get('learned') === true };
                         });
                     }
-                    return { cloudStats: cloudStats, cloudDaily: cloudDaily, cloudMap: cloudMap };
+                    return { cloudStats: cloudStats, cloudDaily: cloudDaily, cloudLessonFlow: cloudLessonFlow, cloudMap: cloudMap };
                 });
             });
         }).then(function (cloudState) {
@@ -255,12 +357,15 @@
             if (Object.keys(statsAtRead).length > 0) userPayload.stats = statsAtRead;
             var dailyAtRead = mergeDaily(localDaily, cloudState.cloudDaily);
             if (dailyAtRead) userPayload.daily = dailyAtRead;
+            var lessonFlowAtRead = mergeLessonFlow(localLessonFlow, cloudState.cloudLessonFlow);
+            if (lessonFlowAtRead) userPayload.lessonFlowProgress = lessonFlowAtRead;
             batch.set(userDoc(uid), userPayload, { merge: true });
 
             return batch.commit().then(function () {
                 return {
                     cloudStats: cloudState.cloudStats,
                     cloudDaily: cloudState.cloudDaily,
+                    cloudLessonFlow: cloudState.cloudLessonFlow,
                     cloudMap: cloudState.cloudMap,
                     uploadIds: learnedPlan.uploadIds
                 };
@@ -274,9 +379,11 @@
             var nowIds = Array.isArray(nowLearned) ? nowLearned : [];
             var nowStreak = readLSJSON('streakData');
             var nowDaily = readLSJSON('dailyProgress');
+            var nowLessonFlow = readLSJSON('lessonFlowProgress');
 
             var statsFinal = mergeStats(nowStreak, ctx.cloudStats);
             var dailyFinal = mergeDaily(nowDaily, ctx.cloudDaily);
+            var lessonFlowFinal = mergeLessonFlow(nowLessonFlow, ctx.cloudLessonFlow);
 
             // Preserve the app's existing daily-rollover rule: a merged day
             // that is not today is stale and starts fresh today (the same
@@ -322,13 +429,17 @@
             if (dailyFinal) {
                 localStorage.setItem('dailyProgress', JSON.stringify(dailyFinal));
             }
+            if (lessonFlowFinal) {
+                localStorage.setItem('lessonFlowProgress', JSON.stringify(lessonFlowFinal));
+            }
 
             // 5) Push merged values into the live runtime variables + UI.
             if (typeof window.EasyCloudApplyMergedState === 'function') {
                 window.EasyCloudApplyMergedState({
                     learnedWords: mergedLearned,
                     streakData: mergedStreak,
-                    dailyProgress: dailyFinal
+                    dailyProgress: dailyFinal,
+                    lessonFlowProgress: lessonFlowFinal
                 });
             }
 
@@ -403,7 +514,58 @@
             if (daily && dateOrNull(daily.date) !== null) {
                 payload.daily = sanitizeDaily(daily);
             }
-            userDoc(uid).set(payload, { merge: true }).catch(function (err) {
+            var localLessonFlow = normalizeLessonFlow(readLSJSON('lessonFlowProgress'));
+            if (localLessonFlow && typeof firestore.runTransaction === 'function') {
+                var ref = userDoc(uid);
+                return firestore.runTransaction(function (transaction) {
+                    return transaction.get(ref).then(function (snapshot) {
+                        var data = (snapshot && snapshot.exists) ? snapshot.data() : {};
+                        var mergedFlow = mergeLessonFlow(localLessonFlow, data && data.lessonFlowProgress);
+                        var transactionPayload = Object.assign({}, payload, {
+                            stats: mergeStats(stats, data && data.stats)
+                        });
+                        if (daily) {
+                            var mergedDaily = mergeDaily(daily, data && data.daily);
+                            if (mergedDaily) transactionPayload.daily = mergedDaily;
+                        }
+                        if (mergedFlow) transactionPayload.lessonFlowProgress = mergedFlow;
+                        transaction.set(ref, transactionPayload, { merge: true });
+                        return {
+                            lessonFlowProgress: mergedFlow,
+                            stats: transactionPayload.stats,
+                            dailyProgress: transactionPayload.daily || null
+                        };
+                    });
+                }).then(function (syncedState) {
+                    if (!syncedState || syncedUid !== uid) return;
+                    var appliedState = {};
+                    var finalFlow = mergeLessonFlow(
+                        readLSJSON('lessonFlowProgress'), syncedState.lessonFlowProgress
+                    );
+                    if (finalFlow) {
+                        localStorage.setItem('lessonFlowProgress', JSON.stringify(finalFlow));
+                        appliedState.lessonFlowProgress = finalFlow;
+                    }
+                    var finalStats = mergeStats(readLSJSON('streakData'), syncedState.stats);
+                    if (Object.keys(finalStats).length) {
+                        var currentStats = readLSJSON('streakData') || {};
+                        var mergedStats = Object.assign({}, currentStats, finalStats);
+                        localStorage.setItem('streakData', JSON.stringify(mergedStats));
+                        appliedState.streakData = mergedStats;
+                    }
+                    var finalDaily = mergeDaily(readLSJSON('dailyProgress'), syncedState.dailyProgress);
+                    if (finalDaily) {
+                        localStorage.setItem('dailyProgress', JSON.stringify(finalDaily));
+                        appliedState.dailyProgress = finalDaily;
+                    }
+                    if (typeof window.EasyCloudApplyMergedState === 'function') {
+                        window.EasyCloudApplyMergedState(appliedState);
+                    }
+                }).catch(function (err) {
+                    console.warn('[EasyCloud] progress push failed (local state kept):', (err && err.code) ? err.code : err);
+                });
+            }
+            return userDoc(uid).set(payload, { merge: true }).catch(function (err) {
                 console.warn('[EasyCloud] stats push failed (local state kept):', (err && err.code) ? err.code : err);
             });
         } catch (err) {
