@@ -5383,3 +5383,53 @@ select.form-input {
 [data-theme="dark"] .grammar-example {
     background: rgba(77, 180, 146, 0.1);
 }
+/* ========================================================
+   MOBILE RESPONSIVE FIX (Telefonlar uchun moslashuv)
+   ======================================================== */
+
+html, body {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+@media (max-width: 600px) {
+  .container, 
+  .main-content, 
+  .view-container, 
+  main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    box-sizing: border-box !important;
+  }
+
+  .button-row, 
+  .action-buttons, 
+  .controls, 
+  .btn-group,
+  .mode-selector {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  button, 
+  .btn, 
+  .action-btn {
+    max-width: 100% !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
+  body {
+    padding-bottom: 90px !important;
+  }
+}
