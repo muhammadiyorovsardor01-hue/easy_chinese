@@ -5840,3 +5840,591 @@ html, body {
     }
 }
 
+/* ========================================================
+   VARIANT B: MOBILE-FIRST 1+4 BENTO GRID & DYNAMIC HSK THEME
+   ======================================================== */
+
+/* 1. Dynamic HSK Level Color System (HSK 1..5) */
+html[data-hsk-level="1"] {
+    --hsk-accent: #10B981;
+    --hsk-accent-dark: #047857;
+    --hsk-accent-light: rgba(16, 185, 129, 0.14);
+    --hsk-gradient: linear-gradient(135deg, #059669 0%, #10B981 100%);
+    --primary-color: #10B981;
+    --primary-dark: #047857;
+    --primary-light: #34D399;
+}
+
+html[data-hsk-level="2"] {
+    --hsk-accent: #0284C7;
+    --hsk-accent-dark: #0369A1;
+    --hsk-accent-light: rgba(2, 132, 199, 0.14);
+    --hsk-gradient: linear-gradient(135deg, #0369A1 0%, #0EA5E9 100%);
+    --primary-color: #0284C7;
+    --primary-dark: #0369A1;
+    --primary-light: #38BDF8;
+}
+
+html[data-hsk-level="3"] {
+    --hsk-accent: #D97706;
+    --hsk-accent-dark: #B45309;
+    --hsk-accent-light: rgba(217, 119, 6, 0.14);
+    --hsk-gradient: linear-gradient(135deg, #B45309 0%, #F59E0B 100%);
+    --primary-color: #D97706;
+    --primary-dark: #B45309;
+    --primary-light: #FBBF24;
+}
+
+html[data-hsk-level="4"] {
+    --hsk-accent: #DC2626;
+    --hsk-accent-dark: #B91C2C;
+    --hsk-accent-light: rgba(220, 38, 38, 0.14);
+    --hsk-gradient: linear-gradient(135deg, #B91C1C 0%, #EF4444 100%);
+    --primary-color: #DC2626;
+    --primary-dark: #B91C2C;
+    --primary-light: #F87171;
+}
+
+html[data-hsk-level="5"] {
+    --hsk-accent: #7C3AED;
+    --hsk-accent-dark: #5B21B6;
+    --hsk-accent-light: rgba(124, 58, 237, 0.14);
+    --hsk-gradient: linear-gradient(135deg, #6D28D9 0%, #8B5CF6 100%);
+    --primary-color: #7C3AED;
+    --primary-dark: #5B21B6;
+    --primary-light: #A78BFA;
+}
+
+/* 2. Header Pills (HSK Badge + Streak + XP) */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
+}
+
+.header-hsk-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.22rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: #fff;
+    background: var(--hsk-gradient, linear-gradient(135deg, #059669, #10B981));
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    white-space: nowrap;
+}
+
+.header-stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.28rem 0.58rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+/* 3. Dashboard Bento Header */
+.dashboard-bento-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0.25rem 0 0.85rem;
+}
+
+.dashboard-bento-header .section-title {
+    margin: 0 !important;
+    text-align: left !important;
+    font-size: 1.35rem;
+    line-height: 1.2;
+}
+
+.dashboard-bento-header .section-title::after {
+    display: none !important;
+}
+
+.dashboard-bento-sub {
+    margin: 0.15rem 0 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.dashboard-level-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    background: var(--hsk-accent-light, rgba(16, 185, 129, 0.14));
+    color: var(--hsk-accent, var(--primary-color));
+    border: 1.5px solid var(--hsk-accent, var(--primary-color));
+    white-space: nowrap;
+}
+
+/* 4. Variant B 1+4 Bento Grid for HSK 1..5 */
+#dashboard .hsk-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.7rem !important;
+    margin: 0 0 0.85rem !important;
+}
+
+#dashboard .hsk-btn {
+    position: relative;
+    min-height: 0 !important;
+    border-radius: 20px !important;
+    padding: 0.9rem 0.95rem !important;
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    gap: 0.55rem !important;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease !important;
+    overflow: hidden;
+}
+
+#dashboard .hsk-btn::before,
+#dashboard .hsk-btn::after {
+    display: none !important;
+}
+
+/* Featured HSK 1 Card: spans full width (row 1) */
+#dashboard .hsk-btn.hsk-featured {
+    grid-column: 1 / -1 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.9rem !important;
+    padding: 1rem 1.1rem !important;
+    background: linear-gradient(135deg, #059669 0%, #10B981 100%) !important;
+    border: 2px solid #047857 !important;
+    border-bottom: 4px solid #065F46 !important;
+    color: #ffffff !important;
+    box-shadow: 0 10px 24px -6px rgba(16, 185, 129, 0.42) !important;
+}
+
+#dashboard .hsk-btn.hsk-featured .hsk-number {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    margin: 0 !important;
+    border-radius: 16px !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+    color: #ffffff !important;
+    font-size: 1.55rem !important;
+    font-weight: 900 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+}
+
+#dashboard .hsk-btn.hsk-featured .hsk-card-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+}
+
+#dashboard .hsk-btn.hsk-featured .hsk-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+}
+
+#dashboard .hsk-btn.hsk-featured .hsk-label {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+}
+
+#dashboard .hsk-btn.hsk-featured .hsk-level-badge {
+    font-size: 0.7rem !important;
+    font-weight: 800 !important;
+    padding: 0.15rem 0.5rem !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+    white-space: nowrap;
+}
+
+#dashboard .hsk-btn.hsk-featured .hsk-subtitle {
+    font-size: 0.76rem !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin: 0 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hsk-mini-progress {
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.22);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 0.25rem;
+}
+
+.hsk-mini-fill {
+    height: 100%;
+    background: #ffffff;
+    border-radius: 999px;
+    transition: width 0.35s ease;
+}
+
+#dashboard .hsk-btn.hsk-featured .hsk-cta {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    padding: 0.42rem 0.75rem !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    color: #047857 !important;
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* HSK 2..5 Bento Cards (2x2 Grid) */
+#dashboard .hsk-btn:not(.hsk-featured) {
+    background: var(--card-bg) !important;
+    border: 2px solid var(--border-color) !important;
+    border-bottom-width: 4px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+#dashboard .hsk-btn:not(.hsk-featured) .hsk-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#dashboard .hsk-btn:not(.hsk-featured) .hsk-number {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    margin: 0 !important;
+    border-radius: 12px !important;
+    font-size: 1.15rem !important;
+    font-weight: 900 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+#dashboard .hsk-btn:not(.hsk-featured) .hsk-level-badge {
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.16rem 0.5rem;
+    border-radius: 8px;
+}
+
+#dashboard .hsk-btn:not(.hsk-featured) .hsk-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+}
+
+#dashboard .hsk-btn:not(.hsk-featured) .hsk-label {
+    font-size: 0.92rem !important;
+    font-weight: 800 !important;
+    color: var(--text-color) !important;
+    margin: 0 !important;
+    line-height: 1.25;
+}
+
+#dashboard .hsk-btn:not(.hsk-featured) .hsk-subtitle {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    color: var(--text-secondary) !important;
+    margin: 0 !important;
+}
+
+#dashboard .hsk-btn:not(.hsk-featured) .hsk-cta {
+    display: none !important;
+}
+
+/* Individual HSK 2..5 Card Accents */
+#dashboard .hsk-btn[data-hsk="2"] { border-color: rgba(2, 132, 199, 0.35) !important; border-bottom-color: #0284C7 !important; }
+#dashboard .hsk-btn[data-hsk="2"] .hsk-number { background: linear-gradient(135deg, #0369A1, #0EA5E9) !important; }
+#dashboard .hsk-btn[data-hsk="2"] .hsk-level-badge { background: rgba(2, 132, 199, 0.12); color: #0284C7; }
+
+#dashboard .hsk-btn[data-hsk="3"] { border-color: rgba(217, 119, 6, 0.35) !important; border-bottom-color: #D97706 !important; }
+#dashboard .hsk-btn[data-hsk="3"] .hsk-number { background: linear-gradient(135deg, #B45309, #F59E0B) !important; }
+#dashboard .hsk-btn[data-hsk="3"] .hsk-level-badge { background: rgba(217, 119, 6, 0.12); color: #D97706; }
+
+#dashboard .hsk-btn[data-hsk="4"] { border-color: rgba(220, 38, 38, 0.35) !important; border-bottom-color: #DC2626 !important; }
+#dashboard .hsk-btn[data-hsk="4"] .hsk-number { background: linear-gradient(135deg, #B91C1C, #EF4444) !important; }
+#dashboard .hsk-btn[data-hsk="4"] .hsk-level-badge { background: rgba(220, 38, 38, 0.12); color: #DC2626; }
+
+#dashboard .hsk-btn[data-hsk="5"] { border-color: rgba(124, 58, 237, 0.35) !important; border-bottom-color: #7C3AED !important; }
+#dashboard .hsk-btn[data-hsk="5"] .hsk-number { background: linear-gradient(135deg, #6D28D9, #8B5CF6) !important; }
+#dashboard .hsk-btn[data-hsk="5"] .hsk-level-badge { background: rgba(124, 58, 237, 0.12); color: #7C3AED; }
+
+/* 5. Bottom Quick-Continue Bar on Dashboard */
+.dashboard-continue-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 18px;
+    background: var(--card-bg);
+    border: 2px solid var(--hsk-accent, var(--primary-color));
+    border-bottom-width: 4px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dashboard-continue-bar:active {
+    transform: translateY(2px);
+}
+
+.continue-play-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 12px;
+    background: var(--hsk-gradient, linear-gradient(135deg, #059669, #10B981));
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 900;
+}
+
+.continue-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.continue-copy strong {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.continue-copy small {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.continue-cta-pill {
+    padding: 0.38rem 0.75rem;
+    border-radius: 999px;
+    background: var(--hsk-accent-light, rgba(16, 185, 129, 0.14));
+    color: var(--hsk-accent, var(--primary-color));
+    font-size: 0.78rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* 6. Lessons View Level-Matched Header Banner */
+.lessons-level-banner {
+    background: var(--hsk-gradient, linear-gradient(135deg, #059669 0%, #10B981 100%));
+    color: #ffffff;
+    border-radius: 22px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 10px 24px -8px rgba(0, 0, 0, 0.22);
+    position: relative;
+    z-index: 2;
+}
+
+.lessons-banner-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.65rem;
+}
+
+.lessons-level-banner .back-btn {
+    margin: 0 !important;
+    padding: 0.38rem 0.8rem !important;
+    font-size: 0.8rem !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.38) !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.lessons-cn-badge {
+    padding: 0.28rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 800;
+    background: rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    white-space: nowrap;
+}
+
+.lessons-banner-main {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.lessons-level-banner .section-title {
+    margin: 0 !important;
+    color: #ffffff !important;
+    text-align: left !important;
+    font-size: 1.4rem !important;
+}
+
+.lessons-level-banner .section-title::after {
+    display: none !important;
+}
+
+.lessons-level-banner .lessons-kicker {
+    margin: 0.15rem 0 0 !important;
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-size: 0.78rem !important;
+    text-align: left !important;
+}
+
+.lessons-level-banner .lessons-progress {
+    margin: 0 !important;
+    padding: 0.25rem 0.65rem !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+    font-size: 0.74rem !important;
+    font-weight: 800 !important;
+}
+
+.lessons-level-banner .hsk-filters {
+    margin: 0.75rem 0 0 !important;
+    padding: 0.22rem;
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 14px;
+    gap: 0.25rem !important;
+}
+
+.lessons-level-banner .hsk-filter-btn {
+    border: none !important;
+    border-radius: 11px !important;
+    padding: 0.48rem 0.5rem !important;
+    font-size: 0.76rem !important;
+    font-weight: 800 !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+    box-shadow: none !important;
+}
+
+.lessons-level-banner .hsk-filter-btn.active {
+    background: #ffffff !important;
+    color: #1E293B !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 7. Mobile-First Optimizations (No scroll on Dashboard, Clean UI) */
+@media (max-width: 768px) {
+    /* Hide the bulky decorative hero on mobile so HSK 1-5 appear immediately on entry */
+    #dashboard .hero {
+        display: none !important;
+    }
+
+    /* Clean up noisy background landscape images on mobile for crisp modern Bento look */
+    #dashboard::after,
+    .lessons-scenery {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-top: 0.6rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    /* Compact segmented 4-tab bar in Lesson View */
+    #lesson .mode-tabs {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 0.25rem !important;
+        padding: 0.25rem !important;
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 14px !important;
+        margin: 0.65rem 0 0.9rem !important;
+    }
+
+    #lesson .tab-btn {
+        min-height: 38px !important;
+        padding: 0.4rem 0.25rem !important;
+        font-size: 0.78rem !important;
+        font-weight: 800 !important;
+        border: none !important;
+        border-radius: 10px !important;
+        background: transparent !important;
+        color: var(--text-secondary) !important;
+        box-shadow: none !important;
+    }
+
+    #lesson .tab-btn.active {
+        background: var(--hsk-gradient, var(--primary-color)) !important;
+        color: #ffffff !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14) !important;
+    }
+
+    /* Compact lesson header & flow panel on mobile */
+    #lesson .lesson-flow-panel {
+        padding: 0.65rem 0.75rem !important;
+        margin-bottom: 0.65rem !important;
+        border-radius: 16px !important;
+    }
+
+    /* Fit Flashcard cleanly on 1 mobile screen */
+    #lesson .flashcard {
+        height: 250px !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+    }
+
+    #lesson .hanzi {
+        font-size: 4rem !important;
+    }
+
+    #lesson .action-buttons {
+        margin: 0.75rem auto !important;
+    }
+
+    #lesson .secondary-controls {
+        margin: 0.5rem auto !important;
+    }
+}
+
+

@@ -733,12 +733,14 @@ const nextWordFromModal = document.getElementById('nextWordFromModal');
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
+    applyHskLevelTheme(currentHSK);
     setupEventListeners();
     updateStreak();
     updateTotalLearned();
     updateXP();
     loadProfileData();
     updateDailyQuests();
+    updateDashboardBentoUI();
     
     // Load voices for speech synthesis
     if ('speechSynthesis' in window) {
@@ -762,6 +764,40 @@ function toggleTheme(savedTheme) {
     localStorage.setItem('theme', newTheme);
 }
 
+function applyHskLevelTheme(level) {
+    const lvl = Number(level) || 1;
+    document.documentElement.setAttribute('data-hsk-level', String(lvl));
+    const headerBadge = document.getElementById('headerHskBadge');
+    const dashPill = document.getElementById('dashboardLevelPill');
+    const cnBadge = document.getElementById('lessonsCnBadge');
+    const cnMeta = {
+        1: '一级 · 150 words',
+        2: '二级 · 300 words',
+        3: '三级 · 600 words',
+        4: '四级 · 1200 words',
+        5: '五级 · 2500 words'
+    };
+    if (headerBadge) headerBadge.textContent = `HSK ${lvl}`;
+    if (dashPill) dashPill.textContent = `HSK ${lvl}`;
+    if (cnBadge) cnBadge.textContent = cnMeta[lvl] || `HSK ${lvl}`;
+}
+
+function updateDashboardBentoUI() {
+    const hsk1Words = vocabularyData.filter(w => w.hsk === 1 && w.track === 'classic');
+    const learnedHsk1 = hsk1Words.filter(w => learnedWords.includes(w.id)).length;
+    const pct = hsk1Words.length > 0 ? Math.round((learnedHsk1 / hsk1Words.length) * 100) : 0;
+    const fillEl = document.getElementById('dashboardHsk1Fill');
+    if (fillEl) fillEl.style.width = `${pct}%`;
+
+    const contTitle = document.getElementById('dashboardContinueTitle');
+    const contSub = document.getElementById('dashboardContinueSub');
+    const lessonNums = [...new Set(vocabularyData.filter(w => w.hsk === currentHSK && w.track === 'classic').map(w => w.lesson))].sort((a, b) => a - b);
+    const nextLesson = lessonNums.find(num => !isLessonComplete(num, 'classic')) || lessonNums[0] || 1;
+    const completedCount = lessonNums.filter(num => isLessonComplete(num, 'classic')).length;
+    if (contTitle) contTitle.textContent = `HSK ${currentHSK} · Lesson ${nextLesson} dan davom etish`;
+    if (contSub) contSub.textContent = `${completedCount} / ${lessonNums.length || 15} dars tugallangan · ${pct}% progress`;
+}
+
 // Event listeners
 function setupEventListeners() {
     themeToggle.addEventListener('click', toggleTheme);
@@ -775,9 +811,21 @@ function setupEventListeners() {
     document.querySelectorAll('.hsk-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentHSK = parseInt(btn.dataset.hsk);
+            applyHskLevelTheme(currentHSK);
+            updateDashboardBentoUI();
             showLessonsView();
         });
     });
+
+    const dashboardContinueBtn = document.getElementById('dashboardContinueBtn');
+    if (dashboardContinueBtn) {
+        dashboardContinueBtn.addEventListener('click', () => {
+            applyHskLevelTheme(currentHSK);
+            const lessonNums = [...new Set(vocabularyData.filter(w => w.hsk === currentHSK && w.track === 'classic').map(w => w.lesson))].sort((a, b) => a - b);
+            const nextLesson = lessonNums.find(num => !isLessonComplete(num, 'classic')) || lessonNums[0] || 1;
+            showLessonView(nextLesson);
+        });
+    }
 
     // HSK 1 lesson version buttons
     hskFilterBtns.forEach(btn => {
@@ -1154,16 +1202,30 @@ function showView(viewToShow) {
 }
 
 function showDashboard() {
+    applyHskLevelTheme(currentHSK);
+    updateDashboardBentoUI();
     showView(dashboard);
 }
 
 function showLessonsView() {
-    lessonsTitle.textContent = `HSK ${currentHSK} Lessons`;
+    applyHskLevelTheme(currentHSK);
+    const hskNames = {
+        1: "HSK 1 · Foundations",
+        2: "HSK 2 · Elementary",
+        3: "HSK 3 · Intermediate",
+        4: "HSK 4 · Upper-Inter",
+        5: "HSK 5 · Advanced"
+    };
+    lessonsTitle.textContent = hskNames[currentHSK] || `HSK ${currentHSK} Lessons`;
     // Reset filter and search when entering lessons view
     currentLessonTrack = 'classic';
     searchQuery = '';
     searchInput.value = '';
     searchClear.classList.remove('visible');
+    const filtersBox = document.querySelector('#lessons .hsk-filters');
+    if (filtersBox) {
+        filtersBox.style.display = currentHSK === 1 ? '' : 'none';
+    }
     hskFilterBtns.forEach(btn => {
         btn.classList.toggle('active', btn.dataset.track === currentLessonTrack);
     });
@@ -1748,16 +1810,21 @@ function updateStreak() {
     notifyStatsChanged();
     
     profileStreak.textContent = streakData.streak;
+    const headerStreak = document.getElementById('headerStreak');
+    if (headerStreak) headerStreak.textContent = streakData.streak;
 }
 
 function updateTotalLearned() {
     streakData.totalLearned = learnedWords.length;
     localStorage.setItem('streakData', JSON.stringify(streakData));
     profileLearned.textContent = streakData.totalLearned;
+    updateDashboardBentoUI();
 }
 
 function updateXP() {
     profileXP.textContent = streakData.xp;
+    const headerXP = document.getElementById('headerXP');
+    if (headerXP) headerXP.textContent = streakData.xp;
 }
 
 // ---------- Phase 2A cloud-sync bridge (additive, guarded) ----------

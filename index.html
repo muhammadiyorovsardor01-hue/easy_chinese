@@ -20,8 +20,11 @@
         <div class="header-content">
             <div class="header-left">
                 <h1 class="app-title">Easy Chinese</h1>
+                <span class="header-hsk-pill" id="headerHskBadge">HSK 1</span>
             </div>
             <div class="header-stats">
+                <span class="header-stat-pill streak-pill" aria-label="Day Streak">🔥 <span id="headerStreak">0</span></span>
+                <span class="header-stat-pill xp-pill" aria-label="Total XP">⭐ <span id="headerXP">0</span></span>
                 <button class="leaderboard-btn" id="leaderboard-btn" type="button" aria-label="Open leaderboard">🏆</button>
                 <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
                     <span class="sun-icon" aria-hidden="true">☀️</span>
@@ -52,44 +55,84 @@
                     <p class="hero-quote">« 千里之行，始于足下 » — a journey of a thousand miles begins with a single step.</p>
                 </div>
             </div>
-            <h2 class="section-title">Select HSK Level</h2>
+
+            <div class="dashboard-bento-header">
+                <div>
+                    <h2 class="section-title">Select HSK Level</h2>
+                    <p class="dashboard-bento-sub">Choose a level to start or continue your practice</p>
+                </div>
+                <span class="dashboard-level-pill" id="dashboardLevelPill">HSK 1</span>
+            </div>
+
             <div class="hsk-grid">
-                <button class="hsk-btn" data-hsk="1">
-                    <span class="hsk-level-badge">HSK</span>
-                    <span class="hsk-number">1</span>
-                    <span class="hsk-label">HSK 1</span>
-                    <span class="hsk-subtitle">Foundations</span>
-                    <span class="hsk-cta">Start Learning →</span>
+                <button class="hsk-btn hsk-featured" data-hsk="1">
+                    <div class="hsk-number">1</div>
+                    <div class="hsk-card-body">
+                        <div class="hsk-card-top">
+                            <span class="hsk-label">HSK 1 · Foundations</span>
+                            <span class="hsk-level-badge">150 words</span>
+                        </div>
+                        <span class="hsk-subtitle">Classic HSK & New HSK 3.0 · 15 lessons</span>
+                        <div class="hsk-mini-progress" aria-hidden="true">
+                            <div class="hsk-mini-fill" id="dashboardHsk1Fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <span class="hsk-cta">Start →</span>
                 </button>
                 <button class="hsk-btn" data-hsk="2">
-                    <span class="hsk-level-badge">HSK</span>
-                    <span class="hsk-number">2</span>
-                    <span class="hsk-label">HSK 2</span>
-                    <span class="hsk-subtitle">Elementary</span>
+                    <div class="hsk-card-top">
+                        <span class="hsk-number">2</span>
+                        <span class="hsk-level-badge">二级</span>
+                    </div>
+                    <div class="hsk-card-body">
+                        <span class="hsk-label">HSK 2 · Elementary</span>
+                        <span class="hsk-subtitle">300 words</span>
+                    </div>
                     <span class="hsk-cta">Continue →</span>
                 </button>
                 <button class="hsk-btn" data-hsk="3">
-                    <span class="hsk-level-badge">HSK</span>
-                    <span class="hsk-number">3</span>
-                    <span class="hsk-label">HSK 3</span>
-                    <span class="hsk-subtitle">Intermediate</span>
+                    <div class="hsk-card-top">
+                        <span class="hsk-number">3</span>
+                        <span class="hsk-level-badge">三级</span>
+                    </div>
+                    <div class="hsk-card-body">
+                        <span class="hsk-label">HSK 3 · Intermediate</span>
+                        <span class="hsk-subtitle">600 words</span>
+                    </div>
                     <span class="hsk-cta">Continue →</span>
                 </button>
                 <button class="hsk-btn" data-hsk="4">
-                    <span class="hsk-level-badge">HSK</span>
-                    <span class="hsk-number">4</span>
-                    <span class="hsk-label">HSK 4</span>
-                    <span class="hsk-subtitle">Upper Intermediate</span>
+                    <div class="hsk-card-top">
+                        <span class="hsk-number">4</span>
+                        <span class="hsk-level-badge">四级</span>
+                    </div>
+                    <div class="hsk-card-body">
+                        <span class="hsk-label">HSK 4 · Upper-Inter</span>
+                        <span class="hsk-subtitle">1200 words</span>
+                    </div>
                     <span class="hsk-cta">Continue →</span>
                 </button>
                 <button class="hsk-btn" data-hsk="5">
-                    <span class="hsk-level-badge">HSK</span>
-                    <span class="hsk-number">5</span>
-                    <span class="hsk-label">HSK 5</span>
-                    <span class="hsk-subtitle">Advanced</span>
+                    <div class="hsk-card-top">
+                        <span class="hsk-number">5</span>
+                        <span class="hsk-level-badge">五级</span>
+                    </div>
+                    <div class="hsk-card-body">
+                        <span class="hsk-label">HSK 5 · Advanced</span>
+                        <span class="hsk-subtitle">2500 words</span>
+                    </div>
                     <span class="hsk-cta">Continue →</span>
                 </button>
             </div>
+
+            <button class="dashboard-continue-bar" id="dashboardContinueBtn" type="button">
+                <span class="continue-play-icon" aria-hidden="true">▶</span>
+                <span class="continue-copy">
+                    <strong id="dashboardContinueTitle">HSK 1 · Lesson 1 dan boshlash</strong>
+                    <small id="dashboardContinueSub">Classic HSK 1 · 15 ta dars</small>
+                </span>
+                <span class="continue-cta-pill">Kirish →</span>
+            </button>
         </section>
 
         <!-- Lessons View -->
@@ -108,15 +151,24 @@
                 <span class="ls-hill ls-hill-b1"></span>
                 <span class="ls-hill ls-hill-b2"></span>
             </div>
-            <button class="back-btn" id="backToDashboard">← Back to Dashboard</button>
-            <p class="lessons-kicker" id="lessonsKicker">HSK 1 · Classic path — follow the winding route below</p>
-            <p class="lessons-progress" id="lessonsProgress" aria-live="polite">0 of 15 lessons complete</p>
-            <h2 class="section-title" id="lessonsTitle">HSK 1 Lessons</h2>
-            
-            <!-- HSK 1 lesson versions (JS toggles .active only — keep both track buttons) -->
-            <div class="hsk-filters" aria-label="HSK 1 lesson version">
-                <button class="hsk-filter-btn active" data-track="classic" type="button">Classic HSK 1 · 15 lessons</button>
-                <button class="hsk-filter-btn" data-track="new" type="button">New HSK 3.0 · 15 lessons</button>
+
+            <div class="lessons-level-banner">
+                <div class="lessons-banner-top">
+                    <button class="back-btn" id="backToDashboard">← Darajalar</button>
+                    <span class="lessons-cn-badge" id="lessonsCnBadge">一级 · 150 words</span>
+                </div>
+                <div class="lessons-banner-main">
+                    <div>
+                        <h2 class="section-title" id="lessonsTitle">HSK 1 Lessons</h2>
+                        <p class="lessons-kicker" id="lessonsKicker">HSK 1 · Classic path — follow the winding route below</p>
+                    </div>
+                    <p class="lessons-progress" id="lessonsProgress" aria-live="polite">0 of 15 lessons complete</p>
+                </div>
+                <!-- HSK 1 lesson versions (JS toggles .active only — keep both track buttons) -->
+                <div class="hsk-filters" aria-label="HSK 1 lesson version">
+                    <button class="hsk-filter-btn active" data-track="classic" type="button">Classic HSK 1 · 15 lessons</button>
+                    <button class="hsk-filter-btn" data-track="new" type="button">New HSK 3.0 · 15 lessons</button>
+                </div>
             </div>
             
             <!-- Search Bar -->
