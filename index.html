@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=9">
+    <link rel="stylesheet" href="styles.css?v=13">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -189,25 +189,30 @@
 
         <!-- Lesson View -->
         <section id="lesson" class="view">
-            <button class="back-btn" id="backToLessons">← Back to Lessons</button>
-            <h2 class="section-title" id="lessonTitle">Lesson 1</h2>
+            <div class="lesson-top-bar">
+                <button class="back-btn" id="backToLessons">← Darslar</button>
+                <h2 class="section-title" id="lessonTitle">Lesson 1</h2>
+            </div>
 
             <section class="lesson-flow-panel" aria-label="Lesson progress">
                 <ol class="lesson-flow-steps" id="lessonFlowSteps"></ol>
+                <div class="lesson-overall-progress" aria-hidden="true">
+                    <div class="lesson-overall-fill" id="lessonOverallFill" style="width: 20%"></div>
+                </div>
                 <div class="lesson-flow-action">
                     <p id="lessonFlowStatus" aria-live="polite"></p>
                     <button class="lesson-flow-continue" id="lessonFlowContinue" type="button">Continue</button>
                 </div>
             </section>
 
-            <div class="mode-tabs">
+            <div class="mode-tabs" aria-hidden="true">
                 <button class="tab-btn" id="learningContentTab" data-mode="learning">Learning</button>
                 <button class="tab-btn active" data-mode="flashcard">Flashcards</button>
                 <button class="tab-btn" data-mode="quiz">Quiz</button>
                 <button class="tab-btn" id="writingTab" data-mode="writing">Writing</button>
             </div>
 
-            <!-- Flashcard Mode -->
+            <!-- Stage 2: Flashcard Mode -->
             <div id="flashcardMode" class="mode-content active">
                 <div class="flashcard-container">
                     <div class="flashcard" id="flashcard">
@@ -240,7 +245,7 @@
                     </button>
                     <button class="action-btn next-action-btn" id="nextCard" aria-label="Next card">
                         <span class="btn-icon">➡️</span>
-                        <span class="btn-label">Next</span>
+                        <span class="btn-label" id="nextCardLabel">Next</span>
                     </button>
                 </div>
                 
@@ -258,7 +263,7 @@
                 </div>
             </div>
 
-            <!-- Quiz Mode -->
+            <!-- Stage 3: Quiz Mode -->
             <div id="quizMode" class="mode-content">
                 <div class="quiz-header">
                     <div class="score-tracker">
@@ -285,11 +290,16 @@
                 </div>
             </div>
 
-            <!-- Learning Content Mode -->
+            <!-- Stage 1: Learning Content Mode -->
             <div id="learningMode" class="mode-content">
                 <div class="learning-content-container">
+                    <div class="learning-section" id="vocabOverviewSection">
+                        <h3 class="learning-section-title">Dars so‘zlari (Vocabulary)</h3>
+                        <div id="lessonVocabPreview" class="lesson-vocab-grid"></div>
+                    </div>
+
                     <!-- Example Sentences Section -->
-                    <div class="learning-section">
+                    <div class="learning-section" id="exampleSentencesSection">
                         <h3 class="learning-section-title">Example Sentences</h3>
                         <div id="exampleSentences" class="example-sentences-list">
                             <p class="learning-placeholder">Loading learning content...</p>
@@ -297,16 +307,50 @@
                     </div>
 
                     <!-- Grammar Note Section -->
-                    <div class="learning-section">
+                    <div class="learning-section" id="grammarNoteSection">
                         <h3 class="learning-section-title">Grammar Note</h3>
                         <div id="grammarNote" class="grammar-note-container">
                             <p class="learning-placeholder">Loading learning content...</p>
                         </div>
                     </div>
+
+                    <div class="stage-next-bar">
+                        <button class="stage-next-btn" id="startFlashcardsFromLearn" type="button">
+                            2-bosqichga o‘tish: Flashcards →
+                        </button>
+                    </div>
                 </div>
             </div>
 
+            <!-- Stage 4: Writing Mode -->
             <div id="writingMode" class="mode-content lesson-writing-mode"></div>
+
+            <!-- Stage 5: Complete Mode -->
+            <div id="completeMode" class="mode-content">
+                <div class="lesson-complete-card">
+                    <div class="complete-badge-icon">🎉</div>
+                    <h3 class="complete-heading" id="completeLessonHeading">Lesson 1 yakunlandi!</h3>
+                    <p class="complete-subtitle" id="completeLessonSub">Barcha bosqichlarni (Learn, Flashcards, Quiz, Writing) muvaffaqiyatli tugatdingiz!</p>
+                    <div class="complete-stats-row">
+                        <div class="complete-stat-box">
+                            <span class="complete-stat-val">+50 XP</span>
+                            <span class="complete-stat-lbl">Mukofot</span>
+                        </div>
+                        <div class="complete-stat-box">
+                            <span class="complete-stat-val" id="completeWordsCount">6 ta</span>
+                            <span class="complete-stat-lbl">O‘rganilgan so‘zlar</span>
+                        </div>
+                        <div class="complete-stat-box">
+                            <span class="complete-stat-val">100%</span>
+                            <span class="complete-stat-lbl">Natija</span>
+                        </div>
+                    </div>
+                    <div class="complete-actions">
+                        <button class="stage-next-btn" id="nextLessonAutoBtn" type="button">Keyingi dars (Lesson 2) →</button>
+                        <button class="secondary-btn complete-back-btn" id="backToLessonsFromComplete" type="button">← Darslar xaritasiga qaytish</button>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Canvas View -->
@@ -322,6 +366,8 @@
                             <button class="hsk-option active" data-hsk="1">HSK 1</button>
                             <button class="hsk-option" data-hsk="2">HSK 2</button>
                             <button class="hsk-option" data-hsk="3">HSK 3</button>
+                            <button class="hsk-option" data-hsk="4">HSK 4</button>
+                            <button class="hsk-option" data-hsk="5">HSK 5</button>
                         </div>
                     </div>
                     
@@ -359,6 +405,8 @@
                             <option value="1">HSK 1</option>
                             <option value="2">HSK 2</option>
                             <option value="3">HSK 3</option>
+                            <option value="4">HSK 4</option>
+                            <option value="5">HSK 5</option>
                         </select>
                         <select class="canvas-mobile-select" id="canvasMobileTrackSelector" aria-label="Curriculum version">
                             <option value="classic">Classic HSK</option>
@@ -715,7 +763,7 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <script src="script.js?v=9"></script>
+    <script src="script.js?v=13"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -726,7 +774,7 @@
     <script defer src="cloud-sync.js"></script>
     <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=9').then(reg => reg.update());
+    navigator.serviceWorker.register('./sw.js?v=13').then(reg => reg.update());
   }
 </script>
 </body>
