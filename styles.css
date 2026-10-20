@@ -7079,17 +7079,12 @@ html[data-hsk-level="5"] {
 }
 
 .pwa-banner-icon {
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
     border-radius: 12px;
-    background: var(--hsk-gradient, linear-gradient(135deg, #059669, #10B981));
-    color: #ffffff;
-    font-size: 1.25rem;
-    font-weight: 900;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
+    object-fit: cover;
     box-shadow: 0 4px 10px rgba(16, 185, 129, 0.28);
 }
 

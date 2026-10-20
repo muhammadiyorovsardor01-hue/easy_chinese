@@ -9,13 +9,16 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Easy Chinese">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3269/3269817.png">
+    <link rel="icon" type="image/svg+xml" href="assets/app-icon-1.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="assets/icon-192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="assets/icon-512.png">
     <title>Easy Chinese - Learn HSK Vocabulary</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=14">
+    <link rel="stylesheet" href="styles.css?v=15">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -769,7 +772,7 @@
 
     <!-- PWA Install Reminder Banner (Shown on every visit if app is not installed yet) -->
     <div id="pwaInstallBanner" class="pwa-install-banner" role="region" aria-label="Ilovani o'rnatish" hidden>
-        <div class="pwa-banner-icon" aria-hidden="true">汉</div>
+        <img src="assets/app-icon-1.svg" alt="Easy Chinese" class="pwa-banner-icon" width="44" height="44" />
         <div class="pwa-banner-copy">
             <strong>Easy Chinese ilovasini o‘rnating</strong>
             <span>Telefoningizda tezkor va oflayn rejimda ishlaydi</span>
@@ -809,7 +812,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=14"></script>
+    <script src="script.js?v=15"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -908,7 +911,7 @@
           window.location.reload();
         });
 
-        navigator.serviceWorker.register('./sw.js?v=14', { updateViaCache: 'none' }).then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=15', { updateViaCache: 'none' }).then((reg) => {
           if (reg.waiting) {
             reg.waiting.postMessage({ type: 'SKIP_WAITING' });
           }

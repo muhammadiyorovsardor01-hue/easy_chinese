@@ -1,11 +1,14 @@
-const CACHE_NAME = 'easychinese-v14';
+const CACHE_NAME = 'easychinese-v15';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css?v=14',
-  './script.js?v=14',
+  './styles.css?v=15',
+  './script.js?v=15',
   './words.json',
   './manifest.json',
+  './assets/app-icon-1.svg',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
   './assets/chinese-landscape.jpg',
   './assets/bg-landscape.svg',
   './assets/bg-landscape-lite.svg',
