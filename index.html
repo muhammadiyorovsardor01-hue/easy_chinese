@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=15">
+    <link rel="stylesheet" href="styles.css?v=16">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -770,12 +770,12 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <!-- PWA Install Reminder Banner (Shown on every visit if app is not installed yet) -->
+    <!-- PWA Direct 1-Tap Install Banner (Only appears when native 1-tap install is ready) -->
     <div id="pwaInstallBanner" class="pwa-install-banner" role="region" aria-label="Ilovani o'rnatish" hidden>
-        <img src="assets/app-icon-1.svg" alt="Easy Chinese" class="pwa-banner-icon" width="44" height="44" />
+        <img src="assets/app-icon-1.svg" alt="Easy Chinese" class="pwa-banner-icon" width="40" height="40" />
         <div class="pwa-banner-copy">
             <strong>Easy Chinese ilovasini o‘rnating</strong>
-            <span>Telefoningizda tezkor va oflayn rejimda ishlaydi</span>
+            <span>1 bosishda telefonga yuklab olish</span>
         </div>
         <div class="pwa-banner-actions">
             <button type="button" id="pwaInstallBtn" class="pwa-install-btn">O‘rnatish</button>
@@ -783,36 +783,7 @@
         </div>
     </div>
 
-    <!-- PWA Manual Install Guide Modal (For iOS Safari & browsers without native 1-tap prompt) -->
-    <div id="pwaInstallModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="pwaModalTitle">
-        <div class="modal-content pwa-modal-content">
-            <div class="modal-header">
-                <h3 id="pwaModalTitle">📲 Ilovani telefonga o‘rnatish</h3>
-                <button type="button" class="modal-close" id="closePwaModalBtn" aria-label="Yopish">✕</button>
-            </div>
-            <div class="modal-body pwa-modal-body">
-                <div class="pwa-guide-step" id="pwaAndroidGuide">
-                    <strong>🤖 Android (Chrome / Samsung) da:</strong>
-                    <ol>
-                        <li>Brauzerning yuqori o‘ng burchagidagi <strong>⋮ (Menyu)</strong> tugmasini bosing.</li>
-                        <li><strong>«Ilovani o‘rnatish» (Install app)</strong> yoki <strong>«Asosiy ekranga qo‘shish» (Add to Home screen)</strong> bandini tanlang.</li>
-                    </ol>
-                </div>
-                <div class="pwa-guide-step" id="pwaIosGuide">
-                    <strong>🍎 iPhone / iPad (Safari) da:</strong>
-                    <ol>
-                        <li>Pastdagi <strong>📤 Ulashish (Share)</strong> tugmasini bosing.</li>
-                        <li>Ro‘yxatdan <strong>«Asosiy ekranga qo‘shish» (Add to Home Screen ➕)</strong> tugmasini bosing.</li>
-                    </ol>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="modal-btn save-btn" id="gotItPwaModalBtn">Tushunarli</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="script.js?v=15"></script>
+    <script src="script.js?v=16"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -834,26 +805,29 @@
       const banner = document.getElementById('pwaInstallBanner');
       const installBtn = document.getElementById('pwaInstallBtn');
       const dismissBtn = document.getElementById('pwaDismissBtn');
-      const installModal = document.getElementById('pwaInstallModal');
-      const closePwaModalBtn = document.getElementById('closePwaModalBtn');
-      const gotItPwaModalBtn = document.getElementById('gotItPwaModalBtn');
       let deferredInstallPrompt = null;
 
       function showInstallReminder() {
-        if (!banner || isRunningStandalone()) {
+        if (!banner || isRunningStandalone() || !deferredInstallPrompt) {
           if (banner) banner.hidden = true;
+          document.body.classList.remove('has-pwa-banner');
           return;
         }
         banner.hidden = false;
-        requestAnimationFrame(() => banner.classList.add('visible'));
+        requestAnimationFrame(() => {
+          banner.classList.add('visible');
+          document.body.classList.add('has-pwa-banner');
+        });
       }
 
       function hideInstallReminder() {
         if (!banner) return;
         banner.classList.remove('visible');
+        document.body.classList.remove('has-pwa-banner');
         setTimeout(() => { banner.hidden = true; }, 220);
       }
 
+      // Show banner ONLY when browser native 1-tap installer is ready (no manual guide popup!)
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredInstallPrompt = e;
@@ -863,43 +837,26 @@
       window.addEventListener('appinstalled', () => {
         deferredInstallPrompt = null;
         hideInstallReminder();
-        if (installModal) installModal.classList.remove('active');
       });
-
-      // Remind user on every site visit if they haven't installed/opened the app yet
-      if (!isRunningStandalone()) {
-        if (document.readyState === 'loading') {
-          window.addEventListener('DOMContentLoaded', () => setTimeout(showInstallReminder, 900));
-        } else {
-          setTimeout(showInstallReminder, 900);
-        }
-      }
 
       if (installBtn) {
         installBtn.addEventListener('click', async () => {
-          if (deferredInstallPrompt) {
-            deferredInstallPrompt.prompt();
-            try {
-              const choice = await deferredInstallPrompt.userChoice;
-              if (choice && choice.outcome === 'accepted') {
-                hideInstallReminder();
-              }
-            } catch (err) {}
-            deferredInstallPrompt = null;
-          } else if (installModal) {
-            installModal.classList.add('active');
+          if (!deferredInstallPrompt) {
+            hideInstallReminder();
+            return;
           }
+          const promptEvent = deferredInstallPrompt;
+          deferredInstallPrompt = null;
+          try {
+            await promptEvent.prompt();
+            await promptEvent.userChoice;
+          } catch (err) {}
+          hideInstallReminder();
         });
       }
 
       if (dismissBtn) {
         dismissBtn.addEventListener('click', hideInstallReminder);
-      }
-      if (closePwaModalBtn) {
-        closePwaModalBtn.addEventListener('click', () => installModal.classList.remove('active'));
-      }
-      if (gotItPwaModalBtn) {
-        gotItPwaModalBtn.addEventListener('click', () => installModal.classList.remove('active'));
       }
 
       // Service Worker Registration + Live Automatic App Updates
@@ -911,7 +868,7 @@
           window.location.reload();
         });
 
-        navigator.serviceWorker.register('./sw.js?v=15', { updateViaCache: 'none' }).then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=16', { updateViaCache: 'none' }).then((reg) => {
           if (reg.waiting) {
             reg.waiting.postMessage({ type: 'SKIP_WAITING' });
           }
