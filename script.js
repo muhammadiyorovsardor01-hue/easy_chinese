@@ -755,6 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
+    syncProfileThemeUI();
 }
 
 function toggleTheme(savedTheme) {
@@ -762,6 +763,24 @@ function toggleTheme(savedTheme) {
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
+    syncProfileThemeUI();
+}
+
+function syncProfileThemeUI() {
+    const themeStatusEl = document.getElementById('profileThemeStatusText');
+    const themeBtnEl = document.getElementById('profileThemeToggleBtn');
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (themeStatusEl) {
+        themeStatusEl.textContent = isDark ? '🌙 Tungi qorong‘u mavzu yoqilgan' : '☀️ Kunduzgi yorug‘ mavzu yoqilgan';
+    }
+    if (themeBtnEl) {
+        themeBtnEl.textContent = isDark ? '☀️ Kunduzgi' : '🌙 Tungi';
+    }
+}
+
+function getSpeechRate() {
+    const saved = parseFloat(localStorage.getItem('easyChineseSpeechRate'));
+    return Number.isFinite(saved) && saved >= 0.5 && saved <= 1.2 ? saved : 0.85;
 }
 
 function applyHskLevelTheme(level) {
@@ -1100,6 +1119,56 @@ function setupEventListeners() {
     if (backToLessonsFromComplete) {
         backToLessonsFromComplete.addEventListener('click', () => {
             showLessonsView();
+        });
+    }
+
+    // Profile interactive HSK 1-5 progress rows -> tap to open that level's lessons
+    document.querySelectorAll('.hsk-progress-item[data-jump-hsk]').forEach(row => {
+        const triggerJump = () => {
+            const targetHsk = parseInt(row.dataset.jumpHsk, 10) || 1;
+            const targetTrack = row.dataset.jumpTrack || 'classic';
+            currentHSK = targetHsk;
+            currentLessonTrack = targetHsk === 1 ? targetTrack : 'classic';
+            hskFilterBtns.forEach(b => b.classList.toggle('active', b.dataset.track === currentLessonTrack));
+            applyHskLevelTheme(currentHSK);
+            updateDashboardBentoUI();
+            showLessonsView();
+            navItems.forEach(nav => nav.classList.toggle('active', nav.dataset.nav === 'practice'));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+        row.addEventListener('click', triggerJump);
+        row.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                triggerJump();
+            }
+        });
+    });
+
+    // Profile settings controls (Dark mode toggle + Speech rate selector + Learned words scroll)
+    const profileThemeToggleBtn = document.getElementById('profileThemeToggleBtn');
+    if (profileThemeToggleBtn) {
+        profileThemeToggleBtn.addEventListener('click', () => toggleTheme());
+    }
+
+    const speechRateGroup = document.getElementById('speechRateGroup');
+    if (speechRateGroup) {
+        speechRateGroup.querySelectorAll('.rate-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const rateVal = parseFloat(btn.dataset.rate) || 0.85;
+                localStorage.setItem('easyChineseSpeechRate', String(rateVal));
+                syncSpeechRateUI();
+                speakChineseText('你好');
+                showToast(rateVal < 0.75 ? '🐢 Ovoz tezligi: Sekin' : '👌 Ovoz tezligi: Normal');
+            });
+        });
+    }
+
+    const profileLearnedCard = document.getElementById('profileLearnedCard');
+    const learnedWordsSection = document.getElementById('learnedWordsSection');
+    if (profileLearnedCard && learnedWordsSection) {
+        profileLearnedCard.addEventListener('click', () => {
+            learnedWordsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
     }
 }
@@ -1723,7 +1792,7 @@ function playPronunciation() {
     try {
         const utterance = new SpeechSynthesisUtterance(word.hanzi);
         utterance.lang = 'zh-CN';
-        utterance.rate = 0.8;
+        utterance.rate = getSpeechRate();
         utterance.pitch = 1;
         utterance.volume = 1;
         
@@ -1978,7 +2047,9 @@ window.EasyCloudApplyMergedState = function (merged) {
     updateDailyQuests();
     updateAchievements();
     updateProfileStats();
+    updateWeeklyStreakCalendar();
     updateHSKProgress();
+    renderLearnedWordsDrawer();
     if (lesson.classList.contains('active')) updateLessonFlowUI();
     if (lessons.classList.contains('active')) generateLessonsGrid();
 };
@@ -2217,7 +2288,7 @@ function speakChineseText(text) {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'zh-CN';
-    utterance.rate = 0.82;
+    utterance.rate = getSpeechRate();
     const voices = window.speechSynthesis.getVoices();
     const zhVoice = voices.find(v => v.lang === 'zh-CN') || voices.find(v => v.lang.startsWith('zh'));
     if (zhVoice) utterance.voice = zhVoice;
@@ -2623,7 +2694,7 @@ function playCanvasAudio() {
     try {
         const utterance = new SpeechSynthesisUtterance(char);
         utterance.lang = 'zh-CN';
-        utterance.rate = 0.8;
+        utterance.rate = getSpeechRate();
         utterance.pitch = 1;
         
         const voices = window.speechSynthesis.getVoices();
@@ -2777,8 +2848,12 @@ function playSuccessSound() {
 function showProfileView() {
     showView(profileView);
     updateProfileStats();
+    updateWeeklyStreakCalendar();
     updateHSKProgress();
+    renderLearnedWordsDrawer();
     updateAchievements();
+    syncProfileThemeUI();
+    syncSpeechRateUI();
 }
 
 function updateProfileStats() {
@@ -2787,8 +2862,96 @@ function updateProfileStats() {
     profileXP.textContent = streakData.xp;
     
     // Calculate user level based on XP
-    const level = Math.floor(streakData.xp / 100) + 1;
+    const xp = Math.max(0, Number(streakData.xp) || 0);
+    const level = Math.floor(xp / 100) + 1;
+    const xpInLevel = xp % 100;
     userLevel.textContent = level;
+
+    const curLbl = document.getElementById('profileLevelCurrentLabel');
+    const nxtLbl = document.getElementById('profileLevelNextLabel');
+    const xpTxt = document.getElementById('profileLevelXpText');
+    const xpFill = document.getElementById('profileLevelXpFill');
+    if (curLbl) curLbl.textContent = `Level ${level}`;
+    if (nxtLbl) nxtLbl.textContent = `Level ${level + 1} →`;
+    if (xpTxt) xpTxt.textContent = `${xpInLevel} / 100 XP`;
+    if (xpFill) xpFill.style.width = `${xpInLevel}%`;
+}
+
+function updateWeeklyStreakCalendar() {
+    const grid = document.getElementById('weeklyDaysGrid');
+    const summaryEl = document.getElementById('weeklyStreakSummary');
+    if (!grid) return;
+
+    const dayNames = ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya'];
+    const now = new Date();
+    // Convert Sunday (0) -> 6, Monday (1) -> 0 .. Saturday (6) -> 5
+    const todayMonIdx = (now.getDay() + 6) % 7;
+    const streakCount = Math.max(1, Number(streakData.streak) || 1);
+    const activeInWeek = Math.min(todayMonIdx + 1, streakCount);
+
+    if (summaryEl) {
+        summaryEl.textContent = `🔥 ${streakData.streak || 1} kun ketma-ket`;
+    }
+
+    grid.innerHTML = dayNames.map((name, idx) => {
+        const isToday = idx === todayMonIdx;
+        const isDone = idx <= todayMonIdx && (todayMonIdx - idx) < streakCount;
+        const stateClass = isDone ? 'is-done' : (idx > todayMonIdx ? 'is-upcoming' : 'is-missed');
+        const icon = isDone ? '🔥' : (isToday ? '●' : '·');
+        return `
+            <div class="weekly-day-cell ${stateClass}${isToday ? ' is-today' : ''}">
+                <span class="weekly-day-name">${name}</span>
+                <span class="weekly-day-circle">${icon}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderLearnedWordsDrawer() {
+    const listEl = document.getElementById('profileLearnedWordsList');
+    const badgeEl = document.getElementById('learnedWordsDrawerCount');
+    if (!listEl) return;
+
+    const learnedItems = vocabularyData.filter(w => learnedWords.includes(w.id));
+    if (badgeEl) {
+        badgeEl.textContent = `${learnedItems.length} ta so‘z`;
+    }
+
+    if (learnedItems.length === 0) {
+        listEl.innerHTML = `
+            <div class="learned-words-empty">
+                <p>Hozircha yodlangan so‘zlar yo‘q. Darslarni boshlang yoki kartochkalarda <strong>⭐ Mark Learned</strong> tugmasini bosing!</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Show up to 24 most recently learned words as interactive chips with audio
+    const recentItems = learnedItems.slice(-24).reverse();
+    listEl.innerHTML = recentItems.map(w => `
+        <button type="button" class="learned-word-chip" data-speak="${w.hanzi}" title="Tinglash: ${w.hanzi} (${w.pinyin})">
+            <span class="lw-hanzi">${w.hanzi}</span>
+            <span class="lw-meta">
+                <span class="lw-pinyin">${w.pinyin}</span>
+                <span class="lw-uzbek">${w.uzbek}</span>
+            </span>
+            <span class="lw-audio" aria-hidden="true">🔊</span>
+        </button>
+    `).join('');
+
+    listEl.querySelectorAll('.learned-word-chip').forEach(chip => {
+        chip.addEventListener('click', () => speakChineseText(chip.dataset.speak));
+    });
+}
+
+function syncSpeechRateUI() {
+    const group = document.getElementById('speechRateGroup');
+    if (!group) return;
+    const currentRate = getSpeechRate();
+    group.querySelectorAll('.rate-chip').forEach(btn => {
+        const rateVal = parseFloat(btn.dataset.rate);
+        btn.classList.toggle('active', Math.abs(rateVal - currentRate) < 0.08);
+    });
 }
 
 function loadProfileData() {
@@ -2910,74 +3073,120 @@ function saveProfile() {
 }
 
 function updateHSKProgress() {
-    // Calculate progress for each HSK level.
-    // HSK 1 has two separate curricula in this app: Classic HSK and New HSK 3.0.
-    // They are counted independently and NEVER combined.
+    // Calculate progress for all HSK 1-5 levels + New HSK 3.0
     const hsk1Words = vocabularyData.filter(w => w.hsk === 1 && w.track === 'classic').length;
+    const newHskWords = vocabularyData.filter(w => w.hsk === 1 && w.track === 'new').length;
     const hsk2Words = vocabularyData.filter(w => w.hsk === 2).length;
     const hsk3Words = vocabularyData.filter(w => w.hsk === 3).length;
-    const newHskWords = vocabularyData.filter(w => w.hsk === 1 && w.track === 'new').length;
-    
+    const hsk4Words = vocabularyData.filter(w => w.hsk === 4).length;
+    const hsk5Words = vocabularyData.filter(w => w.hsk === 5).length;
+
     const hsk1Learned = vocabularyData.filter(w => w.hsk === 1 && w.track === 'classic' && learnedWords.includes(w.id)).length;
+    const newHskLearned = vocabularyData.filter(w => w.hsk === 1 && w.track === 'new' && learnedWords.includes(w.id)).length;
     const hsk2Learned = vocabularyData.filter(w => w.hsk === 2 && learnedWords.includes(w.id)).length;
     const hsk3Learned = vocabularyData.filter(w => w.hsk === 3 && learnedWords.includes(w.id)).length;
-    const newHskLearned = vocabularyData.filter(w => w.hsk === 1 && w.track === 'new' && learnedWords.includes(w.id)).length;
-    
+    const hsk4Learned = vocabularyData.filter(w => w.hsk === 4 && learnedWords.includes(w.id)).length;
+    const hsk5Learned = vocabularyData.filter(w => w.hsk === 5 && learnedWords.includes(w.id)).length;
+
     const hsk1PercentVal = hsk1Words > 0 ? Math.round((hsk1Learned / hsk1Words) * 100) : 0;
+    const newHskPercentVal = newHskWords > 0 ? Math.round((newHskLearned / newHskWords) * 100) : 0;
     const hsk2PercentVal = hsk2Words > 0 ? Math.round((hsk2Learned / hsk2Words) * 100) : 0;
     const hsk3PercentVal = hsk3Words > 0 ? Math.round((hsk3Learned / hsk3Words) * 100) : 0;
-    const newHskPercentVal = newHskWords > 0 ? Math.round((newHskLearned / newHskWords) * 100) : 0;
-    
-    hsk1Percent.textContent = `${hsk1PercentVal}%`;
-    hsk2Percent.textContent = `${hsk2PercentVal}%`;
-    hsk3Percent.textContent = `${hsk3PercentVal}%`;
-    newHskPercent.textContent = `${newHskPercentVal}%`;
-    
-    // Learned / total word counts for the two active tracks (display only —
-    // the progress calculation above is unchanged).
-    hsk1Count.textContent = `${hsk1Learned} / ${hsk1Words} words`;
-    newHskCount.textContent = `${newHskLearned} / ${newHskWords} words`;
-    
-    hsk1Fill.style.width = `${hsk1PercentVal}%`;
-    hsk2Fill.style.width = `${hsk2PercentVal}%`;
-    hsk3Fill.style.width = `${hsk3PercentVal}%`;
-    newHskFill.style.width = `${newHskPercentVal}%`;
+    const hsk4PercentVal = hsk4Words > 0 ? Math.round((hsk4Learned / hsk4Words) * 100) : 0;
+    const hsk5PercentVal = hsk5Words > 0 ? Math.round((hsk5Learned / hsk5Words) * 100) : 0;
+
+    if (hsk1Percent) hsk1Percent.textContent = `${hsk1PercentVal}%`;
+    if (newHskPercent) newHskPercent.textContent = `${newHskPercentVal}%`;
+    if (hsk2Percent) hsk2Percent.textContent = `${hsk2PercentVal}%`;
+    if (hsk3Percent) hsk3Percent.textContent = `${hsk3PercentVal}%`;
+
+    const hsk4PercentEl = document.getElementById('hsk4Percent');
+    const hsk5PercentEl = document.getElementById('hsk5Percent');
+    if (hsk4PercentEl) hsk4PercentEl.textContent = `${hsk4PercentVal}%`;
+    if (hsk5PercentEl) hsk5PercentEl.textContent = `${hsk5PercentVal}%`;
+
+    if (hsk1Count) hsk1Count.textContent = `${hsk1Learned} / ${hsk1Words} so‘z`;
+    if (newHskCount) newHskCount.textContent = `${newHskLearned} / ${newHskWords} so‘z`;
+
+    const hsk2CountEl = document.getElementById('hsk2Count');
+    const hsk3CountEl = document.getElementById('hsk3Count');
+    const hsk4CountEl = document.getElementById('hsk4Count');
+    const hsk5CountEl = document.getElementById('hsk5Count');
+    if (hsk2CountEl) hsk2CountEl.textContent = `${hsk2Learned} / ${hsk2Words} so‘z`;
+    if (hsk3CountEl) hsk3CountEl.textContent = `${hsk3Learned} / ${hsk3Words} so‘z`;
+    if (hsk4CountEl) hsk4CountEl.textContent = `${hsk4Learned} / ${hsk4Words} so‘z`;
+    if (hsk5CountEl) hsk5CountEl.textContent = `${hsk5Learned} / ${hsk5Words} so‘z`;
+
+    if (hsk1Fill) hsk1Fill.style.width = `${hsk1PercentVal}%`;
+    if (newHskFill) newHskFill.style.width = `${newHskPercentVal}%`;
+    if (hsk2Fill) hsk2Fill.style.width = `${hsk2PercentVal}%`;
+    if (hsk3Fill) hsk3Fill.style.width = `${hsk3PercentVal}%`;
+
+    const hsk4FillEl = document.getElementById('hsk4Fill');
+    const hsk5FillEl = document.getElementById('hsk5Fill');
+    if (hsk4FillEl) hsk4FillEl.style.width = `${hsk4PercentVal}%`;
+    if (hsk5FillEl) hsk5FillEl.style.width = `${hsk5PercentVal}%`;
+}
+
+function getCompletedLessonsTotalCount() {
+    if (!lessonFlowProgress || !lessonFlowProgress.lessons) return 0;
+    return Object.values(lessonFlowProgress.lessons).filter(rec => rec && rec.completed).length;
 }
 
 function updateAchievements() {
     const achievements = achievementsGrid.querySelectorAll('.achievement-badge');
-    
+    const completedLessonsCount = getCompletedLessonsTotalCount();
+    let unlockedCount = 0;
+
     achievements.forEach(badge => {
         const achievementType = badge.dataset.achievement;
-        let unlocked = false;
-        
-        switch(achievementType) {
+        let currentVal = 0;
+        let targetVal = 1;
+
+        switch (achievementType) {
             case 'first-word':
-                unlocked = streakData.totalLearned >= 1;
+                currentVal = streakData.totalLearned;
+                targetVal = 1;
+                break;
+            case 'first-lesson':
+                currentVal = completedLessonsCount;
+                targetVal = 1;
                 break;
             case 'streak-3':
-                unlocked = streakData.streak >= 3;
+                currentVal = streakData.streak;
+                targetVal = 3;
                 break;
             case 'streak-7':
-                unlocked = streakData.streak >= 7;
+                currentVal = streakData.streak;
+                targetVal = 7;
                 break;
             case 'words-50':
-                unlocked = streakData.totalLearned >= 50;
+                currentVal = streakData.totalLearned;
+                targetVal = 50;
                 break;
             case 'words-100':
-                unlocked = streakData.totalLearned >= 100;
+                currentVal = streakData.totalLearned;
+                targetVal = 100;
                 break;
             case 'xp-100':
-                unlocked = streakData.xp >= 100;
-                break;
             case 'first-100-xp':
-                unlocked = streakData.xp >= 100;
+                currentVal = streakData.xp;
+                targetVal = 100;
                 break;
             case 'master-calligrapher':
-                unlocked = dailyProgress.traces >= 3;
+                currentVal = dailyProgress.traces;
+                targetVal = 3;
                 break;
         }
-        
+
+        const unlocked = currentVal >= targetVal;
+        if (unlocked) unlockedCount++;
+
+        const progEl = badge.querySelector('.badge-prog');
+        if (progEl) {
+            progEl.textContent = unlocked ? '✓ Ochildi' : `${Math.min(currentVal, targetVal)} / ${targetVal}`;
+        }
+
         if (unlocked) {
             badge.classList.remove('locked');
             badge.classList.add('unlocked');
@@ -2986,4 +3195,9 @@ function updateAchievements() {
             badge.classList.remove('unlocked');
         }
     });
+
+    const countPill = document.getElementById('achievementsUnlockedCount');
+    if (countPill) {
+        countPill.textContent = `${unlockedCount} / ${achievements.length}`;
+    }
 }

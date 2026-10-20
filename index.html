@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=16">
+    <link rel="stylesheet" href="styles.css?v=17">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -504,28 +504,43 @@
             <span class="view-kicker">个人中心 · Personal Center</span>
             <h2 class="section-title">My Profile</h2>
             
+            <!-- 1. Bento ID Card + Live Level XP Bar -->
             <div class="profile-card">
-                <div class="profile-avatar">
-                    <span class="avatar-emoji" id="profileAvatar">👤</span>
-                    <img class="avatar-photo" id="profilePhoto" alt="Profile photo" hidden>
-                </div>
-                <div class="profile-info">
-                    <h3 class="username" id="profileUsername">Chinese Learner</h3>
-                    <!-- Chinese identity: name seal + bilingual motto (never touched by JS) -->
-                    <div class="profile-cn-row">
-                        <span class="profile-seal" aria-hidden="true">学</span>
-                        <p class="profile-motto"><span class="motto-cn">每天进步一点点</span> · a little progress every day</p>
+                <div class="profile-top-row">
+                    <div class="profile-avatar">
+                        <span class="avatar-emoji" id="profileAvatar">👤</span>
+                        <img class="avatar-photo" id="profilePhoto" alt="Profile photo" hidden>
                     </div>
-                    <div class="profile-meta">
-                        <span class="level-badge">Level <span id="userLevel">1</span></span>
-                        <span class="daily-goal">🎯 Daily Goal: <span id="dailyGoalDisplay">10</span> words</span>
+                    <div class="profile-info">
+                        <h3 class="username" id="profileUsername">Chinese Learner</h3>
+                        <div class="profile-cn-row">
+                            <span class="profile-seal" aria-hidden="true">学</span>
+                            <p class="profile-motto"><span class="motto-cn">每天进步一点点</span> · har kuni bir qadam</p>
+                        </div>
+                        <div class="profile-meta">
+                            <span class="level-badge">Level <span id="userLevel">1</span></span>
+                            <span class="daily-goal">🎯 Kunlik: <span id="dailyGoalDisplay">10</span> so‘z</span>
+                        </div>
+                        <p class="user-email" id="profileEmail" hidden></p>
                     </div>
-                    <p class="user-email" id="profileEmail" hidden></p>
                 </div>
+
+                <!-- Live Level XP Progress Bar -->
+                <div class="profile-xp-box">
+                    <div class="profile-xp-header">
+                        <span class="profile-xp-label" id="profileLevelCurrentLabel">Level 1</span>
+                        <span class="profile-xp-numbers" id="profileLevelXpText">0 / 100 XP</span>
+                        <span class="profile-xp-next" id="profileLevelNextLabel">Level 2 →</span>
+                    </div>
+                    <div class="profile-xp-track">
+                        <div class="profile-xp-fill" id="profileLevelXpFill" style="width: 0%"></div>
+                    </div>
+                </div>
+
                 <div class="profile-actions">
                     <button class="edit-profile-btn" id="editProfileBtn" type="button">
                         <span class="edit-btn-icon" aria-hidden="true">✏️</span>
-                        <span class="edit-btn-label">Edit Profile</span>
+                        <span class="edit-btn-label">Tahrirlash</span>
                     </button>
                     <button class="google-signin-btn" id="googleSignInBtn" type="button" aria-label="Continue with Google">
                         <svg viewBox="0 0 48 48" aria-hidden="true">
@@ -534,41 +549,56 @@
                             <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
                             <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
                         </svg>
-                        <span>Continue with Google</span>
+                        <span>Google orqali</span>
                     </button>
                     <button class="signout-btn" id="googleSignOutBtn" type="button" hidden>
                         <span aria-hidden="true">🚪</span>
-                        <span>Sign out</span>
+                        <span>Chiqish</span>
                     </button>
                     <p class="auth-message" id="authMessage" hidden></p>
                 </div>
             </div>
             
+            <!-- 3 Stat Cards -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <span class="stat-icon">🔥</span>
                     <span class="stat-value" id="profileStreak">0</span>
-                    <span class="stat-label">Day Streak <span class="stat-label-cn">连续天数</span></span>
+                    <span class="stat-label">Kunlik Streak <span class="stat-label-cn">连续天数</span></span>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" id="profileLearnedCard">
                     <span class="stat-icon">📚</span>
                     <span class="stat-value" id="profileLearned">0</span>
-                    <span class="stat-label">Words Learned <span class="stat-label-cn">已学单词</span></span>
+                    <span class="stat-label">Yodlangan <span class="stat-label-cn">已学单词</span></span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-icon">⭐</span>
+                    <span class="stat-icon" title="XP">⭐</span>
                     <span class="stat-value" id="profileXP">0</span>
-                    <span class="stat-label">Total XP <span class="stat-label-cn">总经验值</span></span>
+                    <span class="stat-label">Jami XP <span class="stat-label-cn">总经验值</span></span>
                 </div>
             </div>
+
+            <!-- 2. Weekly Activity Streak Calendar (Du - Ya) -->
+            <div class="weekly-streak-section">
+                <div class="section-head-row">
+                    <h3 class="progress-title">Haftalik Faollik<span class="title-cn">本周打卡</span></h3>
+                    <span class="weekly-streak-pill" id="weeklyStreakSummary">🔥 1 kun faol</span>
+                </div>
+                <div class="weekly-days-grid" id="weeklyDaysGrid" aria-label="Haftalik faollik kalendari"></div>
+            </div>
             
+            <!-- 3. All HSK 1 - HSK 5 Interactive Progress Cards -->
             <div class="progress-section">
-                <h3 class="progress-title">HSK Progress<span class="title-cn">学习进度</span></h3>
+                <div class="section-head-row">
+                    <h3 class="progress-title">HSK 1–5 Progress<span class="title-cn">学习进度</span></h3>
+                    <span class="progress-tap-hint">Bosib darsga o‘ting →</span>
+                </div>
                 <div class="hsk-progress-bars">
-                    <div class="hsk-progress-item">
+                    <div class="hsk-progress-item hsk-prog-1" data-jump-hsk="1" data-jump-track="classic" role="button" tabindex="0">
                         <div class="hsk-progress-label">
-                            <span class="hsk-progress-name">Classic HSK 1
-                                <span class="hsk-progress-count" id="hsk1Count">0 / 0 words</span>
+                            <span class="hsk-progress-name">
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">1</span> Classic HSK 1</span>
+                                <span class="hsk-progress-count" id="hsk1Count">0 / 150 so‘z</span>
                             </span>
                             <span class="hsk-progress-percent" id="hsk1Percent">0%</span>
                         </div>
@@ -576,10 +606,11 @@
                             <div class="hsk-progress-fill" id="hsk1Fill" style="width: 0%"></div>
                         </div>
                     </div>
-                    <div class="hsk-progress-item">
+                    <div class="hsk-progress-item hsk-prog-new" data-jump-hsk="1" data-jump-track="new" role="button" tabindex="0">
                         <div class="hsk-progress-label">
-                            <span class="hsk-progress-name">New HSK 3.0
-                                <span class="hsk-progress-count" id="newHskCount">0 / 0 words</span>
+                            <span class="hsk-progress-name">
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">3.0</span> New HSK 3.0 (L1)</span>
+                                <span class="hsk-progress-count" id="newHskCount">0 / 150 so‘z</span>
                             </span>
                             <span class="hsk-progress-percent" id="newHskPercent">0%</span>
                         </div>
@@ -587,85 +618,179 @@
                             <div class="hsk-progress-fill" id="newHskFill" style="width: 0%"></div>
                         </div>
                     </div>
-                    <div class="hsk-progress-item hidden-track" aria-hidden="true">
+                    <div class="hsk-progress-item hsk-prog-2" data-jump-hsk="2" data-jump-track="classic" role="button" tabindex="0">
                         <div class="hsk-progress-label">
-                            <span>HSK 2</span>
+                            <span class="hsk-progress-name">
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">2</span> HSK 2 · Elementary</span>
+                                <span class="hsk-progress-count" id="hsk2Count">0 / 90 so‘z</span>
+                            </span>
                             <span class="hsk-progress-percent" id="hsk2Percent">0%</span>
                         </div>
                         <div class="hsk-progress-bar">
                             <div class="hsk-progress-fill" id="hsk2Fill" style="width: 0%"></div>
                         </div>
                     </div>
-                    <div class="hsk-progress-item hidden-track" aria-hidden="true">
+                    <div class="hsk-progress-item hsk-prog-3" data-jump-hsk="3" data-jump-track="classic" role="button" tabindex="0">
                         <div class="hsk-progress-label">
-                            <span>HSK 3</span>
+                            <span class="hsk-progress-name">
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">3</span> HSK 3 · Intermediate</span>
+                                <span class="hsk-progress-count" id="hsk3Count">0 / 90 so‘z</span>
+                            </span>
                             <span class="hsk-progress-percent" id="hsk3Percent">0%</span>
                         </div>
                         <div class="hsk-progress-bar">
                             <div class="hsk-progress-fill" id="hsk3Fill" style="width: 0%"></div>
                         </div>
                     </div>
+                    <div class="hsk-progress-item hsk-prog-4" data-jump-hsk="4" data-jump-track="classic" role="button" tabindex="0">
+                        <div class="hsk-progress-label">
+                            <span class="hsk-progress-name">
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">4</span> HSK 4 · Upper-Inter</span>
+                                <span class="hsk-progress-count" id="hsk4Count">0 / 90 so‘z</span>
+                            </span>
+                            <span class="hsk-progress-percent" id="hsk4Percent">0%</span>
+                        </div>
+                        <div class="hsk-progress-bar">
+                            <div class="hsk-progress-fill" id="hsk4Fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="hsk-progress-item hsk-prog-5" data-jump-hsk="5" data-jump-track="classic" role="button" tabindex="0">
+                        <div class="hsk-progress-label">
+                            <span class="hsk-progress-name">
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">5</span> HSK 5 · Advanced</span>
+                                <span class="hsk-progress-count" id="hsk5Count">0 / 90 so‘z</span>
+                            </span>
+                            <span class="hsk-progress-percent" id="hsk5Percent">0%</span>
+                        </div>
+                        <div class="hsk-progress-bar">
+                            <div class="hsk-progress-fill" id="hsk5Fill" style="width: 0%"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- 4. Learned Words Quick-Review Drawer -->
+            <div class="learned-words-section" id="learnedWordsSection">
+                <div class="section-head-row">
+                    <h3 class="progress-title">Yodlangan So‘zlarim<span class="title-cn">已学词库</span></h3>
+                    <span class="learned-words-badge" id="learnedWordsDrawerCount">0 ta so‘z</span>
+                </div>
+                <div class="learned-words-list" id="profileLearnedWordsList"></div>
+            </div>
+
+            <!-- Daily Quests -->
             <div class="quests-section">
-                <h3 class="progress-title">Daily Quests<span class="title-cn">每日任务</span></h3>
+                <h3 class="progress-title">Kunlik Vazifalar<span class="title-cn">每日任务</span></h3>
                 <div class="quests-list" id="dailyQuests">
                     <div class="quest-item" data-quest="traces">
                         <span class="quest-icon">✍️</span>
-                        <span class="quest-copy"><strong>Complete 3 Hanzi traces</strong><small><span class="quest-progress">0</span>/3 complete</small></span>
+                        <span class="quest-copy"><strong>3 ta iyeroglif yozish</strong><small><span class="quest-progress">0</span>/3 bajarildi</small></span>
                         <span class="quest-status">0%</span>
                     </div>
                     <div class="quest-item" data-quest="xp">
                         <span class="quest-icon">⭐</span>
-                        <span class="quest-copy"><strong>Earn 50 XP today</strong><small><span class="quest-progress">0</span>/50 XP</small></span>
+                        <span class="quest-copy"><strong>Bugun 50 XP to‘plash</strong><small><span class="quest-progress">0</span>/50 XP</small></span>
                         <span class="quest-status">0%</span>
                     </div>
                 </div>
             </div>
             
+            <!-- 5. Deduplicated Achievements Showcase with Live Progress -->
             <div class="achievements-section">
-                <h3 class="achievements-title">Achievements<span class="title-cn">成就勋章</span></h3>
+                <div class="section-head-row">
+                    <h3 class="achievements-title">Yutuqlar Vitrinasi<span class="title-cn">成就勋章</span></h3>
+                    <span class="achievements-unlocked-pill" id="achievementsUnlockedCount">0 / 8</span>
+                </div>
                 <div class="achievements-grid" id="achievementsGrid">
                     <div class="achievement-badge locked" data-achievement="first-word">
                         <span class="badge-icon">🎯</span>
-                        <span class="badge-name">First Word</span>
-                        <span class="badge-desc">Learn your first word</span>
+                        <span class="badge-name">Ilk Qadam</span>
+                        <span class="badge-desc">1-so‘zni yodlash</span>
+                        <span class="badge-prog" data-ach-prog="first-word">0 / 1</span>
+                    </div>
+                    <div class="achievement-badge locked" data-achievement="first-lesson">
+                        <span class="badge-icon">🏅</span>
+                        <span class="badge-name">1-Dars G‘olibi</span>
+                        <span class="badge-desc">1 ta darsni to‘liq tugatish</span>
+                        <span class="badge-prog" data-ach-prog="first-lesson">0 / 1</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="streak-3">
                         <span class="badge-icon">🔥</span>
-                        <span class="badge-name">3-Day Streak</span>
-                        <span class="badge-desc">Practice for 3 days</span>
+                        <span class="badge-name">3 Kunlik Olov</span>
+                        <span class="badge-desc">3 kun ketma-ket kirish</span>
+                        <span class="badge-prog" data-ach-prog="streak-3">0 / 3</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="streak-7">
                         <span class="badge-icon">⚡</span>
-                        <span class="badge-name">Week Warrior</span>
-                        <span class="badge-desc">7-day streak</span>
+                        <span class="badge-name">Hafta Qahramoni</span>
+                        <span class="badge-desc">7 kunlik streak</span>
+                        <span class="badge-prog" data-ach-prog="streak-7">0 / 7</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="words-50">
                         <span class="badge-icon">📚</span>
-                        <span class="badge-name">Bookworm</span>
-                        <span class="badge-desc">Learn 50 words</span>
+                        <span class="badge-name">Kitobxon</span>
+                        <span class="badge-desc">50 ta so‘z yodlash</span>
+                        <span class="badge-prog" data-ach-prog="words-50">0 / 50</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="words-100">
                         <span class="badge-icon">🎓</span>
-                        <span class="badge-name">Scholar</span>
-                        <span class="badge-desc">Learn 100 words</span>
+                        <span class="badge-name">Olim (Scholar)</span>
+                        <span class="badge-desc">100 ta so‘z yodlash</span>
+                        <span class="badge-prog" data-ach-prog="words-100">0 / 100</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="xp-100">
                         <span class="badge-icon">⭐</span>
-                        <span class="badge-name">Rising Star</span>
-                        <span class="badge-desc">Earn 100 XP</span>
-                    </div>
-                    <div class="achievement-badge locked" data-achievement="first-100-xp">
-                        <span class="badge-icon">🏆</span>
-                        <span class="badge-name">First 100 XP</span>
-                        <span class="badge-desc">Earn 100 XP total</span>
+                        <span class="badge-name">100 XP Yulduzi</span>
+                        <span class="badge-desc">100 XP to‘plash</span>
+                        <span class="badge-prog" data-ach-prog="xp-100">0 / 100</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="master-calligrapher">
                         <span class="badge-icon">🖌️</span>
-                        <span class="badge-name">Master Calligrapher</span>
-                        <span class="badge-desc">Complete 3 Hanzi traces</span>
+                        <span class="badge-name">Xattot Ustasi</span>
+                        <span class="badge-desc">3 ta Hanzi yozish</span>
+                        <span class="badge-prog" data-ach-prog="master-calligrapher">0 / 3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. App Settings Card (Theme, Audio Speed, 1-Tap App Install) -->
+            <div class="profile-settings-section">
+                <h3 class="progress-title">Ilova Sozlamalari<span class="title-cn">应用设置</span></h3>
+                <div class="settings-list">
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <span class="setting-icon">🌓</span>
+                            <div>
+                                <strong>Tungi Rejim (Dark Mode)</strong>
+                                <small id="profileThemeStatusText">Kunduzgi yorug‘ mavzu</small>
+                            </div>
+                        </div>
+                        <button type="button" class="setting-action-btn" id="profileThemeToggleBtn">Almashtirish</button>
+                    </div>
+
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <span class="setting-icon">🔊</span>
+                            <div>
+                                <strong>Talaffuz Tezligi (Audio)</strong>
+                                <small>Xitoycha ovoz tezligi</small>
+                            </div>
+                        </div>
+                        <div class="speech-rate-group" id="speechRateGroup">
+                            <button type="button" class="rate-chip" data-rate="0.65">🐢 Sekin</button>
+                            <button type="button" class="rate-chip active" data-rate="0.85">👌 Normal</button>
+                        </div>
+                    </div>
+
+                    <div class="setting-row" id="profileInstallRow" hidden>
+                        <div class="setting-info">
+                            <img src="assets/app-icon-1.svg" alt="Easy Chinese" class="setting-app-icon" width="38" height="38" />
+                            <div>
+                                <strong>Easy Chinese Ilovasi</strong>
+                                <small>Telefonga 1 bosishda o‘rnatish</small>
+                            </div>
+                        </div>
+                        <button type="button" class="setting-install-btn" id="profileInstallAppBtn">📲 O‘rnatish</button>
                     </div>
                 </div>
             </div>
@@ -783,7 +908,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=16"></script>
+    <script src="script.js?v=17"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -805,9 +930,17 @@
       const banner = document.getElementById('pwaInstallBanner');
       const installBtn = document.getElementById('pwaInstallBtn');
       const dismissBtn = document.getElementById('pwaDismissBtn');
+      const profileInstallRow = document.getElementById('profileInstallRow');
+      const profileInstallBtn = document.getElementById('profileInstallAppBtn');
       let deferredInstallPrompt = null;
 
+      function syncProfileInstallRow() {
+        if (!profileInstallRow) return;
+        profileInstallRow.hidden = Boolean(isRunningStandalone() || !deferredInstallPrompt);
+      }
+
       function showInstallReminder() {
+        syncProfileInstallRow();
         if (!banner || isRunningStandalone() || !deferredInstallPrompt) {
           if (banner) banner.hidden = true;
           document.body.classList.remove('has-pwa-banner');
@@ -827,6 +960,22 @@
         setTimeout(() => { banner.hidden = true; }, 220);
       }
 
+      async function triggerDirectInstall() {
+        if (!deferredInstallPrompt) {
+          hideInstallReminder();
+          syncProfileInstallRow();
+          return;
+        }
+        const promptEvent = deferredInstallPrompt;
+        deferredInstallPrompt = null;
+        try {
+          await promptEvent.prompt();
+          await promptEvent.userChoice;
+        } catch (err) {}
+        hideInstallReminder();
+        syncProfileInstallRow();
+      }
+
       // Show banner ONLY when browser native 1-tap installer is ready (no manual guide popup!)
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
@@ -837,22 +986,14 @@
       window.addEventListener('appinstalled', () => {
         deferredInstallPrompt = null;
         hideInstallReminder();
+        syncProfileInstallRow();
       });
 
       if (installBtn) {
-        installBtn.addEventListener('click', async () => {
-          if (!deferredInstallPrompt) {
-            hideInstallReminder();
-            return;
-          }
-          const promptEvent = deferredInstallPrompt;
-          deferredInstallPrompt = null;
-          try {
-            await promptEvent.prompt();
-            await promptEvent.userChoice;
-          } catch (err) {}
-          hideInstallReminder();
-        });
+        installBtn.addEventListener('click', triggerDirectInstall);
+      }
+      if (profileInstallBtn) {
+        profileInstallBtn.addEventListener('click', triggerDirectInstall);
       }
 
       if (dismissBtn) {
@@ -868,7 +1009,7 @@
           window.location.reload();
         });
 
-        navigator.serviceWorker.register('./sw.js?v=16', { updateViaCache: 'none' }).then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=17', { updateViaCache: 'none' }).then((reg) => {
           if (reg.waiting) {
             reg.waiting.postMessage({ type: 'SKIP_WAITING' });
           }
