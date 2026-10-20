@@ -5,13 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Learn Chinese HSK vocabulary with flashcards, quizzes, and stroke order animations">
-    <meta name="theme-color" content="#B91C2C">
+    <meta name="theme-color" content="#10B981">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Easy Chinese">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3269/3269817.png">
     <title>Easy Chinese - Learn HSK Vocabulary</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=13">
+    <link rel="stylesheet" href="styles.css?v=14">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -763,7 +767,49 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <script src="script.js?v=13"></script>
+    <!-- PWA Install Reminder Banner (Shown on every visit if app is not installed yet) -->
+    <div id="pwaInstallBanner" class="pwa-install-banner" role="region" aria-label="Ilovani o'rnatish" hidden>
+        <div class="pwa-banner-icon" aria-hidden="true">汉</div>
+        <div class="pwa-banner-copy">
+            <strong>Easy Chinese ilovasini o‘rnating</strong>
+            <span>Telefoningizda tezkor va oflayn rejimda ishlaydi</span>
+        </div>
+        <div class="pwa-banner-actions">
+            <button type="button" id="pwaInstallBtn" class="pwa-install-btn">O‘rnatish</button>
+            <button type="button" id="pwaDismissBtn" class="pwa-dismiss-btn" aria-label="Yopish">✕</button>
+        </div>
+    </div>
+
+    <!-- PWA Manual Install Guide Modal (For iOS Safari & browsers without native 1-tap prompt) -->
+    <div id="pwaInstallModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="pwaModalTitle">
+        <div class="modal-content pwa-modal-content">
+            <div class="modal-header">
+                <h3 id="pwaModalTitle">📲 Ilovani telefonga o‘rnatish</h3>
+                <button type="button" class="modal-close" id="closePwaModalBtn" aria-label="Yopish">✕</button>
+            </div>
+            <div class="modal-body pwa-modal-body">
+                <div class="pwa-guide-step" id="pwaAndroidGuide">
+                    <strong>🤖 Android (Chrome / Samsung) da:</strong>
+                    <ol>
+                        <li>Brauzerning yuqori o‘ng burchagidagi <strong>⋮ (Menyu)</strong> tugmasini bosing.</li>
+                        <li><strong>«Ilovani o‘rnatish» (Install app)</strong> yoki <strong>«Asosiy ekranga qo‘shish» (Add to Home screen)</strong> bandini tanlang.</li>
+                    </ol>
+                </div>
+                <div class="pwa-guide-step" id="pwaIosGuide">
+                    <strong>🍎 iPhone / iPad (Safari) da:</strong>
+                    <ol>
+                        <li>Pastdagi <strong>📤 Ulashish (Share)</strong> tugmasini bosing.</li>
+                        <li>Ro‘yxatdan <strong>«Asosiy ekranga qo‘shish» (Add to Home Screen ➕)</strong> tugmasini bosing.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn save-btn" id="gotItPwaModalBtn">Tushunarli</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=14"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -774,7 +820,121 @@
     <script defer src="cloud-sync.js"></script>
     <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=13').then(reg => reg.update());
+    (function() {
+      function isRunningStandalone() {
+        return window.matchMedia('(display-mode: standalone)').matches ||
+               window.matchMedia('(display-mode: fullscreen)').matches ||
+               window.navigator.standalone === true ||
+               document.referrer.includes('android-app://');
+      }
+
+      const banner = document.getElementById('pwaInstallBanner');
+      const installBtn = document.getElementById('pwaInstallBtn');
+      const dismissBtn = document.getElementById('pwaDismissBtn');
+      const installModal = document.getElementById('pwaInstallModal');
+      const closePwaModalBtn = document.getElementById('closePwaModalBtn');
+      const gotItPwaModalBtn = document.getElementById('gotItPwaModalBtn');
+      let deferredInstallPrompt = null;
+
+      function showInstallReminder() {
+        if (!banner || isRunningStandalone()) {
+          if (banner) banner.hidden = true;
+          return;
+        }
+        banner.hidden = false;
+        requestAnimationFrame(() => banner.classList.add('visible'));
+      }
+
+      function hideInstallReminder() {
+        if (!banner) return;
+        banner.classList.remove('visible');
+        setTimeout(() => { banner.hidden = true; }, 220);
+      }
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        showInstallReminder();
+      });
+
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        hideInstallReminder();
+        if (installModal) installModal.classList.remove('active');
+      });
+
+      // Remind user on every site visit if they haven't installed/opened the app yet
+      if (!isRunningStandalone()) {
+        if (document.readyState === 'loading') {
+          window.addEventListener('DOMContentLoaded', () => setTimeout(showInstallReminder, 900));
+        } else {
+          setTimeout(showInstallReminder, 900);
+        }
+      }
+
+      if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+          if (deferredInstallPrompt) {
+            deferredInstallPrompt.prompt();
+            try {
+              const choice = await deferredInstallPrompt.userChoice;
+              if (choice && choice.outcome === 'accepted') {
+                hideInstallReminder();
+              }
+            } catch (err) {}
+            deferredInstallPrompt = null;
+          } else if (installModal) {
+            installModal.classList.add('active');
+          }
+        });
+      }
+
+      if (dismissBtn) {
+        dismissBtn.addEventListener('click', hideInstallReminder);
+      }
+      if (closePwaModalBtn) {
+        closePwaModalBtn.addEventListener('click', () => installModal.classList.remove('active'));
+      }
+      if (gotItPwaModalBtn) {
+        gotItPwaModalBtn.addEventListener('click', () => installModal.classList.remove('active'));
+      }
+
+      // Service Worker Registration + Live Automatic App Updates
+      if ('serviceWorker' in navigator) {
+        let isRefreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (isRefreshing) return;
+          isRefreshing = true;
+          window.location.reload();
+        });
+
+        navigator.serviceWorker.register('./sw.js?v=14', { updateViaCache: 'none' }).then((reg) => {
+          if (reg.waiting) {
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+              }
+            });
+          });
+
+          reg.update().catch(() => {});
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+              reg.update().catch(() => {});
+            }
+          });
+          setInterval(() => {
+            reg.update().catch(() => {});
+          }, 5 * 60 * 1000);
+        }).catch(() => {});
+      }
+    })();
   }
 </script>
 </body>
