@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=17">
+    <link rel="stylesheet" href="styles.css?v=18">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -89,46 +89,66 @@
                 <button class="hsk-btn" data-hsk="2">
                     <div class="hsk-card-top">
                         <span class="hsk-number">2</span>
-                        <span class="hsk-level-badge">二级</span>
+                        <span class="hsk-level-badge">&#x4E8C;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label">HSK 2 · Elementary</span>
-                        <span class="hsk-subtitle">300 words</span>
+                        <span class="hsk-label">HSK 2 &middot; Elementary</span>
+                        <span class="hsk-subtitle">New HSK 3.0 &middot; 15 lessons</span>
                     </div>
-                    <span class="hsk-cta">Continue →</span>
+                    <span class="hsk-cta">Continue &rarr;</span>
                 </button>
                 <button class="hsk-btn" data-hsk="3">
                     <div class="hsk-card-top">
                         <span class="hsk-number">3</span>
-                        <span class="hsk-level-badge">三级</span>
+                        <span class="hsk-level-badge">&#x4E09;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label">HSK 3 · Intermediate</span>
-                        <span class="hsk-subtitle">600 words</span>
+                        <span class="hsk-label">HSK 3 &middot; Intermediate</span>
+                        <span class="hsk-subtitle">New HSK 3.0 &middot; 15 lessons</span>
                     </div>
-                    <span class="hsk-cta">Continue →</span>
+                    <span class="hsk-cta">Continue &rarr;</span>
                 </button>
                 <button class="hsk-btn" data-hsk="4">
                     <div class="hsk-card-top">
                         <span class="hsk-number">4</span>
-                        <span class="hsk-level-badge">四级</span>
+                        <span class="hsk-level-badge">&#x56DB;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label">HSK 4 · Upper-Inter</span>
-                        <span class="hsk-subtitle">1200 words</span>
+                        <span class="hsk-label">HSK 4 &middot; Upper-Inter</span>
+                        <span class="hsk-subtitle">New HSK 3.0 &middot; 15 lessons</span>
                     </div>
-                    <span class="hsk-cta">Continue →</span>
+                    <span class="hsk-cta">Continue &rarr;</span>
                 </button>
                 <button class="hsk-btn" data-hsk="5">
                     <div class="hsk-card-top">
                         <span class="hsk-number">5</span>
-                        <span class="hsk-level-badge">五级</span>
+                        <span class="hsk-level-badge">&#x4E94;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label">HSK 5 · Advanced</span>
-                        <span class="hsk-subtitle">2500 words</span>
+                        <span class="hsk-label">HSK 5 &middot; Advanced</span>
+                        <span class="hsk-subtitle">New HSK 3.0 &middot; 15 lessons</span>
                     </div>
-                    <span class="hsk-cta">Continue →</span>
+                    <span class="hsk-cta">Continue &rarr;</span>
+                </button>
+            </div>
+
+            <!-- Smart Review & Favorites Quick Bento Row -->
+            <div class="dashboard-smart-row" aria-label="Smart review va saqlangan so'zlar">
+                <button class="smart-bento-card smart-mistakes-card" id="dashboardMistakesBtn" type="button">
+                    <span class="smart-bento-icon" aria-hidden="true">&#x1F9E0;</span>
+                    <span class="smart-bento-copy">
+                        <strong>Xatolar ustida ishlash</strong>
+                        <small id="dashboardMistakesSub">Xato qilingan so&#x2018;zlarni takrorlash</small>
+                    </span>
+                    <span class="smart-bento-badge" id="dashboardMistakesCount">0</span>
+                </button>
+                <button class="smart-bento-card smart-bookmarks-card" id="dashboardBookmarksBtn" type="button">
+                    <span class="smart-bento-icon" aria-hidden="true">&#x2B50;</span>
+                    <span class="smart-bento-copy">
+                        <strong>Saqlangan so&#x2018;zlar</strong>
+                        <small id="dashboardBookmarksSub">Sevimli so&#x2018;zlar to&#x2018;plami</small>
+                    </span>
+                    <span class="smart-bento-badge" id="dashboardBookmarksCount">0</span>
                 </button>
             </div>
 
@@ -240,27 +260,33 @@
                     </div>
                 </div>
                 
-                <!-- Main Action Buttons (Audio, Draw, Next) -->
+                <!-- Main Action Buttons (Audio, Speak, Draw, Next) -->
                 <div class="action-buttons">
                     <button class="action-btn audio-action-btn" id="audioBtn" aria-label="Play pronunciation">
-                        <span class="btn-icon">🔊</span>
+                        <span class="btn-icon">&#x1F50A;</span>
                         <span class="btn-label">Audio</span>
                     </button>
+                    <button class="action-btn speak-action-btn" id="speakPracticeBtn" type="button" aria-label="Pronunciation check">
+                        <span class="btn-icon">&#x1F399;&#xFE0F;</span>
+                        <span class="btn-label" id="speakPracticeLabel">Talaffuz</span>
+                    </button>
                     <button class="action-btn draw-action-btn" id="strokeBtn" aria-label="Show stroke order">
-                        <span class="btn-icon">✏️</span>
+                        <span class="btn-icon">&#x270F;&#xFE0F;</span>
                         <span class="btn-label">Draw</span>
                     </button>
                     <button class="action-btn next-action-btn" id="nextCard" aria-label="Next card">
-                        <span class="btn-icon">➡️</span>
+                        <span class="btn-icon">&#x27A1;&#xFE0F;</span>
                         <span class="btn-label" id="nextCardLabel">Next</span>
                     </button>
                 </div>
+                <div id="speakFeedbackBanner" class="speak-feedback-banner" hidden aria-live="polite"></div>
                 
                 <!-- Secondary Controls -->
                 <div class="secondary-controls">
-                    <button class="secondary-btn" id="prevCard">← Previous</button>
-                    <button class="secondary-btn" id="shuffleCards">🔀 Shuffle</button>
-                    <button class="secondary-btn" id="markLearned">⭐ Mark Learned</button>
+                    <button class="secondary-btn" id="prevCard">&larr; Prev</button>
+                    <button class="secondary-btn" id="shuffleCards">&#x1F500; Shuffle</button>
+                    <button class="secondary-btn" id="bookmarkWordBtn" type="button">&#x2B50; Saqlash</button>
+                    <button class="secondary-btn" id="markLearned">&#x2713; Learned</button>
                 </div>
                 
                 <div class="card-counter">
@@ -277,10 +303,12 @@
                         Score: <span id="quizScore">0</span>
                     </div>
                     <div class="quiz-type-selector" role="group" aria-label="Quiz type">
-                        <button class="quiz-type-btn active" data-quiz-type="meaning" type="button">Hanzi to Meaning</button>
-                        <button class="quiz-type-btn" data-quiz-type="pinyin" type="button">Meaning to Pinyin</button>
-                        <button class="quiz-type-btn" data-quiz-type="hanzi" type="button">Pinyin to Hanzi</button>
+                        <button class="quiz-type-btn active" data-quiz-type="meaning" type="button">Hanzi &rarr; Ma&rsquo;no</button>
+                        <button class="quiz-type-btn" data-quiz-type="pinyin" type="button">Ma&rsquo;no &rarr; Pinyin</button>
+                        <button class="quiz-type-btn" data-quiz-type="hanzi" type="button">Pinyin &rarr; Hanzi</button>
+                        <button class="quiz-type-btn" data-quiz-type="audio" type="button">&#x1F3A7; Eshitib topish</button>
                     </div>
+                </div>
                 </div>
                 <div class="quiz-container">
                     <div class="quiz-question">
@@ -315,10 +343,19 @@
 
                     <!-- Grammar Note Section -->
                     <div class="learning-section" id="grammarNoteSection">
-                        <h3 class="learning-section-title">Grammar Note</h3>
+                        <h3 class="learning-section-title">Grammar Note (Grammatika)</h3>
                         <div id="grammarNote" class="grammar-note-container">
                             <p class="learning-placeholder">Loading learning content...</p>
                         </div>
+                    </div>
+
+                    <!-- Sentence Builder Mini-Game Section -->
+                    <div class="learning-section" id="sentenceBuilderSection">
+                        <div class="section-head-row">
+                            <h3 class="learning-section-title">&#x1F9E9; Gap tuzish mashqi (Sentence Builder)</h3>
+                            <span class="builder-xp-pill">+15 XP</span>
+                        </div>
+                        <div id="sentenceBuilderContainer" class="sentence-builder-box"></div>
                     </div>
 
                     <div class="stage-next-bar">
@@ -908,7 +945,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=17"></script>
+    <script src="script.js?v=18"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1009,7 +1046,7 @@
           window.location.reload();
         });
 
-        navigator.serviceWorker.register('./sw.js?v=17', { updateViaCache: 'none' }).then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=18', { updateViaCache: 'none' }).then((reg) => {
           if (reg.waiting) {
             reg.waiting.postMessage({ type: 'SKIP_WAITING' });
           }

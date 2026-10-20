@@ -546,7 +546,488 @@ let vocabularyData = [
   { id: 484, hsk: 1, track: 'new', lesson: 15, hanzi: "接", pinyin: "jiē", uzbek: "Kutib olmoq" },
   { id: 485, hsk: 1, track: 'new', lesson: 15, hanzi: "住", pinyin: "zhù", uzbek: "Yashamoq" },
   { id: 486, hsk: 1, track: 'new', lesson: 15, hanzi: "早", pinyin: "zǎo", uzbek: "Ertalab" },
-  { id: 487, hsk: 1, track: 'new', lesson: 15, hanzi: "那", pinyin: "nà", uzbek: "U, o'sha" }
+  { id: 487, hsk: 1, track: 'new', lesson: 15, hanzi: "那", pinyin: "nà", uzbek: "U, o'sha" },
+  // ===================== NEW HSK 3.0 - LEVELS 2 TO 5 (60 LESSONS, 480 WORDS) =====================
+  { id: 1001, hsk: 2, track: 'classic', lesson: 1, hanzi: "旅游", pinyin: "lǚyóu", uzbek: "Sayohat qilmoq" },
+  { id: 1002, hsk: 2, track: 'classic', lesson: 1, hanzi: "准备", pinyin: "zhǔnbèi", uzbek: "Tayyorlanmoq" },
+  { id: 1003, hsk: 2, track: 'classic', lesson: 1, hanzi: "开始", pinyin: "kāishǐ", uzbek: "Boshlamoq" },
+  { id: 1004, hsk: 2, track: 'classic', lesson: 1, hanzi: "已经", pinyin: "yǐjīng", uzbek: "Allaqachon" },
+  { id: 1005, hsk: 2, track: 'classic', lesson: 1, hanzi: "机票", pinyin: "jīpiào", uzbek: "Aviachipta" },
+  { id: 1006, hsk: 2, track: 'classic', lesson: 1, hanzi: "护照", pinyin: "hùzhào", uzbek: "Pasport" },
+  { id: 1007, hsk: 2, track: 'classic', lesson: 1, hanzi: "行李", pinyin: "xíngli", uzbek: "Yuk, bagaj" },
+  { id: 1008, hsk: 2, track: 'classic', lesson: 1, hanzi: "出发", pinyin: "chūfā", uzbek: "Yo'lga chiqmoq" },
+  { id: 1009, hsk: 2, track: 'classic', lesson: 2, hanzi: "运动", pinyin: "yùndòng", uzbek: "Sport bilan shug'ullanmoq" },
+  { id: 1010, hsk: 2, track: 'classic', lesson: 2, hanzi: "跑步", pinyin: "pǎobù", uzbek: "Yugurmoq" },
+  { id: 1011, hsk: 2, track: 'classic', lesson: 2, hanzi: "游泳", pinyin: "yóuyǒng", uzbek: "Suzmoq" },
+  { id: 1012, hsk: 2, track: 'classic', lesson: 2, hanzi: "踢足球", pinyin: "tī zúqiú", uzbek: "Futbol o'ynamoq" },
+  { id: 1013, hsk: 2, track: 'classic', lesson: 2, hanzi: "打篮球", pinyin: "dǎ lánqiú", uzbek: "Basketbol o'ynamoq" },
+  { id: 1014, hsk: 2, track: 'classic', lesson: 2, hanzi: "健康", pinyin: "jiànkāng", uzbek: "Sog'lom; salomatlik" },
+  { id: 1015, hsk: 2, track: 'classic', lesson: 2, hanzi: "坚持", pinyin: "jiānchí", uzbek: "Davom ettirmoq" },
+  { id: 1016, hsk: 2, track: 'classic', lesson: 2, hanzi: "锻炼", pinyin: "duànliàn", uzbek: "Chiniqmoq, mashq qilmoq" },
+  { id: 1017, hsk: 2, track: 'classic', lesson: 3, hanzi: "感冒", pinyin: "gǎnmào", uzbek: "Shamollamoq" },
+  { id: 1018, hsk: 2, track: 'classic', lesson: 3, hanzi: "发烧", pinyin: "fāshāo", uzbek: "Isitmalamoq" },
+  { id: 1019, hsk: 2, track: 'classic', lesson: 3, hanzi: "头疼", pinyin: "tóuténg", uzbek: "Bosh og'rimoq" },
+  { id: 1020, hsk: 2, track: 'classic', lesson: 3, hanzi: "检查", pinyin: "jiǎnchá", uzbek: "Tekshirmoq" },
+  { id: 1021, hsk: 2, track: 'classic', lesson: 3, hanzi: "照顾", pinyin: "zhàogù", uzbek: "G'amxo'rlik qilmoq" },
+  { id: 1022, hsk: 2, track: 'classic', lesson: 3, hanzi: "担心", pinyin: "dānxīn", uzbek: "Xavotir olmoq" },
+  { id: 1023, hsk: 2, track: 'classic', lesson: 3, hanzi: "舒服", pinyin: "shūfu", uzbek: "Qulay, yengil" },
+  { id: 1024, hsk: 2, track: 'classic', lesson: 3, hanzi: "护士", pinyin: "hùshi", uzbek: "Hamshira" },
+  { id: 1025, hsk: 2, track: 'classic', lesson: 4, hanzi: "颜色", pinyin: "yánsè", uzbek: "Rang" },
+  { id: 1026, hsk: 2, track: 'classic', lesson: 4, hanzi: "合适", pinyin: "héshì", uzbek: "Mos, loyiq" },
+  { id: 1027, hsk: 2, track: 'classic', lesson: 4, hanzi: "试", pinyin: "shì", uzbek: "Sinab ko'rmoq" },
+  { id: 1028, hsk: 2, track: 'classic', lesson: 4, hanzi: "打折", pinyin: "dǎzhé", uzbek: "Chegirma qilmoq" },
+  { id: 1029, hsk: 2, track: 'classic', lesson: 4, hanzi: "现金", pinyin: "xiànjīn", uzbek: "Naqd pul" },
+  { id: 1030, hsk: 2, track: 'classic', lesson: 4, hanzi: "刷卡", pinyin: "shuākǎ", uzbek: "Karta orqali to'lamoq" },
+  { id: 1031, hsk: 2, track: 'classic', lesson: 4, hanzi: "质量", pinyin: "zhìliàng", uzbek: "Sifat" },
+  { id: 1032, hsk: 2, track: 'classic', lesson: 4, hanzi: "衬衫", pinyin: "chènshān", uzbek: "Ko'ylak (erkaklar)" },
+  { id: 1033, hsk: 2, track: 'classic', lesson: 5, hanzi: "菜单", pinyin: "càidān", uzbek: "Taomnoma (menyu)" },
+  { id: 1034, hsk: 2, track: 'classic', lesson: 5, hanzi: "点菜", pinyin: "diǎncài", uzbek: "Ovqat buyurtma qilmoq" },
+  { id: 1035, hsk: 2, track: 'classic', lesson: 5, hanzi: "羊肉", pinyin: "yángròu", uzbek: "Qo'y go'shti" },
+  { id: 1036, hsk: 2, track: 'classic', lesson: 5, hanzi: "牛肉", pinyin: "niúròu", uzbek: "Mol go'shti" },
+  { id: 1037, hsk: 2, track: 'classic', lesson: 5, hanzi: "鱼", pinyin: "yú", uzbek: "Baliq" },
+  { id: 1038, hsk: 2, track: 'classic', lesson: 5, hanzi: "甜", pinyin: "tián", uzbek: "Shirin" },
+  { id: 1039, hsk: 2, track: 'classic', lesson: 5, hanzi: "辣", pinyin: "là", uzbek: "Achchiq" },
+  { id: 1040, hsk: 2, track: 'classic', lesson: 5, hanzi: "筷子", pinyin: "kuàizi", uzbek: "Tayoqcha (ovqat uchun)" },
+  { id: 1041, hsk: 2, track: 'classic', lesson: 6, hanzi: "地铁", pinyin: "dìtiě", uzbek: "Metro" },
+  { id: 1042, hsk: 2, track: 'classic', lesson: 6, hanzi: "公共汽车", pinyin: "gōnggòng qìchē", uzbek: "Avtobus" },
+  { id: 1043, hsk: 2, track: 'classic', lesson: 6, hanzi: "远", pinyin: "yuǎn", uzbek: "Uzoq" },
+  { id: 1044, hsk: 2, track: 'classic', lesson: 6, hanzi: "近", pinyin: "jìn", uzbek: "Yaqin" },
+  { id: 1045, hsk: 2, track: 'classic', lesson: 6, hanzi: "往", pinyin: "wǎng", uzbek: "Tomonga, sari" },
+  { id: 1046, hsk: 2, track: 'classic', lesson: 6, hanzi: "左", pinyin: "zuǒ", uzbek: "Chap" },
+  { id: 1047, hsk: 2, track: 'classic', lesson: 6, hanzi: "右", pinyin: "yòu", uzbek: "O'ng" },
+  { id: 1048, hsk: 2, track: 'classic', lesson: 6, hanzi: "红绿灯", pinyin: "hónglǜdēng", uzbek: "Svetofor" },
+  { id: 1049, hsk: 2, track: 'classic', lesson: 7, hanzi: "考试", pinyin: "kǎoshì", uzbek: "Imtihon" },
+  { id: 1050, hsk: 2, track: 'classic', lesson: 7, hanzi: "复习", pinyin: "fùxí", uzbek: "Takrorlamoq" },
+  { id: 1051, hsk: 2, track: 'classic', lesson: 7, hanzi: "练习", pinyin: "liànxí", uzbek: "Mashq qilmoq" },
+  { id: 1052, hsk: 2, track: 'classic', lesson: 7, hanzi: "成绩", pinyin: "chéngjì", uzbek: "Baho, natija" },
+  { id: 1053, hsk: 2, track: 'classic', lesson: 7, hanzi: "懂", pinyin: "dǒng", uzbek: "Tushunmoq" },
+  { id: 1054, hsk: 2, track: 'classic', lesson: 7, hanzi: "清楚", pinyin: "qīngchu", uzbek: "Aniq, ravshan" },
+  { id: 1055, hsk: 2, track: 'classic', lesson: 7, hanzi: "认真", pinyin: "rènzhēn", uzbek: "Jiddiy, qunt bilan" },
+  { id: 1056, hsk: 2, track: 'classic', lesson: 7, hanzi: "进步", pinyin: "jìnbù", uzbek: "O'sish, rivojlanmoq" },
+  { id: 1057, hsk: 2, track: 'classic', lesson: 8, hanzi: "办公室", pinyin: "bàngōngshì", uzbek: "Ofis, idora" },
+  { id: 1058, hsk: 2, track: 'classic', lesson: 8, hanzi: "经理", pinyin: "jīnglǐ", uzbek: "Menejer, rahbar" },
+  { id: 1059, hsk: 2, track: 'classic', lesson: 8, hanzi: "同事", pinyin: "tóngshì", uzbek: "Hamkasb" },
+  { id: 1060, hsk: 2, track: 'classic', lesson: 8, hanzi: "会议", pinyin: "huìyì", uzbek: "Majlis, yig'ilish" },
+  { id: 1061, hsk: 2, track: 'classic', lesson: 8, hanzi: "加班", pinyin: "jiābān", uzbek: "Qo'shimcha ishlamoq" },
+  { id: 1062, hsk: 2, track: 'classic', lesson: 8, hanzi: "请假", pinyin: "qǐngjià", uzbek: "Ruxsat (ta'til) so'ramoq" },
+  { id: 1063, hsk: 2, track: 'classic', lesson: 8, hanzi: "辛苦", pinyin: "xīnkǔ", uzbek: "Charchamoq, mashaqqatli" },
+  { id: 1064, hsk: 2, track: 'classic', lesson: 8, hanzi: "完成", pinyin: "wánchéng", uzbek: "Tugatmoq, bajarmoq" },
+  { id: 1065, hsk: 2, track: 'classic', lesson: 9, hanzi: "客厅", pinyin: "kètīng", uzbek: "Mehmonxona (zal)" },
+  { id: 1066, hsk: 2, track: 'classic', lesson: 9, hanzi: "厨房", pinyin: "chúfáng", uzbek: "Oshxona" },
+  { id: 1067, hsk: 2, track: 'classic', lesson: 9, hanzi: "洗手间", pinyin: "xǐshǒujiān", uzbek: "Yuvinish xonasi" },
+  { id: 1068, hsk: 2, track: 'classic', lesson: 9, hanzi: "打扫", pinyin: "dǎsǎo", uzbek: "Tozalamoq, supurmoq" },
+  { id: 1069, hsk: 2, track: 'classic', lesson: 9, hanzi: "干净", pinyin: "gānjìng", uzbek: "Toza" },
+  { id: 1070, hsk: 2, track: 'classic', lesson: 9, hanzi: "冰箱", pinyin: "bīngxiāng", uzbek: "Muzlatkich" },
+  { id: 1071, hsk: 2, track: 'classic', lesson: 9, hanzi: "空调", pinyin: "kōngtiáo", uzbek: "Konditsioner" },
+  { id: 1072, hsk: 2, track: 'classic', lesson: 9, hanzi: "洗衣机", pinyin: "xǐyījī", uzbek: "Kir yuvish mashinasi" },
+  { id: 1073, hsk: 2, track: 'classic', lesson: 10, hanzi: "季节", pinyin: "jìjié", uzbek: "Fasl" },
+  { id: 1074, hsk: 2, track: 'classic', lesson: 10, hanzi: "春天", pinyin: "chūntiān", uzbek: "Bahor" },
+  { id: 1075, hsk: 2, track: 'classic', lesson: 10, hanzi: "夏天", pinyin: "xiàtiān", uzbek: "Yoz" },
+  { id: 1076, hsk: 2, track: 'classic', lesson: 10, hanzi: "秋天", pinyin: "qiūtiān", uzbek: "Kuz" },
+  { id: 1077, hsk: 2, track: 'classic', lesson: 10, hanzi: "冬天", pinyin: "dōngtiān", uzbek: "Qish" },
+  { id: 1078, hsk: 2, track: 'classic', lesson: 10, hanzi: "刮风", pinyin: "guāfēng", uzbek: "Shamol esmoq" },
+  { id: 1079, hsk: 2, track: 'classic', lesson: 10, hanzi: "晴天", pinyin: "qíngtiān", uzbek: "Ochiq havo" },
+  { id: 1080, hsk: 2, track: 'classic', lesson: 10, hanzi: "凉快", pinyin: "liángkuai", uzbek: "Salqin" },
+  { id: 1081, hsk: 2, track: 'classic', lesson: 11, hanzi: "爱好", pinyin: "àihào", uzbek: "Qiziqish, xobbi" },
+  { id: 1082, hsk: 2, track: 'classic', lesson: 11, hanzi: "音乐", pinyin: "yīnyuè", uzbek: "Musiqa" },
+  { id: 1083, hsk: 2, track: 'classic', lesson: 11, hanzi: "跳舞", pinyin: "tiàowǔ", uzbek: "Raqsga tushmoq" },
+  { id: 1084, hsk: 2, track: 'classic', lesson: 11, hanzi: "画画儿", pinyin: "huàhuàr", uzbek: "Rasm chizmoq" },
+  { id: 1085, hsk: 2, track: 'classic', lesson: 11, hanzi: "拍照", pinyin: "pāizhào", uzbek: "Suratga olmoq" },
+  { id: 1086, hsk: 2, track: 'classic', lesson: 11, hanzi: "周末", pinyin: "zhōumò", uzbek: "Dam olish kunlari" },
+  { id: 1087, hsk: 2, track: 'classic', lesson: 11, hanzi: "打算", pinyin: "dǎsuàn", uzbek: "Rejalashtirmoq" },
+  { id: 1088, hsk: 2, track: 'classic', lesson: 11, hanzi: "感兴趣", pinyin: "gǎn xìngqù", uzbek: "Qiziqmoq" },
+  { id: 1089, hsk: 2, track: 'classic', lesson: 12, hanzi: "上网", pinyin: "shàngwǎng", uzbek: "Internetga kirmoq" },
+  { id: 1090, hsk: 2, track: 'classic', lesson: 12, hanzi: "发短信", pinyin: "fā duǎnxìn", uzbek: "SMS yubormoq" },
+  { id: 1091, hsk: 2, track: 'classic', lesson: 12, hanzi: "电子邮件", pinyin: "diànzǐ yóujiàn", uzbek: "Elektron pochta" },
+  { id: 1092, hsk: 2, track: 'classic', lesson: 12, hanzi: "微信", pinyin: "Wēixìn", uzbek: "WeChat" },
+  { id: 1093, hsk: 2, track: 'classic', lesson: 12, hanzi: "密码", pinyin: "mìmǎ", uzbek: "Parol" },
+  { id: 1094, hsk: 2, track: 'classic', lesson: 12, hanzi: "消息", pinyin: "xiāoxi", uzbek: "Xabar, yangilik" },
+  { id: 1095, hsk: 2, track: 'classic', lesson: 12, hanzi: "联系", pinyin: "liánxì", uzbek: "Bog'lanmoq" },
+  { id: 1096, hsk: 2, track: 'classic', lesson: 12, hanzi: "方便", pinyin: "fāngbiàn", uzbek: "Qulay" },
+  { id: 1097, hsk: 2, track: 'classic', lesson: 13, hanzi: "生日", pinyin: "shēngrì", uzbek: "Tug'ilgan kun" },
+  { id: 1098, hsk: 2, track: 'classic', lesson: 13, hanzi: "礼物", pinyin: "lǐwù", uzbek: "Sovg'a" },
+  { id: 1099, hsk: 2, track: 'classic', lesson: 13, hanzi: "蛋糕", pinyin: "dàngāo", uzbek: "Tort" },
+  { id: 1100, hsk: 2, track: 'classic', lesson: 13, hanzi: "祝", pinyin: "zhù", uzbek: "Tilamoq" },
+  { id: 1101, hsk: 2, track: 'classic', lesson: 13, hanzi: "快乐", pinyin: "kuàilè", uzbek: "Quvnoq, baxtli" },
+  { id: 1102, hsk: 2, track: 'classic', lesson: 13, hanzi: "春节", pinyin: "Chūnjié", uzbek: "Bahor bayrami (Yangi yil)" },
+  { id: 1103, hsk: 2, track: 'classic', lesson: 13, hanzi: "热闹", pinyin: "rènao", uzbek: "Gavjum, qizg'in" },
+  { id: 1104, hsk: 2, track: 'classic', lesson: 13, hanzi: "邀请", pinyin: "yāoqǐng", uzbek: "Taklif qilmoq" },
+  { id: 1105, hsk: 2, track: 'classic', lesson: 14, hanzi: "热情", pinyin: "rèqíng", uzbek: "Samimiy, mehmondo'st" },
+  { id: 1106, hsk: 2, track: 'classic', lesson: 14, hanzi: "聪明", pinyin: "cōngming", uzbek: "Aqlli" },
+  { id: 1107, hsk: 2, track: 'classic', lesson: 14, hanzi: "努力", pinyin: "nǔlì", uzbek: "Tirishqoq; harakat qilmoq" },
+  { id: 1108, hsk: 2, track: 'classic', lesson: 14, hanzi: "着急", pinyin: "zháojí", uzbek: "Shoshilmoq, xavotirlanmoq" },
+  { id: 1109, hsk: 2, track: 'classic', lesson: 14, hanzi: "难过", pinyin: "nánguò", uzbek: "Xafa bo'lmoq" },
+  { id: 1110, hsk: 2, track: 'classic', lesson: 14, hanzi: "生气", pinyin: "shēngqì", uzbek: "Jahli chiqmoq" },
+  { id: 1111, hsk: 2, track: 'classic', lesson: 14, hanzi: "笑", pinyin: "xiào", uzbek: "Kulmoq" },
+  { id: 1112, hsk: 2, track: 'classic', lesson: 14, hanzi: "哭", pinyin: "kū", uzbek: "Yig'lamoq" },
+  { id: 1113, hsk: 2, track: 'classic', lesson: 15, hanzi: "帮助", pinyin: "bāngzhù", uzbek: "Yordam bermoq" },
+  { id: 1114, hsk: 2, track: 'classic', lesson: 15, hanzi: "因为", pinyin: "yīnwèi", uzbek: "Chunki" },
+  { id: 1115, hsk: 2, track: 'classic', lesson: 15, hanzi: "所以", pinyin: "suǒyǐ", uzbek: "Shuning uchun" },
+  { id: 1116, hsk: 2, track: 'classic', lesson: 15, hanzi: "虽然", pinyin: "suīrán", uzbek: "Garchi" },
+  { id: 1117, hsk: 2, track: 'classic', lesson: 15, hanzi: "但是", pinyin: "dànshì", uzbek: "Lekin, ammo" },
+  { id: 1118, hsk: 2, track: 'classic', lesson: 15, hanzi: "希望", pinyin: "xīwàng", uzbek: "Umid qilmoq" },
+  { id: 1119, hsk: 2, track: 'classic', lesson: 15, hanzi: "告诉", pinyin: "gàosu", uzbek: "Aytib bermoq" },
+  { id: 1120, hsk: 2, track: 'classic', lesson: 15, hanzi: "介绍", pinyin: "jièshào", uzbek: "Tanishtirmoq" },
+  { id: 2001, hsk: 3, track: 'classic', lesson: 1, hanzi: "安排", pinyin: "ānpái", uzbek: "Rejalashtirmoq, tartibga solmoq" },
+  { id: 2002, hsk: 3, track: 'classic', lesson: 1, hanzi: "决定", pinyin: "juédìng", uzbek: "Qaror qilmoq" },
+  { id: 2003, hsk: 3, track: 'classic', lesson: 1, hanzi: "选择", pinyin: "xuǎnzé", uzbek: "Tanlamoq; tanlov" },
+  { id: 2004, hsk: 3, track: 'classic', lesson: 1, hanzi: "参加", pinyin: "cānjiā", uzbek: "Qatnashmoq" },
+  { id: 2005, hsk: 3, track: 'classic', lesson: 1, hanzi: "取消", pinyin: "qǔxiāo", uzbek: "Bekor qilmoq" },
+  { id: 2006, hsk: 3, track: 'classic', lesson: 1, hanzi: "推迟", pinyin: "tuīchí", uzbek: "Kechiktirmoq" },
+  { id: 2007, hsk: 3, track: 'classic', lesson: 1, hanzi: "按时", pinyin: "ànshí", uzbek: "O'z vaqtida" },
+  { id: 2008, hsk: 3, track: 'classic', lesson: 1, hanzi: "准时", pinyin: "zhǔnshí", uzbek: "Aniq vaqtda" },
+  { id: 2009, hsk: 3, track: 'classic', lesson: 2, hanzi: "成功", pinyin: "chénggōng", uzbek: "Muvaffaqiyat" },
+  { id: 2010, hsk: 3, track: 'classic', lesson: 2, hanzi: "失败", pinyin: "shībài", uzbek: "Mag'lubiyat" },
+  { id: 2011, hsk: 3, track: 'classic', lesson: 2, hanzi: "经验", pinyin: "jīngyàn", uzbek: "Tajriba" },
+  { id: 2012, hsk: 3, track: 'classic', lesson: 2, hanzi: "经历", pinyin: "jīnglì", uzbek: "Boshdan kechirmoq" },
+  { id: 2013, hsk: 3, track: 'classic', lesson: 2, hanzi: "机会", pinyin: "jīhuì", uzbek: "Imkoniyat" },
+  { id: 2014, hsk: 3, track: 'classic', lesson: 2, hanzi: "目标", pinyin: "mùbiāo", uzbek: "Maqsad" },
+  { id: 2015, hsk: 3, track: 'classic', lesson: 2, hanzi: "实现", pinyin: "shíxiàn", uzbek: "Amalga oshirmoq" },
+  { id: 2016, hsk: 3, track: 'classic', lesson: 2, hanzi: "放弃", pinyin: "fàngqì", uzbek: "Voz kechmoq" },
+  { id: 2017, hsk: 3, track: 'classic', lesson: 3, hanzi: "环境", pinyin: "huánjìng", uzbek: "Atrof-muhit" },
+  { id: 2018, hsk: 3, track: 'classic', lesson: 3, hanzi: "保护", pinyin: "bǎohù", uzbek: "Himoya qilmoq" },
+  { id: 2019, hsk: 3, track: 'classic', lesson: 3, hanzi: "污染", pinyin: "wūrǎn", uzbek: "Ifloslanish" },
+  { id: 2020, hsk: 3, track: 'classic', lesson: 3, hanzi: "自然", pinyin: "zìrán", uzbek: "Tabiat; tabiiy" },
+  { id: 2021, hsk: 3, track: 'classic', lesson: 3, hanzi: "植物", pinyin: "zhíwù", uzbek: "O'simlik" },
+  { id: 2022, hsk: 3, track: 'classic', lesson: 3, hanzi: "动物", pinyin: "dòngwù", uzbek: "Hayvon" },
+  { id: 2023, hsk: 3, track: 'classic', lesson: 3, hanzi: "空气", pinyin: "kōngqì", uzbek: "Havo" },
+  { id: 2024, hsk: 3, track: 'classic', lesson: 3, hanzi: "节约", pinyin: "jiéyuē", uzbek: "Tejamoq" },
+  { id: 2025, hsk: 3, track: 'classic', lesson: 4, hanzi: "文化", pinyin: "wénhuà", uzbek: "Madaniyat" },
+  { id: 2026, hsk: 3, track: 'classic', lesson: 4, hanzi: "历史", pinyin: "lìshǐ", uzbek: "Tarix" },
+  { id: 2027, hsk: 3, track: 'classic', lesson: 4, hanzi: "传统", pinyin: "chuántǒng", uzbek: "An'ana" },
+  { id: 2028, hsk: 3, track: 'classic', lesson: 4, hanzi: "习惯", pinyin: "xíguàn", uzbek: "Odat; o'rganib qolmoq" },
+  { id: 2029, hsk: 3, track: 'classic', lesson: 4, hanzi: "风俗", pinyin: "fēngsú", uzbek: "Urf-odat" },
+  { id: 2030, hsk: 3, track: 'classic', lesson: 4, hanzi: "民族", pinyin: "mínzú", uzbek: "Millat" },
+  { id: 2031, hsk: 3, track: 'classic', lesson: 4, hanzi: "艺术", pinyin: "yìshù", uzbek: "San'at" },
+  { id: 2032, hsk: 3, track: 'classic', lesson: 4, hanzi: "尊重", pinyin: "zūnzhòng", uzbek: "Hurmat qilmoq" },
+  { id: 2033, hsk: 3, track: 'classic', lesson: 5, hanzi: "教育", pinyin: "jiàoyù", uzbek: "Ta'lim" },
+  { id: 2034, hsk: 3, track: 'classic', lesson: 5, hanzi: "知识", pinyin: "zhīshi", uzbek: "Bilim" },
+  { id: 2035, hsk: 3, track: 'classic', lesson: 5, hanzi: "专业", pinyin: "zhuānyè", uzbek: "Mutaxassislik" },
+  { id: 2036, hsk: 3, track: 'classic', lesson: 5, hanzi: "科学", pinyin: "kēxué", uzbek: "Ilm-fan" },
+  { id: 2037, hsk: 3, track: 'classic', lesson: 5, hanzi: "研究", pinyin: "yánjiū", uzbek: "Tadqiq qilmoq" },
+  { id: 2038, hsk: 3, track: 'classic', lesson: 5, hanzi: "方法", pinyin: "fāngfǎ", uzbek: "Usul, metod" },
+  { id: 2039, hsk: 3, track: 'classic', lesson: 5, hanzi: "提高", pinyin: "tígāo", uzbek: "Oshirmoq, yaxshilamoq" },
+  { id: 2040, hsk: 3, track: 'classic', lesson: 5, hanzi: "水平", pinyin: "shuǐpíng", uzbek: "Daraja, saviya" },
+  { id: 2041, hsk: 3, track: 'classic', lesson: 6, hanzi: "银行", pinyin: "yínháng", uzbek: "Bank" },
+  { id: 2042, hsk: 3, track: 'classic', lesson: 6, hanzi: "信用卡", pinyin: "xìnyòngkǎ", uzbek: "Kredit karta" },
+  { id: 2043, hsk: 3, track: 'classic', lesson: 6, hanzi: "免费", pinyin: "miǎnfèi", uzbek: "Bepul" },
+  { id: 2044, hsk: 3, track: 'classic', lesson: 6, hanzi: "价格", pinyin: "jiàgé", uzbek: "Narx" },
+  { id: 2045, hsk: 3, track: 'classic', lesson: 6, hanzi: "收入", pinyin: "shōurù", uzbek: "Daromad" },
+  { id: 2046, hsk: 3, track: 'classic', lesson: 6, hanzi: "工资", pinyin: "gōngzī", uzbek: "Oylik maosh" },
+  { id: 2047, hsk: 3, track: 'classic', lesson: 6, hanzi: "奖金", pinyin: "jiǎngjīn", uzbek: "Mukofot puli" },
+  { id: 2048, hsk: 3, track: 'classic', lesson: 6, hanzi: "存钱", pinyin: "cúnqián", uzbek: "Pul yig'moq / qo'ymoq" },
+  { id: 2049, hsk: 3, track: 'classic', lesson: 7, hanzi: "社会", pinyin: "shèhuì", uzbek: "Jamiyat" },
+  { id: 2050, hsk: 3, track: 'classic', lesson: 7, hanzi: "关系", pinyin: "guānxi", uzbek: "Munosabat, aloqa" },
+  { id: 2051, hsk: 3, track: 'classic', lesson: 7, hanzi: "信任", pinyin: "xìnrèn", uzbek: "Ishonmoq" },
+  { id: 2052, hsk: 3, track: 'classic', lesson: 7, hanzi: "诚实", pinyin: "chéngshí", uzbek: "Halol, rostgo'y" },
+  { id: 2053, hsk: 3, track: 'classic', lesson: 7, hanzi: "礼貌", pinyin: "lǐmào", uzbek: "Odob, xushmuomalalik" },
+  { id: 2054, hsk: 3, track: 'classic', lesson: 7, hanzi: "印象", pinyin: "yìnxiàng", uzbek: "Taassurot" },
+  { id: 2055, hsk: 3, track: 'classic', lesson: 7, hanzi: "理解", pinyin: "lǐjiě", uzbek: "Tushunmoq, anglamoq" },
+  { id: 2056, hsk: 3, track: 'classic', lesson: 7, hanzi: "支持", pinyin: "zhīchí", uzbek: "Qo'llab-quvvatlamoq" },
+  { id: 2057, hsk: 3, track: 'classic', lesson: 8, hanzi: "新闻", pinyin: "xīnwén", uzbek: "Yangiliklar" },
+  { id: 2058, hsk: 3, track: 'classic', lesson: 8, hanzi: "广告", pinyin: "guǎnggào", uzbek: "Reklama" },
+  { id: 2059, hsk: 3, track: 'classic', lesson: 8, hanzi: "杂志", pinyin: "zázhì", uzbek: "Jurnal" },
+  { id: 2060, hsk: 3, track: 'classic', lesson: 8, hanzi: "报纸", pinyin: "bàozhǐ", uzbek: "Gazeta" },
+  { id: 2061, hsk: 3, track: 'classic', lesson: 8, hanzi: "节目", pinyin: "jiémù", uzbek: "Ko'rsatuv, dastur" },
+  { id: 2062, hsk: 3, track: 'classic', lesson: 8, hanzi: "内容", pinyin: "nèiróng", uzbek: "Mazmun, tarkib" },
+  { id: 2063, hsk: 3, track: 'classic', lesson: 8, hanzi: "丰富", pinyin: "fēngfù", uzbek: "Boy, xilma-xil" },
+  { id: 2064, hsk: 3, track: 'classic', lesson: 8, hanzi: "精彩", pinyin: "jīngcǎi", uzbek: "Ajoyib, qoyilmaqom" },
+  { id: 2065, hsk: 3, track: 'classic', lesson: 9, hanzi: "负责", pinyin: "fùzé", uzbek: "Mas'ul bo'lmoq" },
+  { id: 2066, hsk: 3, track: 'classic', lesson: 9, hanzi: "任务", pinyin: "rènwu", uzbek: "Topshiriq, vazifa" },
+  { id: 2067, hsk: 3, track: 'classic', lesson: 9, hanzi: "能力", pinyin: "nénglì", uzbek: "Qobiliyat" },
+  { id: 2068, hsk: 3, track: 'classic', lesson: 9, hanzi: "合作", pinyin: "hézuò", uzbek: "Hamkorlik qilmoq" },
+  { id: 2069, hsk: 3, track: 'classic', lesson: 9, hanzi: "要求", pinyin: "yāoqiú", uzbek: "Talab qilmoq" },
+  { id: 2070, hsk: 3, track: 'classic', lesson: 9, hanzi: "解决", pinyin: "jiějué", uzbek: "Hal qilmoq" },
+  { id: 2071, hsk: 3, track: 'classic', lesson: 9, hanzi: "困难", pinyin: "kùnnan", uzbek: "Qiyinchilik" },
+  { id: 2072, hsk: 3, track: 'classic', lesson: 9, hanzi: "态度", pinyin: "tàidu", uzbek: "Munosabat, yondashuv" },
+  { id: 2073, hsk: 3, track: 'classic', lesson: 10, hanzi: "安全", pinyin: "ānquán", uzbek: "Xavfsiz; xavfsizlik" },
+  { id: 2074, hsk: 3, track: 'classic', lesson: 10, hanzi: "危险", pinyin: "wēixiǎn", uzbek: "Xavfli" },
+  { id: 2075, hsk: 3, track: 'classic', lesson: 10, hanzi: "小心", pinyin: "xiǎoxīn", uzbek: "Ehtiyot bo'lmoq" },
+  { id: 2076, hsk: 3, track: 'classic', lesson: 10, hanzi: "注意", pinyin: "zhùyì", uzbek: "E'tibor bermoq" },
+  { id: 2077, hsk: 3, track: 'classic', lesson: 10, hanzi: "禁止", pinyin: "jìnzhǐ", uzbek: "Taqiqlamoq" },
+  { id: 2078, hsk: 3, track: 'classic', lesson: 10, hanzi: "规定", pinyin: "guīdìng", uzbek: "Qoida, tartib" },
+  { id: 2079, hsk: 3, track: 'classic', lesson: 10, hanzi: "遵守", pinyin: "zūnshǒu", uzbek: "Rioya qilmoq" },
+  { id: 2080, hsk: 3, track: 'classic', lesson: 10, hanzi: "警察", pinyin: "jǐngchá", uzbek: "Politsiya" },
+  { id: 2081, hsk: 3, track: 'classic', lesson: 11, hanzi: "心情", pinyin: "xīnqíng", uzbek: "Kayfiyat" },
+  { id: 2082, hsk: 3, track: 'classic', lesson: 11, hanzi: "愉快", pinyin: "yúkuài", uzbek: "Xursand, yoqimli" },
+  { id: 2083, hsk: 3, track: 'classic', lesson: 11, hanzi: "紧张", pinyin: "jǐnzhāng", uzbek: "Hayajonlanmoq" },
+  { id: 2084, hsk: 3, track: 'classic', lesson: 11, hanzi: "放松", pinyin: "fàngsōng", uzbek: "Bo'shashmoq, dam olmoq" },
+  { id: 2085, hsk: 3, track: 'classic', lesson: 11, hanzi: "满意", pinyin: "mǎnyì", uzbek: "Mamnun bo'lmoq" },
+  { id: 2086, hsk: 3, track: 'classic', lesson: 11, hanzi: "失望", pinyin: "shīwàng", uzbek: "Ko'ngli qolmoq" },
+  { id: 2087, hsk: 3, track: 'classic', lesson: 11, hanzi: "后悔", pinyin: "hòuhuǐ", uzbek: "Afsuslanmoq" },
+  { id: 2088, hsk: 3, track: 'classic', lesson: 11, hanzi: "感动", pinyin: "gǎndòng", uzbek: "Ta'sirlanmoq" },
+  { id: 2089, hsk: 3, track: 'classic', lesson: 12, hanzi: "变化", pinyin: "biànhuà", uzbek: "O'zgarish" },
+  { id: 2090, hsk: 3, track: 'classic', lesson: 12, hanzi: "发展", pinyin: "fāzhǎn", uzbek: "Rivojlanmoq" },
+  { id: 2091, hsk: 3, track: 'classic', lesson: 12, hanzi: "增加", pinyin: "zēngjiā", uzbek: "Ko'paymoq, ortmoq" },
+  { id: 2092, hsk: 3, track: 'classic', lesson: 12, hanzi: "减少", pinyin: "jiǎnshǎo", uzbek: "Kamaymoq" },
+  { id: 2093, hsk: 3, track: 'classic', lesson: 12, hanzi: "扩大", pinyin: "kuòdà", uzbek: "Kengaytirmoq" },
+  { id: 2094, hsk: 3, track: 'classic', lesson: 12, hanzi: "影响", pinyin: "yǐngxiǎng", uzbek: "Ta'sir qilmoq" },
+  { id: 2095, hsk: 3, track: 'classic', lesson: 12, hanzi: "效果", pinyin: "xiàoguǒ", uzbek: "Samara, natija" },
+  { id: 2096, hsk: 3, track: 'classic', lesson: 12, hanzi: "明显", pinyin: "míngxiǎn", uzbek: "Yaqqol, aniq" },
+  { id: 2097, hsk: 3, track: 'classic', lesson: 13, hanzi: "除了", pinyin: "chúle", uzbek: "...dan tashqari" },
+  { id: 2098, hsk: 3, track: 'classic', lesson: 13, hanzi: "而且", pinyin: "érqiě", uzbek: "Bundan tashqari" },
+  { id: 2099, hsk: 3, track: 'classic', lesson: 13, hanzi: "只要", pinyin: "zhǐyào", uzbek: "Agar ... bo'lsagina" },
+  { id: 2100, hsk: 3, track: 'classic', lesson: 13, hanzi: "只有", pinyin: "zhǐyǒu", uzbek: "Faqatgina" },
+  { id: 2101, hsk: 3, track: 'classic', lesson: 13, hanzi: "无论", pinyin: "wúlùn", uzbek: "Qat'i nazar" },
+  { id: 2102, hsk: 3, track: 'classic', lesson: 13, hanzi: "否则", pinyin: "fǒuzé", uzbek: "Aks holda" },
+  { id: 2103, hsk: 3, track: 'classic', lesson: 13, hanzi: "尽管", pinyin: "jǐnguǎn", uzbek: "Garchi, qaramasdan" },
+  { id: 2104, hsk: 3, track: 'classic', lesson: 13, hanzi: "果然", pinyin: "guǒrán", uzbek: "Haqiqatan ham, kutilganidek" },
+  { id: 2105, hsk: 3, track: 'classic', lesson: 14, hanzi: "租房", pinyin: "zūfáng", uzbek: "Uy ijaraga olmoq" },
+  { id: 2106, hsk: 3, track: 'classic', lesson: 14, hanzi: "搬家", pinyin: "bānjiā", uzbek: "Ko'chmoq" },
+  { id: 2107, hsk: 3, track: 'classic', lesson: 14, hanzi: "房东", pinyin: "fángdōng", uzbek: "Uy egasi" },
+  { id: 2108, hsk: 3, track: 'classic', lesson: 14, hanzi: "邻居", pinyin: "línjū", uzbek: "Qo'shni" },
+  { id: 2109, hsk: 3, track: 'classic', lesson: 14, hanzi: "周围", pinyin: "zhōuwéi", uzbek: "Atrof" },
+  { id: 2110, hsk: 3, track: 'classic', lesson: 14, hanzi: "安静", pinyin: "ānjìng", uzbek: "Tinch" },
+  { id: 2111, hsk: 3, track: 'classic', lesson: 14, hanzi: "家具", pinyin: "jiājù", uzbek: "Mebel" },
+  { id: 2112, hsk: 3, track: 'classic', lesson: 14, hanzi: "钥匙", pinyin: "yàoshi", uzbek: "Kalit" },
+  { id: 2113, hsk: 3, track: 'classic', lesson: 15, hanzi: "表示", pinyin: "biǎoshì", uzbek: "Bildirmoq, ifodalamoq" },
+  { id: 2114, hsk: 3, track: 'classic', lesson: 15, hanzi: "讨论", pinyin: "tǎolùn", uzbek: "Muhokama qilmoq" },
+  { id: 2115, hsk: 3, track: 'classic', lesson: 15, hanzi: "意见", pinyin: "yìjiàn", uzbek: "Fikr, mulohaza" },
+  { id: 2116, hsk: 3, track: 'classic', lesson: 15, hanzi: "建议", pinyin: "jiànyì", uzbek: "Taklif, maslahat" },
+  { id: 2117, hsk: 3, track: 'classic', lesson: 15, hanzi: "同意", pinyin: "tóngyì", uzbek: "Rozi bo'lmoq" },
+  { id: 2118, hsk: 3, track: 'classic', lesson: 15, hanzi: "反对", pinyin: "fǎnduì", uzbek: "Qarshi chiqmoq" },
+  { id: 2119, hsk: 3, track: 'classic', lesson: 15, hanzi: "解释", pinyin: "jiěshì", uzbek: "Tushuntirmoq" },
+  { id: 2120, hsk: 3, track: 'classic', lesson: 15, hanzi: "证明", pinyin: "zhèngmíng", uzbek: "Isbotlamoq" },
+  { id: 3001, hsk: 4, track: 'classic', lesson: 1, hanzi: "按照", pinyin: "ànzhào", uzbek: "Bo'yicha, binoan" },
+  { id: 3002, hsk: 4, track: 'classic', lesson: 1, hanzi: "合同", pinyin: "hétong", uzbek: "Shartnoma" },
+  { id: 3003, hsk: 4, track: 'classic', lesson: 1, hanzi: "谈判", pinyin: "tánpàn", uzbek: "Muzokara olib bormoq" },
+  { id: 3004, hsk: 4, track: 'classic', lesson: 1, hanzi: "市场", pinyin: "shìchǎng", uzbek: "Bozor" },
+  { id: 3005, hsk: 4, track: 'classic', lesson: 1, hanzi: "竞争", pinyin: "jìngzhēng", uzbek: "Raqobat" },
+  { id: 3006, hsk: 4, track: 'classic', lesson: 1, hanzi: "客户", pinyin: "kèhù", uzbek: "Mijoz" },
+  { id: 3007, hsk: 4, track: 'classic', lesson: 1, hanzi: "利润", pinyin: "lìrùn", uzbek: "Foyda, daromad" },
+  { id: 3008, hsk: 4, track: 'classic', lesson: 1, hanzi: "投资", pinyin: "tóuzī", uzbek: "Sarmoya kiritmoq" },
+  { id: 3009, hsk: 4, track: 'classic', lesson: 2, hanzi: "技术", pinyin: "jìshù", uzbek: "Texnologiya, texnika" },
+  { id: 3010, hsk: 4, track: 'classic', lesson: 2, hanzi: "发明", pinyin: "fāmíng", uzbek: "Ixtiro qilmoq" },
+  { id: 3011, hsk: 4, track: 'classic', lesson: 2, hanzi: "创新", pinyin: "chuàngxīn", uzbek: "Innovatsiya, yangilik" },
+  { id: 3012, hsk: 4, track: 'classic', lesson: 2, hanzi: "数据", pinyin: "shùjù", uzbek: "Ma'lumotlar (data)" },
+  { id: 3013, hsk: 4, track: 'classic', lesson: 2, hanzi: "系统", pinyin: "xìtǒng", uzbek: "Tizim" },
+  { id: 3014, hsk: 4, track: 'classic', lesson: 2, hanzi: "软件", pinyin: "ruǎnjiàn", uzbek: "Dasturiy ta'minot" },
+  { id: 3015, hsk: 4, track: 'classic', lesson: 2, hanzi: "智能", pinyin: "zhìnéng", uzbek: "Intellektual, aqlli" },
+  { id: 3016, hsk: 4, track: 'classic', lesson: 2, hanzi: "现代", pinyin: "xiàndài", uzbek: "Zamonaviy" },
+  { id: 3017, hsk: 4, track: 'classic', lesson: 3, hanzi: "法律", pinyin: "fǎlǜ", uzbek: "Qonun" },
+  { id: 3018, hsk: 4, track: 'classic', lesson: 3, hanzi: "权利", pinyin: "quánlì", uzbek: "Huquq" },
+  { id: 3019, hsk: 4, track: 'classic', lesson: 3, hanzi: "义务", pinyin: "yìwù", uzbek: "Burch, majburiyat" },
+  { id: 3020, hsk: 4, track: 'classic', lesson: 3, hanzi: "公平", pinyin: "gōngpíng", uzbek: "Adolatli" },
+  { id: 3021, hsk: 4, track: 'classic', lesson: 3, hanzi: "制度", pinyin: "zhìdù", uzbek: "Tizim, tartib-qoida" },
+  { id: 3022, hsk: 4, track: 'classic', lesson: 3, hanzi: "规则", pinyin: "guīzé", uzbek: "Qoida" },
+  { id: 3023, hsk: 4, track: 'classic', lesson: 3, hanzi: "律师", pinyin: "lǜshī", uzbek: "Advokat, huquqshunos" },
+  { id: 3024, hsk: 4, track: 'classic', lesson: 3, hanzi: "证据", pinyin: "zhèngjù", uzbek: "Dalil, isbot" },
+  { id: 3025, hsk: 4, track: 'classic', lesson: 4, hanzi: "小说", pinyin: "xiǎoshuō", uzbek: "Roman, qissa" },
+  { id: 3026, hsk: 4, track: 'classic', lesson: 4, hanzi: "诗歌", pinyin: "shīgē", uzbek: "She'riyat" },
+  { id: 3027, hsk: 4, track: 'classic', lesson: 4, hanzi: "作者", pinyin: "zuòzhě", uzbek: "Muallif" },
+  { id: 3028, hsk: 4, track: 'classic', lesson: 4, hanzi: "作品", pinyin: "zuòpǐn", uzbek: "Asar" },
+  { id: 3029, hsk: 4, track: 'classic', lesson: 4, hanzi: "描写", pinyin: "miáoxiě", uzbek: "Tasvirlamoq" },
+  { id: 3030, hsk: 4, track: 'classic', lesson: 4, hanzi: "典型", pinyin: "diǎnxíng", uzbek: "Tipik, namunaviy" },
+  { id: 3031, hsk: 4, track: 'classic', lesson: 4, hanzi: "欣赏", pinyin: "xīnshǎng", uzbek: "Zavqlanmoq, qadrlamoq" },
+  { id: 3032, hsk: 4, track: 'classic', lesson: 4, hanzi: "导演", pinyin: "dǎoyǎn", uzbek: "Rejissyor" },
+  { id: 3033, hsk: 4, track: 'classic', lesson: 5, hanzi: "自信", pinyin: "zìxìn", uzbek: "O'ziga ishongan" },
+  { id: 3034, hsk: 4, track: 'classic', lesson: 5, hanzi: "骄傲", pinyin: "jiāo'ào", uzbek: "Mag'rur; faxrlanmoq" },
+  { id: 3035, hsk: 4, track: 'classic', lesson: 5, hanzi: "谦虚", pinyin: "qiānxū", uzbek: "Kamtar" },
+  { id: 3036, hsk: 4, track: 'classic', lesson: 5, hanzi: "耐心", pinyin: "nàixīn", uzbek: "Sabr-toqat" },
+  { id: 3037, hsk: 4, track: 'classic', lesson: 5, hanzi: "勇敢", pinyin: "yǒnggǎn", uzbek: "Jasur, mard" },
+  { id: 3038, hsk: 4, track: 'classic', lesson: 5, hanzi: "冷静", pinyin: "lěngjìng", uzbek: "Bosiq, vazmin" },
+  { id: 3039, hsk: 4, track: 'classic', lesson: 5, hanzi: "温柔", pinyin: "wēnróu", uzbek: "Muloyim" },
+  { id: 3040, hsk: 4, track: 'classic', lesson: 5, hanzi: "幽默", pinyin: "yōumò", uzbek: "Yumor hissi bor" },
+  { id: 3041, hsk: 4, track: 'classic', lesson: 6, hanzi: "简历", pinyin: "jiǎnlì", uzbek: "Rezyume (CV)" },
+  { id: 3042, hsk: 4, track: 'classic', lesson: 6, hanzi: "面试", pinyin: "miànshì", uzbek: "Suhbat (intervyu)" },
+  { id: 3043, hsk: 4, track: 'classic', lesson: 6, hanzi: "招聘", pinyin: "zhāopìn", uzbek: "Ishga yollamoq" },
+  { id: 3044, hsk: 4, track: 'classic', lesson: 6, hanzi: "录取", pinyin: "lùqǔ", uzbek: "Qabul qilmoq" },
+  { id: 3045, hsk: 4, track: 'classic', lesson: 6, hanzi: "职位", pinyin: "zhíwèi", uzbek: "Lavozim" },
+  { id: 3046, hsk: 4, track: 'classic', lesson: 6, hanzi: "待遇", pinyin: "dàiyù", uzbek: "Sharoit va maosh" },
+  { id: 3047, hsk: 4, track: 'classic', lesson: 6, hanzi: "辞职", pinyin: "cízhí", uzbek: "Ishdan bo'shamoq" },
+  { id: 3048, hsk: 4, track: 'classic', lesson: 6, hanzi: "前途", pinyin: "qiántú", uzbek: "Kelajak, istiqbol" },
+  { id: 3049, hsk: 4, track: 'classic', lesson: 7, hanzi: "气候", pinyin: "qìhòu", uzbek: "Iqlim" },
+  { id: 3050, hsk: 4, track: 'classic', lesson: 7, hanzi: "温度", pinyin: "wēndù", uzbek: "Harorat" },
+  { id: 3051, hsk: 4, track: 'classic', lesson: 7, hanzi: "干燥", pinyin: "gānzào", uzbek: "Quruq" },
+  { id: 3052, hsk: 4, track: 'classic', lesson: 7, hanzi: "湿润", pinyin: "shīrùn", uzbek: "Nam" },
+  { id: 3053, hsk: 4, track: 'classic', lesson: 7, hanzi: "海洋", pinyin: "hǎiyáng", uzbek: "Okean, dengiz" },
+  { id: 3054, hsk: 4, track: 'classic', lesson: 7, hanzi: "沙漠", pinyin: "shāmò", uzbek: "Cho'l, sahro" },
+  { id: 3055, hsk: 4, track: 'classic', lesson: 7, hanzi: "森林", pinyin: "sēnlín", uzbek: "O'rmon" },
+  { id: 3056, hsk: 4, track: 'classic', lesson: 7, hanzi: "面积", pinyin: "miànjī", uzbek: "Maydon, yuza" },
+  { id: 3057, hsk: 4, track: 'classic', lesson: 8, hanzi: "症状", pinyin: "zhèngzhuàng", uzbek: "Belgi, simptom" },
+  { id: 3058, hsk: 4, track: 'classic', lesson: 8, hanzi: "治疗", pinyin: "zhìliáo", uzbek: "Davolamoq" },
+  { id: 3059, hsk: 4, track: 'classic', lesson: 8, hanzi: "手术", pinyin: "shǒushù", uzbek: "Operatsiya, jarrohlik" },
+  { id: 3060, hsk: 4, track: 'classic', lesson: 8, hanzi: "预防", pinyin: "yùfáng", uzbek: "Oldini olmoq" },
+  { id: 3061, hsk: 4, track: 'classic', lesson: 8, hanzi: "营养", pinyin: "yíngyǎng", uzbek: "Oziq modda" },
+  { id: 3062, hsk: 4, track: 'classic', lesson: 8, hanzi: "减肥", pinyin: "jiǎnféi", uzbek: "Ozmoq, vazn tashlamoq" },
+  { id: 3063, hsk: 4, track: 'classic', lesson: 8, hanzi: "睡眠", pinyin: "shuìmián", uzbek: "Uyqu" },
+  { id: 3064, hsk: 4, track: 'classic', lesson: 8, hanzi: "恢复", pinyin: "huīfù", uzbek: "Tiklanmoq" },
+  { id: 3065, hsk: 4, track: 'classic', lesson: 9, hanzi: "培养", pinyin: "péiyǎng", uzbek: "Tarbiyalamoq, yetishtirmoq" },
+  { id: 3066, hsk: 4, track: 'classic', lesson: 9, hanzi: "独立", pinyin: "dúlì", uzbek: "Mustaqil" },
+  { id: 3067, hsk: 4, track: 'classic', lesson: 9, hanzi: "鼓励", pinyin: "gǔlì", uzbek: "Ruhlantirmoq, rag'batlantirmoq" },
+  { id: 3068, hsk: 4, track: 'classic', lesson: 9, hanzi: "表扬", pinyin: "biǎoyáng", uzbek: "Maqtamoq" },
+  { id: 3069, hsk: 4, track: 'classic', lesson: 9, hanzi: "批评", pinyin: "pīpíng", uzbek: "Tanqid qilmoq" },
+  { id: 3070, hsk: 4, track: 'classic', lesson: 9, hanzi: "严格", pinyin: "yángé", uzbek: "Qattiqqo'l, qat'iy" },
+  { id: 3071, hsk: 4, track: 'classic', lesson: 9, hanzi: "孝顺", pinyin: "xiàoshùn", uzbek: "Ota-onaga mehribon" },
+  { id: 3072, hsk: 4, track: 'classic', lesson: 9, hanzi: "幸福", pinyin: "xìngfú", uzbek: "Baxtli; baxt" },
+  { id: 3073, hsk: 4, track: 'classic', lesson: 10, hanzi: "交流", pinyin: "jiāoliú", uzbek: "Muloqot qilmoq, almashmoq" },
+  { id: 3074, hsk: 4, track: 'classic', lesson: 10, hanzi: "沟通", pinyin: "gōutōng", uzbek: "Til topishmoq, bog'lanmoq" },
+  { id: 3075, hsk: 4, track: 'classic', lesson: 10, hanzi: "表达", pinyin: "biǎodá", uzbek: "Ifodalamoq" },
+  { id: 3076, hsk: 4, track: 'classic', lesson: 10, hanzi: "演讲", pinyin: "yǎnjiǎng", uzbek: "Nutq so'zlamoq" },
+  { id: 3077, hsk: 4, track: 'classic', lesson: 10, hanzi: "观点", pinyin: "guāndiǎn", uzbek: "Nuqtai nazar" },
+  { id: 3078, hsk: 4, track: 'classic', lesson: 10, hanzi: "强调", pinyin: "qiángdiào", uzbek: "Ta'kidlamoq" },
+  { id: 3079, hsk: 4, track: 'classic', lesson: 10, hanzi: "误会", pinyin: "wùhuì", uzbek: "Tushunmovchilik" },
+  { id: 3080, hsk: 4, track: 'classic', lesson: 10, hanzi: "道歉", pinyin: "dàoqiàn", uzbek: "Uzr so'ramoq" },
+  { id: 3081, hsk: 4, track: 'classic', lesson: 11, hanzi: "航班", pinyin: "hángbān", uzbek: "Aviareys" },
+  { id: 3082, hsk: 4, track: 'classic', lesson: 11, hanzi: "起飞", pinyin: "qǐfēi", uzbek: "Uchib ketmoq (samolyot)" },
+  { id: 3083, hsk: 4, track: 'classic', lesson: 11, hanzi: "降落", pinyin: "jiàngluò", uzbek: "Qo'nmoq" },
+  { id: 3084, hsk: 4, track: 'classic', lesson: 11, hanzi: "堵车", pinyin: "dǔchē", uzbek: "Tirbandlik (probka)" },
+  { id: 3085, hsk: 4, track: 'classic', lesson: 11, hanzi: "距离", pinyin: "jùlí", uzbek: "Masofa" },
+  { id: 3086, hsk: 4, track: 'classic', lesson: 11, hanzi: "方向", pinyin: "fāngxiàng", uzbek: "Yo'nalish" },
+  { id: 3087, hsk: 4, track: 'classic', lesson: 11, hanzi: "速度", pinyin: "sùdù", uzbek: "Tezlik" },
+  { id: 3088, hsk: 4, track: 'classic', lesson: 11, hanzi: "交通", pinyin: "jiāotōng", uzbek: "Transport, qatnov" },
+  { id: 3089, hsk: 4, track: 'classic', lesson: 12, hanzi: "原因", pinyin: "yuányīn", uzbek: "Sabab" },
+  { id: 3090, hsk: 4, track: 'classic', lesson: 12, hanzi: "结果", pinyin: "jiéguǒ", uzbek: "Natija" },
+  { id: 3091, hsk: 4, track: 'classic', lesson: 12, hanzi: "目的", pinyin: "mùdì", uzbek: "Maqsad" },
+  { id: 3092, hsk: 4, track: 'classic', lesson: 12, hanzi: "过程", pinyin: "guòchéng", uzbek: "Jarayon" },
+  { id: 3093, hsk: 4, track: 'classic', lesson: 12, hanzi: "条件", pinyin: "tiáojiàn", uzbek: "Shart-sharoit" },
+  { id: 3094, hsk: 4, track: 'classic', lesson: 12, hanzi: "基础", pinyin: "jīchǔ", uzbek: "Asos, poydevor" },
+  { id: 3095, hsk: 4, track: 'classic', lesson: 12, hanzi: "标准", pinyin: "biāozhǔn", uzbek: "Mezon, standart" },
+  { id: 3096, hsk: 4, track: 'classic', lesson: 12, hanzi: "总结", pinyin: "zǒngjié", uzbek: "Xulosa qilmoq" },
+  { id: 3097, hsk: 4, track: 'classic', lesson: 13, hanzi: "消费", pinyin: "xiāofèi", uzbek: "Iste'mol, xarajat" },
+  { id: 3098, hsk: 4, track: 'classic', lesson: 13, hanzi: "服务", pinyin: "fúwù", uzbek: "Xizmat ko'rsatmoq" },
+  { id: 3099, hsk: 4, track: 'classic', lesson: 13, hanzi: "品牌", pinyin: "pǐnpái", uzbek: "Brend, marka" },
+  { id: 3100, hsk: 4, track: 'classic', lesson: 13, hanzi: "保证", pinyin: "bǎozhèng", uzbek: "Kafolat bermoq" },
+  { id: 3101, hsk: 4, track: 'classic', lesson: 13, hanzi: "退货", pinyin: "tuìhuò", uzbek: "Tovarni qaytarmoq" },
+  { id: 3102, hsk: 4, track: 'classic', lesson: 13, hanzi: "赔偿", pinyin: "péicháng", uzbek: "Tovon to'lamoq" },
+  { id: 3103, hsk: 4, track: 'classic', lesson: 13, hanzi: "优惠", pinyin: "yōuhuì", uzbek: "Imtiyoz, chegirma" },
+  { id: 3104, hsk: 4, track: 'classic', lesson: 13, hanzi: "划算", pinyin: "huásuàn", uzbek: "Arziydigan, foydali" },
+  { id: 3105, hsk: 4, track: 'classic', lesson: 14, hanzi: "比赛", pinyin: "bǐsài", uzbek: "Musobaqa" },
+  { id: 3106, hsk: 4, track: 'classic', lesson: 14, hanzi: "冠军", pinyin: "guànjūn", uzbek: "Chempion" },
+  { id: 3107, hsk: 4, track: 'classic', lesson: 14, hanzi: "奖杯", pinyin: "jiǎngbēi", uzbek: "Kubok" },
+  { id: 3108, hsk: 4, track: 'classic', lesson: 14, hanzi: "对手", pinyin: "duìshǒu", uzbek: "Raqib" },
+  { id: 3109, hsk: 4, track: 'classic', lesson: 14, hanzi: "裁判", pinyin: "cáipàn", uzbek: "Hakam" },
+  { id: 3110, hsk: 4, track: 'classic', lesson: 14, hanzi: "观众", pinyin: "guānzhòng", uzbek: "Tomoshabin" },
+  { id: 3111, hsk: 4, track: 'classic', lesson: 14, hanzi: "鼓掌", pinyin: "gǔzhǎng", uzbek: "Qarsak chalmoq" },
+  { id: 3112, hsk: 4, track: 'classic', lesson: 14, hanzi: "激动", pinyin: "jīdòng", uzbek: "Hayajonlanmoq" },
+  { id: 3113, hsk: 4, track: 'classic', lesson: 15, hanzi: "国际", pinyin: "guójì", uzbek: "Xalqaro" },
+  { id: 3114, hsk: 4, track: 'classic', lesson: 15, hanzi: "和平", pinyin: "hépíng", uzbek: "Tinchlik" },
+  { id: 3115, hsk: 4, track: 'classic', lesson: 15, hanzi: "友好", pinyin: "yǒuhǎo", uzbek: "Do'stona" },
+  { id: 3116, hsk: 4, track: 'classic', lesson: 15, hanzi: "大使馆", pinyin: "dàshǐguǎn", uzbek: "Elchixona" },
+  { id: 3117, hsk: 4, track: 'classic', lesson: 15, hanzi: "签证", pinyin: "qiānzhèng", uzbek: "Viza" },
+  { id: 3118, hsk: 4, track: 'classic', lesson: 15, hanzi: "留学", pinyin: "liúxué", uzbek: "Chet elda o'qimoq" },
+  { id: 3119, hsk: 4, track: 'classic', lesson: 15, hanzi: "理想", pinyin: "lǐxiǎng", uzbek: "Orzu, ideal" },
+  { id: 3120, hsk: 4, track: 'classic', lesson: 15, hanzi: "未来", pinyin: "wèilái", uzbek: "Kelajak" },
+  { id: 4001, hsk: 5, track: 'classic', lesson: 1, hanzi: "智慧", pinyin: "zhìhuì", uzbek: "Donolik, aql-zakovat" },
+  { id: 4002, hsk: 5, track: 'classic', lesson: 1, hanzi: "思想", pinyin: "sīxiǎng", uzbek: "G'oya, tafakkur" },
+  { id: 4003, hsk: 5, track: 'classic', lesson: 1, hanzi: "观念", pinyin: "guānniàn", uzbek: "Tushuncha, qarash" },
+  { id: 4004, hsk: 5, track: 'classic', lesson: 1, hanzi: "道理", pinyin: "dàolǐ", uzbek: "Mantiq, haqiqat" },
+  { id: 4005, hsk: 5, track: 'classic', lesson: 1, hanzi: "客观", pinyin: "kèguān", uzbek: "Xolis, obyektiv" },
+  { id: 4006, hsk: 5, track: 'classic', lesson: 1, hanzi: "主观", pinyin: "zhǔguān", uzbek: "Subyektiv" },
+  { id: 4007, hsk: 5, track: 'classic', lesson: 1, hanzi: "必然", pinyin: "bìrán", uzbek: "Muqarrar" },
+  { id: 4008, hsk: 5, track: 'classic', lesson: 1, hanzi: "偶然", pinyin: "ǒurán", uzbek: "Tasodifiy" },
+  { id: 4009, hsk: 5, track: 'classic', lesson: 2, hanzi: "经济", pinyin: "jīngjì", uzbek: "Iqtisodiyot" },
+  { id: 4010, hsk: 5, track: 'classic', lesson: 2, hanzi: "金融", pinyin: "jīnróng", uzbek: "Moliya" },
+  { id: 4011, hsk: 5, track: 'classic', lesson: 2, hanzi: "股票", pinyin: "gǔpiào", uzbek: "Aksiya (fond bozori)" },
+  { id: 4012, hsk: 5, track: 'classic', lesson: 2, hanzi: "风险", pinyin: "fēngxiǎn", uzbek: "Xatar, risk" },
+  { id: 4013, hsk: 5, track: 'classic', lesson: 2, hanzi: "财富", pinyin: "cáifù", uzbek: "Boylik" },
+  { id: 4014, hsk: 5, track: 'classic', lesson: 2, hanzi: "贷款", pinyin: "dàikuǎn", uzbek: "Kredit, qarz" },
+  { id: 4015, hsk: 5, track: 'classic', lesson: 2, hanzi: "预算", pinyin: "yùsuàn", uzbek: "Byudjet" },
+  { id: 4016, hsk: 5, track: 'classic', lesson: 2, hanzi: "繁荣", pinyin: "fánróng", uzbek: "Farovon, gullab-yashnagan" },
+  { id: 4017, hsk: 5, track: 'classic', lesson: 3, hanzi: "管理", pinyin: "guǎnlǐ", uzbek: "Boshqarmoq" },
+  { id: 4018, hsk: 5, track: 'classic', lesson: 3, hanzi: "效率", pinyin: "xiàolǜ", uzbek: "Samaradorlik" },
+  { id: 4019, hsk: 5, track: 'classic', lesson: 3, hanzi: "核心", pinyin: "héxīn", uzbek: "O'zak, asosiy markaz" },
+  { id: 4020, hsk: 5, track: 'classic', lesson: 3, hanzi: "策略", pinyin: "cèlüè", uzbek: "Strategiya, taktika" },
+  { id: 4021, hsk: 5, track: 'classic', lesson: 3, hanzi: "执行", pinyin: "zhíxíng", uzbek: "Ijro etmoq" },
+  { id: 4022, hsk: 5, track: 'classic', lesson: 3, hanzi: "分配", pinyin: "fēnpèi", uzbek: "Taqsimlamoq" },
+  { id: 4023, hsk: 5, track: 'classic', lesson: 3, hanzi: "协调", pinyin: "xiétiáo", uzbek: "Muvofiqlashtirmoq" },
+  { id: 4024, hsk: 5, track: 'classic', lesson: 3, hanzi: "领导", pinyin: "lǐngdǎo", uzbek: "Rahbar, yetakchi" },
+  { id: 4025, hsk: 5, track: 'classic', lesson: 4, hanzi: "生态", pinyin: "shēngtài", uzbek: "Ekologiya" },
+  { id: 4026, hsk: 5, track: 'classic', lesson: 4, hanzi: "资源", pinyin: "zīyuán", uzbek: "Resurs, manba" },
+  { id: 4027, hsk: 5, track: 'classic', lesson: 4, hanzi: "能源", pinyin: "néngyuán", uzbek: "Energiya manbai" },
+  { id: 4028, hsk: 5, track: 'classic', lesson: 4, hanzi: "环保", pinyin: "huánbǎo", uzbek: "Tabiatni asrash" },
+  { id: 4029, hsk: 5, track: 'classic', lesson: 4, hanzi: "平衡", pinyin: "pínghéng", uzbek: "Muvozanat" },
+  { id: 4030, hsk: 5, track: 'classic', lesson: 4, hanzi: "危机", pinyin: "wēijī", uzbek: "Inqiroz" },
+  { id: 4031, hsk: 5, track: 'classic', lesson: 4, hanzi: "珍惜", pinyin: "zhēnxī", uzbek: "Qadrlamoq, asramoq" },
+  { id: 4032, hsk: 5, track: 'classic', lesson: 4, hanzi: "持续", pinyin: "chíxù", uzbek: "Davomiy, uzluksiz" },
+  { id: 4033, hsk: 5, track: 'classic', lesson: 5, hanzi: "文明", pinyin: "wénmíng", uzbek: "Tamaddun, sivilizatsiya" },
+  { id: 4034, hsk: 5, track: 'classic', lesson: 5, hanzi: "古代", pinyin: "gǔdài", uzbek: "Qadimgi davr" },
+  { id: 4035, hsk: 5, track: 'classic', lesson: 5, hanzi: "遗产", pinyin: "yíchǎn", uzbek: "Meros" },
+  { id: 4036, hsk: 5, track: 'classic', lesson: 5, hanzi: "象征", pinyin: "xiàngzhēng", uzbek: "Ramz, timsol" },
+  { id: 4037, hsk: 5, track: 'classic', lesson: 5, hanzi: "奇迹", pinyin: "qíjì", uzbek: "Mo'jiza" },
+  { id: 4038, hsk: 5, track: 'classic', lesson: 5, hanzi: "辉煌", pinyin: "huīhuáng", uzbek: "Shonli, porloq" },
+  { id: 4039, hsk: 5, track: 'classic', lesson: 5, hanzi: "悠久", pinyin: "yōujiǔ", uzbek: "Ko'p asrlik, qadimiy" },
+  { id: 4040, hsk: 5, track: 'classic', lesson: 5, hanzi: "保存", pinyin: "bǎocún", uzbek: "Saqlab qolmoq" },
+  { id: 4041, hsk: 5, track: 'classic', lesson: 6, hanzi: "探索", pinyin: "tànsuǒ", uzbek: "Izlanmoq, tadqiq etmoq" },
+  { id: 4042, hsk: 5, track: 'classic', lesson: 6, hanzi: "实验", pinyin: "shíyàn", uzbek: "Tajriba, eksperiment" },
+  { id: 4043, hsk: 5, track: 'classic', lesson: 6, hanzi: "理论", pinyin: "lǐlùn", uzbek: "Nazariya" },
+  { id: 4044, hsk: 5, track: 'classic', lesson: 6, hanzi: "现象", pinyin: "xiànxiàng", uzbek: "Hodisa, fenomen" },
+  { id: 4045, hsk: 5, track: 'classic', lesson: 6, hanzi: "规律", pinyin: "guīlǜ", uzbek: "Qonuniyat" },
+  { id: 4046, hsk: 5, track: 'classic', lesson: 6, hanzi: "结论", pinyin: "jiélùn", uzbek: "Xulosa" },
+  { id: 4047, hsk: 5, track: 'classic', lesson: 6, hanzi: "突破", pinyin: "tūpò", uzbek: "Yorib o'tish, katta yutuq" },
+  { id: 4048, hsk: 5, track: 'classic', lesson: 6, hanzi: "贡献", pinyin: "gòngxiàn", uzbek: "Hissa qo'shmoq" },
+  { id: 4049, hsk: 5, track: 'classic', lesson: 7, hanzi: "现象", pinyin: "xiànxiàng", uzbek: "Holat, voqelik" },
+  { id: 4050, hsk: 5, track: 'classic', lesson: 7, hanzi: "趋势", pinyin: "qūshì", uzbek: "Tendensiya, yo'nalish" },
+  { id: 4051, hsk: 5, track: 'classic', lesson: 7, hanzi: "压力", pinyin: "yālì", uzbek: "Bosim, stress" },
+  { id: 4052, hsk: 5, track: 'classic', lesson: 7, hanzi: "缓解", pinyin: "huǎnjiě", uzbek: "Yengillashtirmoq" },
+  { id: 4053, hsk: 5, track: 'classic', lesson: 7, hanzi: "改善", pinyin: "gǎishàn", uzbek: "Yaxshilamoq" },
+  { id: 4054, hsk: 5, track: 'classic', lesson: 7, hanzi: "措施", pinyin: "cuòshī", uzbek: "Chora-tadbir" },
+  { id: 4055, hsk: 5, track: 'classic', lesson: 7, hanzi: "促进", pinyin: "cùjìn", uzbek: "Rag'batlantirmoq, tezlashtirmoq" },
+  { id: 4056, hsk: 5, track: 'classic', lesson: 7, hanzi: "稳定", pinyin: "wěndìng", uzbek: "Barqaror" },
+  { id: 4057, hsk: 5, track: 'classic', lesson: 8, hanzi: "道德", pinyin: "dàodé", uzbek: "Axloq, odob" },
+  { id: 4058, hsk: 5, track: 'classic', lesson: 8, hanzi: "良心", pinyin: "liángxīn", uzbek: "Vijdon" },
+  { id: 4059, hsk: 5, track: 'classic', lesson: 8, hanzi: "善良", pinyin: "shànliáng", uzbek: "Oqko'ngil, mehribon" },
+  { id: 4060, hsk: 5, track: 'classic', lesson: 8, hanzi: "宽容", pinyin: "kuānróng", uzbek: "Bag'rikeng" },
+  { id: 4061, hsk: 5, track: 'classic', lesson: 8, hanzi: "真诚", pinyin: "zhēnchéng", uzbek: "Samimiy" },
+  { id: 4062, hsk: 5, track: 'classic', lesson: 8, hanzi: "尊严", pinyin: "zūnyán", uzbek: "Qadr-qimmat, g'urur" },
+  { id: 4063, hsk: 5, track: 'classic', lesson: 8, hanzi: "奉献", pinyin: "fèngxiàn", uzbek: "Fidoyilik qilmoq" },
+  { id: 4064, hsk: 5, track: 'classic', lesson: 8, hanzi: "感激", pinyin: "gǎnjī", uzbek: "Minnatdor bo'lmoq" },
+  { id: 4065, hsk: 5, track: 'classic', lesson: 9, hanzi: "媒体", pinyin: "méitǐ", uzbek: "Ommaviy axborot vositalari" },
+  { id: 4066, hsk: 5, track: 'classic', lesson: 9, hanzi: "传播", pinyin: "chuánbō", uzbek: "Tarqatmoq" },
+  { id: 4067, hsk: 5, track: 'classic', lesson: 9, hanzi: "平台", pinyin: "píngtái", uzbek: "Platforma" },
+  { id: 4068, hsk: 5, track: 'classic', lesson: 9, hanzi: "直播", pinyin: "zhíbō", uzbek: "Jonli efir" },
+  { id: 4069, hsk: 5, track: 'classic', lesson: 9, hanzi: "虚拟", pinyin: "xūnǐ", uzbek: "Virtual" },
+  { id: 4070, hsk: 5, track: 'classic', lesson: 9, hanzi: "隐私", pinyin: "yǐnsī", uzbek: "Shaxsiy sir (maxfiylik)" },
+  { id: 4071, hsk: 5, track: 'classic', lesson: 9, hanzi: "判断", pinyin: "pànduàn", uzbek: "Baholamoq, hukm chiqarmoq" },
+  { id: 4072, hsk: 5, track: 'classic', lesson: 9, hanzi: "真实", pinyin: "zhēnshí", uzbek: "Haqiqiy, chin" },
+  { id: 4073, hsk: 5, track: 'classic', lesson: 10, hanzi: "审美", pinyin: "shěnměi", uzbek: "Estetik did" },
+  { id: 4074, hsk: 5, track: 'classic', lesson: 10, hanzi: "设计", pinyin: "shèjì", uzbek: "Dizayn qilmoq, loyihalamoq" },
+  { id: 4075, hsk: 5, track: 'classic', lesson: 10, hanzi: "风格", pinyin: "fēnggé", uzbek: "Uslub, stil" },
+  { id: 4076, hsk: 5, track: 'classic', lesson: 10, hanzi: "独特", pinyin: "dútè", uzbek: "O'ziga xos, betakror" },
+  { id: 4077, hsk: 5, track: 'classic', lesson: 10, hanzi: "完美", pinyin: "wánměi", uzbek: "Mukammal" },
+  { id: 4078, hsk: 5, track: 'classic', lesson: 10, hanzi: "细节", pinyin: "xìjié", uzbek: "Detal, tafsilot" },
+  { id: 4079, hsk: 5, track: 'classic', lesson: 10, hanzi: "灵感", pinyin: "línggǎn", uzbek: "Ilhom" },
+  { id: 4080, hsk: 5, track: 'classic', lesson: 10, hanzi: "魅力", pinyin: "mèilì", uzbek: "Joziba" },
+  { id: 4081, hsk: 5, track: 'classic', lesson: 11, hanzi: "挑战", pinyin: "tiǎozhàn", uzbek: "Sinov, chorlov" },
+  { id: 4082, hsk: 5, track: 'classic', lesson: 11, hanzi: "克服", pinyin: "kèfú", uzbek: "Yengib o'tmoq" },
+  { id: 4083, hsk: 5, track: 'classic', lesson: 11, hanzi: "障碍", pinyin: "zhàng'ài", uzbek: "To'siq" },
+  { id: 4084, hsk: 5, track: 'classic', lesson: 11, hanzi: "承受", pinyin: "chéngshòu", uzbek: "Bardosh bermoq" },
+  { id: 4085, hsk: 5, track: 'classic', lesson: 11, hanzi: "乐观", pinyin: "lèguān", uzbek: "Optimist, ko'tarinki" },
+  { id: 4086, hsk: 5, track: 'classic', lesson: 11, hanzi: "悲观", pinyin: "bēiguān", uzbek: "Pessimist" },
+  { id: 4087, hsk: 5, track: 'classic', lesson: 11, hanzi: "坚定", pinyin: "jiāndìng", uzbek: "Qat'iy, mustahkam" },
+  { id: 4088, hsk: 5, track: 'classic', lesson: 11, hanzi: "成熟", pinyin: "chéngshú", uzbek: "Yetuk, ulg'aygan" },
+  { id: 4089, hsk: 5, track: 'classic', lesson: 12, hanzi: "爱不释手", pinyin: "àibúshìshǒu", uzbek: "Qo'ldan qo'ymaslik (juda yoqtirmoq)" },
+  { id: 4090, hsk: 5, track: 'classic', lesson: 12, hanzi: "全神贯注", pinyin: "quánshénguànzhù", uzbek: "Butun diqqatni jamlamoq" },
+  { id: 4091, hsk: 5, track: 'classic', lesson: 12, hanzi: "半途而废", pinyin: "bàntú'érfèi", uzbek: "Ishni yarim yo'lda tashlab ketmoq" },
+  { id: 4092, hsk: 5, track: 'classic', lesson: 12, hanzi: "举世闻名", pinyin: "jǔshìwénmíng", uzbek: "Butun dunyoga mashhur" },
+  { id: 4093, hsk: 5, track: 'classic', lesson: 12, hanzi: "一举两得", pinyin: "yìjǔliǎngdé", uzbek: "Bir o'q bilan ikki quyon" },
+  { id: 4094, hsk: 5, track: 'classic', lesson: 12, hanzi: "迫不及待", pinyin: "pòbùjídài", uzbek: "Sabrsizlik bilan kutmoq" },
+  { id: 4095, hsk: 5, track: 'classic', lesson: 12, hanzi: "理所当然", pinyin: "lǐsuǒdāngrán", uzbek: "Tabiiy hol, shunday bo'lishi kerak" },
+  { id: 4096, hsk: 5, track: 'classic', lesson: 12, hanzi: "脚踏实地", pinyin: "jiǎotàshídì", uzbek: "Qadamni mustahkam bosmoq (amaliy)" },
+  { id: 4097, hsk: 5, track: 'classic', lesson: 13, hanzi: "辩论", pinyin: "biànlùn", uzbek: "Munozara qilmoq, bahslashmoq" },
+  { id: 4098, hsk: 5, track: 'classic', lesson: 13, hanzi: "说服", pinyin: "shuōfú", uzbek: "Ishontirmoq, ko'ndirmoq" },
+  { id: 4099, hsk: 5, track: 'classic', lesson: 13, hanzi: "逻辑", pinyin: "luóji", uzbek: "Mantiq" },
+  { id: 4100, hsk: 5, track: 'classic', lesson: 13, hanzi: "矛盾", pinyin: "máodùn", uzbek: "Ziddiyat, qarama-qarshilik" },
+  { id: 4101, hsk: 5, track: 'classic', lesson: 13, hanzi: "妥协", pinyin: "tuǒxié", uzbek: "Yon bermoq, murosaga kelmoq" },
+  { id: 4102, hsk: 5, track: 'classic', lesson: 13, hanzi: "共识", pinyin: "gòngshí", uzbek: "Umumiy kelishuv" },
+  { id: 4103, hsk: 5, track: 'classic', lesson: 13, hanzi: "立场", pinyin: "lìchǎng", uzbek: "Pozitsiya, nuqtai nazar" },
+  { id: 4104, hsk: 5, track: 'classic', lesson: 13, hanzi: "原则", pinyin: "yuánzé", uzbek: "Tamoyil, prinsip" },
+  { id: 4105, hsk: 5, track: 'classic', lesson: 14, hanzi: "节奏", pinyin: "jiézòu", uzbek: "Marom, ritm" },
+  { id: 4106, hsk: 5, track: 'classic', lesson: 14, hanzi: "设施", pinyin: "shèshī", uzbek: "Infratuzilma, jihozlar" },
+  { id: 4107, hsk: 5, track: 'classic', lesson: 14, hanzi: "便利", pinyin: "biànlì", uzbek: "Qulaylik" },
+  { id: 4108, hsk: 5, track: 'classic', lesson: 14, hanzi: "拥挤", pinyin: "yōngjǐ", uzbek: "Tiqilinch, gavjum" },
+  { id: 4109, hsk: 5, track: 'classic', lesson: 14, hanzi: "移民", pinyin: "yímín", uzbek: "Ko'chib o'tmoq (migratsiya)" },
+  { id: 4110, hsk: 5, track: 'classic', lesson: 14, hanzi: "适应", pinyin: "shìyìng", uzbek: "Moslashmoq" },
+  { id: 4111, hsk: 5, track: 'classic', lesson: 14, hanzi: "归属感", pinyin: "guīshǔgǎn", uzbek: "Daxldorlik hissi" },
+  { id: 4112, hsk: 5, track: 'classic', lesson: 14, hanzi: "品质", pinyin: "pǐnzhì", uzbek: "Sifat, fazilat" },
+  { id: 4113, hsk: 5, track: 'classic', lesson: 15, hanzi: "全球", pinyin: "quánqiú", uzbek: "Global, butun jahon" },
+  { id: 4114, hsk: 5, track: 'classic', lesson: 15, hanzi: "领域", pinyin: "lǐngyù", uzbek: "Soha, jabha" },
+  { id: 4115, hsk: 5, track: 'classic', lesson: 15, hanzi: "合作", pinyin: "hézuò", uzbek: "Hamkorlik" },
+  { id: 4116, hsk: 5, track: 'classic', lesson: 15, hanzi: "共赢", pinyin: "gòngyíng", uzbek: "O'zaro manfaatli g'alaba" },
+  { id: 4117, hsk: 5, track: 'classic', lesson: 15, hanzi: "机遇", pinyin: "jīyù", uzbek: "Qulay imkoniyat" },
+  { id: 4118, hsk: 5, track: 'classic', lesson: 15, hanzi: "前景", pinyin: "qiánjǐng", uzbek: "Istiqbol, kelajak manzarasi" },
+  { id: 4119, hsk: 5, track: 'classic', lesson: 15, hanzi: "使命", pinyin: "shǐmìng", uzbek: "Missiya, oliy vazifa" },
+  { id: 4120, hsk: 5, track: 'classic', lesson: 15, hanzi: "辉煌", pinyin: "huīhuáng", uzbek: "Yorqin, ulug'vor" }
 ];
 let currentHSK = 1;
 let currentLesson = 1;
@@ -558,6 +1039,10 @@ let quizAnswered = false;
 let quizType = 'meaning';
 let hanziWriter = null;
 let learnedWords = JSON.parse(localStorage.getItem('learnedWords')) || [];
+let mistakeWords = JSON.parse(localStorage.getItem('mistakeWords')) || [];
+let bookmarkedWords = JSON.parse(localStorage.getItem('bookmarkedWords')) || [];
+let isCustomReviewDeck = false;
+let activeSpeechRecognition = null;
 const LESSON_FLOW_STORAGE_KEY = 'lessonFlowProgress';
 const LESSON_COMPLETION_XP = 25;
 const lessonFlowSteps = [
@@ -790,11 +1275,11 @@ function applyHskLevelTheme(level) {
     const dashPill = document.getElementById('dashboardLevelPill');
     const cnBadge = document.getElementById('lessonsCnBadge');
     const cnMeta = {
-        1: '一级 · 150 words',
-        2: '二级 · 300 words',
-        3: '三级 · 600 words',
-        4: '四级 · 1200 words',
-        5: '五级 · 2500 words'
+        1: '一级 · 15 lessons',
+        2: '二级 · New HSK 3.0 · 15 lessons',
+        3: '三级 · New HSK 3.0 · 15 lessons',
+        4: '四级 · New HSK 3.0 · 15 lessons',
+        5: '五级 · New HSK 3.0 · 15 lessons'
     };
     if (headerBadge) headerBadge.textContent = `HSK ${lvl}`;
     if (dashPill) dashPill.textContent = `HSK ${lvl}`;
@@ -813,8 +1298,28 @@ function updateDashboardBentoUI() {
     const lessonNums = [...new Set(vocabularyData.filter(w => w.hsk === currentHSK && w.track === 'classic').map(w => w.lesson))].sort((a, b) => a - b);
     const nextLesson = lessonNums.find(num => !isLessonComplete(num, 'classic')) || lessonNums[0] || 1;
     const completedCount = lessonNums.filter(num => isLessonComplete(num, 'classic')).length;
+    const levelTrackText = currentHSK >= 2 ? `New HSK 3.0 · HSK ${currentHSK}` : `Classic HSK 1`;
     if (contTitle) contTitle.textContent = `HSK ${currentHSK} · Lesson ${nextLesson} dan davom etish`;
-    if (contSub) contSub.textContent = `${completedCount} / ${lessonNums.length || 15} dars tugallangan · ${pct}% progress`;
+    if (contSub) contSub.textContent = `${levelTrackText} · ${completedCount} / ${lessonNums.length || 15} dars tugallangan`;
+
+    const validMistakes = mistakeWords.filter(id => vocabularyData.some(w => w.id === id));
+    const validBookmarks = bookmarkedWords.filter(id => vocabularyData.some(w => w.id === id));
+    const mistakesCountEl = document.getElementById('dashboardMistakesCount');
+    const mistakesSubEl = document.getElementById('dashboardMistakesSub');
+    const bookmarksCountEl = document.getElementById('dashboardBookmarksCount');
+    const bookmarksSubEl = document.getElementById('dashboardBookmarksSub');
+    if (mistakesCountEl) mistakesCountEl.textContent = String(validMistakes.length);
+    if (mistakesSubEl) {
+        mistakesSubEl.textContent = validMistakes.length > 0
+            ? `${validMistakes.length} ta xato so‘zni takrorlash`
+            : 'Quizda xato qilingan so‘zlar shu yerga tushadi';
+    }
+    if (bookmarksCountEl) bookmarksCountEl.textContent = String(validBookmarks.length);
+    if (bookmarksSubEl) {
+        bookmarksSubEl.textContent = validBookmarks.length > 0
+            ? `${validBookmarks.length} ta saqlangan so‘zni mashq qilish`
+            : 'Kartochkada ⭐ Saqlash tugmasini bosing';
+    }
 }
 
 // Event listeners
@@ -1171,6 +1676,31 @@ function setupEventListeners() {
             learnedWordsSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
     }
+
+    const dashboardMistakesBtn = document.getElementById('dashboardMistakesBtn');
+    if (dashboardMistakesBtn) {
+        dashboardMistakesBtn.addEventListener('click', () => startSmartCustomDeck('mistakes'));
+    }
+    const dashboardBookmarksBtn = document.getElementById('dashboardBookmarksBtn');
+    if (dashboardBookmarksBtn) {
+        dashboardBookmarksBtn.addEventListener('click', () => startSmartCustomDeck('bookmarks'));
+    }
+
+    const speakPracticeBtn = document.getElementById('speakPracticeBtn');
+    if (speakPracticeBtn) {
+        speakPracticeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            startSpeechPronunciationCheck();
+        });
+    }
+
+    const bookmarkWordBtn = document.getElementById('bookmarkWordBtn');
+    if (bookmarkWordBtn) {
+        bookmarkWordBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleBookmarkCurrentWord();
+        });
+    }
 }
 
 function loadExternalVocabulary() {
@@ -1205,56 +1735,132 @@ async function loadNewHskLessonContent() {
     }
 }
 
-// Display learning content (example sentences and grammar)
+// Thematic metadata & grammar notes for New HSK 3.0 Levels 2-5
+const HSK2_TO_5_LESSON_THEMES = {
+    '2:1': { title: 'Sayohat va reja (旅游与计划)', point: '已经 ... 了 (Allaqachon ... bo‘ldi)', pattern: 'Ega + 已经 + Fe’l + 了', exp: '已经 (yǐjīng) harakatning allaqachon bajarilganini bildiradi va ko‘pincha gap oxirida 了 (le) yuklamasi bilan keladi.' },
+    '2:2': { title: 'Kundalik hayot va sport (日常生活与运动)', point: '坚持 + Fe’l (Davom ettirmoq)', pattern: '每天 + 坚持 + Sport/Mashq', exp: 'Doimiy odat va mashg‘ulotni qoldirmasdan davom ettirishni ifodalash uchun 坚持 (jiānchí) fe’lidan foydalaniladi.' },
+    '2:3': { title: 'Salomatlik va shifoxona (健康与医院)', point: '别担心 (Xavotir olmang)', pattern: '别 + Fe’l / Sifat', exp: 'Suhbatdoshni tinchlantirish yoki biror ishni qilmaslikka chaqirish uchun 别 (bié) inkor yuklamasi ishlatiladi.' },
+    '2:4': { title: 'Xarid va kiyim-kechak (购物与服装)', point: '试一试 (Sinab ko‘rmoq)', pattern: 'Fe’l + 一 + Fe’l', exp: 'Xitoy tilida fe’lni takrorlash (试一试, 看一看) harakatning qisqa va yengil bajarilishini bildiradi.' },
+    '2:5': { title: 'Ovqatlanish va restoran (餐厅与美食)', point: '又... 又... (Ham ..., ham ...)', pattern: '又 + Sifat 1 + 又 + Sifat 2', exp: 'Taom yoki buyumning bir vaqtning o‘zida ikkita sifatga ega ekanligini (又甜又好吃) ifodalaydi.' },
+    '2:6': { title: 'Yo‘l va transport (问路与交通)', point: '往 + Yo‘nalish + Fe’l (... tomonga yurmoq)', pattern: '往 + 左/右/前 + 走', exp: '往 (wǎng) ko‘makchisi harakat yo‘nalishini ko‘rsatishda ishlatiladi.' },
+    '2:7': { title: 'O‘qish va imtihon (学习与考试)', point: 'Fe’l + 懂 / 清楚 (Natija to‘ldiruvchisi)', pattern: '听懂 / 看清楚', exp: 'Fe’ldan keyin 懂 yoki 清楚 qo‘shilishi harakat natijasida tushunilganlik yoki aniqlikni bildiradi.' },
+    '2:8': { title: 'Ish va ofis (工作与办公室)', point: '完成 + Vazifa (Tugatmoq)', pattern: 'Ega + 已经 + 完成 + Ob’yekt', exp: 'Ish yoki topshiriqni muvaffaqiyatli yakunlashda 完成 (wánchéng) fe’li qo‘llaniladi.' },
+    '2:9': { title: 'Uy va xonadon (家庭与房间)', point: '把 + Ob’yekt + Fe’l + Natija', pattern: '把房间打扫干净', exp: '把 (bǎ) konstruksiyasi ob’yekt ustida biror o‘zgarish yuz berganini ta’kidlaydi.' },
+    '2:10': { title: 'Ob-havo va fasllar (天气与季节)', point: '比 (Qiyoslash darajasi)', pattern: 'A + 比 + B + Sifat', exp: 'Ikki fasl yoki narsani solishtirishda 比 (bǐ) ko‘makchisi ishlatiladi.' },
+    '2:11': { title: 'Qiziqish va bo‘sh vaqt (爱好与周末)', point: '对 ... 感兴趣 (...ga qiziqmoq)', pattern: 'Ega + 对 + Narsa + 感兴趣', exp: 'Biror sohaga qiziqishni aytishda har doim 对 (duì) old ko‘makchisi bilan 感兴趣 birikmasi keladi.' },
+    '2:12': { title: 'Internet va aloqa (网络与联系)', point: '用 + Vosita + Fe’l (... orqali bajarmoq)', pattern: '用微信联系', exp: 'Aloqa vositasi yoki asbobdan foydalanib ish bajarishni ifodalaydi.' },
+    '2:13': { title: 'Bayram va sovg‘alar (节日与礼物)', point: '祝 + Shaxs + Tilak (Tabriklamoq)', pattern: '祝你生日快乐', exp: 'Bayram va tug‘ilgan kunda ezgu tilak bildirish uchun 祝 (zhù) fe’li gap boshida keladi.' },
+    '2:14': { title: 'His-tuyg‘u va xarakter (感情与性格)', point: '越来越 + Sifat (Borgan sari ...)', pattern: '越来越 + 开心 / 努力', exp: 'Vaqt o‘tishi bilan sifatning kuchayib borishini ifodalaydi.' },
+    '2:15': { title: 'Tabiat va hayvonot (自然与动物)', point: '保护 + Ob’yekt (Asramoq, himoya qilmoq)', pattern: '我们要保护环境', exp: '要 (yào) modal fe’li zaruriyat ("kerak") ma’nosini beradi.' }
+};
+
+function generateDynamicLessonContent(hskLevel, lessonNumber, words) {
+    const key = `${hskLevel}:${lessonNumber}`;
+    const meta = HSK2_TO_5_LESSON_THEMES[key] || {
+        title: `New HSK 3.0 · HSK ${hskLevel} Lesson ${lessonNumber}`,
+        point: `New HSK 3.0 (第${hskLevel}级) — Kontekstual birikmalar`,
+        pattern: `Mavzuga oid faol iboralar + ${words[0] ? words[0].hanzi : ''}`,
+        exp: `Ushbu darsdagi so‘zlar New HSK 3.0 o‘quv dasturi asosida tanlangan bo‘lib, og‘zaki va yozma nutqda fikrni aniq ifodalashga xizmat qiladi.`
+    };
+
+    const w0 = words[0] || { hanzi: '学习', pinyin: 'xúexí', uzbek: 'o‘rganmoq' };
+    const w1 = words[1] || w0;
+    const w2 = words[2] || w0;
+    const w3 = words[3] || w1;
+    const w4 = words[4] || w2;
+
+    const sentences = [
+        {
+            chinese: `我们今天一起学习“${w0.hanzi}”和“${w1.hanzi}”。`,
+            pinyin: `Wǒmen jīntiān yìqǐ xuéxí "${w0.pinyin}" hé "${w1.pinyin}".`,
+            uzbek: `Biz bugun birgalikda "${w0.uzbek}" va "${w1.uzbek}" so‘zlarini o‘rganamiz.`,
+            english: `Today we learn "${w0.hanzi}" and "${w1.hanzi}" together.`
+        },
+        {
+            chinese: `在生活中，${w2.hanzi}和${w3.hanzi}都非常重要。`,
+            pinyin: `Zài shēnghuó zhōng, ${w2.pinyin} hé ${w3.pinyin} dōu fēicháng zhòngyào.`,
+            uzbek: `Hayotda "${w2.uzbek}" hamda "${w3.uzbek}" juda muhimdir.`,
+            english: `In daily life, both ${w2.hanzi} and ${w3.hanzi} are very important.`
+        },
+        {
+            chinese: `请用“${w4.hanzi}”说一个新的汉语句子。`,
+            pinyin: `Qǐng yòng "${w4.pinyin}" shuō yì ge xīn de Hànyǔ jùzi.`,
+            uzbek: `Iltimos, "${w4.uzbek}" so‘zi ishtirokida yangi xitoycha gap tuzing.`,
+            english: `Please make a new Chinese sentence using "${w4.hanzi}".`
+        }
+    ];
+
+    return {
+        lessonId: lessonNumber,
+        title: meta.title,
+        example_sentences: sentences,
+        grammar: {
+            point: meta.point,
+            pattern: meta.pattern,
+            uzbek_explanation: meta.exp,
+            examples: [
+                {
+                    chinese: `${w0.hanzi} · ${w1.hanzi} · ${w2.hanzi}`,
+                    pinyin: `${w0.pinyin} · ${w1.pinyin} · ${w2.pinyin}`,
+                    uzbek: `${w0.uzbek} / ${w1.uzbek} / ${w2.uzbek}`,
+                    english: `Core New HSK 3.0 collocations`
+                }
+            ]
+        }
+    };
+}
+
+// Display learning content (example sentences, grammar, and interactive Sentence Builder)
 function displayLearningContent(lessonNumber, track) {
     const exampleSentencesContainer = document.getElementById('exampleSentences');
     const grammarNoteContainer = document.getElementById('grammarNote');
 
-    // Select the appropriate content data based on track
-    const contentData = track === 'classic' ? lessonContentData : newHskLessonContentData;
-
-    if (!contentData || !contentData.lessons) {
-        exampleSentencesContainer.innerHTML = '<p class="learning-placeholder">Learning content not available for this lesson.</p>';
-        grammarNoteContainer.innerHTML = '<p class="learning-placeholder">Learning content not available for this lesson.</p>';
-        return;
+    let lessonObj = null;
+    if (currentHSK === 1) {
+        const contentData = track === 'classic' ? lessonContentData : newHskLessonContentData;
+        if (contentData && contentData.lessons) {
+            lessonObj = contentData.lessons.find(l => l.lessonId === lessonNumber) || null;
+        }
+    }
+    if (!lessonObj) {
+        lessonObj = generateDynamicLessonContent(currentHSK, lessonNumber, currentWords);
     }
 
-    const lesson = contentData.lessons.find(l => l.lessonId === lessonNumber);
-    if (!lesson) {
-        exampleSentencesContainer.innerHTML = '<p class="learning-placeholder">No content for this lesson.</p>';
-        grammarNoteContainer.innerHTML = '<p class="learning-placeholder">No content for this lesson.</p>';
-        return;
-    }
-
-    // Display example sentences
-    exampleSentencesContainer.innerHTML = lesson.example_sentences.map(sentence => `
+    // Display example sentences with audio buttons
+    exampleSentencesContainer.innerHTML = lessonObj.example_sentences.map(sentence => `
         <div class="example-sentence-card">
-            <div class="sentence-chinese">${sentence.chinese}</div>
+            <div class="sentence-top-row">
+                <div class="sentence-chinese">${sentence.chinese}</div>
+                <button type="button" class="sentence-audio-btn" data-speak="${sentence.chinese.replace(/"/g, '&quot;')}" aria-label="Gapni tinglash">🔊</button>
+            </div>
             <div class="sentence-pinyin">${sentence.pinyin}</div>
             <div class="sentence-uzbek">${sentence.uzbek}</div>
-            <div class="sentence-english">${sentence.english}</div>
+            ${sentence.english ? `<div class="sentence-english">${sentence.english}</div>` : ''}
         </div>
     `).join('');
 
+    exampleSentencesContainer.querySelectorAll('.sentence-audio-btn').forEach(btn => {
+        btn.addEventListener('click', () => speakChineseText(btn.dataset.speak));
+    });
+
     // Display grammar note
-    if (lesson.grammar) {
+    if (lessonObj.grammar) {
         grammarNoteContainer.innerHTML = `
             <div class="grammar-content">
-                <h4 class="grammar-point">${lesson.grammar.point}</h4>
+                <h4 class="grammar-point">${lessonObj.grammar.point}</h4>
                 <div class="grammar-pattern">
-                    <strong>Pattern:</strong> ${lesson.grammar.pattern}
+                    <strong>Qolip (Pattern):</strong> ${lessonObj.grammar.pattern}
                 </div>
                 <div class="grammar-explanation">
-                    ${lesson.grammar.uzbek_explanation}
+                    ${lessonObj.grammar.uzbek_explanation}
                 </div>
-                ${lesson.grammar.examples && lesson.grammar.examples.length > 0 ? `
+                ${lessonObj.grammar.examples && lessonObj.grammar.examples.length > 0 ? `
                     <div class="grammar-examples">
-                        ${lesson.grammar.examples.map(ex => `
+                        ${lessonObj.grammar.examples.map(ex => `
                             <div class="grammar-example">
                                 <div class="grammar-example-chinese">${ex.chinese}</div>
                                 <div class="grammar-example-pinyin">${ex.pinyin}</div>
                                 <div class="grammar-example-uzbek">${ex.uzbek}</div>
-                                <div class="grammar-example-english">${ex.english}</div>
                             </div>
                         `).join('')}
                     </div>
@@ -1264,6 +1870,131 @@ function displayLearningContent(lessonNumber, track) {
     } else {
         grammarNoteContainer.innerHTML = '<p class="learning-placeholder">No grammar note for this lesson.</p>';
     }
+
+    renderSentenceBuilderGame(lessonObj);
+}
+
+function renderSentenceBuilderGame(lessonObj) {
+    const box = document.getElementById('sentenceBuilderContainer');
+    if (!box) return;
+
+    // Build a clean 4-tile sentence puzzle from currentWords or lesson example
+    const validWords = currentWords.filter(w => w && w.id !== 0);
+    const wA = validWords[0] || { hanzi: '我', pinyin: 'wǒ', uzbek: 'Men' };
+    const wB = validWords[1] || { hanzi: '喜欢', pinyin: 'xǐhuan', uzbek: 'yoqtirmoq' };
+    const tokens = [
+        { hanzi: '我', pinyin: 'wǒ' },
+        { hanzi: '今天', pinyin: 'jīntiān' },
+        { hanzi: '学习', pinyin: 'xuéxí' },
+        { hanzi: wA.hanzi, pinyin: wA.pinyin }
+    ];
+    const targetMeaning = `Men bugun "${wA.uzbek}" (${wA.hanzi}) so‘zini o‘rganaman.`;
+    const fullSentence = tokens.map(t => t.hanzi).join('');
+
+    // Shuffle indices
+    const shuffled = tokens.map((t, idx) => ({ ...t, idx }));
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    if (shuffled.every((item, i) => item.idx === i) && shuffled.length > 1) {
+        [shuffled[0], shuffled[1]] = [shuffled[1], shuffled[0]];
+    }
+
+    let picked = [];
+    let solved = false;
+
+    function renderState() {
+        box.innerHTML = `
+            <p class="builder-prompt">Quyidagi ma’noga mos xitoycha gapni bo‘laklarni bosib tuzing:</p>
+            <div class="builder-target-uzbek">“${targetMeaning}”</div>
+            <div class="builder-answer-slot" id="builderAnswerSlot">
+                ${picked.length === 0
+                    ? '<span class="builder-slot-placeholder">So‘z bo‘laklarini ketma-ket bosing...</span>'
+                    : picked.map((p, pIdx) => `
+                        <button type="button" class="builder-tile is-picked" data-picked-idx="${pIdx}">
+                            <span class="bt-hanzi">${p.hanzi}</span>
+                            <span class="bt-pinyin">${p.pinyin}</span>
+                        </button>
+                    `).join('')}
+            </div>
+            <div class="builder-pool" id="builderPool">
+                ${shuffled.map((item, sIdx) => {
+                    const used = picked.some(p => p.sIdx === sIdx);
+                    return `
+                        <button type="button" class="builder-tile ${used ? 'is-used' : ''}" data-pool-idx="${sIdx}" ${used || solved ? 'disabled' : ''}>
+                            <span class="bt-hanzi">${item.hanzi}</span>
+                            <span class="bt-pinyin">${item.pinyin}</span>
+                        </button>
+                    `;
+                }).join('')}
+            </div>
+            <div class="builder-footer">
+                <span class="builder-feedback" id="builderFeedback"></span>
+                <div class="builder-actions">
+                    <button type="button" class="secondary-btn builder-reset-btn" id="builderResetBtn">🔄 Qayta</button>
+                    <button type="button" class="secondary-btn builder-listen-btn" id="builderListenBtn">🔊 Eshitish</button>
+                </div>
+            </div>
+        `;
+
+        box.querySelectorAll('[data-pool-idx]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (solved) return;
+                const sIdx = parseInt(btn.dataset.poolIdx, 10);
+                const item = shuffled[sIdx];
+                speakChineseText(item.hanzi);
+                picked.push({ ...item, sIdx });
+                renderState();
+                checkBuilderCompletion();
+            });
+        });
+
+        box.querySelectorAll('[data-picked-idx]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (solved) return;
+                const pIdx = parseInt(btn.dataset.pickedIdx, 10);
+                picked.splice(pIdx, 1);
+                renderState();
+            });
+        });
+
+        const resetBtn = box.querySelector('#builderResetBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                picked = [];
+                solved = false;
+                renderState();
+            });
+        }
+
+        const listenBtn = box.querySelector('#builderListenBtn');
+        if (listenBtn) {
+            listenBtn.addEventListener('click', () => speakChineseText(fullSentence));
+        }
+    }
+
+    function checkBuilderCompletion() {
+        const fb = box.querySelector('#builderFeedback');
+        if (picked.length < tokens.length) return;
+        const userStr = picked.map(p => p.hanzi).join('');
+        if (userStr === fullSentence) {
+            solved = true;
+            if (fb) {
+                fb.textContent = '🎉 Barakalla! Gap to‘g‘ri tuzildi (+15 XP)';
+                fb.className = 'builder-feedback is-correct';
+            }
+            addXP(15);
+            speakChineseText(fullSentence);
+        } else {
+            if (fb) {
+                fb.textContent = '❌ Tartib biroz boshqacha. Ustiga bosib o‘zgartirib ko‘ring!';
+                fb.className = 'builder-feedback is-wrong';
+            }
+        }
+    }
+
+    renderState();
 }
 
 function showLeaderboard() {
@@ -1354,6 +2085,7 @@ function showLessonsView() {
 }
 
 function showLessonView(lessonNumber) {
+    isCustomReviewDeck = false;
     currentLesson = lessonNumber;
     const selectedTrack = lessonTracks[currentLessonTrack] || lessonTracks.classic;
     currentWords = vocabularyData.filter(word => 
@@ -1361,11 +2093,10 @@ function showLessonView(lessonNumber) {
     );
     
     if (currentWords.length === 0) {
-        // If no words for this lesson, show a message
         lessonTitle.textContent = `Lesson ${lessonNumber} - No words available`;
         currentWords = [{ id: 0, hsk: currentHSK, track: selectedTrack.dataTrack, lesson: lessonNumber, hanzi: "暂无", pinyin: "zàn wú", uzbek: "Hozircha yo'q" }];
     } else {
-        lessonTitle.textContent = `Lesson ${lessonNumber} — ${currentWords.length} words`;
+        lessonTitle.textContent = `HSK ${currentHSK} · Lesson ${lessonNumber} (${currentWords.length} so‘z)`;
     }
     
     flashcardIndex = 0;
@@ -1388,18 +2119,42 @@ function showLessonView(lessonNumber) {
     updateLessonFlowUI();
 }
 
+function startSmartCustomDeck(type) {
+    const sourceIds = type === 'mistakes' ? mistakeWords : bookmarkedWords;
+    let deckWords = vocabularyData.filter(w => sourceIds.includes(w.id));
+    if (deckWords.length === 0) {
+        showToast(type === 'mistakes'
+            ? '✨ Hozircha xato qilingan so‘zlar yo‘q! Quiz yechib ko‘ring.'
+            : '⭐ Hozircha saqlangan so‘zlar yo‘q! Kartochkalarda "⭐ Saqlash" ni bosing.');
+        return;
+    }
+    isCustomReviewDeck = true;
+    currentWords = deckWords.slice(0, 20);
+    lessonTitle.textContent = type === 'mistakes'
+        ? `🧠 Xatolar ustida ishlash (${currentWords.length} so‘z)`
+        : `⭐ Saqlangan so‘zlar (${currentWords.length} so‘z)`;
+    flashcardIndex = 0;
+    quizIndex = 0;
+    quizScore = 0;
+    quizAnswered = false;
+    updateFlashcard();
+    updateQuiz();
+    showView(lesson);
+    switchMode('flashcard');
+}
+
 // Lessons header: static kicker element + JS-owned progress line (additive only)
 function updateLessonsHeader() {
     const kicker = document.getElementById('lessonsKicker');
     const progress = document.getElementById('lessonsProgress');
     const selectedTrack = lessonTracks[currentLessonTrack] || lessonTracks.classic;
-    const trackLabel = currentLessonTrack === 'new' ? 'New HSK 3.0 path' : 'Classic path';
+    const trackLabel = (currentHSK >= 2 || currentLessonTrack === 'new') ? 'New HSK 3.0 yangi kitob darslari' : 'Classic HSK 1 yo‘nalishi';
     const trackLessons = vocabularyData.filter(word =>
         word.hsk === currentHSK && word.track === selectedTrack.dataTrack
     );
     const lessonNums = [...new Set(trackLessons.map(word => word.lesson))].sort((a, b) => a - b);
     const completed = lessonNums.filter(num => isLessonComplete(num, selectedTrack.dataTrack)).length;
-    if (kicker) kicker.textContent = `HSK ${currentHSK} · ${trackLabel} — follow the winding route below`;
+    if (kicker) kicker.textContent = `HSK ${currentHSK} · ${trackLabel}`;
     if (progress) progress.textContent = `${completed} of ${lessonNums.length} lessons complete`;
 }
 
@@ -1759,9 +2514,13 @@ function updateFlashcard() {
         hanziWriter = null;
     }
     
-    // Update learned button state
+    // Update learned & bookmark button states
     updateLearnedButton();
+    updateBookmarkButton();
     updateLearnedCount();
+
+    const speakBanner = document.getElementById('speakFeedbackBanner');
+    if (speakBanner) speakBanner.hidden = true;
 
     const nextCardLabel = document.getElementById('nextCardLabel');
     if (nextCardLabel) {
@@ -1947,7 +2706,137 @@ function updateLearnedButton() {
         markLearned.textContent = '✓ Learned';
     } else {
         markLearned.classList.remove('learned');
-        markLearned.textContent = 'Mark as Learned';
+        markLearned.textContent = '✓ Learned';
+    }
+}
+
+function toggleBookmarkCurrentWord() {
+    if (currentWords.length === 0) return;
+    const word = currentWords[flashcardIndex];
+    if (!word || !word.id) return;
+    const idx = bookmarkedWords.indexOf(word.id);
+    if (idx > -1) {
+        bookmarkedWords.splice(idx, 1);
+        showToast(`${word.hanzi} saqlanganlardan olindi`);
+    } else {
+        bookmarkedWords.push(word.id);
+        showToast(`⭐ ${word.hanzi} (${word.uzbek}) saqlandi!`);
+    }
+    localStorage.setItem('bookmarkedWords', JSON.stringify(bookmarkedWords));
+    updateBookmarkButton();
+    updateDashboardBentoUI();
+}
+
+function updateBookmarkButton() {
+    const btn = document.getElementById('bookmarkWordBtn');
+    if (!btn || currentWords.length === 0) return;
+    const word = currentWords[flashcardIndex];
+    const isSaved = word && bookmarkedWords.includes(word.id);
+    btn.classList.toggle('bookmarked', Boolean(isSaved));
+    btn.textContent = isSaved ? '⭐ Saqlangan' : '☆ Saqlash';
+}
+
+function recordMistakeWord(wordId) {
+    if (!wordId || wordId === 0) return;
+    if (!mistakeWords.includes(wordId)) {
+        mistakeWords.push(wordId);
+        localStorage.setItem('mistakeWords', JSON.stringify(mistakeWords));
+        updateDashboardBentoUI();
+    }
+}
+
+function clearMistakeWordIfMastered(wordId) {
+    if (!wordId) return;
+    const idx = mistakeWords.indexOf(wordId);
+    if (idx > -1 && isCustomReviewDeck) {
+        mistakeWords.splice(idx, 1);
+        localStorage.setItem('mistakeWords', JSON.stringify(mistakeWords));
+        updateDashboardBentoUI();
+    }
+}
+
+function startSpeechPronunciationCheck() {
+    if (currentWords.length === 0) return;
+    const word = currentWords[flashcardIndex];
+    const speakBtn = document.getElementById('speakPracticeBtn');
+    const speakLbl = document.getElementById('speakPracticeLabel');
+    const banner = document.getElementById('speakFeedbackBanner');
+
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+        // Fallback for browsers without SpeechRecognition: play audio & let user repeat
+        playPronunciation();
+        if (banner) {
+            banner.hidden = false;
+            banner.className = 'speak-feedback-banner is-listening';
+            banner.textContent = `🔊 "${word.hanzi}" (${word.pinyin}) — ovoz chiqarib qaytarib ayting!`;
+        }
+        return;
+    }
+
+    if (activeSpeechRecognition) {
+        try { activeSpeechRecognition.stop(); } catch (e) {}
+        activeSpeechRecognition = null;
+    }
+
+    const rec = new SpeechRec();
+    activeSpeechRecognition = rec;
+    rec.lang = 'zh-CN';
+    rec.interimResults = false;
+    rec.maxAlternatives = 3;
+
+    if (speakBtn) speakBtn.classList.add('is-recording');
+    if (speakLbl) speakLbl.textContent = 'Tinglanmoqda...';
+    if (banner) {
+        banner.hidden = false;
+        banner.className = 'speak-feedback-banner is-listening';
+        banner.textContent = `🎙️ Mikrofonga "${word.hanzi}" (${word.pinyin}) deb ayting...`;
+    }
+
+    rec.onresult = (event) => {
+        const transcripts = [];
+        for (let i = 0; i < event.results[0].length; i++) {
+            transcripts.push(event.results[0][i].transcript.trim());
+        }
+        const heard = transcripts[0] || '';
+        const cleanTarget = word.hanzi.replace(/[^一-龥]/g, '');
+        const matched = transcripts.some(t => t.includes(cleanTarget) || cleanTarget.includes(t.replace(/[^一-龥]/g, '')));
+
+        if (matched) {
+            if (banner) {
+                banner.className = 'speak-feedback-banner is-correct';
+                banner.textContent = `🎉 Ajoyib talaffuz! Eshitildi: "${heard}" (+15 XP)`;
+            }
+            addXP(15);
+            playSuccessSound();
+        } else {
+            if (banner) {
+                banner.className = 'speak-feedback-banner is-retry';
+                banner.textContent = `🔄 Eshitildi: "${heard || '...'}". Asli: ${word.hanzi} (${word.pinyin})`;
+            }
+            speakChineseText(word.hanzi);
+        }
+    };
+
+    rec.onerror = () => {
+        if (banner) {
+            banner.className = 'speak-feedback-banner is-retry';
+            banner.textContent = `🔊 Mikrofon ruxsati topilmadi. Namunani eshitib takrorlang: ${word.hanzi} (${word.pinyin})`;
+        }
+        speakChineseText(word.hanzi);
+    };
+
+    rec.onend = () => {
+        if (speakBtn) speakBtn.classList.remove('is-recording');
+        if (speakLbl) speakLbl.textContent = 'Talaffuz';
+        activeSpeechRecognition = null;
+    };
+
+    try {
+        rec.start();
+    } catch (e) {
+        if (speakBtn) speakBtn.classList.remove('is-recording');
+        if (speakLbl) speakLbl.textContent = 'Talaffuz';
     }
 }
 
@@ -2180,9 +3069,23 @@ function updateQuiz() {
     nextQuizQuestion.disabled = true;
     
     const word = currentWords[quizIndex];
-    const question = quizType === 'meaning' ? word.hanzi : quizType === 'pinyin' ? word.uzbek : word.pinyin;
-    quizHanzi.textContent = question;
-    quizPrompt.textContent = quizType === 'meaning' ? 'What does this mean?' : quizType === 'pinyin' ? 'Choose the correct Pinyin.' : 'Choose the correct Hanzi.';
+    if (quizType === 'audio') {
+        quizHanzi.innerHTML = `<button type="button" class="quiz-audio-hero-btn" id="quizAudioReplayBtn">🔊<span>Qayta eshitish</span></button>`;
+        quizPrompt.textContent = 'So‘zni eshiting va to‘g‘ri ma’noni tanlang:';
+        const replayBtn = document.getElementById('quizAudioReplayBtn');
+        if (replayBtn) {
+            replayBtn.addEventListener('click', () => speakChineseText(word.hanzi));
+        }
+        setTimeout(() => speakChineseText(word.hanzi), 120);
+    } else {
+        const question = quizType === 'meaning' ? word.hanzi : quizType === 'pinyin' ? word.uzbek : word.pinyin;
+        quizHanzi.textContent = question;
+        quizPrompt.textContent = quizType === 'meaning'
+            ? 'Bu so‘zning ma’nosi nima?'
+            : quizType === 'pinyin'
+                ? 'To‘g‘ri Pinyin talaffuzini tanlang:'
+                : 'To‘g‘ri Hanzi iyeroglifini tanlang:';
+    }
     quizScoreElement.textContent = quizScore;
     currentQuestion.textContent = quizIndex + 1;
     totalQuestions.textContent = currentWords.length;
@@ -2194,7 +3097,11 @@ function updateQuiz() {
     options.forEach((option) => {
         const optionBtn = document.createElement('button');
         optionBtn.className = 'quiz-option';
-        optionBtn.textContent = quizType === 'meaning' ? option.uzbek : quizType === 'pinyin' ? option.pinyin : option.hanzi;
+        if (quizType === 'audio') {
+            optionBtn.textContent = `${option.hanzi} (${option.pinyin}) â€” ${option.uzbek}`;
+        } else {
+            optionBtn.textContent = quizType === 'meaning' ? option.uzbek : quizType === 'pinyin' ? option.pinyin : option.hanzi;
+        }
         optionBtn.dataset.wordId = option.id;
         optionBtn.addEventListener('click', () => checkAnswer(optionBtn, option.id === word.id));
         quizOptions.appendChild(optionBtn);
@@ -2204,8 +3111,11 @@ function updateQuiz() {
 function generateQuizOptions(correctWord) {
     const options = [correctWord];
     
-    // Get random wrong answers from other words in the SAME curriculum track
-    const otherWords = vocabularyData.filter(w => w.id !== correctWord.id && w.track === correctWord.track);
+    // Prefer words from the same HSK level first
+    let otherWords = vocabularyData.filter(w => w.id !== correctWord.id && w.hsk === correctWord.hsk && w.track === correctWord.track);
+    if (otherWords.length < 3) {
+        otherWords = vocabularyData.filter(w => w.id !== correctWord.id);
+    }
     
     while (options.length < 4 && otherWords.length > 0) {
         const randomIndex = Math.floor(Math.random() * otherWords.length);
@@ -2226,15 +3136,16 @@ function checkAnswer(selectedBtn, isCorrect) {
     if (quizAnswered) return;
     
     quizAnswered = true;
+    const correctWord = currentWords[quizIndex];
     
     if (isCorrect) {
         selectedBtn.classList.add('correct');
         quizScore++;
         quizScoreElement.textContent = quizScore;
+        if (correctWord) clearMistakeWordIfMastered(correctWord.id);
     } else {
         selectedBtn.classList.add('incorrect');
-        // Highlight correct answer
-        const correctWord = currentWords[quizIndex];
+        if (correctWord) recordMistakeWord(correctWord.id);
         const options = quizOptions.querySelectorAll('.quiz-option');
         options.forEach(option => {
             if (option.dataset.wordId === String(correctWord.id)) {
@@ -2245,7 +3156,6 @@ function checkAnswer(selectedBtn, isCorrect) {
     
     nextQuizQuestion.disabled = false;
 
-    // Automatically advance to the next quiz question (or Writing stage on last question) after 850ms
     if (quizAutoAdvanceTimer) clearTimeout(quizAutoAdvanceTimer);
     quizAutoAdvanceTimer = setTimeout(() => {
         quizAutoAdvanceTimer = null;
@@ -2380,17 +3290,18 @@ function switchMode(mode) {
         renderLessonVocabPreview();
         const exSec = document.getElementById('exampleSentencesSection');
         const grSec = document.getElementById('grammarNoteSection');
+        const sbSec = document.getElementById('sentenceBuilderSection');
+        if (exSec) exSec.style.display = '';
+        if (grSec) grSec.style.display = '';
+        if (sbSec) sbSec.style.display = '';
         if (currentHSK === 1) {
-            if (exSec) exSec.style.display = '';
-            if (grSec) grSec.style.display = '';
             if (currentLessonTrack === 'classic') {
                 loadLessonContent().then(() => displayLearningContent(currentLesson, 'classic'));
             } else {
                 loadNewHskLessonContent().then(() => displayLearningContent(currentLesson, 'new'));
             }
         } else {
-            if (exSec) exSec.style.display = 'none';
-            if (grSec) grSec.style.display = 'none';
+            displayLearningContent(currentLesson, 'classic');
         }
     }
 
