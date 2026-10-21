@@ -4185,6 +4185,99 @@ const toneLabView = document.getElementById('toneLab');
 const survivalView = document.getElementById('survivalPhrases');
 const aiLaoshiView = document.getElementById('aiLaoshi');
 
+// Natural, context-appropriate example sentences dictionary
+const WORD_NATURAL_EXAMPLES = {
+    // Polite phrases & Greetings
+    '你好': { cn: '你好！很高兴认识你。', py: 'Nǐ hǎo! Hěn gāoxìng rènshi nǐ.', uz: 'Salom! Siz bilan tanishganimdan xursandman.' },
+    '您好': { cn: '老师，您好！', py: 'Lǎoshī, nín hǎo!', uz: 'Ustoz, assalomu alaykum!' },
+    '谢谢': { cn: '非常感谢你的帮助！', py: 'Fēicháng gǎnxiè nǐ de bāngzhù!', uz: 'Yordamingiz uchun katta rahmat!' },
+    '不客气': { cn: '不用谢，别客气！', py: 'Bú yòng xiè, bié kèqi!', uz: 'Arzimaydi, xijolat bo‘lmang!' },
+    '再见': { cn: '明天见，再见！', py: 'Míngtiān jiàn, zàijiàn!', uz: 'Ertagacha, xayr!' },
+    '对不起': { cn: '对不起，我来晚了。', py: 'Duìbuqǐ, wǒ lái wǎn le.', uz: 'Kechirasiz, men kechikdim.' },
+    '没关系': { cn: '没关系，别担心。', py: 'Méi guānxi, bié dānxīn.', uz: 'Hechqisi yo‘q, xavotir olmang.' },
+    '请': { cn: '请进，请坐！', py: 'Qǐng jìn, qǐng zuò!', uz: 'Kiring, marhamat o‘tiring!' },
+
+    // Pronouns
+    '我': { cn: '我是留学生。', py: 'Wǒ shì liúxuéshēng.', uz: 'Men chet ellik talabaman.' },
+    '你': { cn: '你是哪国人？', py: 'Nǐ shì nǎ guó rén?', uz: 'Siz qaysi davlatdansiz?' },
+    '他': { cn: '他是我的好朋友。', py: 'Tā shì wǒ de hǎo péngyou.', uz: 'U mening yaxshi do‘stim.' },
+    '她': { cn: '她是我们的汉语老师。', py: 'Tā shì wǒmen de Hànyǔ lǎoshī.', uz: 'U bizning xitoy tili ustozimiz.' },
+    '我们': { cn: '我们一起去吃饭吧。', py: 'Wǒmen yìqǐ qù chīfàn ba.', uz: 'Keling, birga ovqatlangani boramiz.' },
+
+    // Question words
+    '什么': { cn: '这是什么东西？', py: 'Zhè shì shénme dōngxi?', uz: 'Bu nima narsa?' },
+    '哪儿': { cn: '请问，洗手间在哪儿？', py: 'Qǐngwèn, xǐshǒujiān zài nǎr?', uz: 'Kechirasiz, hojatxona qayerda?' },
+    '谁': { cn: '他是谁？', py: 'Tā shì shéi?', uz: 'U kim?' },
+    '多少': { cn: '这个苹果多少钱？', py: 'Zhè ge píngguǒ duōshao qián?', uz: 'Bu olma qancha turadi?' },
+    '几': { cn: '现在几点了？', py: 'Xiànzài jǐ diǎn le?', uz: 'Hozir soat necha bo‘ldi?' },
+    '怎么': { cn: '这个汉字怎么写？', py: 'Zhè ge hànzì zěnme xiě?', uz: 'Bu iyeroglif qanday yoziladi?' },
+    '怎么样': { cn: '今天的中国菜怎么样？', py: 'Jīntiān de Zhōngguó cài zěnmeyàng?', uz: 'Bugungi xitoycha ovqat qanday ekan?' },
+
+    // Common Verbs
+    '是': { cn: '我是乌兹别克斯坦人。', py: 'Wǒ shì Wūzībiékèsītǎn rén.', uz: 'Men O‘zbekistonlikman.' },
+    '有': { cn: '我有一个问题。', py: 'Wǒ yǒu yí gè wèntí.', uz: 'Menda bitta savol bor.' },
+    '看': { cn: '我喜欢看书。', py: 'Wǒ xǐhuan kàn shū.', uz: 'Men kitob o‘qishni yoqtiraman.' },
+    '听': { cn: '请认真听老师讲课。', py: 'Qǐng rènzhēn tīng lǎoshī jiǎngkè.', uz: 'Ustozning tushuntirishini diqqat bilan tinglang.' },
+    '说': { cn: '请慢一点说。', py: 'Qǐng màn yìdiǎn shuō.', uz: 'Iltimos, sal sekinroq gapiring.' },
+    '读': { cn: '跟我一起读这个词。', py: 'Gēn wǒ yìqǐ dú zhè ge cí.', uz: 'Men bilan birga bu so‘zni o‘qing.' },
+    '写': { cn: '汉字很有意思，我想写。', py: 'Hànzì hěn yǒu yìsi, wǒ xiǎng xiě.', uz: 'Iyerogliflar juda qiziq, men yozishni xohlayman.' },
+    '吃': { cn: '你想吃什么？', py: 'Nǐ xiǎng chī shénme?', uz: 'Nima yeyishni xohlaysiz?' },
+    '喝': { cn: '我想喝一杯水。', py: 'Wǒ xiǎng hē yì bēi shuǐ.', uz: 'Bir stakan suv ichmoqchiman.' },
+    '去': { cn: '明天我去超市买东西。', py: 'Míngtiān wǒ qù chāoshì mǎi dōngxi.', uz: 'Ertaga do‘konga xarid qilgani boraman.' },
+    '来': { cn: '欢迎你来中国！', py: 'Huānyíng nǐ lái Zhōngguó!', uz: 'Xitoyga xush kelibsiz!' },
+    '买': { cn: '我想买这件衣服。', py: 'Wǒ xiǎng mǎi zhè jiàn yīfu.', uz: 'Bu kiyimni sotib olmoqchiman.' },
+    '坐': { cn: '请坐在这里。', py: 'Qǐng zuò zài zhèli.', uz: 'Iltimos, shu yerga o‘tiring.' },
+    '叫': { cn: '你叫什么名字？', py: 'Nǐ jiào shénme míngzi?', uz: 'Ismingiz nima?' },
+    '认识': { cn: '认识你很高兴。', py: 'Rènshi nǐ hěn gāoxìng.', uz: 'Siz bilan tanishganimdan mamnunman.' },
+    '喜欢': { cn: '我喜欢学中文。', py: 'Wǒ xǐhuan xué Zhōngwén.', uz: 'Men xitoy tilini o‘rganishni yaxshi ko‘raman.' },
+    '想': { cn: '我想去图书馆看书。', py: 'Wǒ xiǎng qù túshūguǎn kàn shū.', uz: 'Men kutubxonaga kitob o‘qishga bormoqchiman.' },
+    '会': { cn: '你会说汉语吗？', py: 'Nǐ huì shuō Hànyǔ ma?', uz: 'Siz xitoycha gapira olasizmi?' },
+    '能': { cn: '这里能拍照吗？', py: 'Zhèli néng pāizhào ma?', uz: 'Bu yerda rasmga tushish mumkinmi?' },
+
+    // Adjectives & Adverbs
+    '好': { cn: '这本词典非常好！', py: 'Zhè běn cídiǎn fēicháng hǎo!', uz: 'Bu lug‘at juda ajoyib!' },
+    '大': { cn: '这个房间很大。', py: 'Zhè ge fángjiān hěn dà.', uz: 'Bu xona juda katta.' },
+    '小': { cn: '这只小猫很可爱。', py: 'Zhè zhī xiǎomāo hěn kě’ài.', uz: 'Bu mushukcha juda shirin.' },
+    '多': { cn: '学校里学生很多。', py: 'Xuéxiào lǐ xuésheng hěn duō.', uz: 'Maktabda talabalar juda ko‘p.' },
+    '少': { cn: '今天人很少。', py: 'Jīntiān rén hěn shǎo.', uz: 'Bugun odam juda kam.' },
+    '冷': { cn: '今天天气很冷。', py: 'Jīntiān tiānqì hěn lěng.', uz: 'Bugun havo juda sovuq.' },
+    '热': { cn: '夏天很热，多喝水。', py: 'Xiàtiān hěn rè, duō hē shuǐ.', uz: 'Yoz juda issiq, ko‘proq suv iching.' },
+    '高兴': { cn: '今天我非常高兴。', py: 'Jīntiān wǒ fēicháng gāoxìng.', uz: 'Bugun men juda xursandman.' },
+    '太': { cn: '太好了，非常感谢！', py: 'Tài hǎo le, fēicháng gǎnxiè!', uz: 'Juda zo‘r bo‘ldi, katta rahmat!' },
+    '很': { cn: '汉语很有趣。', py: 'Hànyǔ hěn yǒuqù.', uz: 'Xitoy tili juda qiziqarli.' },
+    '不': { cn: '我不去，我要学习。', py: 'Wǒ bú qù, wǒ yào xuéxí.', uz: 'Men bormayman, dars qilishim kerak.' },
+    '没': { cn: '我没有时间。', py: 'Wǒ méiyǒu shíjiān.', uz: 'Mening vaqtim yo‘q.' }
+};
+
+function getWordNaturalExample(word) {
+    if (!word) return { cn: '你好！', py: 'Nǐ hǎo!', uz: 'Salom!' };
+    if (WORD_NATURAL_EXAMPLES[word.hanzi]) {
+        return WORD_NATURAL_EXAMPLES[word.hanzi];
+    }
+
+    const uzb = (word.uzbek || '').toLowerCase();
+    // Smart contextual sentence generation
+    if (uzb.includes('kitob') || uzb.includes('qalam') || uzb.includes('olma') || uzb.includes('choy') || uzb.includes('suv') || uzb.includes('telefon')) {
+        return {
+            cn: `我有一个${word.hanzi}。`,
+            py: `Wǒ yǒu yí gè ${word.hanzi}.`,
+            uz: `Menda bitta ${uzb} bor.`
+        };
+    }
+    if (uzb.includes('moq') || uzb.includes('mak') || uzb.includes('qilmoq') || uzb.includes('bormoq')) {
+        return {
+            cn: `我想${word.hanzi}。`,
+            py: `Wǒ xiǎng ${word.hanzi}.`,
+            uz: `Men ${uzb}ni xohlayman.`
+        };
+    }
+    return {
+        cn: `这个是${word.hanzi}。`,
+        py: `Zhè ge shì ${word.hanzi}.`,
+        uz: `Bu — ${uzb}.`
+    };
+}
+
 // Universal Web Audio Tone Pitch Synthesizer (Works on 100% of smartphones!)
 let audioCtxInstance = null;
 
@@ -4241,9 +4334,7 @@ function playUniversalTonePitch(toneNum, duration = 0.55) {
         gain.connect(ctx.destination);
         osc.start(now);
         osc.stop(now + duration + 0.05);
-    } catch (e) {
-        // Fallback silently if audio context not permitted yet
-    }
+    } catch (e) {}
 }
 
 // Navigation triggers
@@ -4290,7 +4381,6 @@ function showPracticeFlashcardsView() {
 }
 
 function initPracticeFlashcards() {
-    // Collect words for current HSK level
     const pool = vocabularyData.filter(w => w.hsk === currentHSK);
     pfcDeck = pool.length > 0 ? [...pool] : [...vocabularyData.slice(0, 30)];
     pfcIndex = 0;
@@ -4334,7 +4424,6 @@ function initPracticeFlashcards() {
     const againBtn = document.getElementById('pfcAgainBtn');
     if (againBtn) {
         againBtn.onclick = () => {
-            // Push current word to end of deck for spaced repetition
             const current = pfcDeck[pfcIndex];
             pfcDeck.push(current);
             nextPfcCard();
@@ -4360,7 +4449,6 @@ function renderCurrentPfcCard() {
     if (card) card.classList.remove('flipped');
 
     if (pfcIndex >= pfcDeck.length) {
-        // Deck completed celebration
         if (typeof showToast === 'function') showToast(`🎉 Tabriklaymiz! ${pfcMasteredCount} ta so‘z takrorlandi!`);
         showPracticeView();
         return;
@@ -4384,10 +4472,11 @@ function renderCurrentPfcCard() {
     if (pinyin) pinyin.textContent = word.pinyin;
     if (uzbek) uzbek.textContent = word.uzbek;
 
+    const natExample = getWordNaturalExample(word);
     if (sampleBox) {
         sampleBox.innerHTML = `
-            <span class="pfc-sample-cn">${word.hanzi}。 (Wǒ xǐhuan ${word.hanzi})</span>
-            <span class="pfc-sample-uz">Misol: Menga ${word.uzbek.toLowerCase()} yoqadi.</span>
+            <span class="pfc-sample-cn">${natExample.cn}</span>
+            <span class="pfc-sample-uz">${natExample.py} — ${natExample.uz}</span>
         `;
     }
 
@@ -4422,7 +4511,61 @@ function showAiLaoshiView(initialPrompt = null) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Attach event listeners for Practice Hub
+// ------------------------------------------------------------------------------
+// In-Lesson AI Modal (Dars ichidagi AI Tahlil Oynasi)
+// ------------------------------------------------------------------------------
+function showLessonAiModal(word) {
+    const modal = document.getElementById('lessonAiModal');
+    const titleEl = document.getElementById('lessonAiModalWordTitle');
+    const bodyEl = document.getElementById('lessonAiModalBody');
+    const closeBtn = document.getElementById('closeLessonAiModalBtn');
+    const dismissBtn = document.getElementById('dismissLessonAiModalBtn');
+    const goChatBtn = document.getElementById('goToFullAiChatBtn');
+
+    if (!modal || !bodyEl || !word) return;
+
+    if (titleEl) titleEl.textContent = `AI Tahlil: “${word.hanzi}”`;
+
+    const natEx = getWordNaturalExample(word);
+
+    bodyEl.innerHTML = `
+        <div class="lesson-ai-word-hero">
+            <div class="lai-hanzi">${word.hanzi}</div>
+            <div class="lai-pinyin">${word.pinyin}</div>
+            <div class="lai-uzbek">${word.uzbek}</div>
+            <button type="button" class="ai-action-chip ai-audio-chip" id="laiModalSpeakBtn" style="margin-top: 0.35rem;">🔊 Ovozini Tinglash</button>
+        </div>
+        <div class="lesson-ai-example-box">
+            <span style="font-size: 0.72rem; font-weight: 800; color: #10B981; text-transform: uppercase;">Jonli Misol:</span>
+            <div class="lai-eg-cn">${natEx.cn}</div>
+            <div class="lai-eg-py">${natEx.py}</div>
+            <div class="lai-eg-uz">${natEx.uz}</div>
+        </div>
+        <div style="font-size: 0.78rem; line-height: 1.4; color: var(--text-color); background: var(--bg-secondary); padding: 0.65rem 0.8rem; border-radius: 12px; border: 1px solid var(--border-color);">
+            💡 <strong>Laoshi Maslahati:</strong> Bu so‘z HSK ${word.hsk} (Lesson ${word.lesson}) darsiga tegishli. Talaffuz paytida bo‘g‘in tonlariga alohida e’tibor bering.
+        </div>
+    `;
+
+    const speakBtn = document.getElementById('laiModalSpeakBtn');
+    if (speakBtn) speakBtn.onclick = () => speakChineseText(word.hanzi);
+
+    function hideModal() {
+        modal.classList.remove('active');
+    }
+
+    if (closeBtn) closeBtn.onclick = hideModal;
+    if (dismissBtn) dismissBtn.onclick = hideModal;
+    if (goChatBtn) {
+        goChatBtn.onclick = () => {
+            hideModal();
+            showAiLaoshiView(word.hanzi);
+        };
+    }
+
+    modal.classList.add('active');
+}
+
+// Attach event listeners for Practice Hub & In-lesson AI
 document.addEventListener('DOMContentLoaded', () => {
     const hubTone = document.getElementById('hubOpenToneBtn');
     if (hubTone) hubTone.addEventListener('click', () => showToneLabView('chart'));
@@ -4460,23 +4603,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const backFromSurv = document.getElementById('backFromSurvivalBtn');
     if (backFromSurv) backFromSurv.addEventListener('click', showPracticeView);
 
-    // AI Analysis from inside lesson
+    // In-lesson AI Analysis Button -> Opens bottom modal without breaking lesson flow!
     const askAiLessonBtn = document.getElementById('askAiFromLessonBtn');
     if (askAiLessonBtn) {
         askAiLessonBtn.addEventListener('click', () => {
             const currentWord = currentWords[flashcardIndex] || currentWords[0];
-            const p = currentWord ? currentWord.hanzi : 'HSK 1 darslari';
-            showAiLaoshiView(p);
+            if (currentWord) {
+                showLessonAiModal(currentWord);
+            }
         });
     }
 });
 
 // ------------------------------------------------------------------------------
-// 17.2 TONE MASTERY LAB (Universal Audio & Pitch Analyzer)
+// 17.2 TONE MASTERY LAB
 // ------------------------------------------------------------------------------
 const TONE_CONTOURS = [
     { num: 1, symbol: 'ā', mark: '5 → 5 (440Hz)', name: '1-ton: Baland va tekis', exp: 'Ovoz baland va tekis ushlab turiladi (shifokor "A-a-a" degandek)', sample: 'mā (妈 ona), bā (八 sakkiz), tī (踢)', sound: 'mā', toneNum: 1, pitchPath: [80, 80] },
-    { num: 2, symbol: 'á', mark: '3 → 5 (330-460Hz)', name: '2-ton: Ko‘tariluvchi', exp: 'Pastdan yuqoriga ko‘tariladi ("Nima-a?", "Rostdanmi?" degandek)', sample: 'má (麻 nasha), shí (十 o‘n), lái (来)', sound: 'má', toneNum: 2, pitchPath: [50, 80] },
+    { num: 2, symbol: 'á', mark: '3 → 5 (320-460Hz)', name: '2-ton: Ko‘tariluvchi', exp: 'Pastdan yuqoriga ko‘tariladi ("Nima-a?", "Rostdanmi?" degandek)', sample: 'má (麻 nasha), shí (十 o‘n), lái (来)', sound: 'má', toneNum: 2, pitchPath: [50, 80] },
     { num: 3, symbol: 'ǎ', mark: '2 → 1 → 4 (Dip)', name: '3-ton: Tushib-chiquvchi', exp: 'Ovoz avval eng pastga tushadi, keyin sal ko‘tariladi ("Hmm..." degandek)', sample: 'mǎ (马 ot), nǐ (你 sen), hǎo (好)', sound: 'mǎ', toneNum: 3, pitchPath: [40, 20, 65] },
     { num: 4, symbol: 'à', mark: '5 → 1 (Sharp)', name: '4-ton: Qat’iy tushuvchi', exp: 'Tepadan tez va keskin pastga tushadi ("Yo‘q!", "To‘xta!" deb buyurgandek)', sample: 'mà (骂 so‘kmoq), bù (不 yo‘q), shì (是)', sound: 'mà', toneNum: 4, pitchPath: [85, 20] },
     { num: 5, symbol: 'a', mark: 'Neytral', name: 'Yengil (Neytral) ton', exp: 'Qisqa, muloyim va urg‘usiz aytiladi', sample: 'ma (吗 so‘roq), de (的 qaratqich), ba (吧)', sound: 'ma', toneNum: 5, pitchPath: [45, 45] }
@@ -4815,7 +4959,6 @@ function initToneMicPractice() {
                 } catch (e) {}
             }
 
-            // Universal Audio Pitch / Volume Visualizer via Web Audio API
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 micAudioStream = stream;
@@ -4831,11 +4974,9 @@ function initToneMicPractice() {
 
                 const interval = setInterval(() => {
                     analyser.getByteFrequencyData(dataArray);
-                    let sum = 0;
                     let maxIndex = 0;
                     let maxValue = 0;
                     for (let i = 0; i < dataArray.length; i++) {
-                        sum += dataArray[i];
                         if (dataArray[i] > maxValue) {
                             maxValue = dataArray[i];
                             maxIndex = i;
@@ -4856,7 +4997,6 @@ function initToneMicPractice() {
                         recordBtn.textContent = '🎙️ Aytib tekshirish';
                         recordBtn.classList.remove('is-recording');
 
-                        // Evaluate pitch match
                         const userCurve = recordedPitches.length > 3
                             ? recordedPitches
                             : word.path.map(v => v + (Math.random() * 10 - 5));
@@ -4874,12 +5014,10 @@ function initToneMicPractice() {
                     }
                 }, 80);
             } catch (err) {
-                // If microphone permission denied or unavailable
                 recordBtn.disabled = false;
                 recordBtn.textContent = '🎙️ Aytib tekshirish';
                 recordBtn.classList.remove('is-recording');
 
-                // Generate simulated pitch comparison without throwing ugly errors
                 const simulatedCurve = word.path.map(v => v + (Math.random() * 8 - 4));
                 drawTonePitchGuideline(word.path, simulatedCurve);
                 if (feedback) {
@@ -4926,7 +5064,7 @@ const SURVIVAL_CATEGORIES = {
         { hanzi: '师傅，去这个地址。', pinyin: 'Shīfu, qù zhè ge dìzhǐ.', uzbek: 'Haydovchi aka, mana shu manzilga boring.' },
         { hanzi: '请打表。', pinyin: 'Qǐng dǎbiǎo.', uzbek: 'Iltimos, taksi hisoblagichini (schetchik) yoqing.' },
         { hanzi: '前面靠边停一下。', pinyin: 'Qiánmiàn kàobiān tíng yíxià.', uzbek: 'Oldinroqda chetga to‘xtating.' },
-        { hanzi: '地铁站在哪里？', pinyin: 'Dìtiězhàn zài nǎli?', uzbek: 'Metro bekati qayerda?' },
+        { hanzi: '地铁站在哪里？', pinyin: 'Dìtiězhàn zǎinǎli?', uzbek: 'Metro bekati qayerda?' },
         { hanzi: '去机场大概需要多久？', pinyin: 'Qù jīchǎng dàgài xūyào duōjiǔ?', uzbek: 'Aeroportgacha taxminan qancha vaqt ketadi?' },
         { hanzi: '下车，谢谢！', pinyin: 'Xià chē, xièxie!', uzbek: 'Shu yerda tushaman, rahmat!' }
     ]
@@ -4966,14 +5104,15 @@ function renderSurvivalList(catKey) {
 }
 
 // ------------------------------------------------------------------------------
-// 17.4 REAL AI LAOSHI (Live Neural Translation & HSK Expert Coach)
+// 17.4 REAL AI LAOSHI (Live Neural Translation with Pinyin & HSK Expert Coach)
 // ------------------------------------------------------------------------------
 let AI_CHAT_HISTORY = [
     {
         sender: 'bot',
         text: `你好！Men sizning shaxsiy xitoy tili ustozingiz — <strong>Li Laoshi (李老师)</strong>man. 👩‍🏫<br><br>
-        Bugundan boshlab men <strong>haqiqiy jonli tarjima</strong> qila olaman va HSK darslaridagi har qanday tushunarsiz joylarni tahlil qilib beraman!<br><br>
-        💡 <em>Istalgan o‘zbekcha gapni yozing (masalan: “Menga suv bering” yoki “Men ertaga do‘stim bilan bozorga boraman”) — darhol sof xitoychaga tarjima qilib, tonlari va audiosini taqdim etaman!</em>`,
+        Bugun qanday yordam bera olaman?<br>
+        • 🌐 <strong>Tarjima kerakmi?</strong> Istalgan o‘zbekcha gapni yozing — darhol xitoycha iyeroglif, <strong>Pinyin talaffuzi</strong> va ovozini taqdim etaman!<br>
+        • 📚 <strong>Darsda tushunarsiz joy bormi?</strong> Grammatika, tonlar siri yoki vaziyatli gaplarni so‘rang!`,
         speak: '你好！我是李老师，很高兴帮助你学中文和翻译。'
     }
 ];
@@ -5080,40 +5219,38 @@ function handleAiScenarioChange(mode) {
     if (mode === 'classroom') {
         promptMsg = 'Darsda ustoz bilan muloqot qilish iboralari kerak';
         reply = `🎓 <strong>Darsxonada (教室) eng ko‘p ishlatiladigan iboralar:</strong><br><br>
-        1. <strong>老师，我没听懂。</strong> (Lǎoshī, wǒ méi tīngdǒng)<br>
-        • <em>Ma’nosi:</em> Ustoz, men tushunmadim.<br><br>
-        2. <strong>请再说一次，慢一点。</strong> (Qǐng zài shuō yí cì, màn yìdiǎn)<br>
-        • <em>Ma’nosi:</em> Iltimos yana bir bor sekinroq ayting.<br><br>
-        3. <strong>这个字怎么读？</strong> (Zhè ge zì zěnme dú?)<br>
-        • <em>Ma’nosi:</em> Bu iyeroglif qanday o‘qiladi?`;
+        1. <strong>老师，我没听懂。</strong><br>
+        🗣️ <em>Lǎoshī, wǒ méi tīngdǒng.</em> — Ustoz, men tushunmadim.<br><br>
+        2. <strong>请再说一次，慢一点。</strong><br>
+        🗣️ <em>Qǐng zài shuō yí cì, màn yìdiǎn.</em> — Iltimos yana bir bor sekinroq ayting.<br><br>
+        3. <strong>这个字怎么读？</strong><br>
+        🗣️ <em>Zhè ge zì zěnme dú?</em> — Bu iyeroglif qanday o‘qiladi?`;
         speak = '老师，我没听懂。请再说一次。';
     } else if (mode === 'canteen') {
         promptMsg = 'Oshxonada qanday ovqat buyurtma qilamiz?';
         reply = `🍜 <strong>Xitoy oshxonalarida (食堂) hayotiy muhim iboralar:</strong><br><br>
-        1. <strong>不要辣！</strong> (Bú yào là!) — <em>Mutlaqo achchiq solmang!</em><br>
-        2. <strong>打包带走。</strong> (Dǎbāo dài zǒu) — <em>Olib ketishga qilib bering.</em><br>
-        3. <strong>我不吃猪肉，有牛肉吗？</strong> (Wǒ bù chī zhūròu, yǒu niúròu ma?) — <em>Cho‘chqa yemayman, mol go‘shti bormi?</em><br>
-        4. <strong>多少钱？微信支付。</strong> (Duōshao qián? Wēixìn zhīfù) — <em>Qancha bo‘ldi? WeChat orqali to‘layman.</em>`;
+        1. <strong>不要辣！</strong><br>
+        🗣️ <em>Bú yào là!</em> — Mutlaqo achchiq solmang!<br><br>
+        2. <strong>打包带走。</strong><br>
+        🗣️ <em>Dǎbāo dài zǒu.</em> — Olib ketishga qilib bering.<br><br>
+        3. <strong>我不吃猪肉，有牛肉吗？</strong><br>
+        🗣️ <em>Wǒ bù chī zhūròu, yǒu niúròu ma?</em> — Cho‘chqa yemayman, mol go‘shti bormi?`;
         speak = '不要辣，打包带走，微信支付。';
     } else if (mode === 'market') {
         promptMsg = 'Do‘kon va kuryer (外卖) bilan gaplashish';
         reply = `📱 <strong>To‘lov va Kuryer (快递 / 外卖) muloqoti:</strong><br><br>
-        1. <strong>我扫你还是你扫我？</strong> (Wǒ sǎo nǐ háishi nǐ sǎo wǒ?)<br>
-        • <em>QR kod to‘lovi:</em> Men siznikini skanerlaymanmi yoki siz menikinimi?<br><br>
-        2. <strong>放门口吧，谢谢！</strong> (Fàng ménkǒu ba, xièxie!)<br>
-        • <em>Kuryerga:</em> Eshik oldiga qoldiring, rahmat!<br><br>
-        3. <strong>取件码是多少？</strong> (Qǔjiàn mǎ shì duōshao?)<br>
-        • <em>Pochta qutisi paroli.</em>`;
+        1. <strong>我扫你还是你扫我？</strong><br>
+        🗣️ <em>Wǒ sǎo nǐ háishi nǐ sǎo wǒ?</em> — QR kodni siz skaner qilasizmi yoki menmi?<br><br>
+        2. <strong>放门口吧，谢谢！</strong><br>
+        🗣️ <em>Fàng ménkǒu ba, xièxie!</em> — Kuryerga: eshik oldiga qoldiring, rahmat!`;
         speak = '我扫你吧。放在门口，谢谢！';
     } else if (mode === 'taxi') {
         promptMsg = 'Taksida nima deyish kerak?';
         reply = `🚕 <strong>Taksi va Metroda (打车 / 地铁):</strong><br><br>
-        1. <strong>师傅，去这个地址。</strong> (Shīfu, qù zhè ge dìzhǐ)<br>
-        • Haydovchiga telefoningizdagi manzilni ko‘rsatganda.<br><br>
-        2. <strong>请打表。</strong> (Qǐng dǎbiǎo)<br>
-        • Iltimos, hisoblagichni yoqing (ortiqcha pul olmasliklari uchun).<br><br>
-        3. <strong>靠边停一下。</strong> (Kàobiān tíng yíxià)<br>
-        • Chetroqda to‘xtating.`;
+        1. <strong>师傅，去这个地址。</strong><br>
+        🗣️ <em>Shīfu, qù zhè ge dìzhǐ.</em> — Haydovchiga manzilni ko‘rsatganda.<br><br>
+        2. <strong>请打表。</strong><br>
+        🗣️ <em>Qǐng dǎbiǎo.</em> — Iltimos, hisoblagichni yoqing.`;
         speak = '师傅，去这个地址，请打表。';
     } else {
         promptMsg = 'Tonlarni tahlil qilish sirlari';
@@ -5122,7 +5259,7 @@ function handleAiScenarioChange(mode) {
         • <strong>2-ton:</strong> Pastdan yuqoriga (á — 35)<br>
         • <strong>3-ton:</strong> Tushib chiquvchi (ǎ — 214)<br>
         • <strong>4-ton:</strong> Keskin va tez pastga (à — 51)<br><br>
-        💡 <em>Istalgan iyeroglifni yozing yoki mikrofonda ayting, men uning aniq tonini tahlil qilib beraman!</em>`;
+        💡 <em>Istalgan iyeroglif yoki o‘zbekcha gap yozing, darhol Pinyin va tonlari bilan tahlil qilib beraman!</em>`;
         speak = '四声是汉语发音的关键：一声高平，二声升，三声降升，四声降。';
     }
 
@@ -5131,12 +5268,26 @@ function handleAiScenarioChange(mode) {
     renderAiMessages();
 }
 
+// Convert Chinese characters to Pinyin using known dictionary
+function lookupPinyinForChinese(cnText) {
+    if (!cnText) return '';
+    let result = '';
+    for (let char of cnText) {
+        const found = vocabularyData.find(w => w.hanzi === char || w.hanzi.startsWith(char));
+        if (found) {
+            result += (result ? ' ' : '') + found.pinyin.split(' ')[0];
+        } else {
+            result += char;
+        }
+    }
+    return result;
+}
+
 async function handleSendAiMessage(queryText) {
     if (!queryText) return;
     AI_CHAT_HISTORY.push({ sender: 'user', text: queryText });
     renderAiMessages();
 
-    // Show temporary typing indicator
     const box = document.getElementById('aiMessagesBox');
     if (box) {
         const typingEl = document.createElement('div');
@@ -5170,40 +5321,78 @@ async function handleSendAiMessage(queryText) {
 async function generateIntelligentAiResponse(query) {
     const q = query.trim().toLowerCase();
 
-    // If query matches direct HSK grammar, tone rules, or vocabulary -> use instant expert explanation
+    // Check direct HSK grammar or vocabulary lookup first
     const localMatch = checkLocalKnowledge(q, query);
     if (localMatch) {
         return localMatch;
     }
 
-    // If query looks like an Uzbek sentence or translation request -> Call Neural Translation Engine!
+    // Clean user query from conversational filler phrases
+    let cleanPrompt = query
+        .replace(/degani xitoychada qanaqa boladi|degani xitoycha qanaqa|xitoychada qanaqa boladi|xitoychada nima deydi|qanday aytiladi|qanaqa aytiladi|qanday boladi/gi, '')
+        .replace(/tarjima qilib ber|tarjima qilib bering|tarjima qiling|tarjima qil/gi, '')
+        .replace(/xitoychaga|xitoycha|ozbekcha|o‘zbekcha/gi, '')
+        .trim();
+
+    if (!cleanPrompt) cleanPrompt = query;
+
+    // Check if query is an Uzbek sentence needing translation
     const isUzbekSentence = q.includes('men') || q.includes('sen') || q.includes('biz') ||
         q.includes('kerak') || q.includes('bering') || q.includes('qayerda') ||
-        q.includes('qanday') || q.includes('tarjima') || q.includes('dars') ||
-        q.includes('boraman') || q.includes('yeyman') || q.includes('xohlayman') ||
-        query.split(' ').length >= 2;
+        q.includes('qanday') || q.includes('tarjima') || q.includes('salom') ||
+        q.includes('boraman') || q.includes('yeyman') || q.includes('ovqat') ||
+        cleanPrompt.split(' ').length >= 2;
 
     if (isUzbekSentence) {
+        let chineseResult = '';
+        let pinyinResult = '';
+
+        // Strategy 1: Google Translate API with dt=t and dt=rm (Romanization / Pinyin)
         try {
-            const cleanQuery = query.replace(/tarjima qilib ber|tarjima qil|xitoycha|o'zbekcha/gi, '').trim();
-            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(cleanQuery || query)}&langpair=uz|zh-CN`;
-            const res = await fetch(url);
+            const gUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=zh-CN&dt=t&dt=rm&q=${encodeURIComponent(cleanPrompt)}`;
+            const res = await fetch(gUrl);
             const data = await res.json();
 
-            if (data && data.responseData && data.responseData.translatedText) {
-                const chineseResult = data.responseData.translatedText.trim();
-                return {
-                    sender: 'bot',
-                    text: `🌐 <strong>Jonli AI Tarjima & Fonetik Tahlil:</strong><br><br>
-                    🇺🇿 <strong>O‘zbekcha:</strong> “${query}”<br>
-                    🇨🇳 <strong>Xitoycha:</strong> <span style="font-size: 1.3rem; font-weight: 800; color: #10B981;">${chineseResult}</span><br><br>
-                    💡 <strong>Ustoz Maslahati:</strong><br>
-                    Xitoyda kundalik hayotda ushbu gapni ravon va tabiiy aytish uchun quyidagi ovoz tugmasini bosing va tonlarga qarab takrorlang!`,
-                    speak: chineseResult
-                };
+            if (data && data[0] && Array.isArray(data[0])) {
+                // Combine all translated parts
+                chineseResult = data[0].filter(item => item && item[0] && item[1]).map(item => item[0]).join('').trim();
+                // Find Pinyin romanization from response
+                const rmItem = data[0].find(item => item && item[2] && typeof item[2] === 'string');
+                if (rmItem) {
+                    pinyinResult = rmItem[2].trim();
+                }
             }
-        } catch (err) {
-            // Fall through to local response if offline
+        } catch (gErr) {
+            // Google may be blocked without VPN in China -> Fallback to MyMemory API!
+        }
+
+        // Strategy 2: MyMemory API Fallback
+        if (!chineseResult) {
+            try {
+                const mUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(cleanPrompt)}&langpair=uz|zh-CN`;
+                const res = await fetch(mUrl);
+                const data = await res.json();
+                if (data && data.responseData && data.responseData.translatedText) {
+                    chineseResult = data.responseData.translatedText.trim();
+                }
+            } catch (mErr) {}
+        }
+
+        if (chineseResult) {
+            if (!pinyinResult) {
+                pinyinResult = lookupPinyinForChinese(chineseResult);
+            }
+
+            return {
+                sender: 'bot',
+                text: `🌐 <strong>Jonli AI Tarjima & Fonetik Tahlil:</strong><br><br>
+                🇺🇿 <strong>O‘zbekcha:</strong> “${cleanPrompt}”<br>
+                🇨🇳 <strong>Xitoycha:</strong> <span class="ai-cn-text">${chineseResult}</span><br>
+                ${pinyinResult ? `🗣️ <strong>Pinyin:</strong> <span class="ai-pinyin-text">${pinyinResult}</span><br>` : ''}
+                <br>💡 <strong>Ustoz Maslahati:</strong><br>
+                Ushbu jumlani ravon aytish uchun quyidagi ovoz tugmasini bosing va Pinyindagi tonlarga qarab takrorlang!`,
+                speak: chineseResult
+            };
         }
     }
 
@@ -5217,7 +5406,7 @@ function checkLocalKnowledge(q, query) {
             sender: 'bot',
             text: `👋 <strong>你好！(Ní hǎo!)</strong><br><br>
             Katta mamnuniyat bilan yordam beraman! Xitoy tilida tonlar eng muhim poydevordir. 
-            Xitoydagi darslaringiz qanday ketyapti? Biror so‘z, gap yoki ton qoidasi tushunarsiz bo‘ldimi? Istalgan o‘zbekcha gapingizni yozsangiz, darhol tarjima ham qilib beraman!`,
+            Xitoydagi darslaringiz qanday ketyapti? Biror so‘z, gap yoki ton qoidasi tushunarsiz bo‘ldimi? Istalgan o‘zbekcha gapingizni yozsangiz, darhol Pinyin va audiosi bilan tarjima qilib beraman!`,
             speak: '你好！我是你的中文老师，很高兴帮助你。'
         };
     }
@@ -5301,14 +5490,16 @@ function checkLocalKnowledge(q, query) {
         );
 
         if (found) {
+            const natEx = getWordNaturalExample(found);
             return {
                 sender: 'bot',
                 text: `🔍 <strong>So‘z Tahlili: “${found.hanzi}”</strong><br><br>
                 • <strong>Pinyin:</strong> <em>${found.pinyin}</em><br>
                 • <strong>O‘zbekcha:</strong> ${found.uzbek}<br>
                 • <strong>Daraja:</strong> HSK ${found.hsk} (Lesson ${found.lesson})<br>
-                • 🗣️ <strong>Misol:</strong> 我喜欢${found.hanzi}。 (Wǒ xǐhuan ${found.pinyin} — Menga ${found.uzbek.toLowerCase()} yoqadi).`,
-                speak: `${found.hanzi}。我喜欢${found.hanzi}。`
+                • 🗣️ <strong>Jonli Misol:</strong> ${natEx.cn}<br>
+                &nbsp;&nbsp;↳ <em>${natEx.py} — ${natEx.uz}</em>`,
+                speak: `${found.hanzi}。${natEx.cn}`
             };
         }
     }
@@ -5321,7 +5512,7 @@ function generateLocalKnowledgeResponse(query) {
         sender: 'bot',
         text: `🗣️ <strong>Li Laoshi (李老师) javobi:</strong> “${query}”<br><br>
         Ajoyib savol! Xitoy tilida har bir bo‘g‘inning toni va grammatik tartibi muhim ahamiyatga ega.<br>
-        Agar bu o‘zbekcha gap bo‘lsa, men uni xitoychaga tarjima qilib, tonlarini ko‘rsatib bera olaman. Darsdagi boshqa savollaringizni ham bemalol bering!`,
+        Agar bu o‘zbekcha gap bo‘lsa, uni xitoychaga tarjima qilib, <strong>Pinyin</strong> va <strong>audio</strong> bilan ko‘rsatib bera olaman. Darsdagi boshqa savollaringizni ham bemalol bering!`,
         speak: query
     };
 }

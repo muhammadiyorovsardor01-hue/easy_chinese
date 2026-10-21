@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=23">
+    <link rel="stylesheet" href="styles.css?v=24">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -1139,6 +1139,29 @@
         </section>
     </main>
 
+    <!-- In-Lesson AI Analysis Modal (Dars ichidagi AI Tahlil oynasi) -->
+    <div class="modal" id="lessonAiModal">
+        <div class="modal-content lesson-ai-modal-card">
+            <div class="modal-header">
+                <div class="lesson-ai-modal-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="ai-avatar-badge" style="width: 34px; height: 34px; min-width: 34px; font-size: 1.2rem;">👩‍🏫</span>
+                    <div>
+                        <strong id="lessonAiModalWordTitle" style="font-size: 0.95rem;">AI Laoshi Tahlili</strong>
+                        <small style="display: block; font-size: 0.7rem; color: #10B981; font-weight: 700;">Darsdan chiqmasdan o‘rganish</small>
+                    </div>
+                </div>
+                <button class="modal-close" id="closeLessonAiModalBtn">✕</button>
+            </div>
+            <div class="modal-body" id="lessonAiModalBody" style="display: flex; flex-direction: column; gap: 0.85rem; padding: 1rem;">
+                <!-- Dynamically populated with accurate word, pinyin, natural example, tone breakdown -->
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 0.5rem; justify-content: space-between; align-items: center;">
+                <button class="modal-btn cancel-btn" id="dismissLessonAiModalBtn" type="button">✕ Darsga qaytish</button>
+                <button class="modal-btn save-btn" id="goToFullAiChatBtn" type="button" style="font-size: 0.78rem;">💬 AI Laoshi suhbati →</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Success Modal -->
     <div class="modal" id="successModal">
         <div class="modal-content success-modal">
@@ -1271,7 +1294,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=23"></script>
+    <script src="script.js?v=24"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1390,7 +1413,7 @@
         window.location.reload();
       });
 
-      navigator.serviceWorker.register('./sw.js?v=23', { updateViaCache: 'none' }).then((reg) => {
+      navigator.serviceWorker.register('./sw.js?v=24', { updateViaCache: 'none' }).then((reg) => {
         if (reg.waiting) {
           reg.waiting.postMessage({ type: 'SKIP_WAITING' });
         }
