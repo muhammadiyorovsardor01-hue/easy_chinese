@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=24">
+    <link rel="stylesheet" href="styles.css?v=25">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -65,8 +65,8 @@
 
             <div class="dashboard-bento-header">
                 <div>
-                    <h2 class="section-title">Select HSK Level</h2>
-                    <p class="dashboard-bento-sub">Choose a level to start or continue your practice</p>
+                    <h2 class="section-title" data-i18n="home.selectLevel">Select HSK Level</h2>
+                    <p class="dashboard-bento-sub" data-i18n="home.selectLevelSub">Choose a level to start or continue your practice</p>
                 </div>
                 <span class="dashboard-level-pill" id="dashboardLevelPill">HSK 1</span>
             </div>
@@ -539,8 +539,16 @@
 
         <!-- Profile View -->
         <section id="profile" class="view">
-            <span class="view-kicker">个人中心 · Personal Center</span>
-            <h2 class="section-title">My Profile</h2>
+            <div class="profile-page-head">
+                <div>
+                    <span class="view-kicker">个人中心 · <span data-i18n="profile.kicker">Shaxsiy kabinet</span></span>
+                    <h2 class="section-title" data-i18n="profile.title">Mening profilim</h2>
+                </div>
+                <button type="button" class="settings-gear-btn" id="openSettingsBtn" aria-label="Sozlamalar" data-i18n-aria="settings.title">
+                    <span class="gear-icon" aria-hidden="true">⚙️</span>
+                    <span class="gear-label" data-i18n="settings.short">Sozlamalar</span>
+                </button>
+            </div>
             
             <!-- 1. Bento ID Card + Live Level XP Bar -->
             <div class="profile-card">
@@ -578,7 +586,7 @@
                 <div class="profile-actions">
                     <button class="edit-profile-btn" id="editProfileBtn" type="button">
                         <span class="edit-btn-icon" aria-hidden="true">✏️</span>
-                        <span class="edit-btn-label">Tahrirlash</span>
+                        <span class="edit-btn-label" data-i18n="profile.edit">Tahrirlash</span>
                     </button>
                     <button class="google-signin-btn" id="googleSignInBtn" type="button" aria-label="Continue with Google">
                         <svg viewBox="0 0 48 48" aria-hidden="true">
@@ -602,24 +610,24 @@
                 <div class="stat-card">
                     <span class="stat-icon">🔥</span>
                     <span class="stat-value" id="profileStreak">0</span>
-                    <span class="stat-label">Kunlik Streak <span class="stat-label-cn">连续天数</span></span>
+                    <span class="stat-label"><span data-i18n="stat.streak">Kunlik Streak</span> <span class="stat-label-cn">连续天数</span></span>
                 </div>
                 <div class="stat-card" id="profileLearnedCard">
                     <span class="stat-icon">📚</span>
                     <span class="stat-value" id="profileLearned">0</span>
-                    <span class="stat-label">Yodlangan <span class="stat-label-cn">已学单词</span></span>
+                    <span class="stat-label"><span data-i18n="stat.learned">Yodlangan</span> <span class="stat-label-cn">已学单词</span></span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-icon" title="XP">⭐</span>
                     <span class="stat-value" id="profileXP">0</span>
-                    <span class="stat-label">Jami XP <span class="stat-label-cn">总经验值</span></span>
+                    <span class="stat-label"><span data-i18n="stat.xp">Jami XP</span> <span class="stat-label-cn">总经验值</span></span>
                 </div>
             </div>
 
             <!-- 2. Weekly Activity Streak Calendar (Du - Ya) -->
             <div class="weekly-streak-section">
                 <div class="section-head-row">
-                    <h3 class="progress-title">Haftalik Faollik<span class="title-cn">本周打卡</span></h3>
+                    <h3 class="progress-title"><span data-i18n="profile.weekly">Haftalik Faollik</span><span class="title-cn">本周打卡</span></h3>
                     <span class="weekly-streak-pill" id="weeklyStreakSummary">🔥 1 kun faol</span>
                 </div>
                 <div class="weekly-days-grid" id="weeklyDaysGrid" aria-label="Haftalik faollik kalendari"></div>
@@ -628,8 +636,8 @@
             <!-- 3. All HSK 1 - HSK 5 Interactive Progress Cards -->
             <div class="progress-section">
                 <div class="section-head-row">
-                    <h3 class="progress-title">HSK 1–5 Progress<span class="title-cn">学习进度</span></h3>
-                    <span class="progress-tap-hint">Bosib darsga o‘ting →</span>
+                    <h3 class="progress-title"><span data-i18n="profile.progress">HSK 1–5 Progress</span><span class="title-cn">学习进度</span></h3>
+                    <span class="progress-tap-hint" data-i18n="profile.tapHint">Bosib darsga o‘ting →</span>
                 </div>
                 <div class="hsk-progress-bars">
                     <div class="hsk-progress-item hsk-prog-1" data-jump-hsk="1" data-jump-track="classic" role="button" tabindex="0">
@@ -710,7 +718,7 @@
             <!-- 4. Learned Words Quick-Review Drawer -->
             <div class="learned-words-section" id="learnedWordsSection">
                 <div class="section-head-row">
-                    <h3 class="progress-title">Yodlangan So‘zlarim<span class="title-cn">已学词库</span></h3>
+                    <h3 class="progress-title"><span data-i18n="profile.learnedWords">Yodlangan So‘zlarim</span><span class="title-cn">已学词库</span></h3>
                     <span class="learned-words-badge" id="learnedWordsDrawerCount">0 ta so‘z</span>
                 </div>
                 <div class="learned-words-list" id="profileLearnedWordsList"></div>
@@ -718,7 +726,7 @@
 
             <!-- Daily Quests -->
             <div class="quests-section">
-                <h3 class="progress-title">Kunlik Vazifalar<span class="title-cn">每日任务</span></h3>
+                <h3 class="progress-title"><span data-i18n="profile.quests">Kunlik Vazifalar</span><span class="title-cn">每日任务</span></h3>
                 <div class="quests-list" id="dailyQuests">
                     <div class="quest-item" data-quest="traces">
                         <span class="quest-icon">✍️</span>
@@ -736,7 +744,7 @@
             <!-- 5. Deduplicated Achievements Showcase with Live Progress -->
             <div class="achievements-section">
                 <div class="section-head-row">
-                    <h3 class="achievements-title">Yutuqlar Vitrinasi<span class="title-cn">成就勋章</span></h3>
+                    <h3 class="achievements-title"><span data-i18n="profile.achievements">Yutuqlar Vitrinasi</span><span class="title-cn">成就勋章</span></h3>
                     <span class="achievements-unlocked-pill" id="achievementsUnlockedCount">0 / 8</span>
                 </div>
                 <div class="achievements-grid" id="achievementsGrid">
@@ -791,47 +799,7 @@
                 </div>
             </div>
 
-            <!-- 6. App Settings Card (Theme, Audio Speed, 1-Tap App Install) -->
-            <div class="profile-settings-section">
-                <h3 class="progress-title">Ilova Sozlamalari<span class="title-cn">应用设置</span></h3>
-                <div class="settings-list">
-                    <div class="setting-row">
-                        <div class="setting-info">
-                            <span class="setting-icon">🌓</span>
-                            <div>
-                                <strong>Tungi Rejim (Dark Mode)</strong>
-                                <small id="profileThemeStatusText">Kunduzgi yorug‘ mavzu</small>
-                            </div>
-                        </div>
-                        <button type="button" class="setting-action-btn" id="profileThemeToggleBtn">Almashtirish</button>
-                    </div>
-
-                    <div class="setting-row">
-                        <div class="setting-info">
-                            <span class="setting-icon">🔊</span>
-                            <div>
-                                <strong>Talaffuz Tezligi (Audio)</strong>
-                                <small>Xitoycha ovoz tezligi</small>
-                            </div>
-                        </div>
-                        <div class="speech-rate-group" id="speechRateGroup">
-                            <button type="button" class="rate-chip" data-rate="0.65">🐢 Sekin</button>
-                            <button type="button" class="rate-chip active" data-rate="0.85">👌 Normal</button>
-                        </div>
-                    </div>
-
-                    <div class="setting-row" id="profileInstallRow" hidden>
-                        <div class="setting-info">
-                            <img src="assets/app-icon-1.svg" alt="Easy Chinese" class="setting-app-icon" width="38" height="38" />
-                            <div>
-                                <strong>Easy Chinese Ilovasi</strong>
-                                <small>Telefonga 1 bosishda o‘rnatish</small>
-                            </div>
-                        </div>
-                        <button type="button" class="setting-install-btn" id="profileInstallAppBtn">&#x1F4F2; O&#x2018;rnatish</button>
-                    </div>
-                </div>
-            </div>
+            <!-- App settings moved to the ⚙️ Settings bottom sheet (#settingsSheet) -->
         </section>
 
         <!-- Dedicated Practice Hub View (练习中心 · Amaliyot Markazi) -->
@@ -841,13 +809,13 @@
                     <span class="lessons-cn-badge">练习中心 · Super Practice</span>
                     <span class="weekly-streak-pill" id="practiceHskPill">HSK 1</span>
                 </div>
-                <h2 class="section-title">📚 Amaliyot Markazi</h2>
-                <p class="lessons-kicker">Tonlar, jonli muloqot, so‘zlar va viktorinalar orqali xitoy tilingizni charxlang</p>
+                <h2 class="section-title">📚 <span data-i18n="practice.title">Amaliyot Markazi</span></h2>
+                <p class="lessons-kicker" data-i18n="practice.kicker">Tonlar, jonli muloqot, so‘zlar va viktorinalar orqali xitoy tilingizni charxlang</p>
             </div>
 
             <!-- Group 1: Fonetika & Tonlar -->
             <div class="practice-group-section">
-                <h3 class="practice-group-heading">🎵 Fonetika &amp; Tonlar (语音与声调)</h3>
+                <h3 class="practice-group-heading">🎵 <span data-i18n="practice.g1">Fonetika &amp; Tonlar</span> (语音与声调)</h3>
                 <div class="practice-tiles-grid">
                     <button type="button" class="hub-tile-card tile-tone" id="hubOpenToneBtn">
                         <div class="hub-tile-icon tone-icon">🎵</div>
@@ -877,7 +845,7 @@
 
             <!-- Group 2: Real Xitoy Hayoti -->
             <div class="practice-group-section">
-                <h3 class="practice-group-heading">🏮 Xitoyda Jonli Hayot &amp; Muloqot (情景口语)</h3>
+                <h3 class="practice-group-heading">🏮 <span data-i18n="practice.g2">Xitoyda Jonli Hayot &amp; Muloqot</span> (情景口语)</h3>
                 <div class="practice-tiles-grid">
                     <button type="button" class="hub-tile-card tile-survival" id="hubOpenSurvivalBtn">
                         <div class="hub-tile-icon surv-icon">🏮</div>
@@ -907,7 +875,7 @@
 
             <!-- Group 3: So'z Boyligi & Xotira Mashqi -->
             <div class="practice-group-section">
-                <h3 class="practice-group-heading">🧠 So‘z Boyligi &amp; Xotira Mashqi (词汇与记忆)</h3>
+                <h3 class="practice-group-heading">🧠 <span data-i18n="practice.g3">So‘z Boyligi &amp; Xotira Mashqi</span> (词汇与记忆)</h3>
                 <div class="practice-tiles-grid">
                     <button type="button" class="hub-tile-card tile-flashcards" id="hubOpenFlashcardsBtn">
                         <div class="hub-tile-icon card-icon">🗂️</div>
@@ -1230,15 +1198,209 @@
         </div>
     </div>
 
+    <!-- ⚙️ Settings Bottom Sheet (应用设置) -->
+    <div class="settings-sheet" id="settingsSheet" role="dialog" aria-modal="true" aria-labelledby="settingsSheetTitle" hidden>
+        <div class="settings-sheet-backdrop" data-close-settings></div>
+        <div class="settings-sheet-panel">
+            <div class="settings-sheet-grabber" aria-hidden="true"></div>
+            <div class="settings-sheet-head">
+                <div>
+                    <h3 id="settingsSheetTitle"><span data-i18n="settings.title">Ilova sozlamalari</span> <span class="title-cn">应用设置</span></h3>
+                    <small data-i18n="settings.subtitle">Ilovani o‘zingizga moslang</small>
+                </div>
+                <button type="button" class="settings-close-btn" data-close-settings aria-label="Yopish">✕</button>
+            </div>
+
+            <div class="settings-sheet-body">
+                <!-- 1. Language -->
+                <div class="settings-group">
+                    <h4 class="settings-group-title" data-i18n="settings.group.language">🌐 Ilova tili</h4>
+                    <div class="settings-card">
+                        <div class="lang-grid" id="appLanguageGroup">
+                            <button type="button" class="lang-chip" data-lang="uz"><span class="lang-flag">🇺🇿</span><span>O‘zbekcha</span></button>
+                            <button type="button" class="lang-chip" data-lang="uz-cyrl"><span class="lang-flag">🇺🇿</span><span>Ўзбекча</span></button>
+                            <button type="button" class="lang-chip" data-lang="ru"><span class="lang-flag">🇷🇺</span><span>Русский</span></button>
+                            <button type="button" class="lang-chip" data-lang="en"><span class="lang-flag">🇬🇧</span><span>English</span></button>
+                        </div>
+                        <p class="settings-note" data-i18n="settings.languageNote">Menyular va tugmalar tanlangan tilda ko‘rsatiladi.</p>
+                    </div>
+                </div>
+
+                <!-- 2. Appearance -->
+                <div class="settings-group">
+                    <h4 class="settings-group-title" data-i18n="settings.group.appearance">🎨 Ko‘rinish</h4>
+                    <div class="settings-card">
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-icon">🌓</span>
+                                <div>
+                                    <strong data-i18n="settings.theme">Tungi rejim</strong>
+                                    <small id="profileThemeStatusText">Kunduzgi yorug‘ mavzu</small>
+                                </div>
+                            </div>
+                            <button type="button" class="setting-action-btn" id="profileThemeToggleBtn">🌙</button>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-icon">🈶</span>
+                                <div>
+                                    <strong data-i18n="settings.pinyin">Pinyin ko‘rsatish</strong>
+                                    <small data-i18n="settings.pinyinHint">Yashirilsa, bosganda ochiladi — o‘zingizni sinang</small>
+                                </div>
+                            </div>
+                            <div class="seg-group" id="pinyinModeGroup">
+                                <button type="button" class="seg-chip" data-pinyin-mode="show" data-i18n="settings.show">Doim</button>
+                                <button type="button" class="seg-chip" data-pinyin-mode="hide" data-i18n="settings.hide">Yashirish</button>
+                            </div>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-icon">字</span>
+                                <div>
+                                    <strong data-i18n="settings.hanziSize">Iyeroglif o‘lchami</strong>
+                                    <small class="hanzi-size-preview">你好</small>
+                                </div>
+                            </div>
+                            <div class="seg-group" id="hanziSizeGroup">
+                                <button type="button" class="seg-chip" data-hanzi-size="small">A</button>
+                                <button type="button" class="seg-chip" data-hanzi-size="medium">A+</button>
+                                <button type="button" class="seg-chip" data-hanzi-size="large">A++</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Sound -->
+                <div class="settings-group">
+                    <h4 class="settings-group-title" data-i18n="settings.group.sound">🔊 Ovoz</h4>
+                    <div class="settings-card">
+                        <div class="setting-row setting-row-stack">
+                            <div class="setting-info">
+                                <span class="setting-icon">🗣️</span>
+                                <div>
+                                    <strong data-i18n="settings.speechRate">Talaffuz tezligi</strong>
+                                    <small data-i18n="settings.speechRateHint">Xitoycha ovoz tezligi</small>
+                                </div>
+                            </div>
+                            <div class="speech-rate-group" id="speechRateGroup">
+                                <button type="button" class="rate-chip" data-rate="0.65">🐢 <span data-i18n="settings.slow">Sekin</span></button>
+                                <button type="button" class="rate-chip active" data-rate="0.85">👌 <span data-i18n="settings.normal">Normal</span></button>
+                                <button type="button" class="rate-chip" data-rate="1.0">🐇 <span data-i18n="settings.fast">Tez</span></button>
+                            </div>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-icon">🎵</span>
+                                <div>
+                                    <strong data-i18n="settings.sfx">Ovoz effektlari</strong>
+                                    <small data-i18n="settings.sfxHint">To‘g‘ri javob va yutuq ovozlari</small>
+                                </div>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="soundEffectsToggle" checked>
+                                <span class="switch-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Study -->
+                <div class="settings-group">
+                    <h4 class="settings-group-title" data-i18n="settings.group.study">🎯 O‘qish</h4>
+                    <div class="settings-card">
+                        <div class="setting-row setting-row-stack">
+                            <div class="setting-info">
+                                <span class="setting-icon">🎯</span>
+                                <div>
+                                    <strong data-i18n="settings.dailyGoal">Kunlik maqsad</strong>
+                                    <small data-i18n="settings.dailyGoalHint">Har kuni nechta so‘z o‘rganasiz</small>
+                                </div>
+                            </div>
+                            <div class="seg-group" id="dailyGoalGroup">
+                                <button type="button" class="seg-chip" data-goal="5">5</button>
+                                <button type="button" class="seg-chip" data-goal="10">10</button>
+                                <button type="button" class="seg-chip" data-goal="20">20</button>
+                                <button type="button" class="seg-chip" data-goal="30">30</button>
+                            </div>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-icon">🔔</span>
+                                <div>
+                                    <strong data-i18n="settings.reminder">Kunlik eslatma</strong>
+                                    <small id="reminderStatusText" data-i18n="settings.reminderHint">O‘qish vaqti kelganda eslatadi</small>
+                                </div>
+                            </div>
+                            <div class="reminder-controls">
+                                <input type="time" id="reminderTimeInput" value="20:00" aria-label="Eslatma vaqti">
+                                <label class="switch">
+                                    <input type="checkbox" id="reminderToggle">
+                                    <span class="switch-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Data -->
+                <div class="settings-group">
+                    <h4 class="settings-group-title" data-i18n="settings.group.data">💾 Ma’lumotlar</h4>
+                    <div class="settings-card">
+                        <div class="data-actions-grid">
+                            <button type="button" class="data-action-btn" id="exportProgressBtn">
+                                <span>📤</span><span data-i18n="settings.export">Zaxira nusxa olish</span>
+                            </button>
+                            <button type="button" class="data-action-btn" id="importProgressBtn">
+                                <span>📥</span><span data-i18n="settings.import">Zaxiradan tiklash</span>
+                            </button>
+                        </div>
+                        <input type="file" id="importProgressInput" accept="application/json,.json" hidden>
+                        <p class="settings-note" data-i18n="settings.backupNote">Telefon almashtirsangiz ham progressingiz yo‘qolmaydi.</p>
+                        <button type="button" class="data-action-btn danger" id="resetProgressBtn">
+                            <span>🗑️</span><span data-i18n="settings.reset">Progressni nolga tushirish</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6. App -->
+                <div class="settings-group">
+                    <h4 class="settings-group-title" data-i18n="settings.group.app">📱 Ilova</h4>
+                    <div class="settings-card">
+                        <div class="setting-row" id="profileInstallRow" hidden>
+                            <div class="setting-info">
+                                <img src="assets/app-icon-1.svg" alt="Easy Chinese" class="setting-app-icon" width="38" height="38" />
+                                <div>
+                                    <strong data-i18n="settings.installTitle">Easy Chinese ilovasi</strong>
+                                    <small data-i18n="settings.installHint">Telefonga 1 bosishda o‘rnatish</small>
+                                </div>
+                            </div>
+                            <button type="button" class="setting-install-btn" id="profileInstallAppBtn">&#x1F4F2; <span data-i18n="settings.install">O‘rnatish</span></button>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <span class="setting-icon">ℹ️</span>
+                                <div>
+                                    <strong data-i18n="settings.about">Ilova haqida</strong>
+                                    <small>Easy Chinese · v25 · 每天进步一点点</small>
+                                </div>
+                            </div>
+                            <a class="setting-action-btn" href="https://github.com/muhammadiyorovsardor01-hue/easy_chinese" target="_blank" rel="noopener">GitHub</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bottom Navigation Bar (5 Tabs with Center AI Laoshi) -->
     <nav class="bottom-nav">
         <button class="nav-item active" data-nav="home">
             <span class="nav-icon">&#x1F3E0;</span>
-            <span class="nav-label">Home</span>
+            <span class="nav-label" data-i18n="nav.home">Home</span>
         </button>
         <button class="nav-item" data-nav="practice">
             <span class="nav-icon">&#x1F4DA;</span>
-            <span class="nav-label">Practice</span>
+            <span class="nav-label" data-i18n="nav.practice">Practice</span>
         </button>
         <button class="nav-item nav-item-ai" data-nav="ai">
             <span class="nav-icon">&#x1F916;</span>
@@ -1246,11 +1408,11 @@
         </button>
         <button class="nav-item" data-nav="canvas">
             <span class="nav-icon">&#x270F;&#xFE0F;</span>
-            <span class="nav-label">Canvas</span>
+            <span class="nav-label" data-i18n="nav.canvas">Canvas</span>
         </button>
         <button class="nav-item" data-nav="profile">
             <span class="nav-icon">&#x1F464;</span>
-            <span class="nav-label">Profile</span>
+            <span class="nav-label" data-i18n="nav.profile">Profile</span>
         </button>
     </nav>
 
@@ -1294,7 +1456,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=24"></script>
+    <script src="script.js?v=25"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1413,7 +1575,7 @@
         window.location.reload();
       });
 
-      navigator.serviceWorker.register('./sw.js?v=24', { updateViaCache: 'none' }).then((reg) => {
+      navigator.serviceWorker.register('./sw.js?v=25', { updateViaCache: 'none' }).then((reg) => {
         if (reg.waiting) {
           reg.waiting.postMessage({ type: 'SKIP_WAITING' });
         }

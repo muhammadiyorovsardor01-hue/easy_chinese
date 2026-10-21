@@ -1256,10 +1256,10 @@ function syncProfileThemeUI() {
     const themeBtnEl = document.getElementById('profileThemeToggleBtn');
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     if (themeStatusEl) {
-        themeStatusEl.textContent = isDark ? '🌙 Tungi qorong‘u mavzu yoqilgan' : '☀️ Kunduzgi yorug‘ mavzu yoqilgan';
+        themeStatusEl.textContent = isDark ? t('settings.themeDark') : t('settings.themeLight');
     }
     if (themeBtnEl) {
-        themeBtnEl.textContent = isDark ? '☀️ Kunduzgi' : '🌙 Tungi';
+        themeBtnEl.textContent = isDark ? '☀️' : '🌙';
     }
 }
 
@@ -3796,6 +3796,7 @@ function hideAllModals() {
 
 function playSuccessSound() {
     // Create a simple success sound using Web Audio API
+    if (localStorage.getItem('easyChineseSfx') === 'off') return;
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
@@ -5552,4 +5553,492 @@ function renderAiMessages() {
     });
 
     box.scrollTop = box.scrollHeight;
+}
+
+
+// ==============================================================================
+// 20. SETTINGS SHEET (⚙️), APP LANGUAGE (i18n), PINYIN / HANZI SIZE, SFX,
+//     DAILY GOAL, DAILY REMINDER, BACKUP / RESTORE / RESET
+// ==============================================================================
+
+var EC_SETTINGS_KEYS = {
+    lang: 'easyChineseLang',
+    pinyin: 'easyChinesePinyinMode',
+    hanziSize: 'easyChineseHanziSize',
+    sfx: 'easyChineseSfx',
+    reminderOn: 'easyChineseReminderOn',
+    reminderTime: 'easyChineseReminderTime',
+    reminderLast: 'easyChineseReminderLast'
+};
+
+var EC_I18N = {
+    uz: {
+        'nav.home': 'Bosh sahifa', 'nav.practice': 'Mashq', 'nav.canvas': 'Yozish', 'nav.profile': 'Profil',
+        'profile.kicker': 'Shaxsiy kabinet', 'profile.title': 'Mening profilim', 'profile.edit': 'Tahrirlash',
+        'profile.weekly': 'Haftalik faollik', 'profile.progress': 'HSK 1–5 natijalar', 'profile.tapHint': 'Bosib darsga o‘ting →',
+        'profile.learnedWords': 'Yodlangan so‘zlarim', 'profile.quests': 'Kunlik vazifalar', 'profile.achievements': 'Yutuqlar vitrinasi',
+        'stat.streak': 'Kunlik streak', 'stat.learned': 'Yodlangan', 'stat.xp': 'Jami XP',
+        'home.selectLevel': 'HSK darajasini tanlang', 'home.selectLevelSub': 'Boshlash yoki davom ettirish uchun darajani tanlang',
+        'practice.title': 'Amaliyot markazi', 'practice.kicker': 'Tonlar, jonli muloqot, so‘zlar va viktorinalar orqali xitoy tilingizni charxlang',
+        'practice.g1': 'Fonetika va tonlar', 'practice.g2': 'Xitoyda jonli hayot va muloqot', 'practice.g3': 'So‘z boyligi va xotira mashqi',
+        'settings.title': 'Ilova sozlamalari', 'settings.short': 'Sozlamalar', 'settings.subtitle': 'Ilovani o‘zingizga moslang',
+        'settings.group.language': '🌐 Ilova tili', 'settings.languageNote': 'Menyular va tugmalar tanlangan tilda ko‘rsatiladi. So‘z tarjimalari o‘zbekcha qoladi.',
+        'settings.group.appearance': '🎨 Ko‘rinish', 'settings.theme': 'Tungi rejim',
+        'settings.themeLight': '☀️ Kunduzgi yorug‘ mavzu', 'settings.themeDark': '🌙 Tungi qorong‘u mavzu',
+        'settings.pinyin': 'Pinyin ko‘rsatish', 'settings.pinyinHint': 'Yashirilsa, bosganda ochiladi — o‘zingizni sinang',
+        'settings.show': 'Doim', 'settings.hide': 'Yashirish', 'settings.hanziSize': 'Iyeroglif o‘lchami',
+        'settings.group.sound': '🔊 Ovoz', 'settings.speechRate': 'Talaffuz tezligi', 'settings.speechRateHint': 'Xitoycha ovoz tezligi',
+        'settings.slow': 'Sekin', 'settings.normal': 'Normal', 'settings.fast': 'Tez',
+        'settings.sfx': 'Ovoz effektlari', 'settings.sfxHint': 'To‘g‘ri javob va yutuq ovozlari',
+        'settings.group.study': '🎯 O‘qish', 'settings.dailyGoal': 'Kunlik maqsad', 'settings.dailyGoalHint': 'Har kuni nechta so‘z o‘rganasiz',
+        'settings.reminder': 'Kunlik eslatma', 'settings.reminderHint': 'O‘qish vaqti kelganda eslatadi',
+        'settings.reminderOn': '🔔 Har kuni {time} da eslatiladi',
+        'settings.reminderDenied': 'Bildirishnomaga ruxsat berilmadi. Brauzer sozlamalaridan yoqing.',
+        'settings.reminderUnsupported': 'Bu brauzer bildirishnomalarni qo‘llamaydi.',
+        'settings.group.data': '💾 Ma’lumotlar', 'settings.export': 'Zaxira nusxa olish', 'settings.import': 'Zaxiradan tiklash',
+        'settings.backupNote': 'Telefon almashtirsangiz ham progressingiz yo‘qolmaydi.',
+        'settings.reset': 'Progressni nolga tushirish',
+        'settings.resetConfirm': 'Rostdan ham barcha progress (so‘zlar, XP, streak) o‘chirilsinmi? Buni qaytarib bo‘lmaydi.',
+        'settings.resetDone': 'Progress tozalandi 🧹', 'settings.importDone': 'Progress tiklandi ✅', 'settings.importError': 'Fayl noto‘g‘ri yoki buzilgan ❌',
+        'settings.exportDone': 'Zaxira fayli yuklab olindi 📤',
+        'settings.group.app': '📱 Ilova', 'settings.installTitle': 'Easy Chinese ilovasi', 'settings.installHint': 'Telefonga 1 bosishda o‘rnatish',
+        'settings.install': 'O‘rnatish', 'settings.about': 'Ilova haqida', 'settings.saved': 'Saqlandi ✅',
+        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Bugungi xitoy tili mashqi vaqti keldi! 加油! 🔥'
+    },
+    'uz-cyrl': {
+        'nav.home': 'Бош саҳифа', 'nav.practice': 'Машқ', 'nav.canvas': 'Ёзиш', 'nav.profile': 'Профил',
+        'profile.kicker': 'Шахсий кабинет', 'profile.title': 'Менинг профилим', 'profile.edit': 'Таҳрирлаш',
+        'profile.weekly': 'Ҳафталик фаоллик', 'profile.progress': 'HSK 1–5 натижалар', 'profile.tapHint': 'Босиб дарсга ўтинг →',
+        'profile.learnedWords': 'Ёдланган сўзларим', 'profile.quests': 'Кунлик вазифалар', 'profile.achievements': 'Ютуқлар витринаси',
+        'stat.streak': 'Кунлик стрик', 'stat.learned': 'Ёдланган', 'stat.xp': 'Жами XP',
+        'home.selectLevel': 'HSK даражасини танланг', 'home.selectLevelSub': 'Бошлаш ёки давом эттириш учун даражани танланг',
+        'practice.title': 'Амалиёт маркази', 'practice.kicker': 'Тонлар, жонли мулоқот, сўзлар ва викториналар орқали хитой тилингизни чархланг',
+        'practice.g1': 'Фонетика ва тонлар', 'practice.g2': 'Хитойда жонли ҳаёт ва мулоқот', 'practice.g3': 'Сўз бойлиги ва хотира машқи',
+        'settings.title': 'Илова созламалари', 'settings.short': 'Созламалар', 'settings.subtitle': 'Иловани ўзингизга мосланг',
+        'settings.group.language': '🌐 Илова тили', 'settings.languageNote': 'Менюлар ва тугмалар танланган тилда кўрсатилади. Сўз таржималари ўзбекча қолади.',
+        'settings.group.appearance': '🎨 Кўриниш', 'settings.theme': 'Тунги режим',
+        'settings.themeLight': '☀️ Кундузги ёруғ мавзу', 'settings.themeDark': '🌙 Тунги қоронғу мавзу',
+        'settings.pinyin': 'Пиньин кўрсатиш', 'settings.pinyinHint': 'Яширилса, босганда очилади — ўзингизни синанг',
+        'settings.show': 'Доим', 'settings.hide': 'Яшириш', 'settings.hanziSize': 'Иероглиф ўлчами',
+        'settings.group.sound': '🔊 Овоз', 'settings.speechRate': 'Талаффуз тезлиги', 'settings.speechRateHint': 'Хитойча овоз тезлиги',
+        'settings.slow': 'Секин', 'settings.normal': 'Нормал', 'settings.fast': 'Тез',
+        'settings.sfx': 'Овоз эффектлари', 'settings.sfxHint': 'Тўғри жавоб ва ютуқ овозлари',
+        'settings.group.study': '🎯 Ўқиш', 'settings.dailyGoal': 'Кунлик мақсад', 'settings.dailyGoalHint': 'Ҳар куни нечта сўз ўрганасиз',
+        'settings.reminder': 'Кунлик эслатма', 'settings.reminderHint': 'Ўқиш вақти келганда эслатади',
+        'settings.reminderOn': '🔔 Ҳар куни {time} да эслатилади',
+        'settings.reminderDenied': 'Билдиришномага рухсат берилмади. Браузер созламаларидан ёқинг.',
+        'settings.reminderUnsupported': 'Бу браузер билдиришномаларни қўлламайди.',
+        'settings.group.data': '💾 Маълумотлар', 'settings.export': 'Захира нусха олиш', 'settings.import': 'Захирадан тиклаш',
+        'settings.backupNote': 'Телефон алмаштирсангиз ҳам прогрессингиз йўқолмайди.',
+        'settings.reset': 'Прогрессни нолга тушириш',
+        'settings.resetConfirm': 'Ростдан ҳам барча прогресс (сўзлар, XP, стрик) ўчирилсинми? Буни қайтариб бўлмайди.',
+        'settings.resetDone': 'Прогресс тозаланди 🧹', 'settings.importDone': 'Прогресс тикланди ✅', 'settings.importError': 'Файл нотўғри ёки бузилган ❌',
+        'settings.exportDone': 'Захира файли юклаб олинди 📤',
+        'settings.group.app': '📱 Илова', 'settings.installTitle': 'Easy Chinese иловаси', 'settings.installHint': 'Телефонга 1 босишда ўрнатиш',
+        'settings.install': 'Ўрнатиш', 'settings.about': 'Илова ҳақида', 'settings.saved': 'Сақланди ✅',
+        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Бугунги хитой тили машқи вақти келди! 加油! 🔥'
+    },
+    ru: {
+        'nav.home': 'Главная', 'nav.practice': 'Практика', 'nav.canvas': 'Письмо', 'nav.profile': 'Профиль',
+        'profile.kicker': 'Личный кабинет', 'profile.title': 'Мой профиль', 'profile.edit': 'Изменить',
+        'profile.weekly': 'Активность за неделю', 'profile.progress': 'Прогресс HSK 1–5', 'profile.tapHint': 'Нажмите, чтобы перейти →',
+        'profile.learnedWords': 'Выученные слова', 'profile.quests': 'Ежедневные задания', 'profile.achievements': 'Достижения',
+        'stat.streak': 'Дней подряд', 'stat.learned': 'Выучено', 'stat.xp': 'Всего XP',
+        'home.selectLevel': 'Выберите уровень HSK', 'home.selectLevelSub': 'Выберите уровень, чтобы начать или продолжить',
+        'practice.title': 'Центр практики', 'practice.kicker': 'Тренируйте китайский: тоны, живое общение, слова и викторины',
+        'practice.g1': 'Фонетика и тоны', 'practice.g2': 'Жизнь и общение в Китае', 'practice.g3': 'Словарный запас и память',
+        'settings.title': 'Настройки приложения', 'settings.short': 'Настройки', 'settings.subtitle': 'Настройте приложение под себя',
+        'settings.group.language': '🌐 Язык приложения', 'settings.languageNote': 'Меню и кнопки отображаются на выбранном языке. Переводы слов остаются на узбекском.',
+        'settings.group.appearance': '🎨 Внешний вид', 'settings.theme': 'Тёмная тема',
+        'settings.themeLight': '☀️ Светлая тема включена', 'settings.themeDark': '🌙 Тёмная тема включена',
+        'settings.pinyin': 'Показ пиньиня', 'settings.pinyinHint': 'Если скрыт — откроется по нажатию. Проверьте себя',
+        'settings.show': 'Всегда', 'settings.hide': 'Скрыть', 'settings.hanziSize': 'Размер иероглифов',
+        'settings.group.sound': '🔊 Звук', 'settings.speechRate': 'Скорость произношения', 'settings.speechRateHint': 'Скорость китайской озвучки',
+        'settings.slow': 'Медленно', 'settings.normal': 'Обычно', 'settings.fast': 'Быстро',
+        'settings.sfx': 'Звуковые эффекты', 'settings.sfxHint': 'Звуки верных ответов и наград',
+        'settings.group.study': '🎯 Учёба', 'settings.dailyGoal': 'Дневная цель', 'settings.dailyGoalHint': 'Сколько слов учить в день',
+        'settings.reminder': 'Ежедневное напоминание', 'settings.reminderHint': 'Напомнит, когда пора заниматься',
+        'settings.reminderOn': '🔔 Напоминание каждый день в {time}',
+        'settings.reminderDenied': 'Уведомления запрещены. Разрешите их в настройках браузера.',
+        'settings.reminderUnsupported': 'Этот браузер не поддерживает уведомления.',
+        'settings.group.data': '💾 Данные', 'settings.export': 'Создать резервную копию', 'settings.import': 'Восстановить из копии',
+        'settings.backupNote': 'Прогресс сохранится даже при смене телефона.',
+        'settings.reset': 'Сбросить прогресс',
+        'settings.resetConfirm': 'Удалить весь прогресс (слова, XP, серию)? Это действие нельзя отменить.',
+        'settings.resetDone': 'Прогресс сброшен 🧹', 'settings.importDone': 'Прогресс восстановлен ✅', 'settings.importError': 'Файл неверный или повреждён ❌',
+        'settings.exportDone': 'Резервная копия скачана 📤',
+        'settings.group.app': '📱 Приложение', 'settings.installTitle': 'Приложение Easy Chinese', 'settings.installHint': 'Установить на телефон в 1 нажатие',
+        'settings.install': 'Установить', 'settings.about': 'О приложении', 'settings.saved': 'Сохранено ✅',
+        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Пора позаниматься китайским! 加油! 🔥'
+    },
+    en: {
+        'nav.home': 'Home', 'nav.practice': 'Practice', 'nav.canvas': 'Writing', 'nav.profile': 'Profile',
+        'profile.kicker': 'Personal Center', 'profile.title': 'My Profile', 'profile.edit': 'Edit',
+        'profile.weekly': 'Weekly Activity', 'profile.progress': 'HSK 1–5 Progress', 'profile.tapHint': 'Tap to open lessons →',
+        'profile.learnedWords': 'My Learned Words', 'profile.quests': 'Daily Quests', 'profile.achievements': 'Achievements',
+        'stat.streak': 'Day Streak', 'stat.learned': 'Learned', 'stat.xp': 'Total XP',
+        'home.selectLevel': 'Select HSK Level', 'home.selectLevelSub': 'Choose a level to start or continue your practice',
+        'practice.title': 'Practice Center', 'practice.kicker': 'Sharpen your Chinese with tones, real-life dialogues, words and quizzes',
+        'practice.g1': 'Phonetics & Tones', 'practice.g2': 'Real Life in China', 'practice.g3': 'Vocabulary & Memory',
+        'settings.title': 'App Settings', 'settings.short': 'Settings', 'settings.subtitle': 'Make the app yours',
+        'settings.group.language': '🌐 App Language', 'settings.languageNote': 'Menus and buttons use the selected language. Word translations stay in Uzbek.',
+        'settings.group.appearance': '🎨 Appearance', 'settings.theme': 'Dark Mode',
+        'settings.themeLight': '☀️ Light theme is on', 'settings.themeDark': '🌙 Dark theme is on',
+        'settings.pinyin': 'Show Pinyin', 'settings.pinyinHint': 'When hidden, tap to reveal — test yourself',
+        'settings.show': 'Always', 'settings.hide': 'Hide', 'settings.hanziSize': 'Character Size',
+        'settings.group.sound': '🔊 Sound', 'settings.speechRate': 'Speech Speed', 'settings.speechRateHint': 'Chinese voice speed',
+        'settings.slow': 'Slow', 'settings.normal': 'Normal', 'settings.fast': 'Fast',
+        'settings.sfx': 'Sound Effects', 'settings.sfxHint': 'Correct answer & reward sounds',
+        'settings.group.study': '🎯 Study', 'settings.dailyGoal': 'Daily Goal', 'settings.dailyGoalHint': 'Words to learn every day',
+        'settings.reminder': 'Daily Reminder', 'settings.reminderHint': 'Reminds you when it is study time',
+        'settings.reminderOn': '🔔 Reminder every day at {time}',
+        'settings.reminderDenied': 'Notifications are blocked. Enable them in browser settings.',
+        'settings.reminderUnsupported': 'This browser does not support notifications.',
+        'settings.group.data': '💾 Data', 'settings.export': 'Back up progress', 'settings.import': 'Restore backup',
+        'settings.backupNote': 'Keep your progress even when you switch phones.',
+        'settings.reset': 'Reset progress',
+        'settings.resetConfirm': 'Delete all progress (words, XP, streak)? This cannot be undone.',
+        'settings.resetDone': 'Progress reset 🧹', 'settings.importDone': 'Progress restored ✅', 'settings.importError': 'Invalid or corrupted file ❌',
+        'settings.exportDone': 'Backup file downloaded 📤',
+        'settings.group.app': '📱 App', 'settings.installTitle': 'Easy Chinese App', 'settings.installHint': 'Install on your phone in 1 tap',
+        'settings.install': 'Install', 'settings.about': 'About', 'settings.saved': 'Saved ✅',
+        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Time for today’s Chinese practice! 加油! 🔥'
+    }
+};
+
+function getAppLanguage() {
+    var lang = localStorage.getItem(EC_SETTINGS_KEYS.lang);
+    return EC_I18N[lang] ? lang : 'uz';
+}
+
+function t(key, vars) {
+    var lang = getAppLanguage();
+    var str = (EC_I18N[lang] && EC_I18N[lang][key]) || EC_I18N.uz[key] || key;
+    if (vars) {
+        Object.keys(vars).forEach(function (k) { str = str.replace('{' + k + '}', vars[k]); });
+    }
+    return str;
+}
+
+function applyAppLanguage() {
+    var lang = getAppLanguage();
+    document.documentElement.setAttribute('lang', lang === 'uz-cyrl' ? 'uz-Cyrl' : lang);
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+        el.textContent = t(el.dataset.i18n);
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+        el.setAttribute('aria-label', t(el.dataset.i18nAria));
+    });
+    document.querySelectorAll('#appLanguageGroup .lang-chip').forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+    if (typeof syncProfileThemeUI === 'function') syncProfileThemeUI();
+    syncReminderUI();
+}
+
+// ---- Pinyin visibility & Hanzi size --------------------------------------------
+function applyDisplayPrefs() {
+    var pinyinMode = localStorage.getItem(EC_SETTINGS_KEYS.pinyin) === 'hide' ? 'hide' : 'show';
+    var hanziSize = localStorage.getItem(EC_SETTINGS_KEYS.hanziSize) || 'medium';
+    document.documentElement.setAttribute('data-pinyin', pinyinMode);
+    document.documentElement.setAttribute('data-hanzi-size', hanziSize);
+    document.querySelectorAll('#pinyinModeGroup .seg-chip').forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.pinyinMode === pinyinMode);
+    });
+    document.querySelectorAll('#hanziSizeGroup .seg-chip').forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.hanziSize === hanziSize);
+    });
+}
+
+var EC_PINYIN_SELECTOR = '.pinyin, .sentence-pinyin, .vocab-preview-pinyin, .grammar-example-pinyin, .lw-pinyin, .pfc-pinyin, .sp-pinyin, .bt-pinyin';
+
+// Tap a hidden pinyin to reveal it (works for dynamically rendered cards too)
+document.addEventListener('click', function (e) {
+    if (document.documentElement.getAttribute('data-pinyin') !== 'hide') return;
+    var el = e.target.closest && e.target.closest(EC_PINYIN_SELECTOR);
+    if (el && !el.classList.contains('pinyin-revealed')) {
+        el.classList.add('pinyin-revealed');
+        e.stopPropagation();
+        e.preventDefault();
+    }
+}, true);
+
+// ---- Daily goal (synced with profileData.dailyGoal) ---------------------------
+function getProfileDataSafe() {
+    try {
+        return JSON.parse(localStorage.getItem('profileData')) || { username: 'Chinese Learner', avatar: '👤', dailyGoal: 10 };
+    } catch (err) {
+        return { username: 'Chinese Learner', avatar: '👤', dailyGoal: 10 };
+    }
+}
+
+function syncDailyGoalUI() {
+    var goal = String(getProfileDataSafe().dailyGoal || 10);
+    document.querySelectorAll('#dailyGoalGroup .seg-chip').forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.goal === goal);
+    });
+    var display = document.getElementById('dailyGoalDisplay');
+    if (display) display.textContent = goal;
+}
+
+function setDailyGoal(goal) {
+    var data = getProfileDataSafe();
+    data.dailyGoal = parseInt(goal, 10) || 10;
+    localStorage.setItem('profileData', JSON.stringify(data));
+    syncDailyGoalUI();
+    var input = document.getElementById('dailyGoalInput');
+    if (input && input.querySelector('option[value="' + data.dailyGoal + '"]')) input.value = String(data.dailyGoal);
+}
+
+// ---- Daily reminder ------------------------------------------------------------
+var ecReminderTimer = null;
+
+function syncReminderUI() {
+    var toggle = document.getElementById('reminderToggle');
+    var timeInput = document.getElementById('reminderTimeInput');
+    var status = document.getElementById('reminderStatusText');
+    var on = localStorage.getItem(EC_SETTINGS_KEYS.reminderOn) === '1';
+    var time = localStorage.getItem(EC_SETTINGS_KEYS.reminderTime) || '20:00';
+    if (toggle) toggle.checked = on;
+    if (timeInput) timeInput.value = time;
+    if (status) status.textContent = on ? t('settings.reminderOn', { time: time }) : t('settings.reminderHint');
+}
+
+function hasStudiedToday() {
+    try {
+        var dp = JSON.parse(localStorage.getItem('dailyProgress'));
+        return !!(dp && dp.date === new Date().toDateString() && (dp.xp > 0 || dp.traces > 0));
+    } catch (err) {
+        return false;
+    }
+}
+
+function fireStudyReminder() {
+    var today = new Date().toDateString();
+    if (localStorage.getItem(EC_SETTINGS_KEYS.reminderLast) === today) return;
+    if (hasStudiedToday()) return;
+    if (!('Notification' in window) || Notification.permission !== 'granted') return;
+    localStorage.setItem(EC_SETTINGS_KEYS.reminderLast, today);
+    var options = { body: t('reminder.body'), icon: 'assets/icon-192.png', badge: 'assets/icon-192.png', tag: 'easy-chinese-daily' };
+    if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+        navigator.serviceWorker.ready
+            .then(function (reg) { return reg.showNotification(t('reminder.title'), options); })
+            .catch(function () { try { new Notification(t('reminder.title'), options); } catch (e) {} });
+    } else {
+        try { new Notification(t('reminder.title'), options); } catch (e) {}
+    }
+}
+
+function scheduleStudyReminder() {
+    if (ecReminderTimer) { clearTimeout(ecReminderTimer); ecReminderTimer = null; }
+    if (localStorage.getItem(EC_SETTINGS_KEYS.reminderOn) !== '1') return;
+    var parts = (localStorage.getItem(EC_SETTINGS_KEYS.reminderTime) || '20:00').split(':');
+    var now = new Date();
+    var target = new Date();
+    target.setHours(parseInt(parts[0], 10) || 20, parseInt(parts[1], 10) || 0, 0, 0);
+    if (now >= target) {
+        // Time already passed today: remind once (if not studied yet), then plan for tomorrow
+        fireStudyReminder();
+        target.setDate(target.getDate() + 1);
+    }
+    var delay = Math.min(target - now, 2147483000);
+    ecReminderTimer = setTimeout(function () { fireStudyReminder(); scheduleStudyReminder(); }, delay);
+}
+
+function enableReminder(enable) {
+    if (!enable) {
+        localStorage.setItem(EC_SETTINGS_KEYS.reminderOn, '0');
+        scheduleStudyReminder();
+        syncReminderUI();
+        return;
+    }
+    if (!('Notification' in window)) {
+        showToast(t('settings.reminderUnsupported'));
+        syncReminderUI();
+        return;
+    }
+    var finish = function (perm) {
+        if (perm === 'granted') {
+            localStorage.setItem(EC_SETTINGS_KEYS.reminderOn, '1');
+            scheduleStudyReminder();
+            showToast(t('settings.saved'));
+        } else {
+            localStorage.setItem(EC_SETTINGS_KEYS.reminderOn, '0');
+            showToast(t('settings.reminderDenied'));
+        }
+        syncReminderUI();
+    };
+    if (Notification.permission === 'granted') return finish('granted');
+    var req = Notification.requestPermission(finish);
+    if (req && typeof req.then === 'function') req.then(finish);
+}
+
+// ---- Backup / Restore / Reset ---------------------------------------------------
+var EC_PRESERVE_ON_RESET = ['theme', 'profileData', 'easyChineseSpeechRate'].concat(
+    Object.keys(EC_SETTINGS_KEYS).map(function (k) { return EC_SETTINGS_KEYS[k]; })
+);
+
+function exportProgressBackup() {
+    var data = {};
+    for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key && key.indexOf('firebase') !== 0) data[key] = localStorage.getItem(key);
+    }
+    var payload = { app: 'easy-chinese', version: 25, exportedAt: new Date().toISOString(), data: data };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'easy-chinese-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 500);
+    showToast(t('settings.exportDone'));
+}
+
+function importProgressBackup(file) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+        try {
+            var payload = JSON.parse(reader.result);
+            if (!payload || payload.app !== 'easy-chinese' || typeof payload.data !== 'object') throw new Error('bad file');
+            Object.keys(payload.data).forEach(function (key) {
+                if (typeof payload.data[key] === 'string') localStorage.setItem(key, payload.data[key]);
+            });
+            showToast(t('settings.importDone'));
+            setTimeout(function () { window.location.reload(); }, 900);
+        } catch (err) {
+            showToast(t('settings.importError'));
+        }
+    };
+    reader.readAsText(file);
+}
+
+function resetAllProgress() {
+    if (!window.confirm(t('settings.resetConfirm'))) return;
+    var keys = [];
+    for (var i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i));
+    keys.forEach(function (key) {
+        if (key && EC_PRESERVE_ON_RESET.indexOf(key) === -1 && key.indexOf('firebase') !== 0) {
+            localStorage.removeItem(key);
+        }
+    });
+    showToast(t('settings.resetDone'));
+    setTimeout(function () { window.location.reload(); }, 900);
+}
+
+// ---- Settings sheet open / close ------------------------------------------------
+function openSettingsSheet() {
+    var sheet = document.getElementById('settingsSheet');
+    if (!sheet) return;
+    applyAppLanguage();
+    applyDisplayPrefs();
+    syncDailyGoalUI();
+    syncReminderUI();
+    if (typeof syncSpeechRateUI === 'function') syncSpeechRateUI();
+    var sfx = document.getElementById('soundEffectsToggle');
+    if (sfx) sfx.checked = localStorage.getItem(EC_SETTINGS_KEYS.sfx) !== 'off';
+    sheet.hidden = false;
+    document.body.classList.add('settings-open');
+    requestAnimationFrame(function () { sheet.classList.add('open'); });
+}
+
+function closeSettingsSheet() {
+    var sheet = document.getElementById('settingsSheet');
+    if (!sheet || sheet.hidden) return;
+    sheet.classList.remove('open');
+    document.body.classList.remove('settings-open');
+    setTimeout(function () { sheet.hidden = true; }, 260);
+}
+
+function initSettingsSheet() {
+    applyAppLanguage();
+    applyDisplayPrefs();
+    syncDailyGoalUI();
+    scheduleStudyReminder();
+
+    var openBtn = document.getElementById('openSettingsBtn');
+    if (openBtn) openBtn.addEventListener('click', openSettingsSheet);
+
+    document.querySelectorAll('[data-close-settings]').forEach(function (el) {
+        el.addEventListener('click', closeSettingsSheet);
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSettingsSheet(); });
+
+    document.querySelectorAll('#appLanguageGroup .lang-chip').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            localStorage.setItem(EC_SETTINGS_KEYS.lang, btn.dataset.lang);
+            applyAppLanguage();
+            showToast(t('settings.saved'));
+        });
+    });
+
+    document.querySelectorAll('#pinyinModeGroup .seg-chip').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            localStorage.setItem(EC_SETTINGS_KEYS.pinyin, btn.dataset.pinyinMode);
+            document.querySelectorAll('.pinyin-revealed').forEach(function (el) { el.classList.remove('pinyin-revealed'); });
+            applyDisplayPrefs();
+        });
+    });
+
+    document.querySelectorAll('#hanziSizeGroup .seg-chip').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            localStorage.setItem(EC_SETTINGS_KEYS.hanziSize, btn.dataset.hanziSize);
+            applyDisplayPrefs();
+        });
+    });
+
+    var sfxToggle = document.getElementById('soundEffectsToggle');
+    if (sfxToggle) {
+        sfxToggle.addEventListener('change', function () {
+            localStorage.setItem(EC_SETTINGS_KEYS.sfx, sfxToggle.checked ? 'on' : 'off');
+            if (sfxToggle.checked) playSuccessSound();
+        });
+    }
+
+    document.querySelectorAll('#dailyGoalGroup .seg-chip').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            setDailyGoal(btn.dataset.goal);
+            showToast(t('settings.saved'));
+        });
+    });
+
+    var reminderToggle = document.getElementById('reminderToggle');
+    if (reminderToggle) {
+        reminderToggle.addEventListener('change', function () { enableReminder(reminderToggle.checked); });
+    }
+    var reminderTime = document.getElementById('reminderTimeInput');
+    if (reminderTime) {
+        reminderTime.addEventListener('change', function () {
+            localStorage.setItem(EC_SETTINGS_KEYS.reminderTime, reminderTime.value || '20:00');
+            localStorage.removeItem(EC_SETTINGS_KEYS.reminderLast);
+            scheduleStudyReminder();
+            syncReminderUI();
+        });
+    }
+
+    var exportBtn = document.getElementById('exportProgressBtn');
+    if (exportBtn) exportBtn.addEventListener('click', exportProgressBackup);
+    var importBtn = document.getElementById('importProgressBtn');
+    var importInput = document.getElementById('importProgressInput');
+    if (importBtn && importInput) {
+        importBtn.addEventListener('click', function () { importInput.click(); });
+        importInput.addEventListener('change', function () {
+            importProgressBackup(importInput.files && importInput.files[0]);
+            importInput.value = '';
+        });
+    }
+    var resetBtn = document.getElementById('resetProgressBtn');
+    if (resetBtn) resetBtn.addEventListener('click', resetAllProgress);
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') scheduleStudyReminder();
+    });
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSettingsSheet);
+} else {
+    initSettingsSheet();
 }
