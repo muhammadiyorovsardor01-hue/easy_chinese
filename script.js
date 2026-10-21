@@ -2058,23 +2058,30 @@ function showDashboard() {
     showView(dashboard);
 }
 
+function matchesHskAndTrack(word, hskLevel, dataTrack) {
+    if (word.hsk !== hskLevel) return false;
+    if (hskLevel === 1) return word.track === dataTrack;
+    return true;
+}
+
 function showLessonsView() {
     applyHskLevelTheme(currentHSK);
     const hskNames = {
         1: "HSK 1 · Foundations",
-        2: "HSK 2 · Elementary",
-        3: "HSK 3 · Intermediate",
-        4: "HSK 4 · Upper-Inter",
-        5: "HSK 5 · Advanced"
+        2: "HSK 2 · New HSK 3.0",
+        3: "HSK 3 · New HSK 3.0",
+        4: "HSK 4 · New HSK 3.0",
+        5: "HSK 5 · New HSK 3.0"
     };
     lessonsTitle.textContent = hskNames[currentHSK] || `HSK ${currentHSK} Lessons`;
     // Reset filter and search when entering lessons view
-    currentLessonTrack = 'classic';
+    currentLessonTrack = currentHSK === 1 ? 'classic' : 'new';
     searchQuery = '';
     searchInput.value = '';
     searchClear.classList.remove('visible');
     const filtersBox = document.querySelector('#lessons .hsk-filters');
     if (filtersBox) {
+        filtersBox.hidden = (currentHSK !== 1);
         filtersBox.style.display = currentHSK === 1 ? '' : 'none';
     }
     hskFilterBtns.forEach(btn => {
@@ -2089,9 +2096,8 @@ function showLessonView(lessonNumber) {
     currentLesson = lessonNumber;
     const selectedTrack = lessonTracks[currentLessonTrack] || lessonTracks.classic;
     currentWords = vocabularyData.filter(word => 
-        word.hsk === currentHSK && word.track === selectedTrack.dataTrack && word.lesson === lessonNumber
+        matchesHskAndTrack(word, currentHSK, selectedTrack.dataTrack) && word.lesson === lessonNumber
     );
-    
     if (currentWords.length === 0) {
         lessonTitle.textContent = `Lesson ${lessonNumber} - No words available`;
         currentWords = [{ id: 0, hsk: currentHSK, track: selectedTrack.dataTrack, lesson: lessonNumber, hanzi: "暂无", pinyin: "zàn wú", uzbek: "Hozircha yo'q" }];
@@ -2150,7 +2156,7 @@ function updateLessonsHeader() {
     const selectedTrack = lessonTracks[currentLessonTrack] || lessonTracks.classic;
     const trackLabel = (currentHSK >= 2 || currentLessonTrack === 'new') ? 'New HSK 3.0 yangi kitob darslari' : 'Classic HSK 1 yo‘nalishi';
     const trackLessons = vocabularyData.filter(word =>
-        word.hsk === currentHSK && word.track === selectedTrack.dataTrack
+        matchesHskAndTrack(word, currentHSK, selectedTrack.dataTrack)
     );
     const lessonNums = [...new Set(trackLessons.map(word => word.lesson))].sort((a, b) => a - b);
     const completed = lessonNums.filter(num => isLessonComplete(num, selectedTrack.dataTrack)).length;
@@ -2186,11 +2192,12 @@ function saveLessonFlowProgress() {
 }
 
 function getOrCreateLessonFlowRecord(track, hskLevel, lessonNumber) {
-    const key = lessonFlowKey(track, hskLevel, lessonNumber);
+    const normTrack = hskLevel === 1 ? track : 'classic';
+    const key = lessonFlowKey(normTrack, hskLevel, lessonNumber);
     let progress = lessonFlowProgress.lessons[key];
     if (progress) return progress;
 
-    const words = vocabularyData.filter(word => word.hsk === hskLevel && word.track === track && word.lesson === lessonNumber);
+    const words = vocabularyData.filter(word => matchesHskAndTrack(word, hskLevel, normTrack) && word.lesson === lessonNumber);
     const legacyComplete = words.length > 0 && words.every(word => learnedWords.includes(word.id));
     progress = {
         track,
@@ -2330,9 +2337,9 @@ function continueLessonFlow() {
 
 function prepareLessonWritingCanvas() {
     canvasHSK = currentHSK;
-    canvasTrack = currentLessonTrack;
+    canvasTrack = currentHSK === 1 ? currentLessonTrack : 'classic';
     canvasLesson = currentLesson;
-    const words = vocabularyData.filter(word => word.hsk === canvasHSK && word.track === canvasTrack && word.lesson === canvasLesson);
+    const words = vocabularyData.filter(word => matchesHskAndTrack(word, canvasHSK, canvasTrack) && word.lesson === canvasLesson);
     const progress = getOrCreateLessonFlowRecord(canvasTrack, canvasHSK, canvasLesson);
     const nextWordIndex = words.findIndex(word => !progress.writingWordIds.includes(word.id));
     canvasWordIndex = nextWordIndex === -1 ? 0 : nextWordIndex;
@@ -2383,9 +2390,10 @@ function registerFlashcardView() {
     }
 }
 
-function recordCanvasWritingCompletion() {
-    if (!canvasReturnToLesson || canvasCharacterIndex !== currentCanvasCharacters.length - 1) return false;
-    const words = vocabularyData.filter(word => word.hsk === canvasHSK && word.track === canvasTrack && word.lesson === canvasLesson);
+function recordCanvasWritingCompletion(forceWholeWord = false) {
+    if (!canvasReturnToLesson) return false;
+    if (!forceWholeWord && canvasCharacterIndex !== currentCanvasCharacters.length - 1) return false;
+    const words = vocabularyData.filter(word => matchesHskAndTrack(word, canvasHSK, canvasTrack) && word.lesson === canvasLesson);
     const word = words[canvasWordIndex];
     if (!word || !words.length) return false;
 
@@ -2413,10 +2421,11 @@ function recordCanvasWritingCompletion() {
 
 // Legacy learned-word completion is retained as a one-way migration fallback.
 function isLessonComplete(lessonNum, dataTrack) {
-    const progress = getLessonFlowRecord(dataTrack, currentHSK, lessonNum);
+    const normTrack = currentHSK === 1 ? dataTrack : 'classic';
+    const progress = getLessonFlowRecord(normTrack, currentHSK, lessonNum);
     if (progress) return Boolean(progress.completed);
     const ids = vocabularyData
-        .filter(word => word.hsk === currentHSK && word.track === dataTrack && word.lesson === lessonNum)
+        .filter(word => matchesHskAndTrack(word, currentHSK, normTrack) && word.lesson === lessonNum)
         .map(word => word.id);
     return ids.length > 0 && ids.every(id => learnedWords.includes(id));
 }
@@ -2427,9 +2436,9 @@ function generateLessonsGrid() {
     
     const selectedTrack = lessonTracks[currentLessonTrack] || lessonTracks.classic;
 
-    // Get words for the selected HSK version and curriculum track only.
+    // Get words for the selected HSK version and curriculum track.
     let filteredWords = vocabularyData.filter(word =>
-        word.hsk === currentHSK && word.track === selectedTrack.dataTrack
+        matchesHskAndTrack(word, currentHSK, selectedTrack.dataTrack)
     );
     
     // Apply search filter
@@ -2451,15 +2460,11 @@ function generateLessonsGrid() {
     }
     
     lessons.forEach(lessonNum => {
-        const wordCount = vocabularyData.filter(word =>
-            word.hsk === currentHSK && word.track === selectedTrack.dataTrack && word.lesson === lessonNum
-        ).length;
+        const lessonWords = vocabularyData.filter(word =>
+            matchesHskAndTrack(word, currentHSK, selectedTrack.dataTrack) && word.lesson === lessonNum
+        );
+        const wordCount = lessonWords.length;
         const lessonBtn = document.createElement('button');
-        // Additive state classes only — base 'lesson-btn' selector stays intact everywhere.
-        // NOTE: the grid-scope array is named `lessons` (const above), which
-        // shadows the global #lessons section element inside this function only.
-        // First INCOMPLETE lesson is the current one; completed lessons before
-        // it stay green, later lessons stay locked.
         const done = isLessonComplete(lessonNum, selectedTrack.dataTrack);
         const firstOpen = lessons.find(n => !isLessonComplete(n, selectedTrack.dataTrack));
         const isCurrent = lessonNum === firstOpen;
@@ -2476,7 +2481,8 @@ function generateLessonsGrid() {
         lessonLabel.textContent = `Lesson ${lessonNum}`;
         const wordCountLabel = document.createElement('span');
         wordCountLabel.className = 'lesson-word-count';
-        wordCountLabel.textContent = `${wordCount} words`;
+        const sampleHanzi = lessonWords.slice(0, 2).map(w => w.hanzi).join(' · ');
+        wordCountLabel.textContent = sampleHanzi ? `${wordCount} so‘z · ${sampleHanzi}` : `${wordCount} words`;
         lessonBtn.appendChild(lessonLabel);
         lessonBtn.appendChild(wordCountLabel);
         lessonBtn.addEventListener('click', () => showLessonView(lessonNum));
@@ -3342,7 +3348,7 @@ function restoreCanvasViewToStandalone() {
 }
 
 function updateCanvasLessonSelector() {
-    const lessons = [...new Set(vocabularyData.filter(w => w.hsk === canvasHSK && w.track === canvasTrack).map(w => w.lesson))].sort((a, b) => a - b);
+    const lessons = [...new Set(vocabularyData.filter(w => matchesHskAndTrack(w, canvasHSK, canvasTrack)).map(w => w.lesson))].sort((a, b) => a - b);
     canvasLessonSelector.innerHTML = lessons.map(lesson =>
         `<option value="${lesson}" ${lesson === canvasLesson ? 'selected' : ''}>Lesson ${lesson}</option>`
     ).join('');
@@ -3363,8 +3369,59 @@ function updateCanvasLessonSelector() {
     }
 }
 
+function renderCanvasCharChips(word) {
+    const chipsContainer = document.getElementById('canvasCharChips');
+    if (!chipsContainer) return;
+    if (!currentCanvasCharacters || currentCanvasCharacters.length <= 1) {
+        chipsContainer.innerHTML = '';
+        chipsContainer.hidden = true;
+        return;
+    }
+    chipsContainer.hidden = false;
+    const charButtonsHtml = currentCanvasCharacters.map((ch, idx) => {
+        const stateCls = idx < canvasCharacterIndex ? 'is-done' : (idx === canvasCharacterIndex ? 'is-active' : '');
+        const mark = idx < canvasCharacterIndex ? '✓ ' : '';
+        return `<button type="button" class="canvas-char-chip ${stateCls}" data-char-idx="${idx}">${mark}${ch}</button>`;
+    }).join('');
+    const skipWordHtml = `<button type="button" class="canvas-skip-word-chip" id="canvasSkipWholeWordBtn" title="Keyingi so'zga o'tish">Keyingi so‘z →</button>`;
+    chipsContainer.innerHTML = `<div class="canvas-chips-row">${charButtonsHtml}</div>${skipWordHtml}`;
+
+    chipsContainer.querySelectorAll('.canvas-char-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+            canvasCharacterIndex = parseInt(btn.dataset.charIdx, 10) || 0;
+            loadCanvasCharacter();
+        });
+    });
+
+    const skipBtn = document.getElementById('canvasSkipWholeWordBtn');
+    if (skipBtn) {
+        skipBtn.addEventListener('click', () => {
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+            const words = vocabularyData.filter(w => matchesHskAndTrack(w, canvasHSK, canvasTrack) && w.lesson === canvasLesson);
+            if (!words.length) return;
+            const writingDone = recordCanvasWritingCompletion(true);
+            if (canvasReturnToLesson && writingDone) {
+                completeCurrentLesson();
+                switchMode('complete');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+            canvasWordIndex = (canvasWordIndex + 1) % words.length;
+            canvasCharacterIndex = 0;
+            loadCanvasCharacter();
+        });
+    }
+}
+
 function loadCanvasCharacter() {
-    const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.track === canvasTrack && w.lesson === canvasLesson);
+    const words = vocabularyData.filter(w => matchesHskAndTrack(w, canvasHSK, canvasTrack) && w.lesson === canvasLesson);
     if (words.length > 0) {
         canvasWordIndex %= words.length;
         const word = words[canvasWordIndex];
@@ -3372,11 +3429,14 @@ function loadCanvasCharacter() {
         canvasCharacterIndex = Math.min(canvasCharacterIndex, currentCanvasCharacters.length - 1);
         const targetChar = currentCanvasCharacters[canvasCharacterIndex];
         canvasCharacter.textContent = targetChar;
-        canvasWordLabel.textContent = word.hanzi;
-        canvasCharacterPosition.textContent = `Character ${canvasCharacterIndex + 1} of ${currentCanvasCharacters.length}`;
+        canvasWordLabel.textContent = `${word.hanzi} (${canvasWordIndex + 1}/${words.length})`;
+        canvasCharacterPosition.textContent = currentCanvasCharacters.length > 1
+            ? `Bo‘g‘in ${canvasCharacterIndex + 1} / ${currentCanvasCharacters.length}`
+            : `1 ta iyeroglif`;
         canvasMeaning.textContent = word.uzbek;
         canvasPinyin.textContent = word.pinyin;
-        const nextLabel = canvasCharacterIndex < currentCanvasCharacters.length - 1 ? 'Next Character →' : 'Next Word →';
+        renderCanvasCharChips(word);
+        const nextLabel = canvasCharacterIndex < currentCanvasCharacters.length - 1 ? 'Keyingi harf →' : 'Keyingi so‘z →';
         canvasContinueBtn.textContent = nextLabel;
         nextCanvasWord.textContent = nextLabel;
         nextWordFromModal.textContent = nextLabel.replace(' →', '');
@@ -3391,12 +3451,11 @@ function loadCanvasCharacter() {
 }
 
 function nextCanvasCharacter() {
-    // Clear any pending auto-advance timer to prevent double-advance
     if (autoAdvanceTimer) {
         clearTimeout(autoAdvanceTimer);
         autoAdvanceTimer = null;
     }
-    const words = vocabularyData.filter(w => w.hsk === canvasHSK && w.track === canvasTrack && w.lesson === canvasLesson);
+    const words = vocabularyData.filter(w => matchesHskAndTrack(w, canvasHSK, canvasTrack) && w.lesson === canvasLesson);
     if (!words.length) return;
     if (canvasCharacterIndex < currentCanvasCharacters.length - 1) {
         canvasCharacterIndex++;

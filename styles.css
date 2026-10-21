@@ -8604,3 +8604,91 @@ body.has-pwa-banner {
         gap: 0.5rem;
     }
 }
+
+
+/* ========================================================
+   15. STRICT LESSON STAGE ISOLATION, HSK 2-5 FILTER HIDE & CANVAS CHAR CHIPS
+   ======================================================== */
+#lesson > .mode-content:not(.active) {
+    display: none !important;
+}
+
+#lesson > .mode-content.active {
+    display: block !important;
+}
+
+.lessons-level-banner .hsk-filters[hidden],
+[data-hsk-level="2"] .lessons-level-banner .hsk-filters,
+[data-hsk-level="3"] .lessons-level-banner .hsk-filters,
+[data-hsk-level="4"] .lessons-level-banner .hsk-filters,
+[data-hsk-level="5"] .lessons-level-banner .hsk-filters {
+    display: none !important;
+}
+
+.canvas-char-chips {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 0.4rem 0 0.55rem;
+    padding: 0.4rem 0.55rem;
+    border-radius: 12px;
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--border-color);
+}
+
+.canvas-chips-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.canvas-char-chip {
+    min-width: 36px;
+    height: 34px;
+    padding: 0 0.55rem;
+    border-radius: 9px;
+    border: 1.5px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.canvas-char-chip.is-active {
+    border-color: var(--hsk-accent, var(--primary-color));
+    background: var(--hsk-accent, var(--primary-color));
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.28);
+}
+
+.canvas-char-chip.is-done {
+    border-color: rgba(16, 185, 129, 0.45);
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+}
+
+.canvas-skip-word-chip {
+    height: 32px;
+    padding: 0 0.65rem;
+    border-radius: 9px;
+    border: 1.5px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.74rem;
+    font-weight: 800;
+    cursor: pointer;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.canvas-skip-word-chip:active {
+    transform: scale(0.96);
+}

@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=18">
+    <link rel="stylesheet" href="styles.css?v=19">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -309,7 +309,6 @@
                         <button class="quiz-type-btn" data-quiz-type="audio" type="button">&#x1F3A7; Eshitib topish</button>
                     </div>
                 </div>
-                </div>
                 <div class="quiz-container">
                     <div class="quiz-question">
                         <div class="quiz-hanzi" id="quizHanzi">你好</div>
@@ -469,9 +468,10 @@
                         <div class="canvas-category">Trace Practice</div>
                         <div class="canvas-cn-kicker">汉字练习 · Hanzi Practice</div>
                         <div class="canvas-word-progress" aria-live="polite">
-                            <span>Word: <strong id="canvasWordLabel">你</strong></span>
+                            <span>Word: <strong id="canvasWordLabel">&#x4F60;</strong></span>
                             <span id="canvasCharacterPosition">Character 1 of 1</span>
                         </div>
+                        <div class="canvas-char-chips" id="canvasCharChips" aria-label="So'z bo'g'inlari"></div>
                         <div class="canvas-prompt-row">
                             <div class="canvas-reference-character" id="canvasCharacter">你</div>
                             <div class="canvas-meaning" id="canvasMeaning">You</div>
@@ -945,7 +945,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=18"></script>
+    <script src="script.js?v=19"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1046,7 +1046,7 @@
           window.location.reload();
         });
 
-        navigator.serviceWorker.register('./sw.js?v=18', { updateViaCache: 'none' }).then((reg) => {
+        navigator.serviceWorker.register('./sw.js?v=19', { updateViaCache: 'none' }).then((reg) => {
           if (reg.waiting) {
             reg.waiting.postMessage({ type: 'SKIP_WAITING' });
           }
