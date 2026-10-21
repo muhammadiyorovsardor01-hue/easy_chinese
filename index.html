@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <meta name="description" content="Learn Chinese HSK vocabulary with flashcards, quizzes, and stroke order animations">
     <meta name="theme-color" content="#10B981">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=21">
+    <link rel="stylesheet" href="styles.css?v=22">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -196,33 +196,6 @@
                     <button class="hsk-filter-btn active" data-track="classic" type="button">Classic HSK 1 &middot; 15 lessons</button>
                     <button class="hsk-filter-btn" data-track="new" type="button">New HSK 3.0 &middot; 15 lessons</button>
                 </div>
-            </div>
-
-            <!-- Practice Hub: Tone Lab & China Survival Phrases -->
-            <div class="practice-special-hub" aria-label="Maxsus mashqlar markazi">
-                <button type="button" class="practice-hub-card hub-tone-card" id="openToneLabBtn">
-                    <div class="hub-card-icon">&#x1F3B5;</div>
-                    <div class="hub-card-body">
-                        <div class="hub-card-title-row">
-                            <strong>Tonlar Mashqi &middot; &#x56DB;&#x58F0;&#x7EC3;&#x4E60;</strong>
-                            <span class="hub-badge">4 Ton + Sandhi</span>
-                        </div>
-                        <small>1&ndash;4 tonlar grafigi, eshitib farqlash va mikrofonda tonni tekshirish</small>
-                    </div>
-                    <span class="hub-arrow">&rarr;</span>
-                </button>
-
-                <button type="button" class="practice-hub-card hub-survival-card" id="openSurvivalBtn">
-                    <div class="hub-card-icon">&#x1F3EE;</div>
-                    <div class="hub-card-body">
-                        <div class="hub-card-title-row">
-                            <strong>Xitoyda Kunlik Hayot &middot; &#x5E38;&#x7528;&#x53E3;&#x8BED;</strong>
-                            <span class="hub-badge">Jonli Muloqot</span>
-                        </div>
-                        <small>Darsda (&#x6559;&#x5BA4;), oshxonada (&#x98DF;&#x5802;), do&#x2018;kon, metro va kuryer (&#x5916;&#x5356;) iboralari</small>
-                    </div>
-                    <span class="hub-arrow">&rarr;</span>
-                </button>
             </div>
 
             <!-- Search Bar -->
@@ -861,6 +834,132 @@
             </div>
         </section>
 
+        <!-- Dedicated Practice Hub View (练习中心 · Amaliyot Markazi) -->
+        <section id="practice" class="view">
+            <div class="subview-header-card practice-center-banner">
+                <div class="lessons-banner-top">
+                    <span class="lessons-cn-badge">练习中心 · Super Practice</span>
+                    <span class="weekly-streak-pill" id="practiceHskPill">HSK 1</span>
+                </div>
+                <h2 class="section-title">📚 Amaliyot Markazi</h2>
+                <p class="lessons-kicker">Tonlar, jonli muloqot, so‘zlar va viktorinalar orqali xitoy tilingizni charxlang</p>
+            </div>
+
+            <!-- Group 1: Fonetika & Tonlar -->
+            <div class="practice-group-section">
+                <h3 class="practice-group-heading">🎵 Fonetika &amp; Tonlar (语音与声调)</h3>
+                <div class="practice-tiles-grid">
+                    <button type="button" class="hub-tile-card tile-tone" id="hubOpenToneBtn">
+                        <div class="hub-tile-icon tone-icon">🎵</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong>Tonlar Laboratoriyasi</strong>
+                                <span class="hub-pill-badge">4 Ton + Sandhi</span>
+                            </div>
+                            <p>1–4 tonlar grafigi, o‘xshash so‘zlar (mā/má/mǎ/mà) va eshitib topish viktorinasi</p>
+                        </div>
+                        <span class="hub-tile-arrow">→</span>
+                    </button>
+
+                    <button type="button" class="hub-tile-card tile-mic" id="hubOpenPitchBtn">
+                        <div class="hub-tile-icon mic-icon">🎙️</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong>Talaffuz &amp; Pitch Mashqi</strong>
+                                <span class="hub-pill-badge">Ovozli tekshirish</span>
+                            </div>
+                            <p>Mikrofonga aytib, ovoz konturingiz to‘g‘ri tushayotganini tekshiring</p>
+                        </div>
+                        <span class="hub-tile-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Group 2: Real Xitoy Hayoti -->
+            <div class="practice-group-section">
+                <h3 class="practice-group-heading">🏮 Xitoyda Jonli Hayot &amp; Muloqot (情景口语)</h3>
+                <div class="practice-tiles-grid">
+                    <button type="button" class="hub-tile-card tile-survival" id="hubOpenSurvivalBtn">
+                        <div class="hub-tile-icon surv-icon">🏮</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong>Xitoyda Kunlik Muloqot</strong>
+                                <span class="hub-pill-badge">Jonli Iboralar</span>
+                            </div>
+                            <p>Darsda (教室), oshxonada (食堂), WeChat to‘lov (微信), metro va kuryer (外卖) gaplari</p>
+                        </div>
+                        <span class="hub-tile-arrow">→</span>
+                    </button>
+
+                    <button type="button" class="hub-tile-card tile-ai" id="hubOpenAiCoachBtn">
+                        <div class="hub-tile-icon ai-icon">👩‍🏫</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong>AI Laoshi (Li Ustoz)</strong>
+                                <span class="hub-pill-badge">SuperChinese uslubida</span>
+                            </div>
+                            <p>Istalgan savolni bering, ton tahlili yoki real dialog mashq qiling</p>
+                        </div>
+                        <span class="hub-tile-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Group 3: So'z Boyligi & Ko'nikmalar -->
+            <div class="practice-group-section">
+                <h3 class="practice-group-heading">🧠 So‘z Boyligi &amp; Yozish (词汇与技能)</h3>
+                <div class="practice-tiles-grid">
+                    <button type="button" class="hub-tile-card tile-flashcards" id="hubOpenFlashcardsBtn">
+                        <div class="hub-tile-icon card-icon">🗂️</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong>So‘zlar Flashcard Mashqi</strong>
+                                <span class="hub-pill-badge" id="hubFlashcardsBadge">HSK So‘zlari</span>
+                            </div>
+                            <p>Iyeroglif, Pinyin va audio talaffuz bilan yangi so‘zlarni kartochkada takrorlash</p>
+                        </div>
+                        <span class="hub-tile-arrow">→</span>
+                    </button>
+
+                    <button type="button" class="hub-tile-card tile-canvas" id="hubOpenCanvasBtn">
+                        <div class="hub-tile-icon write-icon">✍️</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong>Iyeroglif Yozish Mashqi</strong>
+                                <span class="hub-pill-badge">Hanzi Writer</span>
+                            </div>
+                            <p>To‘g‘ri chiziqlar tartibi (笔顺) bilan ekranda yozish trenajyori</p>
+                        </div>
+                        <span class="hub-tile-arrow">→</span>
+                    </button>
+
+                    <button type="button" class="hub-tile-card tile-mistakes" id="hubOpenMistakesBtn">
+                        <div class="hub-tile-icon review-icon">🧠</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong>Xatolar Ustida Ishlash</strong>
+                                <span class="hub-pill-badge" id="hubMistakesBadge">0 ta so‘z</span>
+                            </div>
+                            <p>Dars va viktorinalarda noaniq bo‘lgan so‘zlarni qayta mustahkamlash</p>
+                        </div>
+                        <span class="hub-tile-arrow">→</span>
+                    </button>
+
+                    <button type="button" class="hub-tile-card tile-bookmarks" id="hubOpenBookmarksBtn">
+                        <div class="hub-tile-icon fav-icon">⭐</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong>Saqlangan So‘zlar</strong>
+                                <span class="hub-pill-badge" id="hubBookmarksBadge">0 ta so‘z</span>
+                            </div>
+                            <p>O‘zingiz yulduzcha qo‘ygan maxsus so‘zlar to‘plamini takrorlash</p>
+                        </div>
+                        <span class="hub-tile-arrow">→</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
         <!-- Tone Mastery Lab View (å£°è°ƒå®žéªŒå®¤) -->
         <section id="toneLab" class="view">
             <div class="subview-header-card tone-lab-banner">
@@ -953,36 +1052,46 @@
         <section id="aiLaoshi" class="view">
             <div class="subview-header-card ai-laoshi-banner">
                 <div class="ai-banner-head">
-                    <div class="ai-avatar-badge">&#x1F916;</div>
-                    <div>
-                        <span class="lessons-cn-badge">AI &#x8001;&#x5E08; &middot; Intelligent Chinese Coach</span>
-                        <h2 class="section-title">AI Laoshi (Sun&rsquo;iy Intellekt Ustoz)</h2>
-                        <p class="lessons-kicker">Tonlarni tahlil qiling, grammatikani so&#x2018;rang yoki Xitoydagi real vaziyatlarda dialog mashq qiling</p>
+                    <div class="ai-avatar-badge">👩‍🏫</div>
+                    <div class="ai-head-meta">
+                        <div class="ai-head-title-row">
+                            <span class="lessons-cn-badge">李老师 · Li Laoshi</span>
+                            <span class="ai-online-badge"><span class="status-pulse-dot"></span> Onlayn</span>
+                        </div>
+                        <h2 class="section-title">AI Laoshi (Ustoz)</h2>
+                        <p class="lessons-kicker">Grammatika, 1–4 tonlar siri va Xitoyda yashash bo‘yicha shaxsiy maslahatchi</p>
                     </div>
+                    <button type="button" class="ai-clear-btn" id="aiClearChatBtn" title="Suhbatni tozalash" aria-label="Suhbatni tozalash">🗑️</button>
                 </div>
                 <div class="subview-tabs" id="aiScenarioChips">
-                    <button type="button" class="subview-tab active" data-ai-mode="coach">&#x1F50D; Ton &amp; So&#x2018;z Tahlili</button>
-                    <button type="button" class="subview-tab" data-ai-mode="classroom">&#x1F393; Laoshi bilan Dars</button>
-                    <button type="button" class="subview-tab" data-ai-mode="canteen">&#x1F95F; Oshxonada Buyurtma</button>
-                    <button type="button" class="subview-tab" data-ai-mode="market">&#x1F6CD;&#xFE0F; Xarid &amp; Savdolashish</button>
+                    <button type="button" class="subview-tab active" data-ai-mode="coach">🔍 Ton &amp; So‘z</button>
+                    <button type="button" class="subview-tab" data-ai-mode="classroom">🎓 Darsda</button>
+                    <button type="button" class="subview-tab" data-ai-mode="canteen">🍜 Oshxona</button>
+                    <button type="button" class="subview-tab" data-ai-mode="market">📱 To‘lov &amp; Kuryer</button>
+                    <button type="button" class="subview-tab" data-ai-mode="taxi">🚕 Taksi / Shahar</button>
                 </div>
             </div>
 
             <div class="ai-chat-card">
                 <div class="ai-quick-prompts" id="aiQuickPrompts">
-                    <button type="button" class="ai-prompt-chip" data-prompt="&#x4F60;&#x597D;">&#x1F50D; &laquo;&#x4F60;&#x597D;&raquo; ton qoidasi</button>
-                    <button type="button" class="ai-prompt-chip" data-prompt="&#x4E0D;&#x662F;">&#x1F50D; &laquo;&#x4E0D;&#x662F;&raquo; (b&uacute; sh&igrave;) o&#x2018;zgarishi</button>
-                    <button type="button" class="ai-prompt-chip" data-prompt="&#x4E8C; va &#x4E24; farqi">&#x2753; &#x4E8C; va &#x4E24; farqi</button>
-                    <button type="button" class="ai-prompt-chip" data-prompt="&#x4E86; qachon ishlatiladi">&#x1F4D6; &#x4E86; (le) grammatikasi</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="你好">🔍 «你好» ton siri</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="不是">🔍 «不是» (bú shì) qoidasi</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="二 va 两 farqi">❓ 二 va 两 farqi</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="Oshxonada nima deyish kerak?">🍜 Oshxonada nima deymiz?</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="WeChat tolov qilish iboralari">📱 WeChat to‘lov</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="了 qachon ishlatiladi">📖 了 (le) qoidasi</button>
                 </div>
 
                 <div class="ai-messages-box" id="aiMessagesBox" aria-live="polite"></div>
 
-                <div class="ai-input-bar">
-                    <button type="button" class="ai-mic-btn" id="aiVoiceInputBtn" title="Ovoz bilan aytish">&#x1F399;&#xFE0F;</button>
-                    <input type="text" class="ai-text-input" id="aiTextInput" placeholder="Xitoycha so'z, gap yoki o'zbekcha savol yozing..." />
-                    <button type="button" class="ai-send-btn" id="aiSendBtn">Yuborish &rarr;</button>
-                </div>
+                <form class="ai-input-bar" id="aiChatForm" onsubmit="return false;">
+                    <button type="button" class="ai-mic-btn" id="aiVoiceInputBtn" title="Ovoz bilan aytish" aria-label="Mikrofon">🎙️</button>
+                    <input type="text" class="ai-text-input" id="aiTextInput" placeholder="Xitoycha so‘z, gap yoki o‘zbekcha savol..." autocomplete="off" autocorrect="off" enterkeyhint="send" />
+                    <button type="submit" class="ai-send-btn" id="aiSendBtn" aria-label="Yuborish">
+                        <span class="send-text">Yuborish</span>
+                        <span class="send-icon">➤</span>
+                    </button>
+                </form>
             </div>
         </section>
     </main>
@@ -1119,7 +1228,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=21"></script>
+    <script src="script.js?v=22"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1238,7 +1347,7 @@
         window.location.reload();
       });
 
-      navigator.serviceWorker.register('./sw.js?v=21', { updateViaCache: 'none' }).then((reg) => {
+      navigator.serviceWorker.register('./sw.js?v=22', { updateViaCache: 'none' }).then((reg) => {
         if (reg.waiting) {
           reg.waiting.postMessage({ type: 'SKIP_WAITING' });
         }
