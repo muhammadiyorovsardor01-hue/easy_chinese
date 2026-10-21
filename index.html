@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=20">
+    <link rel="stylesheet" href="styles.css?v=21">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -191,13 +191,40 @@
                     </div>
                     <p class="lessons-progress" id="lessonsProgress" aria-live="polite">0 of 15 lessons complete</p>
                 </div>
-                <!-- HSK 1 lesson versions (JS toggles .active only — keep both track buttons) -->
+                <!-- HSK 1 lesson versions (JS toggles .active only â€” keep both track buttons) -->
                 <div class="hsk-filters" aria-label="HSK 1 lesson version">
-                    <button class="hsk-filter-btn active" data-track="classic" type="button">Classic HSK 1 · 15 lessons</button>
-                    <button class="hsk-filter-btn" data-track="new" type="button">New HSK 3.0 · 15 lessons</button>
+                    <button class="hsk-filter-btn active" data-track="classic" type="button">Classic HSK 1 &middot; 15 lessons</button>
+                    <button class="hsk-filter-btn" data-track="new" type="button">New HSK 3.0 &middot; 15 lessons</button>
                 </div>
             </div>
-            
+
+            <!-- Practice Hub: Tone Lab & China Survival Phrases -->
+            <div class="practice-special-hub" aria-label="Maxsus mashqlar markazi">
+                <button type="button" class="practice-hub-card hub-tone-card" id="openToneLabBtn">
+                    <div class="hub-card-icon">&#x1F3B5;</div>
+                    <div class="hub-card-body">
+                        <div class="hub-card-title-row">
+                            <strong>Tonlar Mashqi &middot; &#x56DB;&#x58F0;&#x7EC3;&#x4E60;</strong>
+                            <span class="hub-badge">4 Ton + Sandhi</span>
+                        </div>
+                        <small>1&ndash;4 tonlar grafigi, eshitib farqlash va mikrofonda tonni tekshirish</small>
+                    </div>
+                    <span class="hub-arrow">&rarr;</span>
+                </button>
+
+                <button type="button" class="practice-hub-card hub-survival-card" id="openSurvivalBtn">
+                    <div class="hub-card-icon">&#x1F3EE;</div>
+                    <div class="hub-card-body">
+                        <div class="hub-card-title-row">
+                            <strong>Xitoyda Kunlik Hayot &middot; &#x5E38;&#x7528;&#x53E3;&#x8BED;</strong>
+                            <span class="hub-badge">Jonli Muloqot</span>
+                        </div>
+                        <small>Darsda (&#x6559;&#x5BA4;), oshxonada (&#x98DF;&#x5802;), do&#x2018;kon, metro va kuryer (&#x5916;&#x5356;) iboralari</small>
+                    </div>
+                    <span class="hub-arrow">&rarr;</span>
+                </button>
+            </div>
+
             <!-- Search Bar -->
             <div class="search-container">
                 <input type="text" class="search-input" id="searchInput" placeholder="Search by Uzbek, Pinyin, or Hanzi...">
@@ -217,8 +244,9 @@
         <!-- Lesson View -->
         <section id="lesson" class="view">
             <div class="lesson-top-bar">
-                <button class="back-btn" id="backToLessons">← Darslar</button>
+                <button class="back-btn" id="backToLessons">&larr; Darslar</button>
                 <h2 class="section-title" id="lessonTitle">Lesson 1</h2>
+                <button type="button" class="lesson-ai-ask-btn" id="askAiFromLessonBtn" title="Shu so'zni AI Laoshi'dan so'rash">&#x1F916; AI Tahlil</button>
             </div>
 
             <section class="lesson-flow-panel" aria-label="Lesson progress">
@@ -827,8 +855,133 @@
                                 <small>Telefonga 1 bosishda o‘rnatish</small>
                             </div>
                         </div>
-                        <button type="button" class="setting-install-btn" id="profileInstallAppBtn">📲 O‘rnatish</button>
+                        <button type="button" class="setting-install-btn" id="profileInstallAppBtn">&#x1F4F2; O&#x2018;rnatish</button>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tone Mastery Lab View (å£°è°ƒå®žéªŒå®¤) -->
+        <section id="toneLab" class="view">
+            <div class="subview-header-card tone-lab-banner">
+                <div class="lessons-banner-top">
+                    <button type="button" class="back-btn" id="backFromToneLabBtn">&larr; Practice</button>
+                    <span class="lessons-cn-badge">&#x56DB;&#x58F0;&#x4E0E;&#x53D8;&#x8C03; &middot; Tone Mastery</span>
+                </div>
+                <h2 class="section-title">Tonlar Laboratoriyasi (4 Tones)</h2>
+                <p class="lessons-kicker">Xitoy tilida ma&rsquo;noni aniq yetkazish uchun 4 ta ton va Tone Sandhi qoidalarini mashq qiling</p>
+                <div class="subview-tabs" id="toneLabTabs">
+                    <button type="button" class="subview-tab active" data-tone-tab="chart">&#x1F4CA; 4 Ton Grafigi</button>
+                    <button type="button" class="subview-tab" data-tone-tab="ear">&#x1F3A7; Eshitib Topish</button>
+                    <button type="button" class="subview-tab" data-tone-tab="sandhi">&#x1F517; Tone Sandhi</button>
+                    <button type="button" class="subview-tab" data-tone-tab="mic">&#x1F399;&#xFE0F; Talaffuz &amp; Pitch</button>
+                </div>
+            </div>
+
+            <!-- Tab 1: 4 Tones Pitch Contours & Minimal Pairs -->
+            <div class="tone-tab-panel active" id="toneTabChart">
+                <div class="tone-cards-grid" id="toneContoursGrid"></div>
+                <div class="tone-minimal-section">
+                    <div class="section-head-row">
+                        <h3 class="progress-title">Ton o&#x2018;zgarsa &mdash; ma&rsquo;no o&#x2018;zgaradi!<span class="title-cn">&#x8FA8;&#x8C03;&#x5BF9;&#x6BD4;</span></h3>
+                        <span class="weekly-streak-pill">&#x1F50A; Bosib solishtiring</span>
+                    </div>
+                    <div class="minimal-pairs-list" id="minimalPairsList"></div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Tone Ear-Trainer Quiz -->
+            <div class="tone-tab-panel" id="toneTabEar">
+                <div class="tone-ear-card">
+                    <div class="tone-ear-top">
+                        <span class="weekly-streak-pill">Ball: <strong id="toneEarScore">0</strong></span>
+                        <span class="progress-tap-hint" id="toneEarProgressText">Savol #1</span>
+                    </div>
+                    <button type="button" class="quiz-audio-hero-btn" id="toneEarPlayBtn">&#x1F50A;<span>Bo&#x2018;g&#x2018;inni eshitish</span></button>
+                    <p class="tone-ear-hint" id="toneEarHint">Ovozni tinglang: bu nechanchi ton?</p>
+                    <div class="tone-ear-options" id="toneEarOptions"></div>
+                    <div class="tone-ear-feedback" id="toneEarFeedback" hidden></div>
+                    <button type="button" class="stage-next-btn" id="toneEarNextBtn">Keyingi ton savoli &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Tab 3: Tone Sandhi Golden Rules -->
+            <div class="tone-tab-panel" id="toneTabSandhi">
+                <div class="sandhi-rules-list" id="sandhiRulesList"></div>
+            </div>
+
+            <!-- Tab 4: Microphone Tone & Pitch Practice -->
+            <div class="tone-tab-panel" id="toneTabMic">
+                <div class="tone-mic-card">
+                    <div class="tone-mic-target" id="toneMicTargetBox">
+                        <span class="tm-badge" id="toneMicBadge">3-ton + 3-ton &rarr; 2-ton + 3-ton</span>
+                        <div class="tm-hanzi" id="toneMicHanzi">&#x4F60;&#x597D;</div>
+                        <div class="tm-pinyin" id="toneMicPinyin">n&#x01D0; h&#x01CE;o &rarr; <strong>n&#x00ED; h&#x01CE;o</strong></div>
+                        <div class="tm-uzbek" id="toneMicUzbek">Salom</div>
+                    </div>
+                    <canvas id="tonePitchCanvas" class="tone-pitch-canvas" width="320" height="90"></canvas>
+                    <div class="tone-mic-actions">
+                        <button type="button" class="secondary-btn" id="toneMicListenBtn">&#x1F50A; Namuna</button>
+                        <button type="button" class="stage-next-btn" id="toneMicRecordBtn">&#x1F399;&#xFE0F; Aytib tekshirish</button>
+                        <button type="button" class="secondary-btn" id="toneMicNextWordBtn">Keyingisi &rarr;</button>
+                    </div>
+                    <div class="speak-feedback-banner" id="toneMicFeedback" hidden></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- China Survival Phrases View (ä¸­å›½ç”Ÿæ´»å£è¯­) -->
+        <section id="survivalPhrases" class="view">
+            <div class="subview-header-card survival-banner">
+                <div class="lessons-banner-top">
+                    <button type="button" class="back-btn" id="backFromSurvivalBtn">&larr; Practice</button>
+                    <span class="lessons-cn-badge">&#x5B9E;&#x7528;&#x53E3;&#x8BED; &middot; Real China Life</span>
+                </div>
+                <h2 class="section-title">Xitoyda Kunlik Muloqot</h2>
+                <p class="lessons-kicker">Auditoriyada, oshxonada, WeChat to&#x2018;lovida, kuryer bilan va ko&#x2018;chada har kuni kerak bo&#x2018;ladigan iboralar</p>
+                <div class="subview-tabs" id="survivalCategoryTabs">
+                    <button type="button" class="subview-tab active" data-surv-cat="classroom">&#x1F3EB; Darsda (&#x6559;&#x5BA4;)</button>
+                    <button type="button" class="subview-tab" data-surv-cat="canteen">&#x1F35C; Oshxona (&#x98DF;&#x5802;)</button>
+                    <button type="button" class="subview-tab" data-surv-cat="delivery">&#x1F4E6; Kuryer &amp; Do&#x2018;kon</button>
+                    <button type="button" class="subview-tab" data-surv-cat="transport">&#x1F687; Metro &amp; Taksi</button>
+                </div>
+            </div>
+            <div class="survival-phrases-list" id="survivalPhrasesList"></div>
+        </section>
+
+        <!-- AI Laoshi View (AI è€å¸ˆ Â· Sun'iy Intellekt Ustoz) -->
+        <section id="aiLaoshi" class="view">
+            <div class="subview-header-card ai-laoshi-banner">
+                <div class="ai-banner-head">
+                    <div class="ai-avatar-badge">&#x1F916;</div>
+                    <div>
+                        <span class="lessons-cn-badge">AI &#x8001;&#x5E08; &middot; Intelligent Chinese Coach</span>
+                        <h2 class="section-title">AI Laoshi (Sun&rsquo;iy Intellekt Ustoz)</h2>
+                        <p class="lessons-kicker">Tonlarni tahlil qiling, grammatikani so&#x2018;rang yoki Xitoydagi real vaziyatlarda dialog mashq qiling</p>
+                    </div>
+                </div>
+                <div class="subview-tabs" id="aiScenarioChips">
+                    <button type="button" class="subview-tab active" data-ai-mode="coach">&#x1F50D; Ton &amp; So&#x2018;z Tahlili</button>
+                    <button type="button" class="subview-tab" data-ai-mode="classroom">&#x1F393; Laoshi bilan Dars</button>
+                    <button type="button" class="subview-tab" data-ai-mode="canteen">&#x1F95F; Oshxonada Buyurtma</button>
+                    <button type="button" class="subview-tab" data-ai-mode="market">&#x1F6CD;&#xFE0F; Xarid &amp; Savdolashish</button>
+                </div>
+            </div>
+
+            <div class="ai-chat-card">
+                <div class="ai-quick-prompts" id="aiQuickPrompts">
+                    <button type="button" class="ai-prompt-chip" data-prompt="&#x4F60;&#x597D;">&#x1F50D; &laquo;&#x4F60;&#x597D;&raquo; ton qoidasi</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="&#x4E0D;&#x662F;">&#x1F50D; &laquo;&#x4E0D;&#x662F;&raquo; (b&uacute; sh&igrave;) o&#x2018;zgarishi</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="&#x4E8C; va &#x4E24; farqi">&#x2753; &#x4E8C; va &#x4E24; farqi</button>
+                    <button type="button" class="ai-prompt-chip" data-prompt="&#x4E86; qachon ishlatiladi">&#x1F4D6; &#x4E86; (le) grammatikasi</button>
+                </div>
+
+                <div class="ai-messages-box" id="aiMessagesBox" aria-live="polite"></div>
+
+                <div class="ai-input-bar">
+                    <button type="button" class="ai-mic-btn" id="aiVoiceInputBtn" title="Ovoz bilan aytish">&#x1F399;&#xFE0F;</button>
+                    <input type="text" class="ai-text-input" id="aiTextInput" placeholder="Xitoycha so'z, gap yoki o'zbekcha savol yozing..." />
+                    <button type="button" class="ai-send-btn" id="aiSendBtn">Yuborish &rarr;</button>
                 </div>
             </div>
         </section>
@@ -902,22 +1055,26 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Bottom Navigation Bar (5 Tabs with Center AI Laoshi) -->
     <nav class="bottom-nav">
         <button class="nav-item active" data-nav="home">
-            <span class="nav-icon">🏠</span>
+            <span class="nav-icon">&#x1F3E0;</span>
             <span class="nav-label">Home</span>
         </button>
         <button class="nav-item" data-nav="practice">
-            <span class="nav-icon">📚</span>
+            <span class="nav-icon">&#x1F4DA;</span>
             <span class="nav-label">Practice</span>
         </button>
+        <button class="nav-item nav-item-ai" data-nav="ai">
+            <span class="nav-icon">&#x1F916;</span>
+            <span class="nav-label">AI Laoshi</span>
+        </button>
         <button class="nav-item" data-nav="canvas">
-            <span class="nav-icon">✏️</span>
+            <span class="nav-icon">&#x270F;&#xFE0F;</span>
             <span class="nav-label">Canvas</span>
         </button>
         <button class="nav-item" data-nav="profile">
-            <span class="nav-icon">👤</span>
+            <span class="nav-icon">&#x1F464;</span>
             <span class="nav-label">Profile</span>
         </button>
     </nav>
@@ -962,7 +1119,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=20"></script>
+    <script src="script.js?v=21"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1081,7 +1238,7 @@
         window.location.reload();
       });
 
-      navigator.serviceWorker.register('./sw.js?v=20', { updateViaCache: 'none' }).then((reg) => {
+      navigator.serviceWorker.register('./sw.js?v=21', { updateViaCache: 'none' }).then((reg) => {
         if (reg.waiting) {
           reg.waiting.postMessage({ type: 'SKIP_WAITING' });
         }

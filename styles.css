@@ -8775,3 +8775,791 @@ body.has-pwa-banner {
     align-items: center;
     justify-content: center;
 }
+/* ========================================================
+   16. PRACTICE HUB, TONE LAB, SURVIVAL PHRASES & AI LAOSHI
+   ======================================================== */
+
+/* 16.1 Practice Special Hub (Tone Lab & Survival Phrases cards) */
+.practice-special-hub {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin: 0.75rem 0 1rem;
+    width: 100%;
+}
+
+.practice-hub-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-radius: 18px;
+    border: 2px solid var(--border-color);
+    border-bottom-width: 4px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    text-align: left;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.practice-hub-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--hsk-accent, var(--primary-color));
+}
+
+.practice-hub-card:active {
+    transform: scale(0.98);
+}
+
+.hub-tone-card .hub-card-icon {
+    background: rgba(14, 165, 233, 0.15);
+    color: #0284C7;
+    border: 1.5px solid rgba(14, 165, 233, 0.3);
+}
+
+.hub-survival-card .hub-card-icon {
+    background: rgba(245, 158, 11, 0.15);
+    color: #D97706;
+    border: 1.5px solid rgba(245, 158, 11, 0.3);
+}
+
+.hub-card-icon {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.hub-card-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.hub-card-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.hub-card-title-row strong {
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.hub-badge {
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    background: var(--hsk-accent-light, rgba(16, 185, 129, 0.14));
+    color: var(--hsk-accent-dark, #047857);
+}
+
+.hub-card-body small {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    line-height: 1.3;
+}
+
+.hub-arrow {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+@media (max-width: 680px) {
+    .practice-special-hub {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 16.2 Lesson Top Bar AI Ask Button */
+.lesson-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.lesson-ai-ask-btn {
+    padding: 0.38rem 0.75rem;
+    border-radius: 11px;
+    border: 1.5px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.76rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.lesson-ai-ask-btn:active {
+    transform: scale(0.95);
+    border-color: var(--hsk-accent, #10B981);
+}
+
+/* 16.3 5-Column Bottom Navigation Bar with Center Highlighted AI */
+.bottom-nav {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 0.15rem !important;
+}
+
+.nav-item-ai .nav-icon {
+    font-size: 1.45rem !important;
+    filter: drop-shadow(0 2px 6px rgba(16, 185, 129, 0.35));
+}
+
+.nav-item-ai.active {
+    color: var(--hsk-accent, var(--primary-color)) !important;
+}
+
+/* 16.4 Subviews Header Card & Navigation Tabs */
+.subview-header-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-bottom-width: 4px;
+    border-radius: 20px;
+    padding: 1.1rem;
+    margin-bottom: 0.9rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.subview-header-card .section-title {
+    margin: 0.4rem 0 0.2rem !important;
+    font-size: 1.35rem !important;
+}
+
+.subview-header-card .lessons-kicker {
+    margin-bottom: 0.75rem !important;
+    font-size: 0.8rem !important;
+}
+
+.subview-tabs {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: none;
+}
+
+.subview-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.subview-tab {
+    padding: 0.45rem 0.85rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.subview-tab.active {
+    background: var(--hsk-accent, var(--primary-color));
+    border-color: var(--hsk-accent, var(--primary-color));
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+/* 16.5 Tone Lab: 4 Contours & Minimal Pairs */
+.tone-tab-panel {
+    display: none;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.tone-tab-panel.active {
+    display: flex;
+}
+
+.tone-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 0.6rem;
+}
+
+.tone-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-bottom-width: 4px;
+    border-radius: 16px;
+    padding: 0.85rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.tone-card:active {
+    transform: scale(0.97);
+    border-color: var(--hsk-accent, #10B981);
+}
+
+.tone-num-pill {
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 0.35rem;
+}
+
+.tone-1 .tone-num-pill { background: #0284C7; }
+.tone-2 .tone-num-pill { background: #10B981; }
+.tone-3 .tone-num-pill { background: #F59E0B; }
+.tone-4 .tone-num-pill { background: #EF4444; }
+.tone-5 .tone-num-pill { background: #6B7280; }
+
+.tone-symbol {
+    font-size: 2.1rem;
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--text-color);
+}
+
+.tone-pitch-label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--hsk-accent, #10B981);
+    margin: 0.2rem 0;
+}
+
+.tone-name-uz {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.tone-sample {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 0.15rem;
+}
+
+/* Minimal pairs list */
+.minimal-pairs-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.55rem;
+}
+
+.minimal-pair-card {
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--border-color);
+    border-radius: 14px;
+    padding: 0.7rem 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.mp-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.mp-hanzi-pinyin {
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: var(--text-color);
+}
+
+.mp-hanzi-pinyin small {
+    font-size: 0.75rem;
+    color: var(--hsk-accent, #10B981);
+    margin-left: 0.35rem;
+}
+
+.mp-meaning {
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.mp-listen-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border-color);
+    background: var(--card-bg);
+    cursor: pointer;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* 16.6 Tone Ear Trainer */
+.tone-ear-card,
+.tone-mic-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-bottom-width: 4px;
+    border-radius: 20px;
+    padding: 1.25rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.85rem;
+}
+
+.tone-ear-top {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tone-ear-options {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.tone-opt-btn {
+    padding: 0.75rem 0.4rem;
+    border-radius: 14px;
+    border: 2px solid var(--border-color);
+    border-bottom-width: 4px;
+    background: var(--bg-secondary);
+    color: var(--text-color);
+    font-weight: 900;
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    transition: transform 0.12s ease;
+}
+
+.tone-opt-btn small {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.tone-opt-btn:active {
+    transform: scale(0.95);
+}
+
+.tone-opt-btn.correct {
+    background: rgba(16, 185, 129, 0.18) !important;
+    border-color: #10B981 !important;
+    color: #047857 !important;
+}
+
+.tone-opt-btn.wrong {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: #EF4444 !important;
+    color: #B91C1C !important;
+}
+
+/* 16.7 Tone Sandhi Rules */
+.sandhi-rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.sandhi-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-bottom-width: 4px;
+    border-radius: 18px;
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.sandhi-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.sandhi-rule-title {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: var(--text-color);
+}
+
+.sandhi-formula {
+    padding: 0.45rem 0.65rem;
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    border-left: 3.5px solid var(--hsk-accent, #10B981);
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--hsk-accent-dark, #047857);
+}
+
+.sandhi-explanation {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.sandhi-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.2rem;
+}
+
+.sandhi-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--border-color);
+    background: var(--card-bg);
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.sandhi-chip:active {
+    transform: scale(0.95);
+    border-color: var(--hsk-accent, #10B981);
+}
+
+/* 16.8 Pitch Canvas & Microphone practice */
+.tone-pitch-canvas {
+    width: 100%;
+    max-width: 320px;
+    height: 90px;
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--border-color);
+    border-radius: 14px;
+}
+
+.tm-hanzi {
+    font-size: 2.8rem;
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--text-color);
+}
+
+.tm-pinyin {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--hsk-accent, #10B981);
+}
+
+.tm-uzbek {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.tone-mic-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 360px;
+}
+
+/* 16.9 China Survival Phrases */
+.survival-phrases-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.survival-phrase-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-bottom-width: 3px;
+    border-radius: 16px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.sp-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.sp-chinese {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--text-color);
+    line-height: 1.25;
+}
+
+.sp-pinyin {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--hsk-accent, #10B981);
+}
+
+.sp-uzbek {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.sp-tip {
+    font-size: 0.68rem;
+    color: #D97706;
+    font-weight: 700;
+    margin-top: 0.15rem;
+}
+
+.sp-audio-btn {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-secondary);
+    cursor: pointer;
+    font-size: 1.15rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.12s ease;
+}
+
+.sp-audio-btn:active {
+    transform: scale(0.92);
+    border-color: var(--hsk-accent, #10B981);
+}
+
+/* 16.10 AI Laoshi Chat Interface */
+.ai-laoshi-banner .ai-banner-head {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 0.65rem;
+}
+
+.ai-avatar-badge {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 16px;
+    background: var(--hsk-accent-light, rgba(16, 185, 129, 0.18));
+    border: 2px solid var(--hsk-accent, #10B981);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.ai-chat-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-bottom-width: 4px;
+    border-radius: 20px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 480px;
+}
+
+.ai-quick-prompts {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: none;
+}
+
+.ai-quick-prompts::-webkit-scrollbar {
+    display: none;
+}
+
+.ai-prompt-chip {
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-color);
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.ai-prompt-chip:active {
+    transform: scale(0.95);
+    border-color: var(--hsk-accent, #10B981);
+}
+
+.ai-messages-box {
+    flex: 1 1 auto;
+    max-height: 380px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-right: 0.25rem;
+}
+
+.ai-msg {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    max-width: 86%;
+    padding: 0.75rem 0.95rem;
+    border-radius: 16px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+}
+
+.ai-msg.user {
+    align-self: flex-end;
+    background: var(--hsk-accent, var(--primary-color));
+    color: #ffffff;
+    border-bottom-right-radius: 4px;
+}
+
+.ai-msg.bot {
+    align-self: flex-start;
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--border-color);
+    color: var(--text-color);
+    border-bottom-left-radius: 4px;
+}
+
+.ai-msg-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    opacity: 0.8;
+}
+
+.ai-msg-speak-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+}
+
+.ai-tone-analysis-box {
+    margin-top: 0.35rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 10px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.ai-input-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: 100%;
+}
+
+.ai-mic-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 13px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ai-mic-btn.is-recording {
+    background: #EF4444;
+    color: #ffffff;
+    border-color: #B91C1C;
+    animation: pulseMic 1.1s infinite ease-in-out;
+}
+
+.ai-text-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 44px;
+    padding: 0 0.85rem;
+    border-radius: 13px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.ai-text-input:focus {
+    outline: none;
+    border-color: var(--hsk-accent, var(--primary-color));
+}
+
+.ai-send-btn {
+    height: 44px;
+    padding: 0 0.95rem;
+    border-radius: 13px;
+    border: none;
+    background: var(--hsk-gradient, var(--primary-color));
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 800;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.ai-send-btn:active {
+    transform: scale(0.96);
+}

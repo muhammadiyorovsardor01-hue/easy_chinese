@@ -3013,8 +3013,10 @@ function handleNavigation(nav) {
             showDashboard();
             break;
         case 'practice':
-            // Navigate to lessons view with current HSK
             showLessonsView();
+            break;
+        case 'ai':
+            showAiLaoshiView();
             break;
         case 'canvas':
             showCanvasView();
@@ -4170,4 +4172,709 @@ function updateAchievements() {
     if (countPill) {
         countPill.textContent = `${unlockedCount} / ${achievements.length}`;
     }
+}
+
+
+// ==============================================================================
+// 17. TONE MASTERY LAB, SURVIVAL PHRASES & AI LAOSHI LOGIC
+// ==============================================================================
+
+const toneLabView = document.getElementById('toneLab');
+const survivalView = document.getElementById('survivalPhrases');
+const aiLaoshiView = document.getElementById('aiLaoshi');
+
+// Navigation triggers
+function showToneLabView() {
+    showView(toneLabView);
+    initToneLab();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showSurvivalPhrasesView() {
+    showView(survivalView);
+    initSurvivalPhrases();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showAiLaoshiView(initialPrompt = null) {
+    showView(aiLaoshiView);
+    initAiLaoshi(initialPrompt);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Attach event listeners for special hub cards & AI buttons
+document.addEventListener('DOMContentLoaded', () => {
+    const openToneBtn = document.getElementById('openToneLabBtn');
+    if (openToneBtn) openToneBtn.addEventListener('click', showToneLabView);
+
+    const openSurvBtn = document.getElementById('openSurvivalBtn');
+    if (openSurvBtn) openSurvBtn.addEventListener('click', showSurvivalPhrasesView);
+
+    const backFromTone = document.getElementById('backFromToneLabBtn');
+    if (backFromTone) backFromTone.addEventListener('click', showLessonsView);
+
+    const backFromSurv = document.getElementById('backFromSurvivalBtn');
+    if (backFromSurv) backFromSurv.addEventListener('click', showLessonsView);
+
+    const askAiLessonBtn = document.getElementById('askAiFromLessonBtn');
+    if (askAiLessonBtn) {
+        askAiLessonBtn.addEventListener('click', () => {
+            const currentWord = currentWords[flashcardIndex] || currentWords[0];
+            const p = currentWord ? currentWord.hanzi : 'HSK 1 darslari';
+            showAiLaoshiView(p);
+        });
+    }
+});
+
+// ------------------------------------------------------------------------------
+// 17.1 TONE MASTERY LAB
+// ------------------------------------------------------------------------------
+const TONE_CONTOURS = [
+    { num: 1, symbol: 'ā', mark: '5 → 5', name: '1-ton: Baland va tekis', exp: 'Ovoz baland va tekis ushlab turiladi (shifokor "A-a-a" degandek)', sample: 'mā (妈 ona), bā (八 sakkiz), tī (踢 tepmoq)', sound: 'mā', pitchPath: [80, 80] },
+    { num: 2, symbol: 'á', mark: '3 → 5', name: '2-ton: Ko‘tariluvchi', exp: 'Pastdan yuqoriga ko‘tariladi ("Nima-a?", "Rostdanmi?" degandek)', sample: 'má (麻 nasha), shí (十 o‘n), lái (来 kelmoq)', sound: 'má', pitchPath: [50, 80] },
+    { num: 3, symbol: 'ǎ', mark: '2 → 1 → 4', name: '3-ton: Tushib-chiquvchi', exp: 'Ovoz avval eng pastga tushadi, keyin sal ko‘tariladi ("Hmm..." deb o‘ylagandek)', sample: 'mǎ (马 ot), nǐ (你 sen), hǎo (好 yaxshi)', sound: 'mǎ', pitchPath: [40, 20, 65] },
+    { num: 4, symbol: 'à', mark: '5 → 1', name: '4-ton: Qat’iy tushuvchi', exp: 'Tepadan tez va keskin pastga tushadi ("Yo‘q!", "To‘xta!" deb buyruq bergandek)', sample: 'mà (骂 so‘kmoq), bù (不 yo‘q), shì (是 bo‘lmoq)', sound: 'mà', pitchPath: [85, 20] },
+    { num: 5, symbol: 'a', mark: 'Neytral', name: 'Yengil (Neytral) ton', exp: 'Qisqa, muloyim va urg‘usiz aytiladi', sample: 'ma (吗 so‘roq), de (的 qaratqich), ba (吧 undov)', sound: 'ma', pitchPath: [45, 45] }
+];
+
+const MINIMAL_PAIRS = [
+    { hanzi: '妈 / 麻 / 马 / 骂', pinyin: 'mā / má / mǎ / mà', uzbek: 'Ona (1) / Zig‘ir (2) / Ot (3) / So‘kmoq (4)', speak: '妈, 麻, 马, 骂' },
+    { hanzi: '温 / 文 / 吻 / 问', pinyin: 'wēn / wén / wěn / wèn', uzbek: 'Iliq (1) / Matn (2) / O‘pmoq (3) / So‘ramoq (4)', speak: '温, 文, 吻, 问' },
+    { hanzi: '书 / 熟 / 数 / 树', pinyin: 'shū / shú / shǔ / shù', uzbek: 'Kitob (1) / Pishgan (2) / Sanamoq (3) / Daraxt (4)', speak: '书, 熟, 数, 树' },
+    { hanzi: '睡觉 vs 水饰', pinyin: 'shuìjiào vs shuǐjiǎo', uzbek: 'Uxlamoq (4+4) vs Chuchvara (3+3→2+3)', speak: '睡觉, 水饰' }
+];
+
+const SANDHI_RULES = [
+    {
+        title: '1. Ikkita 3-ton ketma-ket kelsa (3 + 3 → 2 + 3)',
+        formula: 'ǎ + ǎ → á + ǎ',
+        exp: 'Xitoy tilida ikkita 3-tonni ketma-ket talaffuz qilish qiyin. Shuning uchun birinchi bo‘g‘in 2-tonga aylanadi, lekin pinyinda o‘z holicha yoziladi!',
+        chips: [
+            { text: '你好 (nǐ hǎo → ní hǎo)', speak: '你好' },
+            { text: '手表 (shǒu biǎo → shóu biǎo)', speak: '手表' },
+            { text: '水果 (shuǐ guǒ → shuí guǒ)', speak: '水果' },
+            { text: '可以 (kě yǐ → ké yǐ)', speak: '可以' }
+        ]
+    },
+    {
+        title: '2. “不” (bù) ning 4-tondan oldin o‘zgarishi (bù → bú)',
+        formula: '不 (bù) + 4-ton → bú + 4-ton',
+        exp: '不 aslida 4-ton (bù). Agar undan keyingi so‘z ham 4-ton bo‘lsa, u 2-tonga (bú) aylanadi. 1-, 2-, 3-tonlar oldida esa 4-ton bo‘lib qolaveradi.',
+        chips: [
+            { text: '不是 (bù shì → bú shì)', speak: '不是' },
+            { text: '不对 (bù duì → bú duì)', speak: '不对' },
+            { text: '不要 (bù yào → bú yào)', speak: '不要' },
+            { text: '不好 (bù hǎo — o‘zgarmaydi)', speak: '不好' }
+        ]
+    },
+    {
+        title: '3. “一” (yī) ning turli tonlarda o‘zgarishi',
+        formula: '一 + 4-ton → yí; 一 + 1,2,3-ton → yì',
+        exp: '一 yakka o‘zi 1-ton (yī). 4-tondan oldin kelsa 2-ton (yí), 1, 2 yoki 3-tondan oldin kelsa 4-ton (yì) bo‘ladi.',
+        chips: [
+            { text: '一个 (yí gè)', speak: '一个' },
+            { text: '一定 (yí dìng)', speak: '一定' },
+            { text: '一天 (yì tiān)', speak: '一天' },
+            { text: '一起 (yì qǐ)', speak: '一起' }
+        ]
+    }
+];
+
+const TONE_EAR_QUESTIONS = [
+    { syllable: 'mā', tone: 1, hanzi: '妈', meaning: 'Ona' },
+    { syllable: 'shí', tone: 2, hanzi: '十', meaning: 'O‘n (10)' },
+    { syllable: 'hǎo', tone: 3, hanzi: '好', meaning: 'Yaxshi' },
+    { syllable: 'bù', tone: 4, hanzi: '不', meaning: 'Yo‘q' },
+    { syllable: 'chī', tone: 1, hanzi: '吃', meaning: 'Yemoq' },
+    { syllable: 'guó', tone: 2, hanzi: '国', meaning: 'Mamlakat' },
+    { syllable: 'nǐ', tone: 3, hanzi: '你', meaning: 'Sen' },
+    { syllable: 'kàn', tone: 4, hanzi: '看', meaning: 'Qaramoq' },
+    { syllable: 'shuǐ', tone: 3, hanzi: '水', meaning: 'Suv' },
+    { syllable: 'xià', tone: 4, hanzi: '下', meaning: 'Pastga' }
+];
+
+let toneEarIdx = 0;
+let toneEarScore = 0;
+let toneEarAnswered = false;
+
+function initToneLab() {
+    // 1. Render contours
+    const contoursEl = document.getElementById('toneContoursGrid');
+    if (contoursEl) {
+        contoursEl.innerHTML = TONE_CONTOURS.map(t => `
+            <div class="tone-card tone-${t.num}" data-speak="${t.sound}">
+                <span class="tone-num-pill">${t.num === 5 ? 'Neytral' : t.num + '-ton'} (${t.mark})</span>
+                <span class="tone-symbol">${t.symbol}</span>
+                <span class="tone-name-uz">${t.name}</span>
+                <span class="tone-sample">${t.sample}</span>
+            </div>
+        `).join('');
+        contoursEl.querySelectorAll('.tone-card').forEach(c => {
+            c.addEventListener('click', () => speakChineseText(c.dataset.speak));
+        });
+    }
+
+    // 2. Render minimal pairs
+    const pairsEl = document.getElementById('minimalPairsList');
+    if (pairsEl) {
+        pairsEl.innerHTML = MINIMAL_PAIRS.map(p => `
+            <div class="minimal-pair-card">
+                <div class="mp-left">
+                    <span class="mp-hanzi-pinyin">${p.hanzi}<small>${p.pinyin}</small></span>
+                    <span class="mp-meaning">${p.uzbek}</span>
+                </div>
+                <button type="button" class="mp-listen-btn" data-speak="${p.speak}" aria-label="Tinglash">🔊</button>
+            </div>
+        `).join('');
+        pairsEl.querySelectorAll('.mp-listen-btn').forEach(btn => {
+            btn.addEventListener('click', () => speakChineseText(btn.dataset.speak));
+        });
+    }
+
+    // 3. Render Sandhi rules
+    const sandhiEl = document.getElementById('sandhiRulesList');
+    if (sandhiEl) {
+        sandhiEl.innerHTML = SANDHI_RULES.map(r => `
+            <div class="sandhi-card">
+                <div class="sandhi-head">
+                    <span class="sandhi-rule-title">${r.title}</span>
+                </div>
+                <div class="sandhi-formula">${r.formula}</div>
+                <p class="sandhi-explanation">${r.exp}</p>
+                <div class="sandhi-examples">
+                    ${r.chips.map(ch => `
+                        <button type="button" class="sandhi-chip" data-speak="${ch.speak}">
+                            <span>🔊</span>
+                            <span>${ch.text}</span>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+        sandhiEl.querySelectorAll('.sandhi-chip').forEach(btn => {
+            btn.addEventListener('click', () => speakChineseText(btn.dataset.speak));
+        });
+    }
+
+    // 4. Setup Tone tabs
+    const tabs = document.querySelectorAll('#toneLabTabs .subview-tab');
+    tabs.forEach(tab => {
+        tab.onclick = () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            const targetId = 'toneTab' + tab.dataset.toneTab.charAt(0).toUpperCase() + tab.dataset.toneTab.slice(1);
+            document.querySelectorAll('#toneLab .tone-tab-panel').forEach(p => p.classList.remove('active'));
+            const targetPanel = document.getElementById(targetId);
+            if (targetPanel) targetPanel.classList.add('active');
+            if (tab.dataset.toneTab === 'mic') drawTonePitchGuide();
+        };
+    });
+
+    // 5. Tone Ear-Trainer Quiz setup
+    setupToneEarQuiz();
+    setupToneMicPractice();
+}
+
+function setupToneEarQuiz() {
+    toneEarIdx = 0;
+    toneEarScore = 0;
+    renderToneEarQuestion();
+
+    const playBtn = document.getElementById('toneEarPlayBtn');
+    if (playBtn) {
+        playBtn.onclick = () => {
+            const q = TONE_EAR_QUESTIONS[toneEarIdx % TONE_EAR_QUESTIONS.length];
+            speakChineseText(q.syllable);
+        };
+    }
+
+    const nextBtn = document.getElementById('toneEarNextBtn');
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            toneEarIdx++;
+            renderToneEarQuestion();
+        };
+    }
+}
+
+function renderToneEarQuestion() {
+    toneEarAnswered = false;
+    const q = TONE_EAR_QUESTIONS[toneEarIdx % TONE_EAR_QUESTIONS.length];
+    const scoreEl = document.getElementById('toneEarScore');
+    const progEl = document.getElementById('toneEarProgressText');
+    const fbEl = document.getElementById('toneEarFeedback');
+    const optsEl = document.getElementById('toneEarOptions');
+
+    if (scoreEl) scoreEl.textContent = String(toneEarScore);
+    if (progEl) progEl.textContent = `Savol ${toneEarIdx + 1} / ${TONE_EAR_QUESTIONS.length}`;
+    if (fbEl) fbEl.hidden = true;
+
+    if (optsEl) {
+        optsEl.innerHTML = [1, 2, 3, 4].map(n => `
+            <button type="button" class="tone-opt-btn" data-tone-val="${n}">
+                <span>${n}-ton</span>
+                <small>${n === 1 ? '5→5 ā' : n === 2 ? '3→5 á' : n === 3 ? '2→1→4 ǎ' : '5→1 à'}</small>
+            </button>
+        `).join('');
+
+        optsEl.querySelectorAll('.tone-opt-btn').forEach(btn => {
+            btn.onclick = () => {
+                if (toneEarAnswered) return;
+                toneEarAnswered = true;
+                const chosen = parseInt(btn.dataset.toneVal, 10);
+                const isCorrect = (chosen === q.tone);
+                if (isCorrect) {
+                    btn.classList.add('correct');
+                    toneEarScore += 10;
+                    addXP(10);
+                    if (scoreEl) scoreEl.textContent = String(toneEarScore);
+                    if (fbEl) {
+                        fbEl.hidden = false;
+                        fbEl.className = 'tone-ear-feedback is-correct';
+                        fbEl.textContent = `🎉 To‘g‘ri! Bu ${q.tone}-ton edi: "${q.syllable}" (${q.hanzi} — ${q.meaning}) (+10 XP)`;
+                    }
+                    playSuccessSound();
+                } else {
+                    btn.classList.add('wrong');
+                    optsEl.querySelector(`[data-tone-val="${q.tone}"]`)?.classList.add('correct');
+                    if (fbEl) {
+                        fbEl.hidden = false;
+                        fbEl.className = 'tone-ear-feedback is-retry';
+                        fbEl.textContent = `❌ Noto‘g‘ri. Aslida bu ${q.tone}-ton edi: "${q.syllable}" (${q.hanzi} — ${q.meaning})`;
+                    }
+                }
+            };
+        });
+    }
+
+    setTimeout(() => speakChineseText(q.syllable), 150);
+}
+
+function setupToneMicPractice() {
+    const micSamples = [
+        { hanzi: '你好', pinyin: 'ní hǎo', uzbek: 'Salom (3+3 → 2+3 ton)', badge: 'Tone Sandhi: 2-ton + 3-ton' },
+        { hanzi: '不是', pinyin: 'bú shì', uzbek: 'Emas (4-ton oldida bú)', badge: 'Tone Sandhi: 2-ton + 4-ton' },
+        { hanzi: '一个', pinyin: 'yí gè', uzbek: 'Bitta (4-ton oldida yí)', badge: 'Tone Sandhi: 2-ton + 4-ton' },
+        { hanzi: '谢谢', pinyin: 'xièxie', uzbek: 'Rahmat (4-ton + neytral)', badge: '4-ton + Neytral' },
+        { hanzi: '我很好', pinyin: 'wǒ hén hǎo', uzbek: 'Men juda yaxshiman (3+3+3)', badge: 'Uchta 3-ton birikmasi' }
+    ];
+    let micIdx = 0;
+
+    const renderMicCard = () => {
+        const item = micSamples[micIdx % micSamples.length];
+        const hEl = document.getElementById('toneMicHanzi');
+        const pEl = document.getElementById('toneMicPinyin');
+        const uEl = document.getElementById('toneMicUzbek');
+        const bEl = document.getElementById('toneMicBadge');
+        if (hEl) hEl.textContent = item.hanzi;
+        if (pEl) pEl.innerHTML = item.pinyin;
+        if (uEl) uEl.textContent = item.uzbek;
+        if (bEl) bEl.textContent = item.badge;
+        drawTonePitchGuide();
+    };
+
+    const listenBtn = document.getElementById('toneMicListenBtn');
+    if (listenBtn) {
+        listenBtn.onclick = () => {
+            const item = micSamples[micIdx % micSamples.length];
+            speakChineseText(item.hanzi);
+        };
+    }
+
+    const nextWordBtn = document.getElementById('toneMicNextWordBtn');
+    if (nextWordBtn) {
+        nextWordBtn.onclick = () => {
+            micIdx++;
+            renderMicCard();
+            const fb = document.getElementById('toneMicFeedback');
+            if (fb) fb.hidden = true;
+        };
+    }
+
+    const recBtn = document.getElementById('toneMicRecordBtn');
+    if (recBtn) {
+        recBtn.onclick = () => {
+            const item = micSamples[micIdx % micSamples.length];
+            const fb = document.getElementById('toneMicFeedback');
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                speakChineseText(item.hanzi);
+                if (fb) {
+                    fb.hidden = false;
+                    fb.className = 'speak-feedback-banner is-listening';
+                    fb.textContent = `🔊 Ovozni eshiting va tonni aniq chiqarib qaytaring: ${item.hanzi} (${item.pinyin})`;
+                }
+                return;
+            }
+
+            const rec = new SpeechRec();
+            rec.lang = 'zh-CN';
+            recBtn.textContent = '🎙️ Tinglanmoqda...';
+            if (fb) {
+                fb.hidden = false;
+                fb.className = 'speak-feedback-banner is-listening';
+                fb.textContent = `🎙️ "${item.hanzi}" (${item.pinyin}) deb ayting...`;
+            }
+
+            rec.onresult = (e) => {
+                const heard = e.results[0][0].transcript;
+                if (heard.includes(item.hanzi) || item.hanzi.includes(heard)) {
+                    if (fb) {
+                        fb.className = 'speak-feedback-banner is-correct';
+                        fb.textContent = `🎉 Mukammal ton va talaffuz! Eshitildi: "${heard}" (+15 XP)`;
+                    }
+                    addXP(15);
+                    playSuccessSound();
+                    drawTonePitchGuide(true);
+                } else {
+                    if (fb) {
+                        fb.className = 'speak-feedback-banner is-retry';
+                        fb.textContent = `🔄 Eshitildi: "${heard}". Qayta urinib ko‘ring: ${item.hanzi} (${item.pinyin})`;
+                    }
+                    speakChineseText(item.hanzi);
+                }
+            };
+            rec.onerror = () => {
+                if (fb) {
+                    fb.className = 'speak-feedback-banner is-retry';
+                    fb.textContent = `🔊 Namunani eshiting: ${item.hanzi} (${item.pinyin})`;
+                }
+                speakChineseText(item.hanzi);
+            };
+            rec.onend = () => {
+                recBtn.textContent = '🎙️ Aytib tekshirish';
+            };
+            rec.start();
+        };
+    }
+
+    renderMicCard();
+}
+
+function drawTonePitchGuide(isSuccess = false) {
+    const canvas = document.getElementById('tonePitchCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Draw reference 5-pitch lines (5, 4, 3, 2, 1)
+    ctx.strokeStyle = 'rgba(150, 150, 150, 0.2)';
+    ctx.lineWidth = 1;
+    for (let i = 1; i <= 5; i++) {
+        const y = h - (i * (h / 6));
+        ctx.beginPath();
+        ctx.moveTo(35, y);
+        ctx.lineTo(w - 20, y);
+        ctx.stroke();
+
+        ctx.fillStyle = '#888';
+        ctx.font = '10px Nunito, sans-serif';
+        ctx.fillText(String(i), 15, y + 3);
+    }
+
+    // Draw dynamic tone contour wave
+    ctx.strokeStyle = isSuccess ? '#10B981' : '#0284C7';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(40, h * 0.45);
+    ctx.quadraticCurveTo(w * 0.4, h * 0.8, w * 0.7, h * 0.3);
+    ctx.lineTo(w - 25, h * 0.25);
+    ctx.stroke();
+
+    ctx.fillStyle = isSuccess ? '#047857' : '#0284C7';
+    ctx.font = '11px Nunito, sans-serif';
+    ctx.fillText('Tone Pitch Contour ✓', w - 130, h - 8);
+}
+
+// ------------------------------------------------------------------------------
+// 17.2 CHINA SURVIVAL PHRASES (ä¸­å›½ç”Ÿæ´»å£è¯­)
+// ------------------------------------------------------------------------------
+const SURVIVAL_DATA = {
+    classroom: [
+        { chinese: '老师好！', pinyin: 'Lǎoshī hǎo!', uzbek: 'Salom, ustoz!', tip: 'Dars boshlanishida o‘qituvchiga salom berish' },
+        { chinese: '请再说一遍。', pinyin: 'Qǐng zài shuō yí biàn.', uzbek: 'Iltimos, yana bir bor qaytaring.', tip: 'Darsda tushunmay qolganingizda eng kerakli ibora' },
+        { chinese: '请问，这个怎么读？', pinyin: 'Qǐngwèn, zhège zěnme dú?', uzbek: 'Kechirasiz, bu qanday o‘qiladi?', tip: 'Yangi iyeroglif yoki tonni so‘rashda' },
+        { chinese: '我有一个问题。', pinyin: 'Wǒ yǒu yí ge wèntí.', uzbek: 'Menda bitta savol bor.', tip: 'Qo‘l ko‘tarib savol berishdan oldin aytiladi' },
+        { chinese: '我懂了，谢谢老师！', pinyin: 'Wǒ dǒng le, xièxie lǎoshī!', uzbek: 'Tushundim, rahmat ustoz!', tip: 'Mavzuni tushunganingizni bildirish' }
+    ],
+    canteen: [
+        { chinese: '这个多少钱？', pinyin: 'Zhège duōshao qián?', uzbek: 'Bu qancha turadi?', tip: 'Oshxona va do‘konda narx so‘rash' },
+        { chinese: '我要这个。', pinyin: 'Wǒ yào zhège.', uzbek: 'Menga mana shundan bering.', tip: 'Ko‘rsatib taom tanlashda' },
+        { chinese: '不要辣！ / 微辣。', pinyin: 'Bú yào là! / Wēilà.', uzbek: 'Achchiq bo‘lmasin! / Salgina achchiq.', tip: 'Xitoyda eng muhim ibora (achchiq yeya olmasangiz)' },
+        { chinese: '包括猪肉吗？(清真)', pinyin: 'Bāokuò zhūròu ma? (Qīngzhēn)', uzbek: 'Cho‘chqa go‘shti bormi? (Halolmi?)', tip: 'Musulmon talabalar uchun taom tarkibini aniqlash' },
+        { chinese: '打包还是在这儿吃？', pinyin: 'Dǎbāo háishì zài zhèr chī?', uzbek: 'Olib ketishgami yoki shu yerda yeysizmi?', tip: 'Kassir so‘raganda: "打包 dǎbāo" (olib ketishga)' }
+    ],
+    delivery: [
+        { chinese: '你好，你的外卖到了。', pinyin: 'Nǐ hǎo, nǐ de wàimài dào le.', uzbek: 'Salom, buyurtmangiz (ovqat) yetib keldi.', tip: 'Kuryer telefon qilganda aytadigan gapi' },
+        { chinese: '请放在门口，谢谢！', pinyin: 'Qǐng fàng zài ménkǒu, xièxie!', uzbek: 'Iltimos, eshik oldiga qo‘yib keting, rahmat!', tip: 'Xonadan chiqmasdan buyurtmani olishda' },
+        { chinese: '微信还是支付宝？', pinyin: 'Wēixìn háishì Zhīfùbǎo?', uzbek: 'WeChat orqalimi yoki Alipay?', tip: 'To‘lov turini tanlashda' },
+        { chinese: '我扫你，还是你扫我？', pinyin: 'Wǒ sǎo nǐ, háishì nǐ sǎo wǒ?', uzbek: 'Men QR kodni skaner qilaymi yoki sizmi?', tip: 'QR-kod to‘lovida har kuni kerak bo‘ladigan ibora' }
+    ],
+    transport: [
+        { chinese: '去北京大学怎么走？', pinyin: 'Qù Běijīng Dàxué zěnme zǒu?', uzbek: 'Pekin Universitetiga qanday boriladi?', tip: 'Yo‘l so‘rash' },
+        { chinese: '地铁站在哪儿？', pinyin: 'Dìtiězhàn zài nǎr?', uzbek: 'Metro bekati qayerda?', tip: 'Metroni topishda' },
+        { chinese: '师傅，请打表。', pinyin: 'Shīfu, qǐng dǎbiǎo.', uzbek: 'Haydovchi aka, iltimos hisoblagichni (schetchik) yoqing.', tip: 'Taksida ortiqcha to‘lamaslik uchun' },
+        { chinese: '在这里停车就可以。', pinyin: 'Zài zhèlǐ tíngchē jiù kěyǐ.', uzbek: 'Shu yerda to‘xtatsangiz bo‘ladi.', tip: 'Yetib kelganda taksichiga aytiladi' }
+    ]
+};
+
+let currentSurvivalCat = 'classroom';
+
+function initSurvivalPhrases() {
+    renderSurvivalList();
+    const tabs = document.querySelectorAll('#survivalCategoryTabs .subview-tab');
+    tabs.forEach(tab => {
+        tab.onclick = () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentSurvivalCat = tab.dataset.survCat;
+            renderSurvivalList();
+        };
+    });
+}
+
+function renderSurvivalList() {
+    const listEl = document.getElementById('survivalPhrasesList');
+    if (!listEl) return;
+    const items = SURVIVAL_DATA[currentSurvivalCat] || [];
+    listEl.innerHTML = items.map(p => `
+        <div class="survival-phrase-card">
+            <div class="sp-main">
+                <span class="sp-chinese">${p.chinese}</span>
+                <span class="sp-pinyin">${p.pinyin}</span>
+                <span class="sp-uzbek">${p.uzbek}</span>
+                <span class="sp-tip">💡 ${p.tip}</span>
+            </div>
+            <button type="button" class="sp-audio-btn" data-speak="${p.chinese}" aria-label="Tinglash">🔊</button>
+        </div>
+    `).join('');
+
+    listEl.querySelectorAll('.sp-audio-btn').forEach(btn => {
+        btn.onclick = () => speakChineseText(btn.dataset.speak);
+    });
+}
+
+// ------------------------------------------------------------------------------
+// 17.3 AI LAOSHI (AI è€å¸ˆ Â· Sun'iy Intellekt Ustoz)
+// ------------------------------------------------------------------------------
+const AI_CHAT_HISTORY = [
+    {
+        sender: 'bot',
+        text: '你好！ (Ní hǎo!) Men sizning xitoy tili bo‘yicha shaxsiy Sun’iy Intellekt ustozingiz — AI Laoshi (老师) man. Xitoydagi darslar, tonlar, grammatika yoki kundalik hayot haqida xohlagan savolingizni bering!',
+        speak: '你好！我是你的中文老师。'
+    }
+];
+
+let aiCurrentMode = 'coach';
+
+function initAiLaoshi(initialPrompt = null) {
+    renderAiMessages();
+
+    // Mode chips
+    const chips = document.querySelectorAll('#aiScenarioChips .subview-tab');
+    chips.forEach(chip => {
+        chip.onclick = () => {
+            chips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            aiCurrentMode = chip.dataset.aiMode;
+            triggerAiModeChange(aiCurrentMode);
+        };
+    });
+
+    // Quick prompt buttons
+    document.querySelectorAll('.ai-prompt-chip').forEach(btn => {
+        btn.onclick = () => {
+            const promptText = btn.dataset.prompt;
+            processAiUserInput(promptText);
+        };
+    });
+
+    const sendBtn = document.getElementById('aiSendBtn');
+    const inputEl = document.getElementById('aiTextInput');
+    if (sendBtn && inputEl) {
+        sendBtn.onclick = () => {
+            const val = inputEl.value.trim();
+            if (val) {
+                inputEl.value = '';
+                processAiUserInput(val);
+            }
+        };
+        inputEl.onkeydown = (e) => {
+            if (e.key === 'Enter') {
+                const val = inputEl.value.trim();
+                if (val) {
+                    inputEl.value = '';
+                    processAiUserInput(val);
+                }
+            }
+        };
+    }
+
+    const micBtn = document.getElementById('aiVoiceInputBtn');
+    if (micBtn) {
+        micBtn.onclick = () => {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                showToast('🎙️ Brauzeringizda ovozli kiritish qo‘llab-quvvatlanmadi.');
+                return;
+            }
+            const rec = new SpeechRec();
+            rec.lang = 'zh-CN';
+            micBtn.classList.add('is-recording');
+            rec.onresult = (e) => {
+                const transcript = e.results[0][0].transcript;
+                if (transcript && inputEl) {
+                    inputEl.value = transcript;
+                    processAiUserInput(transcript);
+                }
+            };
+            rec.onend = () => micBtn.classList.remove('is-recording');
+            rec.onerror = () => micBtn.classList.remove('is-recording');
+            rec.start();
+        };
+    }
+
+    if (initialPrompt) {
+        processAiUserInput(initialPrompt);
+    }
+}
+
+function triggerAiModeChange(mode) {
+    let welcome = '';
+    let speak = '';
+    if (mode === 'classroom') {
+        welcome = '🎓 [Dars rejimi · 上课]: “同学们好！请打开书，今天我们学新课。” (Salom talabalar! Kitobni oching, bugun yangi dars o‘tamiz). O‘qituvchiga javob bering yoki savol bering!';
+        speak = '同学们好，今天我们学习汉语。';
+    } else if (mode === 'canteen') {
+        welcome = '🥟 [Oshxona rejimi · 食堂]: “你好，你想吃什么？” (Salom, nima yeysiz?). Masalan: "我要牛肉面，不要辣" deb buyurtma qilib ko‘ring!';
+        speak = '你好，你想吃什么？';
+    } else if (mode === 'market') {
+        welcome = '🛍️ [Do‘kon & Xarid · 购物]: “欢迎光临！想买点儿什么？” (Xush kelibsiz! Nima xarid qilmoqchisiz?). Narx so‘rang: "这个多少钱？"';
+        speak = '欢迎光临，想买点儿什么？';
+    } else {
+        welcome = '🔍 [Ton & So‘z tahlilchisi]: Istalgan xitoycha so‘zni yozing, men uning ton qoidalarini (Tone Sandhi), bo‘g‘inlarini va o‘zbekcha ma’nosini tahlil qilib beraman!';
+        speak = '请输入你想学习的汉字或句子。';
+    }
+    AI_CHAT_HISTORY.push({ sender: 'bot', text: welcome, speak });
+    renderAiMessages();
+}
+
+function processAiUserInput(input) {
+    AI_CHAT_HISTORY.push({ sender: 'user', text: input });
+    renderAiMessages();
+
+    // AI Laoshi smart offline linguistic analysis
+    setTimeout(() => {
+        const response = generateAiLaoshiResponse(input);
+        AI_CHAT_HISTORY.push(response);
+        renderAiMessages();
+        if (response.speak) {
+            speakChineseText(response.speak);
+        }
+    }, 400);
+}
+
+function generateAiLaoshiResponse(query) {
+    const q = query.trim().toLowerCase();
+
+    // 1. Check if user asked about "ä½ å¥½" (Ni hao)
+    if (q.includes('你好') || q.includes('ni hao') || q.includes('salom')) {
+        return {
+            sender: 'bot',
+            text: `🔍 <strong>“你好” (nǐ hǎo) — Ton Tahlili:</strong><br>
+            • Asl tonlari: 你 (nǐ — 3-ton) + 好 (hǎo — 3-ton).<br>
+            • ⚠️ <strong>Tone Sandhi qoidasi:</strong> Ikkita 3-ton ketma-ket kelganda birinchisi 2-tonga aylanadi!<br>
+            • 🗣️ <strong>Talaffuz:</strong> <em>ní hǎo</em> deb o‘qiladi.<br>
+            • 📖 <strong>Ma’nosi:</strong> Salom / Assalomu alaykum. Kattalarga hurmat ma’nosida: 您好 (Nín hǎo).`,
+            speak: '你好，两个三声变为二声：“ní hǎo”。'
+        };
+    }
+
+    // 2. Check if asked about "ä¸æ˜¯" (Bu shi)
+    if (q.includes('不是') || q.includes('bu shi') || q.includes('不')) {
+        return {
+            sender: 'bot',
+            text: `🔍 <strong>“不” (bù) ning Ton Qoidasi:</strong><br>
+            • 不 aslida 4-ton (bù).<br>
+            • ⚠️ Agar undan keyingi so‘z 4-ton bo‘lsa (是 shì, 对 duì), 不 so‘zi 2-tonga o‘zgaradi: <strong>bú shì (不是)</strong>, <strong>bú duì (不对)</strong>!<br>
+            • Boshqa tonlar oldida o‘zgarmaydi: bù chī (不吃), bù hǎo (不好).`,
+            speak: '不是，“bú shì”。'
+        };
+    }
+
+    // 3. Difference between äºŒ (Ã¨r) and ä¸¤ (liÇŽng)
+    if (q.includes('二') && q.includes('两') || q.includes('er') && q.includes('liang')) {
+        return {
+            sender: 'bot',
+            text: `📖 <strong>二 (èr) va 两 (liǎng) farqi:</strong><br>
+            1. <strong>二 (èr):</strong> Shunchaki sanashda va raqamlarda ishlatiladi: 1, 2, 3 (一，二，三), telefon raqamlarda, xona raqamida.<br>
+            2. <strong>两 (liǎng):</strong> Sanoq so‘zlar (o‘lchov birliklari) oldidan faqat 两 keladi!<br>
+            • <em>To‘g‘ri:</em> 两个人 (liǎng ge rén — 2 kishi), 两块钱 (liǎng kuài qián — 2 yuan).<br>
+            • <em>Xato:</em> 二个人 ❌ (hech qachon aytilmaydi!).`,
+            speak: '二用于数数，两用于量词：两个人。'
+        };
+    }
+
+    // 4. Grammar question about äº† (le)
+    if (q.includes('了') || q.includes('le') || q.includes('grammatika')) {
+        return {
+            sender: 'bot',
+            text: `📖 <strong>“了” (le) yuklamasining 2 ta asosiy vazifasi:</strong><br>
+            1. <strong>Fe’ldan keyin — Harakatning yakunlangani:</strong><br>
+            • 我吃了 (Wǒ chī le) — Men ovqatlandim.<br>
+            2. <strong>Gap oxirida — Yangi holat yoki o‘zgarish:</strong><br>
+            • 下雨了 (Xià yǔ le) — Yomg‘ir yog‘a boshladi.<br>
+            • 我懂了 (Wǒ dǒng le) — Endi tushundim.`,
+            speak: '我吃了，下雨了，我懂了。'
+        };
+    }
+
+    // 5. Search word in vocabularyData (480 HSK words)
+    const matchedWord = vocabularyData.find(w =>
+        w.hanzi === query || w.pinyin.toLowerCase() === q || w.uzbek.toLowerCase().includes(q)
+    );
+
+    if (matchedWord) {
+        return {
+            sender: 'bot',
+            text: `🔍 <strong>So‘z Tahlili: “${matchedWord.hanzi}”</strong><br>
+            • <strong>Pinyin:</strong> ${matchedWord.pinyin}<br>
+            • <strong>O‘zbekcha ma’nosi:</strong> ${matchedWord.uzbek}<br>
+            • <strong>Daraja:</strong> HSK ${matchedWord.hsk} (Lesson ${matchedWord.lesson})<br>
+            • <strong>Misol:</strong> 我喜欢${matchedWord.hanzi}。 (Wǒ xǐhuan ${matchedWord.pinyin} — Menga ${matchedWord.uzbek.toLowerCase()} yoqadi).`,
+            speak: matchedWord.hanzi
+        };
+    }
+
+    // Default conversational reply
+    return {
+        sender: 'bot',
+        text: `🗣️ <strong>AI Laoshi tahlili:</strong> “${query}”<br>
+        Ajoyib savol! Xitoy tilida har bir bo‘g‘inning toni ma’noni belgilaydi. Agar biror so‘zning aniq toni yoki darsdagi grammatikasi qiziq bo‘lsa, so‘zni iyeroglifda yozing yoki mikrofonda aytib bering!`,
+        speak: query
+    };
+}
+
+function renderAiMessages() {
+    const box = document.getElementById('aiMessagesBox');
+    if (!box) return;
+
+    box.innerHTML = AI_CHAT_HISTORY.map(msg => `
+        <div class="ai-msg ${msg.sender}">
+            <div class="ai-msg-head">
+                <span>${msg.sender === 'user' ? '👤 Siz' : '🤖 AI Laoshi (老师)'}</span>
+                ${msg.speak ? `<button type="button" class="ai-msg-speak-btn" data-speak="${msg.speak.replace(/"/g, '&quot;')}" title="Ovoz chiqarib o'qish">🔊</button>` : ''}
+            </div>
+            <div class="ai-msg-body">${msg.text}</div>
+        </div>
+    `).join('');
+
+    box.querySelectorAll('.ai-msg-speak-btn').forEach(btn => {
+        btn.onclick = () => speakChineseText(btn.dataset.speak);
+    });
+
+    box.scrollTop = box.scrollHeight;
 }
