@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=19">
+    <link rel="stylesheet" href="styles.css?v=20">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -932,20 +932,37 @@
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <!-- PWA Direct 1-Tap Install Banner (Only appears when native 1-tap install is ready) -->
+    <!-- PWA Install Banner + iOS Safari Guide Sheet -->
     <div id="pwaInstallBanner" class="pwa-install-banner" role="region" aria-label="Ilovani o'rnatish" hidden>
         <img src="assets/app-icon-1.svg" alt="Easy Chinese" class="pwa-banner-icon" width="40" height="40" />
         <div class="pwa-banner-copy">
-            <strong>Easy Chinese ilovasini o‘rnating</strong>
-            <span>1 bosishda telefonga yuklab olish</span>
+            <strong>Easy Chinese ilovasini o&#x2018;rnating</strong>
+            <span id="pwaBannerSub">1 bosishda telefonga yuklab olish</span>
         </div>
         <div class="pwa-banner-actions">
-            <button type="button" id="pwaInstallBtn" class="pwa-install-btn">O‘rnatish</button>
-            <button type="button" id="pwaDismissBtn" class="pwa-dismiss-btn" aria-label="Yopish">✕</button>
+            <button type="button" id="pwaInstallBtn" class="pwa-install-btn">O&#x2018;rnatish</button>
+            <button type="button" id="pwaDismissBtn" class="pwa-dismiss-btn" aria-label="Yopish">&#x2715;</button>
         </div>
     </div>
 
-    <script src="script.js?v=19"></script>
+    <div id="iosInstallSheet" class="ios-install-sheet" role="dialog" aria-label="iPhone ga o'rnatish" hidden>
+        <div class="ios-sheet-card">
+            <div class="ios-sheet-head">
+                <img src="assets/app-icon-1.svg" alt="Easy Chinese" width="36" height="36" class="ios-sheet-icon" />
+                <div>
+                    <strong>iPhone / iPad ga o&#x2018;rnatish</strong>
+                    <small>Safari orqali 2 ta bosishda o&#x2018;rnating</small>
+                </div>
+                <button type="button" id="closeIosSheetBtn" class="pwa-dismiss-btn" aria-label="Yopish">&#x2715;</button>
+            </div>
+            <div class="ios-sheet-steps">
+                <div class="ios-step-row"><span>1</span> Pastdagi <strong>Ulashish (Share &#x1F4E4;)</strong> tugmasini bosing</div>
+                <div class="ios-step-row"><span>2</span> <strong>&laquo;Asosiy ekranga qo&#x2018;shish&raquo; (Add to Home Screen &#x2795;)</strong> ni tanlang</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js?v=20"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -964,24 +981,41 @@
                document.referrer.includes('android-app://');
       }
 
+      function isIosDevice() {
+        return /iPhone|iPad|iPod/i.test(navigator.userAgent) && !window.MSStream;
+      }
+
       const banner = document.getElementById('pwaInstallBanner');
+      const bannerSub = document.getElementById('pwaBannerSub');
       const installBtn = document.getElementById('pwaInstallBtn');
       const dismissBtn = document.getElementById('pwaDismissBtn');
       const profileInstallRow = document.getElementById('profileInstallRow');
       const profileInstallBtn = document.getElementById('profileInstallAppBtn');
+      const iosSheet = document.getElementById('iosInstallSheet');
+      const closeIosSheetBtn = document.getElementById('closeIosSheetBtn');
       let deferredInstallPrompt = null;
+
+      function canOfferInstall() {
+        if (isRunningStandalone()) return false;
+        return Boolean(deferredInstallPrompt || isIosDevice());
+      }
 
       function syncProfileInstallRow() {
         if (!profileInstallRow) return;
-        profileInstallRow.hidden = Boolean(isRunningStandalone() || !deferredInstallPrompt);
+        profileInstallRow.hidden = !canOfferInstall();
       }
 
       function showInstallReminder() {
         syncProfileInstallRow();
-        if (!banner || isRunningStandalone() || !deferredInstallPrompt) {
+        if (!banner || !canOfferInstall()) {
           if (banner) banner.hidden = true;
           document.body.classList.remove('has-pwa-banner');
           return;
+        }
+        if (bannerSub) {
+          bannerSub.textContent = isIosDevice() && !deferredInstallPrompt
+            ? 'iPhone ekraniga ilova sifatida qo\u2018shish'
+            : '1 bosishda telefonga yuklab olish';
         }
         banner.hidden = false;
         requestAnimationFrame(() => {
@@ -998,22 +1032,23 @@
       }
 
       async function triggerDirectInstall() {
-        if (!deferredInstallPrompt) {
+        if (deferredInstallPrompt) {
+          const promptEvent = deferredInstallPrompt;
+          deferredInstallPrompt = null;
+          try {
+            await promptEvent.prompt();
+            await promptEvent.userChoice;
+          } catch (err) {}
           hideInstallReminder();
           syncProfileInstallRow();
           return;
         }
-        const promptEvent = deferredInstallPrompt;
-        deferredInstallPrompt = null;
-        try {
-          await promptEvent.prompt();
-          await promptEvent.userChoice;
-        } catch (err) {}
-        hideInstallReminder();
-        syncProfileInstallRow();
+        if (isIosDevice() && iosSheet) {
+          hideInstallReminder();
+          iosSheet.hidden = false;
+        }
       }
 
-      // Show banner ONLY when browser native 1-tap installer is ready (no manual guide popup!)
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredInstallPrompt = e;
@@ -1022,56 +1057,55 @@
 
       window.addEventListener('appinstalled', () => {
         deferredInstallPrompt = null;
+        if (iosSheet) iosSheet.hidden = true;
         hideInstallReminder();
         syncProfileInstallRow();
       });
 
-      if (installBtn) {
-        installBtn.addEventListener('click', triggerDirectInstall);
-      }
-      if (profileInstallBtn) {
-        profileInstallBtn.addEventListener('click', triggerDirectInstall);
+      if (isIosDevice() && !isRunningStandalone()) {
+        setTimeout(showInstallReminder, 900);
       }
 
-      if (dismissBtn) {
-        dismissBtn.addEventListener('click', hideInstallReminder);
+      if (installBtn) installBtn.addEventListener('click', triggerDirectInstall);
+      if (profileInstallBtn) profileInstallBtn.addEventListener('click', triggerDirectInstall);
+      if (dismissBtn) dismissBtn.addEventListener('click', hideInstallReminder);
+      if (closeIosSheetBtn && iosSheet) {
+        closeIosSheetBtn.addEventListener('click', () => { iosSheet.hidden = true; });
       }
 
       // Service Worker Registration + Live Automatic App Updates
-      if ('serviceWorker' in navigator) {
-        let isRefreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (isRefreshing) return;
-          isRefreshing = true;
-          window.location.reload();
-        });
+      let isRefreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (isRefreshing) return;
+        isRefreshing = true;
+        window.location.reload();
+      });
 
-        navigator.serviceWorker.register('./sw.js?v=19', { updateViaCache: 'none' }).then((reg) => {
-          if (reg.waiting) {
-            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-          }
+      navigator.serviceWorker.register('./sw.js?v=20', { updateViaCache: 'none' }).then((reg) => {
+        if (reg.waiting) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
 
-          reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            if (!newWorker) return;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                newWorker.postMessage({ type: 'SKIP_WAITING' });
-              }
-            });
-          });
-
-          reg.update().catch(() => {});
-          document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-              reg.update().catch(() => {});
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
             }
           });
-          setInterval(() => {
+        });
+
+        reg.update().catch(() => {});
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
             reg.update().catch(() => {});
-          }, 5 * 60 * 1000);
-        }).catch(() => {});
-      }
+          }
+        });
+        setInterval(() => {
+          reg.update().catch(() => {});
+        }, 5 * 60 * 1000);
+      }).catch(() => {});
     })();
   }
 </script>

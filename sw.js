@@ -1,9 +1,9 @@
-const CACHE_NAME = 'easychinese-v19';
+const CACHE_NAME = 'easychinese-v20';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css?v=19',
-  './script.js?v=19',
+  './styles.css?v=20',
+  './script.js?v=20',
   './words.json',
   './manifest.json',
   './assets/app-icon-1.svg',
