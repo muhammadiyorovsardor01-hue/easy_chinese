@@ -5008,7 +5008,7 @@ function initToneMicPractice() {
                             feedback.hidden = false;
                             feedback.className = 'speak-feedback-banner feedback-correct';
                             const score = Math.floor(88 + Math.random() * 10);
-                            const heardInfo = recognizedWord ? `(Eshitildi: “${recognizedWord}”)` : '';
+                            const heardInfo = recognizedWord ? `(Eshitildi: “${escapeHtml(recognizedWord)}”)` : '';
                             feedback.innerHTML = `🎉 <strong>Ajoyib natija (${score}%)!</strong> ${heardInfo} Ovoz konturingiz to‘g‘ri ton grafigi bilan mos tushdi!`;
                             if (typeof triggerHapticSuccess === 'function') triggerHapticSuccess();
                         }
@@ -5269,6 +5269,17 @@ function handleAiScenarioChange(mode) {
     renderAiMessages();
 }
 
+// Security: escape any untrusted text (user input, external API responses)
+// before it is placed into innerHTML / HTML attributes.
+function escapeHtml(value) {
+    return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // Convert Chinese characters to Pinyin using known dictionary
 function lookupPinyinForChinese(cnText) {
     if (!cnText) return '';
@@ -5387,9 +5398,9 @@ async function generateIntelligentAiResponse(query) {
             return {
                 sender: 'bot',
                 text: `🌐 <strong>Jonli AI Tarjima & Fonetik Tahlil:</strong><br><br>
-                🇺🇿 <strong>O‘zbekcha:</strong> “${cleanPrompt}”<br>
-                🇨🇳 <strong>Xitoycha:</strong> <span class="ai-cn-text">${chineseResult}</span><br>
-                ${pinyinResult ? `🗣️ <strong>Pinyin:</strong> <span class="ai-pinyin-text">${pinyinResult}</span><br>` : ''}
+                🇺🇿 <strong>O‘zbekcha:</strong> “${escapeHtml(cleanPrompt)}”<br>
+                🇨🇳 <strong>Xitoycha:</strong> <span class="ai-cn-text">${escapeHtml(chineseResult)}</span><br>
+                ${pinyinResult ? `🗣️ <strong>Pinyin:</strong> <span class="ai-pinyin-text">${escapeHtml(pinyinResult)}</span><br>` : ''}
                 <br>💡 <strong>Ustoz Maslahati:</strong><br>
                 Ushbu jumlani ravon aytish uchun quyidagi ovoz tugmasini bosing va Pinyindagi tonlarga qarab takrorlang!`,
                 speak: chineseResult
@@ -5511,7 +5522,7 @@ function checkLocalKnowledge(q, query) {
 function generateLocalKnowledgeResponse(query) {
     return {
         sender: 'bot',
-        text: `🗣️ <strong>Li Laoshi (李老师) javobi:</strong> “${query}”<br><br>
+        text: `🗣️ <strong>Li Laoshi (李老师) javobi:</strong> “${escapeHtml(query)}”<br><br>
         Ajoyib savol! Xitoy tilida har bir bo‘g‘inning toni va grammatik tartibi muhim ahamiyatga ega.<br>
         Agar bu o‘zbekcha gap bo‘lsa, uni xitoychaga tarjima qilib, <strong>Pinyin</strong> va <strong>audio</strong> bilan ko‘rsatib bera olaman. Darsdagi boshqa savollaringizni ham bemalol bering!`,
         speak: query
@@ -5526,14 +5537,14 @@ function renderAiMessages() {
         <div class="ai-msg ${msg.sender}">
             <div class="ai-msg-head">
                 <span>${msg.sender === 'user' ? '👤 Siz' : '👩‍🏫 Li Laoshi (李老师)'}</span>
-                ${msg.speak ? `<button type="button" class="ai-msg-speak-btn" data-speak="${msg.speak.replace(/"/g, '&quot;')}" title="Ovoz chiqarib o‘qish">🔊</button>` : ''}
+                ${msg.speak ? `<button type="button" class="ai-msg-speak-btn" data-speak="${escapeHtml(msg.speak)}" title="Ovoz chiqarib o‘qish">🔊</button>` : ''}
             </div>
             <div class="ai-msg-body">
-                ${msg.text}
+                ${msg.sender === 'user' ? escapeHtml(msg.text) : msg.text}
                 ${msg.speak ? `
                     <div class="ai-msg-foot-actions">
-                        <button type="button" class="ai-action-chip ai-audio-chip" data-speak="${msg.speak.replace(/"/g, '&quot;')}">🔊 Eshitish</button>
-                        <button type="button" class="ai-action-chip ai-copy-chip" data-copy="${msg.speak.replace(/"/g, '&quot;')}">📋 Xitoycha matn</button>
+                        <button type="button" class="ai-action-chip ai-audio-chip" data-speak="${escapeHtml(msg.speak)}">🔊 Eshitish</button>
+                        <button type="button" class="ai-action-chip ai-copy-chip" data-copy="${escapeHtml(msg.speak)}">📋 Xitoycha matn</button>
                     </div>
                 ` : ''}
             </div>
@@ -5878,11 +5889,35 @@ var EC_PRESERVE_ON_RESET = ['theme', 'profileData', 'easyChineseSpeechRate'].con
     Object.keys(EC_SETTINGS_KEYS).map(function (k) { return EC_SETTINGS_KEYS[k]; })
 );
 
+// Security: only these keys may be exported / restored from a backup file.
+var EC_BACKUP_JSON_KEYS = ['learnedWords', 'bookmarkedWords', 'mistakeWords', 'streakData', 'dailyProgress', 'lessonFlowProgress', 'profileData'];
+var EC_BACKUP_MAX_BYTES = 2 * 1024 * 1024;
+
+function isAllowedBackupKey(key) {
+    if (EC_BACKUP_JSON_KEYS.indexOf(key) !== -1) return true;
+    if (key === 'theme') return true;
+    return /^easyChinese[A-Za-z]{1,40}$/.test(key);
+}
+
+function isValidBackupValue(key, value) {
+    if (typeof value !== 'string' || value.length > 500000) return false;
+    if (EC_BACKUP_JSON_KEYS.indexOf(key) !== -1) {
+        try {
+            var parsed = JSON.parse(value);
+            return parsed !== null && typeof parsed === 'object';
+        } catch (err) {
+            return false;
+        }
+    }
+    if (key === 'theme') return value === 'light' || value === 'dark';
+    return value.length <= 40 && /^[\w:.\-]*$/.test(value);
+}
+
 function exportProgressBackup() {
     var data = {};
     for (var i = 0; i < localStorage.length; i++) {
         var key = localStorage.key(i);
-        if (key && key.indexOf('firebase') !== 0) data[key] = localStorage.getItem(key);
+        if (key && isAllowedBackupKey(key)) data[key] = localStorage.getItem(key);
     }
     var payload = { app: 'easy-chinese', version: 25, exportedAt: new Date().toISOString(), data: data };
     var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
@@ -5898,13 +5933,21 @@ function exportProgressBackup() {
 
 function importProgressBackup(file) {
     if (!file) return;
+    if (file.size > EC_BACKUP_MAX_BYTES) {
+        showToast(t('settings.importError'));
+        return;
+    }
     var reader = new FileReader();
     reader.onload = function () {
         try {
             var payload = JSON.parse(reader.result);
-            if (!payload || payload.app !== 'easy-chinese' || typeof payload.data !== 'object') throw new Error('bad file');
-            Object.keys(payload.data).forEach(function (key) {
-                if (typeof payload.data[key] === 'string') localStorage.setItem(key, payload.data[key]);
+            if (!payload || payload.app !== 'easy-chinese' || !payload.data || typeof payload.data !== 'object' || Array.isArray(payload.data)) throw new Error('bad file');
+            var accepted = Object.keys(payload.data).filter(function (key) {
+                return isAllowedBackupKey(key) && isValidBackupValue(key, payload.data[key]);
+            });
+            if (accepted.length === 0) throw new Error('empty backup');
+            accepted.forEach(function (key) {
+                localStorage.setItem(key, payload.data[key]);
             });
             showToast(t('settings.importDone'));
             setTimeout(function () { window.location.reload(); }, 900);

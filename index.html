@@ -3,6 +3,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Security: Content Security Policy — only trusted sources may load scripts/connect -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.gstatic.com https://apis.google.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://cdn.jsdelivr.net https://translate.googleapis.com https://api.mymemory.translated.net https://*.googleapis.com https://www.gstatic.com https://*.firebaseio.com wss://*.firebaseio.com https://easy-chinese-2e2d6.firebaseapp.com; frame-src https://easy-chinese-2e2d6.firebaseapp.com https://accounts.google.com https://apis.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <meta name="description" content="Learn Chinese HSK vocabulary with flashcards, quizzes, and stroke order animations">
     <meta name="theme-color" content="#10B981">
@@ -18,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=25">
+    <link rel="stylesheet" href="styles.css?v=26">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -1095,7 +1098,7 @@
 
                 <div class="ai-messages-box" id="aiMessagesBox" aria-live="polite"></div>
 
-                <form class="ai-input-bar" id="aiChatForm" onsubmit="return false;">
+                <form class="ai-input-bar" id="aiChatForm">
                     <button type="button" class="ai-mic-btn" id="aiVoiceInputBtn" title="Ovoz bilan aytish" aria-label="Mikrofon">🎙️</button>
                     <input type="text" class="ai-text-input" id="aiTextInput" placeholder="Istalgan o‘zbekcha gapni yozing (tarjima qiladi) yoki savol bering..." autocomplete="off" autocorrect="off" enterkeyhint="send" />
                     <button type="submit" class="ai-send-btn" id="aiSendBtn" aria-label="Yuborish">
@@ -1456,7 +1459,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=25"></script>
+    <script src="script.js?v=26"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1465,143 +1468,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script>
-  if ('serviceWorker' in navigator) {
-    (function() {
-      function isRunningStandalone() {
-        return window.matchMedia('(display-mode: standalone)').matches ||
-               window.matchMedia('(display-mode: fullscreen)').matches ||
-               window.navigator.standalone === true ||
-               document.referrer.includes('android-app://');
-      }
-
-      function isIosDevice() {
-        return /iPhone|iPad|iPod/i.test(navigator.userAgent) && !window.MSStream;
-      }
-
-      const banner = document.getElementById('pwaInstallBanner');
-      const bannerSub = document.getElementById('pwaBannerSub');
-      const installBtn = document.getElementById('pwaInstallBtn');
-      const dismissBtn = document.getElementById('pwaDismissBtn');
-      const profileInstallRow = document.getElementById('profileInstallRow');
-      const profileInstallBtn = document.getElementById('profileInstallAppBtn');
-      const iosSheet = document.getElementById('iosInstallSheet');
-      const closeIosSheetBtn = document.getElementById('closeIosSheetBtn');
-      let deferredInstallPrompt = null;
-
-      function canOfferInstall() {
-        if (isRunningStandalone()) return false;
-        return Boolean(deferredInstallPrompt || isIosDevice());
-      }
-
-      function syncProfileInstallRow() {
-        if (!profileInstallRow) return;
-        profileInstallRow.hidden = !canOfferInstall();
-      }
-
-      function showInstallReminder() {
-        syncProfileInstallRow();
-        if (!banner || !canOfferInstall()) {
-          if (banner) banner.hidden = true;
-          document.body.classList.remove('has-pwa-banner');
-          return;
-        }
-        if (bannerSub) {
-          bannerSub.textContent = isIosDevice() && !deferredInstallPrompt
-            ? 'iPhone ekraniga ilova sifatida qo\u2018shish'
-            : '1 bosishda telefonga yuklab olish';
-        }
-        banner.hidden = false;
-        requestAnimationFrame(() => {
-          banner.classList.add('visible');
-          document.body.classList.add('has-pwa-banner');
-        });
-      }
-
-      function hideInstallReminder() {
-        if (!banner) return;
-        banner.classList.remove('visible');
-        document.body.classList.remove('has-pwa-banner');
-        setTimeout(() => { banner.hidden = true; }, 220);
-      }
-
-      async function triggerDirectInstall() {
-        if (deferredInstallPrompt) {
-          const promptEvent = deferredInstallPrompt;
-          deferredInstallPrompt = null;
-          try {
-            await promptEvent.prompt();
-            await promptEvent.userChoice;
-          } catch (err) {}
-          hideInstallReminder();
-          syncProfileInstallRow();
-          return;
-        }
-        if (isIosDevice() && iosSheet) {
-          hideInstallReminder();
-          iosSheet.hidden = false;
-        }
-      }
-
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredInstallPrompt = e;
-        showInstallReminder();
-      });
-
-      window.addEventListener('appinstalled', () => {
-        deferredInstallPrompt = null;
-        if (iosSheet) iosSheet.hidden = true;
-        hideInstallReminder();
-        syncProfileInstallRow();
-      });
-
-      if (isIosDevice() && !isRunningStandalone()) {
-        setTimeout(showInstallReminder, 900);
-      }
-
-      if (installBtn) installBtn.addEventListener('click', triggerDirectInstall);
-      if (profileInstallBtn) profileInstallBtn.addEventListener('click', triggerDirectInstall);
-      if (dismissBtn) dismissBtn.addEventListener('click', hideInstallReminder);
-      if (closeIosSheetBtn && iosSheet) {
-        closeIosSheetBtn.addEventListener('click', () => { iosSheet.hidden = true; });
-      }
-
-      // Service Worker Registration + Live Automatic App Updates
-      let isRefreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (isRefreshing) return;
-        isRefreshing = true;
-        window.location.reload();
-      });
-
-      navigator.serviceWorker.register('./sw.js?v=25', { updateViaCache: 'none' }).then((reg) => {
-        if (reg.waiting) {
-          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
-
-        reg.addEventListener('updatefound', () => {
-          const newWorker = reg.installing;
-          if (!newWorker) return;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              newWorker.postMessage({ type: 'SKIP_WAITING' });
-            }
-          });
-        });
-
-        reg.update().catch(() => {});
-        document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'visible') {
-            reg.update().catch(() => {});
-          }
-        });
-        setInterval(() => {
-          reg.update().catch(() => {});
-        }, 5 * 60 * 1000);
-      }).catch(() => {});
-    })();
-  }
-</script>
+    <script src="pwa.js?v=26"></script>
 </body>
 </html>
