@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=26">
+    <link rel="stylesheet" href="styles.css?v=27">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -976,51 +976,78 @@
             <div class="subview-header-card tone-lab-banner">
                 <div class="lessons-banner-top">
                     <button type="button" class="back-btn" id="backFromToneLabBtn">&larr; Practice</button>
-                    <span class="lessons-cn-badge">&#x56DB;&#x58F0;&#x4E0E;&#x53D8;&#x8C03; &middot; Tone Mastery</span>
+                    <span class="lessons-cn-badge">&#x56DB;&#x58F0;&#x4E0E;&#x53D8;&#x8C03; &middot; Super Chinese Tones</span>
                 </div>
                 <h2 class="section-title">Tonlar Laboratoriyasi (4 Tones)</h2>
-                <p class="lessons-kicker">Xitoy tilida ma&rsquo;noni aniq yetkazish uchun 4 ta ton va Tone Sandhi qoidalarini mashq qiling</p>
+                <p class="lessons-kicker">Super Chinese uslubida: jonli 4 ta ton talaffuzi, eshitib topish viktorinasi, taqqoslash juftliklari va Tone Sandhi</p>
                 <div class="subview-tabs" id="toneLabTabs">
-                    <button type="button" class="subview-tab active" data-tone-tab="chart">&#x1F4CA; 4 Ton Grafigi</button>
-                    <button type="button" class="subview-tab" data-tone-tab="ear">&#x1F3A7; Eshitib Topish</button>
+                    <button type="button" class="subview-tab active" data-tone-tab="chart">&#x1F4CA; 4 Ton Grafigi &amp; Mashq</button>
+                    <button type="button" class="subview-tab" data-tone-tab="ear">&#x1F3A7; Eshitib Topish (Viktorina)</button>
+                    <button type="button" class="subview-tab" data-tone-tab="pairs">&#x2696;&#xFE0F; Taqqoslash Juftliklari</button>
                     <button type="button" class="subview-tab" data-tone-tab="sandhi">&#x1F517; Tone Sandhi</button>
                     <button type="button" class="subview-tab" data-tone-tab="mic">&#x1F399;&#xFE0F; Talaffuz &amp; Pitch</button>
                 </div>
             </div>
 
-            <!-- Tab 1: 4 Tones Pitch Contours & Minimal Pairs -->
+            <!-- Tab 1: 4 Tones Pitch Contours & Interactive Soundboard -->
             <div class="tone-tab-panel active" id="toneTabChart">
-                <div class="tone-cards-grid" id="toneContoursGrid"></div>
-                <div class="tone-minimal-section">
-                    <div class="section-head-row">
-                        <h3 class="progress-title">Ton o&#x2018;zgarsa &mdash; ma&rsquo;no o&#x2018;zgaradi!<span class="title-cn">&#x8FA8;&#x8C03;&#x5BF9;&#x6BD4;</span></h3>
-                        <span class="weekly-streak-pill">&#x1F50A; Bosib solishtiring</span>
+                <!-- Super Chinese sequential player bar -->
+                <div class="tone-sequence-player-card">
+                    <div class="tsp-info">
+                        <span class="tsp-badge">&#x1F525; Super Chinese Usuli</span>
+                        <strong>1-2-3-4 Tonlarni ketma-ket tinglash</strong>
+                        <small>m&#x0101; (1) &rarr; m&#x00E1; (2) &rarr; m&#x01CE; (3) &rarr; m&#x00E0; (4) &mdash; ohanglar farqini bevosita his qiling</small>
                     </div>
-                    <div class="minimal-pairs-list" id="minimalPairsList"></div>
+                    <button type="button" class="tsp-play-btn" id="playAllTonesSeqBtn">
+                        <span class="tsp-play-icon">&#x25B6;&#xFE0F;</span>
+                        <span>Ketma-ket solishtirish</span>
+                    </button>
                 </div>
+                <div class="tone-cards-grid" id="toneContoursGrid"></div>
             </div>
 
-            <!-- Tab 2: Tone Ear-Trainer Quiz -->
+            <!-- Tab 2: Super Chinese Tone Ear-Trainer Quiz -->
             <div class="tone-tab-panel" id="toneTabEar">
                 <div class="tone-ear-card">
                     <div class="tone-ear-top">
-                        <span class="weekly-streak-pill">Ball: <strong id="toneEarScore">0</strong></span>
-                        <span class="progress-tap-hint" id="toneEarProgressText">Savol #1</span>
+                        <span class="weekly-streak-pill" id="toneEarStreakPill">&#x1F525; Streak: <strong id="toneEarStreak">0</strong></span>
+                        <span class="weekly-streak-pill">&#x2B50; Ball: <strong id="toneEarScore">0</strong></span>
+                        <span class="progress-tap-hint" id="toneEarProgressText">Savol #1 / 16</span>
                     </div>
-                    <button type="button" class="quiz-audio-hero-btn" id="toneEarPlayBtn">&#x1F50A;<span>Bo&#x2018;g&#x2018;inni eshitish</span></button>
-                    <p class="tone-ear-hint" id="toneEarHint">Ovozni tinglang: bu nechanchi ton?</p>
+                    <div class="tone-ear-sound-box">
+                        <button type="button" class="quiz-audio-hero-btn" id="toneEarPlayBtn">
+                            &#x1F50A; <span>Ovozni tinglash</span>
+                        </button>
+                        <p class="tone-ear-hint" id="toneEarHint">Quloq soling: bu nechanchi ton va qaysi so&#x2018;z?</p>
+                    </div>
                     <div class="tone-ear-options" id="toneEarOptions"></div>
                     <div class="tone-ear-feedback" id="toneEarFeedback" hidden></div>
-                    <button type="button" class="stage-next-btn" id="toneEarNextBtn">Keyingi ton savoli &rarr;</button>
+                    <div class="tone-ear-actions" id="toneEarActions" hidden>
+                        <button type="button" class="secondary-btn" id="toneEarCompareBtn">&#x25B6;&#xFE0F; Ikkalasini solishtirish</button>
+                        <button type="button" class="stage-next-btn" id="toneEarNextBtn">Keyingi savol &rarr;</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Tab 3: Tone Sandhi Golden Rules -->
+            <!-- Tab 3: Super Chinese Minimal Pairs (Taqqoslash Mashqlari) -->
+            <div class="tone-tab-panel" id="toneTabPairs">
+                <div class="tone-minimal-header-card">
+                    <div class="section-head-row">
+                        <div>
+                            <h3 class="progress-title">Ton o&#x2018;zgarsa &mdash; ma&#x2018;no butkul o&#x2018;zgaradi!<span class="title-cn">&#x8FA8;&#x8C03;&#x5BF9;&#x6BD4;</span></h3>
+                            <p class="lessons-kicker">Xitoyda eng ko&#x2018;p adashtiriladigan hayotiy so&#x2018;zlar: &laquo;&#x4E70; (sotib olmoq) vs &#x5356; (sotmoq)&raquo;, &laquo;&#x56DB; (4) vs &#x5341; (10)&raquo;</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="minimal-pairs-list" id="minimalPairsList"></div>
+            </div>
+
+            <!-- Tab 4: Tone Sandhi Golden Rules -->
             <div class="tone-tab-panel" id="toneTabSandhi">
                 <div class="sandhi-rules-list" id="sandhiRulesList"></div>
             </div>
 
-            <!-- Tab 4: Microphone Tone & Pitch Practice -->
+            <!-- Tab 5: Microphone Tone & Pitch Practice -->
             <div class="tone-tab-panel" id="toneTabMic">
                 <div class="tone-mic-card">
                     <div class="tone-mic-target" id="toneMicTargetBox">
@@ -1459,7 +1486,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=26"></script>
+    <script src="script.js?v=27"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1468,6 +1495,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=26"></script>
+    <script src="pwa.js?v=27"></script>
 </body>
 </html>

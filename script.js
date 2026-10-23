@@ -3201,18 +3201,31 @@ function nextQuiz() {
     updateLessonFlowUI();
 }
 
-function speakChineseText(text) {
+function speakChineseText(text, customRate = null) {
     if (!text || !('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
+
+    // Map latin pinyin to Hanzi so Chinese TTS produces authentic native tones
+    let speakable = String(text).trim();
+    const cleanLower = speakable.toLowerCase();
+    if (typeof PINYIN_SPEECH_MAP !== 'undefined' && PINYIN_SPEECH_MAP[cleanLower]) {
+        speakable = PINYIN_SPEECH_MAP[cleanLower];
+    } else if (typeof PINYIN_SPEECH_MAP !== 'undefined' && !/[\u4e00-\u9fa5]/.test(speakable)) {
+        const words = cleanLower.split(/[\s,\/]+/);
+        const mapped = words.map(w => PINYIN_SPEECH_MAP[w] || w).join('');
+        if (/[\u4e00-\u9fa5]/.test(mapped)) {
+            speakable = mapped;
+        }
+    }
+
+    const utterance = new SpeechSynthesisUtterance(speakable);
     utterance.lang = 'zh-CN';
-    utterance.rate = getSpeechRate();
+    utterance.rate = (typeof customRate === 'number' && customRate > 0) ? customRate : getSpeechRate();
     const voices = window.speechSynthesis.getVoices();
     const zhVoice = voices.find(v => v.lang === 'zh-CN') || voices.find(v => v.lang.startsWith('zh'));
     if (zhVoice) utterance.voice = zhVoice;
     window.speechSynthesis.speak(utterance);
 }
-
 function renderLessonVocabPreview() {
     const container = document.getElementById('lessonVocabPreview');
     if (!container) return;
@@ -4617,21 +4630,218 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ------------------------------------------------------------------------------
-// 17.2 TONE MASTERY LAB
-// ------------------------------------------------------------------------------
+// ==============================================================================
+// 17.2 SUPER CHINESE STYLE TONE MASTERY LAB (四声与变调)
+// ==============================================================================
+
+// Pinyin-to-Hanzi mapping to guarantee Chinese SpeechSynthesis speaks authentic tones
+const PINYIN_SPEECH_MAP = {
+    'mā': '妈', 'má': '麻', 'mǎ': '马', 'mà': '骂', 'ma': '吗',
+    'bā': '八', 'bá': '拔', 'bǎ': '靶', 'bà': '爸', 'ba': '吧',
+    'tā': '他', 'tá': '抬', 'tǎ': '塔', 'tà': '踏',
+    'tī': '梯', 'tí': '提', 'tǐ': '体', 'tì': '替',
+    'dī': '低', 'dí': '敌', 'dǐ': '底', 'dì': '地',
+    'nī': '妮', 'ní': '泥', 'nǐ': '你', 'nì': '逆',
+    'lī': '哩', 'lí': '梨', 'lǐ': '里', 'lì': '丽',
+    'gāo': '高', 'gáo': '搞', 'gǎo': '稿', 'gào': '告',
+    'hē': '喝', 'hé': '和', 'hǎo': '好', 'hào': '号',
+    'fēi': '飞', 'féi': '肥', 'fěi': '匪', 'fèi': '费',
+    'shū': '书', 'shú': '熟', 'shǔ': '数', 'shù': '树',
+    'wēn': '温', 'wén': '文', 'wěn': '吻', 'wèn': '问',
+    'sī': '丝', 'shí': '十', 'sǐ': '死', 'sì': '四',
+    'qī': '七', 'qí': '骑', 'qǐ': '起', 'qì': '气',
+    'xī': '西', 'xí': '习', 'xǐ': '洗', 'xì': '细',
+    'mǎi': '买', 'mài': '卖',
+    'shuǐ': '水', 'shuì': '睡',
+    'shuìjiào': '睡觉', 'shuǐjiǎo': '水饺',
+    'nǐ hǎo': '你好', 'ní hǎo': '你好',
+    'hěn hǎo': '很好', 'hén hǎo': '很好'
+};
+
+// SVG tone contour curves (Stave level 1 to 5)
+function getToneSvgContour(toneNum) {
+    if (toneNum === 1) {
+        // High flat (55)
+        return `<svg class="tc-wave-svg" viewBox="0 0 200 50">
+            <line x1="10" y1="12" x2="190" y2="12" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="10" y1="42" x2="190" y2="42" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="2" y="16" font-size="9" fill="#94a3b8" font-family="Nunito">5</text>
+            <text x="2" y="46" font-size="9" fill="#94a3b8" font-family="Nunito">1</text>
+            <path d="M 25 14 L 180 14" fill="none" stroke="#0284C7" stroke-width="5" stroke-linecap="round"/>
+        </svg>`;
+    } else if (toneNum === 2) {
+        // Mid rising (35)
+        return `<svg class="tc-wave-svg" viewBox="0 0 200 50">
+            <line x1="10" y1="12" x2="190" y2="12" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="10" y1="42" x2="190" y2="42" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="2" y="16" font-size="9" fill="#94a3b8" font-family="Nunito">5</text>
+            <text x="2" y="46" font-size="9" fill="#94a3b8" font-family="Nunito">1</text>
+            <path d="M 25 32 Q 100 24 180 14" fill="none" stroke="#10B981" stroke-width="5" stroke-linecap="round"/>
+        </svg>`;
+    } else if (toneNum === 3) {
+        // Dipping (214)
+        return `<svg class="tc-wave-svg" viewBox="0 0 200 50">
+            <line x1="10" y1="12" x2="190" y2="12" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="10" y1="42" x2="190" y2="42" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="2" y="16" font-size="9" fill="#94a3b8" font-family="Nunito">5</text>
+            <text x="2" y="46" font-size="9" fill="#94a3b8" font-family="Nunito">1</text>
+            <path d="M 25 30 Q 95 44 130 42 Q 155 35 180 20" fill="none" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+        </svg>`;
+    } else if (toneNum === 4) {
+        // Falling (51)
+        return `<svg class="tc-wave-svg" viewBox="0 0 200 50">
+            <line x1="10" y1="12" x2="190" y2="12" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="10" y1="42" x2="190" y2="42" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="2" y="16" font-size="9" fill="#94a3b8" font-family="Nunito">5</text>
+            <text x="2" y="46" font-size="9" fill="#94a3b8" font-family="Nunito">1</text>
+            <path d="M 25 14 Q 80 20 180 42" fill="none" stroke="#EF4444" stroke-width="5" stroke-linecap="round"/>
+        </svg>`;
+    } else {
+        // Neutral
+        return `<svg class="tc-wave-svg" viewBox="0 0 200 50">
+            <line x1="10" y1="12" x2="190" y2="12" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="10" y1="42" x2="190" y2="42" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="2" y="16" font-size="9" fill="#94a3b8" font-family="Nunito">5</text>
+            <text x="2" y="46" font-size="9" fill="#94a3b8" font-family="Nunito">1</text>
+            <circle cx="95" cy="28" r="6" fill="#64748B"/>
+        </svg>`;
+    }
+}
+
 const TONE_CONTOURS = [
-    { num: 1, symbol: 'ā', mark: '5 → 5 (440Hz)', name: '1-ton: Baland va tekis', exp: 'Ovoz baland va tekis ushlab turiladi (shifokor "A-a-a" degandek)', sample: 'mā (妈 ona), bā (八 sakkiz), tī (踢)', sound: 'mā', toneNum: 1, pitchPath: [80, 80] },
-    { num: 2, symbol: 'á', mark: '3 → 5 (320-460Hz)', name: '2-ton: Ko‘tariluvchi', exp: 'Pastdan yuqoriga ko‘tariladi ("Nima-a?", "Rostdanmi?" degandek)', sample: 'má (麻 nasha), shí (十 o‘n), lái (来)', sound: 'má', toneNum: 2, pitchPath: [50, 80] },
-    { num: 3, symbol: 'ǎ', mark: '2 → 1 → 4 (Dip)', name: '3-ton: Tushib-chiquvchi', exp: 'Ovoz avval eng pastga tushadi, keyin sal ko‘tariladi ("Hmm..." degandek)', sample: 'mǎ (马 ot), nǐ (你 sen), hǎo (好)', sound: 'mǎ', toneNum: 3, pitchPath: [40, 20, 65] },
-    { num: 4, symbol: 'à', mark: '5 → 1 (Sharp)', name: '4-ton: Qat’iy tushuvchi', exp: 'Tepadan tez va keskin pastga tushadi ("Yo‘q!", "To‘xta!" deb buyurgandek)', sample: 'mà (骂 so‘kmoq), bù (不 yo‘q), shì (是)', sound: 'mà', toneNum: 4, pitchPath: [85, 20] },
-    { num: 5, symbol: 'a', mark: 'Neytral', name: 'Yengil (Neytral) ton', exp: 'Qisqa, muloyim va urg‘usiz aytiladi', sample: 'ma (吗 so‘roq), de (的 qaratqich), ba (吧)', sound: 'ma', toneNum: 5, pitchPath: [45, 45] }
+    {
+        num: 1,
+        toneName: '1-ton (阴平)',
+        mark: '55 Yuqori & Tekis',
+        heroHz: '妈',
+        heroPy: 'mā',
+        exp: 'Ovoz baland va tebranmasdan tekis ushlab turiladi (shifokor huzurida "A-a-a" deb tomoqni ko‘rsatgandek).',
+        syllables: [
+            { hz: '妈', py: 'mā', uz: 'ona' },
+            { hz: '八', py: 'bā', uz: 'sakkiz' },
+            { hz: '喝', py: 'hē', uz: 'ichmoq' },
+            { hz: '高', py: 'gāo', uz: 'baland' },
+            { hz: '飞', py: 'fēi', uz: 'uchmoq' }
+        ]
+    },
+    {
+        num: 2,
+        toneName: '2-ton (阳平)',
+        mark: '35 Ko‘tariluvchi',
+        heroHz: '麻',
+        heroPy: 'má',
+        exp: 'Ovoz pastdan tepaga ko‘tariladi. O‘zbek tilida savol berib hayron bo‘lgandek: "Nima-a?", "Rostdanmi?".',
+        syllables: [
+            { hz: '麻', py: 'má', uz: 'zig‘ir' },
+            { hz: '拔', py: 'bá', uz: 'sug‘urmoq' },
+            { hz: '十', py: 'shí', uz: 'o‘n' },
+            { hz: '来', py: 'lái', uz: 'kelmoq' },
+            { hz: '红', py: 'hóng', uz: 'qizil' }
+        ]
+    },
+    {
+        num: 3,
+        toneName: '3-ton (上声)',
+        mark: '214 Tushib-chiquvchi',
+        heroHz: '马',
+        heroPy: 'mǎ',
+        exp: 'Ovoz avval tomoq tubiga chuqur tushadi, keyin sal yuqoriga chiqadi ("Hmm... tushunarli" deb o‘ylangandek).',
+        syllables: [
+            { hz: '马', py: 'mǎ', uz: 'ot' },
+            { hz: '靶', py: 'bǎ', uz: 'nishon' },
+            { hz: '好', py: 'hǎo', uz: 'yaxshi' },
+            { hz: '你', py: 'nǐ', uz: 'sen' },
+            { hz: '水', py: 'shuǐ', uz: 'suv' }
+        ]
+    },
+    {
+        num: 4,
+        toneName: '4-ton (去声)',
+        mark: '51 Keskin tushuvchi',
+        heroHz: '骂',
+        heroPy: 'mà',
+        exp: 'Tepadan tez va keskin pastga tushadi. Buyruq bergan yoki jerkigandek qat’iy: "Yo‘q!", "To‘xta!".',
+        syllables: [
+            { hz: '骂', py: 'mà', uz: 'so‘kmoq' },
+            { hz: '爸', py: 'bà', uz: 'ota' },
+            { hz: '看', py: 'kàn', uz: 'qaramoq' },
+            { hz: '去', py: 'qù', uz: 'bormoq' },
+            { hz: '大', py: 'dà', uz: 'katta' }
+        ]
+    },
+    {
+        num: 5,
+        toneName: 'Neytral ton (轻声)',
+        mark: '0 Yengil / Qisqa',
+        heroHz: '吗',
+        heroPy: 'ma',
+        exp: 'Urg‘usiz, juda yengil va qisqa aytiladi. Odatda so‘roq yoki qaratqich qo‘shimchalarida keladi.',
+        syllables: [
+            { hz: '吗', py: 'ma', uz: 'so‘roq' },
+            { hz: '吧', py: 'ba', uz: 'taklif' },
+            { hz: '的', py: 'de', uz: 'qaratqich' },
+            { hz: '爸爸', py: 'bàba', uz: 'dada' },
+            { hz: '妈妈', py: 'māma', uz: 'ona' }
+        ]
+    }
 ];
 
+// Super Chinese Minimal Tone Pairs
 const MINIMAL_PAIRS = [
-    { hanzi: '妈 / 麻 / 马 / 骂', pinyin: 'mā / má / mǎ / mà', uzbek: 'Ona (1) / Zig‘ir (2) / Ot (3) / So‘kmoq (4)', speak: '妈, 麻, 马, 骂' },
-    { hanzi: '温 / 文 / 吻 / 问', pinyin: 'wēn / wén / wěn / wèn', uzbek: 'Iliq (1) / Matn (2) / O‘pmoq (3) / So‘ramoq (4)', speak: '温, 文, 吻, 问' },
-    { hanzi: '书 / 熟 / 数 / 树', pinyin: 'shū / shú / shǔ / shù', uzbek: 'Kitob (1) / Pishgan (2) / Sanamoq (3) / Daraxt (4)', speak: '书, 熟, 数, 树' },
-    { hanzi: '睡觉 vs 水饺', pinyin: 'shuìjiào vs shuǐjiǎo', uzbek: 'Uxlamoq (4+4) vs Chuchvara (3+3→2+3)', speak: '睡觉, 水饺' }
+    {
+        note: '💡 Eng muhim bozor so‘zi! (3 vs 4)',
+        words: [
+            { hz: '买', py: 'mǎi', uz: 'sotib olmoq (3-ton)' },
+            { hz: '卖', py: 'mài', uz: 'sotmoq (4-ton)' }
+        ]
+    },
+    {
+        note: '⚠️ Klassik ma’no farqi (1 vs 3 vs 4)',
+        words: [
+            { hz: '妈', py: 'mā', uz: 'ona (1-ton)' },
+            { hz: '马', py: 'mǎ', uz: 'ot (3-ton)' },
+            { hz: '骂', py: 'mà', uz: 'so‘kmoq (4-ton)' }
+        ]
+    },
+    {
+        note: '🗣️ Xitoy tilidagi eng mashhur tez aytish (4 vs 2)',
+        words: [
+            { hz: '四', py: 'sì', uz: 'to‘rt (4-ton)' },
+            { hz: '十', py: 'shí', uz: 'o‘n (2-ton)' }
+        ]
+    },
+    {
+        note: '🍜 Oshxonada adashtirib qo‘ymang! (4+4 vs 3+3)',
+        words: [
+            { hz: '睡觉', py: 'shuìjiào', uz: 'uxlamoq (4+4)' },
+            { hz: '水饺', py: 'shuǐjiǎo', uz: 'chuchvara (3+3→2+3)' }
+        ]
+    },
+    {
+        note: '📚 HSK darslaridagi nozik farq',
+        words: [
+            { hz: '练习', py: 'liànxí', uz: 'mashq qilmoq' },
+            { hz: '联系', py: 'liánxì', uz: 'bog‘lanmoq' }
+        ]
+    },
+    {
+        note: '🎵 Barcha 4 ton bitta bo‘g‘inda (wēn/wén/wěn/wèn)',
+        words: [
+            { hz: '温', py: 'wēn', uz: 'iliq (1-ton)' },
+            { hz: '文', py: 'wén', uz: 'matn (2-ton)' },
+            { hz: '吻', py: 'wěn', uz: 'o‘pmoq (3-ton)' },
+            { hz: '问', py: 'wèn', uz: 'so‘ramoq (4-ton)' }
+        ]
+    },
+    {
+        note: '📖 Kitob, pishgan, sanamoq va daraxt (shū/shú/shǔ/shù)',
+        words: [
+            { hz: '书', py: 'shū', uz: 'kitob (1-ton)' },
+            { hz: '熟', py: 'shú', uz: 'pishgan (2-ton)' },
+            { hz: '数', py: 'shǔ', uz: 'sanamoq (3-ton)' },
+            { hz: '树', py: 'shù', uz: 'daraxt (4-ton)' }
+        ]
+    }
 ];
 
 const SANDHI_RULES = [
@@ -4639,44 +4849,70 @@ const SANDHI_RULES = [
         title: '1. Ikkita 3-ton ketma-ket kelsa (3 + 3 → 2 + 3)',
         formula: 'ǎ + ǎ → á + ǎ',
         exp: 'Xitoy tilida ikkita tushib-chiquvchi 3-tonni ketma-ket aytish noqulay. Shu sababli birinchi so‘z avtomatik ravishda 2-tonga (ko‘tariluvchi) aylanadi.',
-        example: '你好: nǐ hǎo → ní hǎo (Salom)<br>很好: hěn hǎo → hén hǎo (Juda yaxshi)<br>手表: shǒubiǎo → shóubiǎo (Qo‘l soati)<br>可以: kěyǐ → kéyǐ (Mumkin)',
-        speak: '你好, 很好, 手表, 可以'
+        chips: [
+            { hz: '你好', py: 'nǐ hǎo → ní hǎo', uz: 'Salom' },
+            { hz: '很好', py: 'hěn hǎo → hén hǎo', uz: 'Juda yaxshi' },
+            { hz: '手表', py: 'shǒubiǎo → shóubiǎo', uz: 'Qo‘l soati' },
+            { hz: '可以', py: 'kěyǐ → kéyǐ', uz: 'Mumkin' }
+        ]
     },
     {
         title: '2. “不” (bù) so‘zining o‘zgarishi (bù → bú)',
         formula: '不 (bù) + 4-ton → bú + 4-ton',
         exp: '“不” so‘zi aslida 4-ton (bù). Ammo undan keyingi so‘z ham 4-ton bo‘lsa, “不” 2-tonga (bú) aylanadi. Boshqa barcha tonlar (1, 2, 3) oldida o‘zgarmaydi.',
-        example: '不是: bù shì → bú shì (Emas)<br>不对: bù duì → bú duì (Noto‘g‘ri)<br>不要: bù yào → bú yào (Kerakmas)<br><em>Taqqoslang (o‘zgarmaydi):</em> 不吃 (bù chī), 不好 (bù hǎo)',
-        speak: '不是, 不对, 不要, 不吃, 不好'
+        chips: [
+            { hz: '不是', py: 'bù shì → bú shì', uz: 'Emas' },
+            { hz: '不对', py: 'bù duì → bú duì', uz: 'Noto‘g‘ri' },
+            { hz: '不要', py: 'bù yào → bú yào', uz: 'Kerakmas' },
+            { hz: '不吃', py: 'bù chī', uz: 'Yemaslik (o‘zgarmaydi)' },
+            { hz: '不好', py: 'bù hǎo', uz: 'Yaxshimas (o‘zgarmaydi)' }
+        ]
     },
     {
         title: '3. “一” (yī) so‘zining uch xil talaffuzi',
-        formula: 'yī (sanoqda) | yì (1,2,3 oldida) | yí (4 oldida)',
-        exp: '“一” sanashda 1-ton (yī). Ammo 1, 2, 3-tondagi so‘zlar oldidan 4-tonga (yì), 4-tondagi so‘zlar oldidan esa 2-tonga (yí) o‘zgaradi.',
-        example: '1, 2, 3: yī, èr, sān (1-ton)<br>一天: yì tiān (1-ton oldida → yì)<br>一年: yì nián (2-ton oldida → yì)<br>一起: yì qǐ (3-ton oldida → yì)<br>一个: yí gè (4-ton oldida → yí)',
-        speak: '一二三, 一天, 一年, 一起, 一个'
+        formula: 'yī (sanoq) | yí (4-ton oldida) | yì (1,2,3 oldida)',
+        exp: '“一” sanashda 1-ton (yī). Ammo 4-tondagi so‘zlar oldidan 2-tonga (yí), 1, 2, 3-tondagi so‘zlar oldidan esa 4-tonga (yì) o‘zgaradi.',
+        chips: [
+            { hz: '一二三', py: 'yī, èr, sān', uz: '1, 2, 3 (sanoqda)' },
+            { hz: '一个', py: 'yí gè', uz: 'Bitta (4-ton oldida → yí)' },
+            { hz: '一天', py: 'yì tiān', uz: 'Bir kun (1-ton oldida → yì)' },
+            { hz: '一年', py: 'yì nián', uz: 'Bir yil (2-ton oldida → yì)' },
+            { hz: '一起', py: 'yì qǐ', uz: 'Birgalikda (3-ton oldida → yì)' }
+        ]
     }
 ];
 
+// Super Chinese Style Ear Quiz Questions
 const TONE_QUIZ_QUESTIONS = [
-    { sound: 'mā', hanzi: '妈', pinyin: 'mā', ans: 1, prompt: 'Qaysi ton yangramoqda?' },
-    { sound: 'má', hanzi: '麻', pinyin: 'má', ans: 2, prompt: 'Qaysi ton yangramoqda?' },
-    { sound: 'mǎ', hanzi: '马', pinyin: 'mǎ', ans: 3, prompt: 'Qaysi ton yangramoqda?' },
-    { sound: 'mà', hanzi: '骂', pinyin: 'mà', ans: 4, prompt: 'Qaysi ton yangramoqda?' },
-    { sound: 'shū', hanzi: '书', pinyin: 'shū', ans: 1, prompt: 'Qaysi ton yangramoqda?' },
-    { sound: 'shú', hanzi: '熟', pinyin: 'shú', ans: 2, prompt: 'Qaysi ton yangramoqda?' },
-    { sound: 'hǎo', hanzi: '好', pinyin: 'hǎo', ans: 3, prompt: 'Qaysi ton yangramoqda?' },
-    { sound: 'shì', hanzi: '是', pinyin: 'shì', ans: 4, prompt: 'Qaysi ton yangramoqda?' }
+    { hz: '八', py: 'bā', tone: 1, base: 'ba', uz: 'sakkiz' },
+    { hz: '拔', py: 'bá', tone: 2, base: 'ba', uz: 'sug‘urmoq' },
+    { hz: '靶', py: 'bǎ', tone: 3, base: 'ba', uz: 'nishon' },
+    { hz: '爸', py: 'bà', tone: 4, base: 'ba', uz: 'ota' },
+    { hz: '喝', py: 'hē', tone: 1, base: 'he', uz: 'ichmoq' },
+    { hz: '和', py: 'hé', tone: 2, base: 'he', uz: 'va / bilan' },
+    { hz: '好', py: 'hǎo', tone: 3, base: 'hao', uz: 'yaxshi' },
+    { hz: '号', py: 'hào', tone: 4, base: 'hao', uz: 'raqam / sana' },
+    { hz: '十', py: 'shí', tone: 2, base: 'shi', uz: 'o‘n' },
+    { hz: '是', py: 'shì', tone: 4, base: 'shi', uz: 'ha / bo‘lmoq' },
+    { hz: '买', py: 'mǎi', tone: 3, base: 'mai', uz: 'sotib olmoq' },
+    { hz: '卖', py: 'mài', tone: 4, base: 'mai', uz: 'sotmoq' },
+    { hz: '飞', py: 'fēi', tone: 1, base: 'fei', uz: 'uchmoq' },
+    { hz: '水', py: 'shuǐ', tone: 3, base: 'shui', uz: 'suv' },
+    { hz: '睡', py: 'shuì', tone: 4, base: 'shui', uz: 'uxlamoq' },
+    { hz: '书', py: 'shū', tone: 1, base: 'shu', uz: 'kitob' }
 ];
 
 let toneQuizIndex = 0;
 let toneQuizScore = 0;
+let toneQuizStreak = 0;
+let toneQuizUserChoice = null;
 
 function initToneLab(initialTab = 'chart') {
     const tabs = document.querySelectorAll('#toneLabTabs .subview-tab');
     const panels = {
         chart: document.getElementById('toneTabChart'),
         ear: document.getElementById('toneTabEar'),
+        pairs: document.getElementById('toneTabPairs'),
         sandhi: document.getElementById('toneTabSandhi'),
         mic: document.getElementById('toneTabMic')
     };
@@ -4699,32 +4935,97 @@ function initToneLab(initialTab = 'chart') {
     renderSandhiRules();
     loadToneEarQuestion();
     initToneMicPractice();
+
+    // Bind Super Chinese sequential player button
+    const seqBtn = document.getElementById('playAllTonesSeqBtn');
+    if (seqBtn) {
+        seqBtn.onclick = playAllTonesSequentially;
+    }
+}
+
+// Super Chinese: Plays Tone 1 -> Tone 2 -> Tone 3 -> Tone 4 in sequence with active glow!
+function playAllTonesSequentially() {
+    const btn = document.getElementById('playAllTonesSeqBtn');
+    if (!btn || btn.disabled) return;
+
+    btn.disabled = true;
+    const origHtml = btn.innerHTML;
+    btn.innerHTML = '<span>🔊 Tinglanmoqda...</span>';
+
+    const sequence = [
+        { tone: 1, hz: '妈' },
+        { tone: 2, hz: '麻' },
+        { tone: 3, hz: '马' },
+        { tone: 4, hz: '骂' }
+    ];
+
+    let step = 0;
+    function playStep() {
+        if (step >= sequence.length) {
+            document.querySelectorAll('.tone-card').forEach(c => c.classList.remove('is-playing'));
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
+            return;
+        }
+
+        const item = sequence[step];
+        document.querySelectorAll('.tone-card').forEach(c => {
+            c.classList.toggle('is-playing', parseInt(c.dataset.tone) === item.tone);
+        });
+
+        speakChineseText(item.hz, 0.85);
+        step++;
+        setTimeout(playStep, 850);
+    }
+
+    playStep();
 }
 
 function renderToneContours() {
     const grid = document.getElementById('toneContoursGrid');
     if (!grid) return;
+
     grid.innerHTML = TONE_CONTOURS.map(t => `
         <div class="tone-card" data-tone="${t.num}">
-            <div class="tc-top">
-                <span class="tc-mark-badge">${t.mark}</span>
-                <button type="button" class="tone-play-pill" data-sound="${t.sound}" data-tone="${t.num}" aria-label="${t.sound} ni eshitish">🔊 Tinglash</button>
+            <div class="tc-top-row">
+                <span class="tc-num-pill">${t.toneName}</span>
+                <span class="tc-pitch-badge">${t.mark}</span>
             </div>
-            <div class="tc-char-row">
-                <span class="tc-symbol">${t.symbol}</span>
-                <span class="tc-name">${t.name}</span>
+
+            <div class="tc-body-row">
+                <div class="tc-hero-box">
+                    <span class="tc-hero-hanzi">${t.heroHz}</span>
+                    <span class="tc-hero-pinyin">${t.heroPy}</span>
+                    <button type="button" class="tc-hero-play-btn" data-speak="${t.heroHz}">
+                        🔊 Tinglash
+                    </button>
+                </div>
+                <div class="tc-desc-box">
+                    <p class="tc-exp-text">${t.exp}</p>
+                    ${getToneSvgContour(t.num)}
+                </div>
             </div>
-            <p class="tc-exp">${t.exp}</p>
-            <div class="tc-sample"><strong>Misol:</strong> ${t.sample}</div>
+
+            <div class="tc-soundboard">
+                <span class="tc-sb-title">🗣️ Talaffuz mashqi (Bosib eshiting):</span>
+                <div class="tc-sb-chips">
+                    ${t.syllables.map(s => `
+                        <button type="button" class="tc-syllable-chip" data-speak="${s.hz}">
+                            <span>🔊</span>
+                            <span class="chip-hanzi">${s.hz}</span>
+                            <span>${s.py}</span>
+                            <span class="chip-uzbek">(${s.uz})</span>
+                        </button>
+                    `).join('')}
+                </div>
+            </div>
         </div>
     `).join('');
 
-    grid.querySelectorAll('.tone-play-pill').forEach(btn => {
+    grid.querySelectorAll('.tc-hero-play-btn, .tc-syllable-chip').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
-            const toneNum = parseInt(btn.dataset.tone) || 1;
-            playUniversalTonePitch(toneNum);
-            speakChineseText(btn.dataset.sound, 0.85);
+            speakChineseText(btn.dataset.speak, 0.85);
         };
     });
 }
@@ -4732,80 +5033,144 @@ function renderToneContours() {
 function renderMinimalPairs() {
     const container = document.getElementById('minimalPairsList');
     if (!container) return;
+
     container.innerHTML = MINIMAL_PAIRS.map(p => `
         <div class="minimal-pair-card">
-            <div class="mp-left">
-                <div class="mp-hanzi">${p.hanzi}</div>
-                <div class="mp-pinyin">${p.pinyin}</div>
-                <div class="mp-uzbek">${p.uzbek}</div>
+            <div class="mp-head">
+                <span class="mp-note-badge">${p.note}</span>
+                <button type="button" class="mp-compare-btn" data-words='${JSON.stringify(p.words.map(w => w.hz))}'>
+                    ▶️ Solishtirish
+                </button>
             </div>
-            <button type="button" class="mp-listen-btn" data-speak="${p.speak}" title="Barchasini ketma-ket eshitish">🔊</button>
+            <div class="mp-words-row">
+                ${p.words.map(w => `
+                    <div class="mp-word-item" data-speak="${w.hz}">
+                        <span class="mp-w-hanzi">${w.hz}</span>
+                        <span class="mp-w-pinyin">${w.py}</span>
+                        <span class="mp-w-uzbek">${w.uz}</span>
+                        <span class="mp-w-speak-hint">🔊 Tinglash</span>
+                    </div>
+                `).join('')}
+            </div>
         </div>
     `).join('');
 
-    container.querySelectorAll('.mp-listen-btn').forEach(btn => {
-        btn.onclick = () => speakChineseText(btn.dataset.speak, 0.75);
+    container.querySelectorAll('.mp-word-item').forEach(item => {
+        item.onclick = () => {
+            item.classList.add('is-speaking');
+            speakChineseText(item.dataset.speak, 0.85);
+            setTimeout(() => item.classList.remove('is-speaking'), 500);
+        };
+    });
+
+    container.querySelectorAll('.mp-compare-btn').forEach(btn => {
+        btn.onclick = () => {
+            const list = JSON.parse(btn.dataset.words);
+            let idx = 0;
+            btn.disabled = true;
+
+            function playNext() {
+                if (idx >= list.length) {
+                    btn.disabled = false;
+                    return;
+                }
+                speakChineseText(list[idx], 0.85);
+                idx++;
+                setTimeout(playNext, 700);
+            }
+            playNext();
+        };
     });
 }
 
 function renderSandhiRules() {
     const container = document.getElementById('sandhiRulesList');
     if (!container) return;
+
     container.innerHTML = SANDHI_RULES.map(r => `
         <div class="sandhi-card">
-            <div class="sc-head">
-                <h4>${r.title}</h4>
-                <span class="sc-formula">${r.formula}</span>
+            <div class="sandhi-head">
+                <h4 class="sandhi-rule-title">${r.title}</h4>
             </div>
-            <p class="sc-exp">${r.exp}</p>
-            <div class="sc-example-box">${r.example}</div>
-            <button type="button" class="sc-listen-pill" data-speak="${r.speak}">🔊 Misollarni tinglash</button>
+            <div class="sandhi-formula">${r.formula}</div>
+            <p class="sandhi-explanation">${r.exp}</p>
+            <div class="sandhi-examples">
+                ${r.chips.map(c => `
+                    <button type="button" class="sandhi-chip" data-speak="${c.hz}">
+                        <span>🔊</span>
+                        <strong>${c.hz}</strong>
+                        <span>(${c.py})</span>
+                        <small>· ${c.uz}</small>
+                    </button>
+                `).join('')}
+            </div>
         </div>
     `).join('');
 
-    container.querySelectorAll('.sc-listen-pill').forEach(btn => {
-        btn.onclick = () => speakChineseText(btn.dataset.speak, 0.8);
+    container.querySelectorAll('.sandhi-chip').forEach(btn => {
+        btn.onclick = () => speakChineseText(btn.dataset.speak, 0.85);
     });
 }
 
 function loadToneEarQuestion() {
     const q = TONE_QUIZ_QUESTIONS[toneQuizIndex % TONE_QUIZ_QUESTIONS.length];
     const scoreEl = document.getElementById('toneEarScore');
+    const streakEl = document.getElementById('toneEarStreak');
     const progEl = document.getElementById('toneEarProgressText');
     const playBtn = document.getElementById('toneEarPlayBtn');
     const optBox = document.getElementById('toneEarOptions');
     const feedBox = document.getElementById('toneEarFeedback');
+    const actionsBox = document.getElementById('toneEarActions');
+    const compareBtn = document.getElementById('toneEarCompareBtn');
     const nextBtn = document.getElementById('toneEarNextBtn');
 
     if (!q || !playBtn || !optBox) return;
 
     if (scoreEl) scoreEl.textContent = toneQuizScore;
+    if (streakEl) streakEl.textContent = toneQuizStreak;
     if (progEl) progEl.textContent = `Savol #${(toneQuizIndex % TONE_QUIZ_QUESTIONS.length) + 1} / ${TONE_QUIZ_QUESTIONS.length}`;
     if (feedBox) feedBox.hidden = true;
-    if (nextBtn) nextBtn.style.display = 'none';
+    if (actionsBox) actionsBox.hidden = true;
 
     function playEarQuestionAudio() {
-        playUniversalTonePitch(q.ans);
-        speakChineseText(q.sound, 0.85);
+        speakChineseText(q.hz, 0.85);
     }
 
     playBtn.onclick = playEarQuestionAudio;
-    setTimeout(playEarQuestionAudio, 250);
+    setTimeout(playEarQuestionAudio, 300);
+
+    // Prepare 4 tone choices for the syllable
+    const basePinyin = {
+        'ba': ['bā', 'bá', 'bǎ', 'bà'],
+        'he': ['hē', 'hé', 'hě', 'hè'],
+        'hao': ['hāo', 'háo', 'hǎo', 'hào'],
+        'shi': ['shī', 'shí', 'shǐ', 'shì'],
+        'mai': ['māi', 'mái', 'mǎi', 'mài'],
+        'fei': ['fēi', 'féi', 'fěi', 'fèi'],
+        'shui': ['shuī', 'shuí', 'shuǐ', 'shuì'],
+        'shu': ['shū', 'shú', 'shǔ', 'shù']
+    };
+
+    const pyOptions = basePinyin[q.base] || ['1-ton', '2-ton', '3-ton', '4-ton'];
 
     optBox.innerHTML = [1, 2, 3, 4].map(num => `
-        <button type="button" class="tone-opt-btn" data-tone="${num}">
-            <span class="t-opt-num">${num}-ton</span>
-            <span class="t-opt-symbol">${num === 1 ? 'ā (tekis)' : num === 2 ? 'á (ko‘tariluvchi)' : num === 3 ? 'ǎ (tushib-chiq)' : 'à (keskin tush)'}</span>
+        <button type="button" class="tone-opt-card" data-tone="${num}">
+            <span class="toc-num">${num}-ton</span>
+            <span class="toc-pinyin">${pyOptions[num - 1]}</span>
+            <span class="toc-curve">${getToneSvgContour(num)}</span>
         </button>
     `).join('');
 
-    optBox.querySelectorAll('.tone-opt-btn').forEach(btn => {
+    optBox.querySelectorAll('.tone-opt-card').forEach(btn => {
         btn.onclick = () => {
             const chosen = parseInt(btn.dataset.tone);
-            const isCorrect = chosen === q.ans;
-            optBox.querySelectorAll('.tone-opt-btn').forEach(b => {
+            toneQuizUserChoice = chosen;
+            const isCorrect = chosen === q.tone;
+
+            optBox.querySelectorAll('.tone-opt-card').forEach(b => {
                 b.disabled = true;
-                if (parseInt(b.dataset.tone) === q.ans) b.classList.add('correct');
+                const bTone = parseInt(b.dataset.tone);
+                if (bTone === q.tone) b.classList.add('correct');
                 else if (b === btn && !isCorrect) b.classList.add('wrong');
             });
 
@@ -4813,24 +5178,45 @@ function loadToneEarQuestion() {
                 feedBox.hidden = false;
                 if (isCorrect) {
                     toneQuizScore += 10;
+                    toneQuizStreak++;
                     if (scoreEl) scoreEl.textContent = toneQuizScore;
+                    if (streakEl) streakEl.textContent = toneQuizStreak;
                     feedBox.className = 'tone-ear-feedback correct';
-                    feedBox.innerHTML = `🎉 <strong>To‘g‘ri!</strong> Bu ${q.ans}-ton: <em>${q.pinyin}</em> (${q.hanzi}).`;
+                    feedBox.innerHTML = `🎉 <strong>Barakalla! To‘g‘ri topdingiz!</strong><br>Bu haqiqatan ham <strong>${q.tone}-ton</strong>: <em>${q.py}</em> (${q.hz} — ${q.uz}).`;
+                    playSuccessSound();
                 } else {
+                    toneQuizStreak = 0;
+                    if (streakEl) streakEl.textContent = 0;
                     feedBox.className = 'tone-ear-feedback wrong';
-                    feedBox.innerHTML = `❌ <strong>Noto‘g‘ri.</strong> To‘g‘ri javob ${q.ans}-ton edi: <em>${q.pinyin}</em> (${q.hanzi}).`;
+                    feedBox.innerHTML = `❌ <strong>Noto‘g‘ri.</strong> Siz <strong>${chosen}-ton</strong> tanladingiz, ammo bu <strong>${q.tone}-ton</strong> edi: <em>${q.py}</em> (${q.hz} — ${q.uz}).`;
                 }
             }
-            if (nextBtn) {
-                nextBtn.style.display = 'inline-block';
-                nextBtn.onclick = () => {
-                    toneQuizIndex++;
-                    loadToneEarQuestion();
-                };
+
+            if (actionsBox) {
+                actionsBox.hidden = false;
+                if (compareBtn) {
+                    compareBtn.style.display = isCorrect ? 'none' : 'inline-flex';
+                    compareBtn.onclick = () => {
+                        // Play user's chosen option, pause, then play correct answer
+                        const userHz = (chosen === 1) ? '妈' : (chosen === 2) ? '麻' : (chosen === 3) ? '马' : '骂';
+                        speakChineseText(userHz, 0.85);
+                        setTimeout(() => {
+                            speakChineseText(q.hz, 0.85);
+                        }, 700);
+                    };
+                }
             }
         };
     });
+
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            toneQuizIndex++;
+            loadToneEarQuestion();
+        };
+    }
 }
+
 
 function drawTonePitchGuideline(path, userPath = null) {
     const canvas = document.getElementById('tonePitchCanvas');
