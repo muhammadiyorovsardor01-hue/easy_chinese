@@ -1,10 +1,10 @@
-const CACHE_NAME = 'easychinese-v28';
+const CACHE_NAME = 'easychinese-v29';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css?v=28',
-  './script.js?v=28',
-  './pwa.js?v=28',
+  './styles.css?v=29',
+  './script.js?v=29',
+  './pwa.js?v=29',
   './words.json',
   './manifest.json',
   './assets/app-icon-1.svg',

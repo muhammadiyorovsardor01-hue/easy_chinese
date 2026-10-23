@@ -4306,83 +4306,57 @@ function getAudioContext() {
     return audioCtxInstance;
 }
 
-// Pure tone-contour synthesizer (formant vowel "a" on a sawtooth source).
-// Device TTS softens isolated single-syllable tones, so this gives a reliable,
-// clearly different pitch contour for tones 1-4 and the neutral tone.
-// Pitch levels follow Chao tone letters: T1=55, T2=35, T3=214, T4=51.
-function toneLevelToHz(level) {
-    const lo = 110;   // level 1 (low)
-    const hi = 260;   // level 5 (high)
-    return lo * Math.pow(hi / lo, (level - 1) / 4);
-}
+// Native Speaker Tone Audio Player (crystal-clear studio recordings from davinfifield/mp3-chinese-pinyin-sound)
+let activeToneAudio = null;
 
-const TONE_SYNTH_PATHS = {
-    1: { levels: [5, 5], dur: 0.80 },
-    2: { levels: [3, 5], dur: 0.70 },
-    3: { levels: [2, 1, 4], dur: 0.95 },
-    4: { levels: [5, 1], dur: 0.60 },
-    5: { levels: [3, 2.6], dur: 0.28 }
-};
-
-// Returns the duration in milliseconds so callers can chain audio / animation.
-function playUniversalTonePitch(toneNum, durationScale = 1) {
+function playNativeToneSound(soundName, fallbackHz = null, rate = 1.0) {
     try {
-        const ctx = getAudioContext();
-        if (!ctx) return 0;
-        const spec = TONE_SYNTH_PATHS[toneNum] || TONE_SYNTH_PATHS[1];
-        const dur = spec.dur * (durationScale > 0 ? durationScale : 1);
-        const now = ctx.currentTime + 0.02;
-
-        const osc = ctx.createOscillator();
-        osc.type = 'sawtooth';
-        const levels = spec.levels;
-        osc.frequency.setValueAtTime(toneLevelToHz(levels[0]), now);
-        for (let i = 1; i < levels.length; i++) {
-            osc.frequency.exponentialRampToValueAtTime(toneLevelToHz(levels[i]), now + dur * (i / (levels.length - 1)));
+        if (activeToneAudio) {
+            activeToneAudio.pause();
+            activeToneAudio.currentTime = 0;
+            activeToneAudio = null;
         }
-
-        // Two formants (F1 ~ 800Hz, F2 ~ 1300Hz) make it sound like a voiced "a" instead of a beep
-        const f1 = ctx.createBiquadFilter();
-        f1.type = 'bandpass'; f1.frequency.value = 800; f1.Q.value = 5;
-        const f2 = ctx.createBiquadFilter();
-        f2.type = 'bandpass'; f2.frequency.value = 1300; f2.Q.value = 7;
-        const g1 = ctx.createGain(); g1.gain.value = 1.8;
-        const g2 = ctx.createGain(); g2.gain.value = 1.2;
-
-        const master = ctx.createGain();
-        master.gain.setValueAtTime(0.0001, now);
-        master.gain.exponentialRampToValueAtTime(0.55, now + 0.05);
-        master.gain.setValueAtTime(0.55, now + Math.max(0.06, dur - 0.1));
-        master.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-
-        osc.connect(f1); f1.connect(g1); g1.connect(master);
-        osc.connect(f2); f2.connect(g2); g2.connect(master);
-        master.connect(ctx.destination);
-        osc.start(now);
-        osc.stop(now + dur + 0.05);
-        return Math.round(dur * 1000);
+        if (soundName) {
+            const audio = new Audio(`./assets/audio/tones/${soundName}.mp3`);
+            activeToneAudio = audio;
+            audio.playbackRate = rate;
+            const promise = audio.play();
+            if (promise !== undefined) {
+                promise.catch(() => {
+                    if (fallbackHz) speakChineseText(fallbackHz, rate);
+                });
+            }
+            return audio;
+        } else if (fallbackHz) {
+            speakChineseText(fallbackHz, rate);
+        }
     } catch (e) {
-        return 0;
+        if (fallbackHz) speakChineseText(fallbackHz, rate);
     }
+    return null;
 }
 
-// Plays the pure tone contour, animates the contour line on the card and
-// (optionally) speaks the real word afterwards.
-function playToneDemo(toneNum, hanzi, cardEl) {
-    const ms = playUniversalTonePitch(toneNum);
+// Universal tone player (pure native speaker voice, no artificial synthesizer buzzing)
+function playUniversalTonePitch(toneNum, durationScale = 1) {
+    const heroSound = (toneNum === 1) ? 'ma1' : (toneNum === 2) ? 'ma2' : (toneNum === 3) ? 'ma3' : (toneNum === 4) ? 'ma4' : 'ma5';
+    const hz = (toneNum === 1) ? '妈' : (toneNum === 2) ? '麻' : (toneNum === 3) ? '马' : (toneNum === 4) ? '骂' : '吗';
+    playNativeToneSound(heroSound, hz, durationScale < 1 ? 0.75 : 1.0);
+    return 650;
+}
+
+// Plays native tone sound and animates the card SVG wave line
+function playToneDemo(toneNum, hanzi = null, cardEl = null, rate = 1.0) {
+    const heroSound = (toneNum === 1) ? 'ma1' : (toneNum === 2) ? 'ma2' : (toneNum === 3) ? 'ma3' : (toneNum === 4) ? 'ma4' : 'ma5';
     if (cardEl) {
         const svg = cardEl.querySelector('.tc-wave-svg');
         if (svg) {
-            svg.style.setProperty('--dur', ms + 'ms');
+            svg.style.setProperty('--dur', (rate < 1 ? '1100ms' : '750ms'));
             svg.classList.remove('drawing');
             void svg.getBoundingClientRect();
             svg.classList.add('drawing');
         }
     }
-    if (hanzi) {
-        setTimeout(() => speakChineseText(hanzi, 0.8), ms + 250);
-    }
-    return ms;
+    return playNativeToneSound(heroSound, hanzi, rate);
 }
 
 // Navigation triggers
@@ -4749,13 +4723,14 @@ const TONE_CONTOURS = [
         mark: '55 Yuqori & Tekis',
         heroHz: '妈',
         heroPy: 'mā',
+        heroSound: 'ma1',
         exp: 'Ovoz baland va tebranmasdan tekis ushlab turiladi (shifokor huzurida "A-a-a" deb tomoqni ko‘rsatgandek).',
         syllables: [
-            { hz: '妈', py: 'mā', uz: 'ona' },
-            { hz: '八', py: 'bā', uz: 'sakkiz' },
-            { hz: '喝', py: 'hē', uz: 'ichmoq' },
-            { hz: '高', py: 'gāo', uz: 'baland' },
-            { hz: '飞', py: 'fēi', uz: 'uchmoq' }
+            { hz: '妈', py: 'mā', sound: 'ma1', uz: 'ona' },
+            { hz: '八', py: 'bā', sound: 'ba1', uz: 'sakkiz' },
+            { hz: '喝', py: 'hē', sound: 'he1', uz: 'ichmoq' },
+            { hz: '高', py: 'gāo', sound: 'gao1', uz: 'baland' },
+            { hz: '飞', py: 'fēi', sound: 'fei1', uz: 'uchmoq' }
         ]
     },
     {
@@ -4764,13 +4739,14 @@ const TONE_CONTOURS = [
         mark: '35 Ko‘tariluvchi',
         heroHz: '麻',
         heroPy: 'má',
+        heroSound: 'ma2',
         exp: 'Ovoz pastdan tepaga ko‘tariladi. O‘zbek tilida savol berib hayron bo‘lgandek: "Nima-a?", "Rostdanmi?".',
         syllables: [
-            { hz: '麻', py: 'má', uz: 'zig‘ir' },
-            { hz: '拔', py: 'bá', uz: 'sug‘urmoq' },
-            { hz: '十', py: 'shí', uz: 'o‘n' },
-            { hz: '来', py: 'lái', uz: 'kelmoq' },
-            { hz: '红', py: 'hóng', uz: 'qizil' }
+            { hz: '麻', py: 'má', sound: 'ma2', uz: 'zig‘ir' },
+            { hz: '拔', py: 'bá', sound: 'ba2', uz: 'sug‘urmoq' },
+            { hz: '十', py: 'shí', sound: 'shi2', uz: 'o‘n' },
+            { hz: '来', py: 'lái', sound: 'lai2', uz: 'kelmoq' },
+            { hz: '红', py: 'hóng', sound: 'hong2', uz: 'qizil' }
         ]
     },
     {
@@ -4779,13 +4755,14 @@ const TONE_CONTOURS = [
         mark: '214 Tushib-chiquvchi',
         heroHz: '马',
         heroPy: 'mǎ',
+        heroSound: 'ma3',
         exp: 'Ovoz avval tomoq tubiga chuqur tushadi, keyin sal yuqoriga chiqadi ("Hmm... tushunarli" deb o‘ylangandek).',
         syllables: [
-            { hz: '马', py: 'mǎ', uz: 'ot' },
-            { hz: '靶', py: 'bǎ', uz: 'nishon' },
-            { hz: '好', py: 'hǎo', uz: 'yaxshi' },
-            { hz: '你', py: 'nǐ', uz: 'sen' },
-            { hz: '水', py: 'shuǐ', uz: 'suv' }
+            { hz: '马', py: 'mǎ', sound: 'ma3', uz: 'ot' },
+            { hz: '靶', py: 'bǎ', sound: 'ba3', uz: 'nishon' },
+            { hz: '好', py: 'hǎo', sound: 'hao3', uz: 'yaxshi' },
+            { hz: '你', py: 'nǐ', sound: 'ni3', uz: 'sen' },
+            { hz: '水', py: 'shuǐ', sound: 'shui3', uz: 'suv' }
         ]
     },
     {
@@ -4794,13 +4771,14 @@ const TONE_CONTOURS = [
         mark: '51 Keskin tushuvchi',
         heroHz: '骂',
         heroPy: 'mà',
+        heroSound: 'ma4',
         exp: 'Tepadan tez va keskin pastga tushadi. Buyruq bergan yoki jerkigandek qat’iy: "Yo‘q!", "To‘xta!".',
         syllables: [
-            { hz: '骂', py: 'mà', uz: 'so‘kmoq' },
-            { hz: '爸', py: 'bà', uz: 'ota' },
-            { hz: '看', py: 'kàn', uz: 'qaramoq' },
-            { hz: '去', py: 'qù', uz: 'bormoq' },
-            { hz: '大', py: 'dà', uz: 'katta' }
+            { hz: '骂', py: 'mà', sound: 'ma4', uz: 'so‘kmoq' },
+            { hz: '爸', py: 'bà', sound: 'ba4', uz: 'ota' },
+            { hz: '看', py: 'kàn', sound: 'kan4', uz: 'qaramoq' },
+            { hz: '去', py: 'qù', sound: 'qu4', uz: 'bormoq' },
+            { hz: '大', py: 'dà', sound: 'da4', uz: 'katta' }
         ]
     },
     {
@@ -4809,13 +4787,14 @@ const TONE_CONTOURS = [
         mark: '0 Yengil / Qisqa',
         heroHz: '吗',
         heroPy: 'ma',
+        heroSound: 'ma5',
         exp: 'Urg‘usiz, juda yengil va qisqa aytiladi. Odatda so‘roq yoki qaratqich qo‘shimchalarida keladi.',
         syllables: [
-            { hz: '吗', py: 'ma', uz: 'so‘roq' },
-            { hz: '吧', py: 'ba', uz: 'taklif' },
-            { hz: '的', py: 'de', uz: 'qaratqich' },
-            { hz: '爸爸', py: 'bàba', uz: 'dada' },
-            { hz: '妈妈', py: 'māma', uz: 'ona' }
+            { hz: '吗', py: 'ma', sound: 'ma5', uz: 'so‘roq' },
+            { hz: '的', py: 'de', sound: 'de5', uz: 'qaratqich' },
+            { hz: '了', py: 'le', sound: 'le5', uz: 'o‘tgan zamon' },
+            { hz: '爸爸', py: 'bàba', sound: null, uz: 'dada' },
+            { hz: '妈妈', py: 'māma', sound: null, uz: 'ona' }
         ]
     }
 ];
@@ -4825,55 +4804,37 @@ const MINIMAL_PAIRS = [
     {
         note: '💡 Eng muhim bozor so‘zi! (3 vs 4)',
         words: [
-            { hz: '买', py: 'mǎi', uz: 'sotib olmoq (3-ton)' },
-            { hz: '卖', py: 'mài', uz: 'sotmoq (4-ton)' }
+            { hz: '买', py: 'mǎi', sound: 'mai3', uz: 'sotib olmoq (3-ton)' },
+            { hz: '卖', py: 'mài', sound: 'mai4', uz: 'sotmoq (4-ton)' }
         ]
     },
     {
         note: '⚠️ Klassik ma’no farqi (1 vs 3 vs 4)',
         words: [
-            { hz: '妈', py: 'mā', uz: 'ona (1-ton)' },
-            { hz: '马', py: 'mǎ', uz: 'ot (3-ton)' },
-            { hz: '骂', py: 'mà', uz: 'so‘kmoq (4-ton)' }
+            { hz: '妈', py: 'mā', sound: 'ma1', uz: 'ona (1-ton)' },
+            { hz: '马', py: 'mǎ', sound: 'ma3', uz: 'ot (3-ton)' },
+            { hz: '骂', py: 'mà', sound: 'ma4', uz: 'so‘kmoq (4-ton)' }
         ]
     },
     {
         note: '🗣️ Xitoy tilidagi eng mashhur tez aytish (4 vs 2)',
         words: [
-            { hz: '四', py: 'sì', uz: 'to‘rt (4-ton)' },
-            { hz: '十', py: 'shí', uz: 'o‘n (2-ton)' }
+            { hz: '四', py: 'sì', sound: 'si4', uz: 'to‘rt (4-ton)' },
+            { hz: '十', py: 'shí', sound: 'shi2', uz: 'o‘n (2-ton)' }
         ]
     },
     {
         note: '🍜 Oshxonada adashtirib qo‘ymang! (4+4 vs 3+3)',
         words: [
-            { hz: '睡觉', py: 'shuìjiào', uz: 'uxlamoq (4+4)' },
-            { hz: '水饺', py: 'shuǐjiǎo', uz: 'chuchvara (3+3→2+3)' }
+            { hz: '睡觉', py: 'shuìjiào', sound: null, uz: 'uxlamoq (4+4)' },
+            { hz: '水饺', py: 'shuǐjiǎo', sound: null, uz: 'chuchvara (3+3→2+3)' }
         ]
     },
     {
         note: '📚 HSK darslaridagi nozik farq',
         words: [
-            { hz: '练习', py: 'liànxí', uz: 'mashq qilmoq' },
-            { hz: '联系', py: 'liánxì', uz: 'bog‘lanmoq' }
-        ]
-    },
-    {
-        note: '🎵 Barcha 4 ton bitta bo‘g‘inda (wēn/wén/wěn/wèn)',
-        words: [
-            { hz: '温', py: 'wēn', uz: 'iliq (1-ton)' },
-            { hz: '文', py: 'wén', uz: 'matn (2-ton)' },
-            { hz: '吻', py: 'wěn', uz: 'o‘pmoq (3-ton)' },
-            { hz: '问', py: 'wèn', uz: 'so‘ramoq (4-ton)' }
-        ]
-    },
-    {
-        note: '📖 Kitob, pishgan, sanamoq va daraxt (shū/shú/shǔ/shù)',
-        words: [
-            { hz: '书', py: 'shū', uz: 'kitob (1-ton)' },
-            { hz: '熟', py: 'shú', uz: 'pishgan (2-ton)' },
-            { hz: '数', py: 'shǔ', uz: 'sanamoq (3-ton)' },
-            { hz: '树', py: 'shù', uz: 'daraxt (4-ton)' }
+            { hz: '练习', py: 'liànxí', sound: null, uz: 'mashq qilmoq' },
+            { hz: '联系', py: 'liánxì', sound: null, uz: 'bog‘lanmoq' }
         ]
     }
 ];
@@ -4917,23 +4878,24 @@ const SANDHI_RULES = [
 ];
 
 // Super Chinese Style Ear Quiz Questions
+// Super Chinese Style Ear Quiz Questions with Native Speaker Sounds
 const TONE_QUIZ_QUESTIONS = [
-    { hz: '八', py: 'bā', tone: 1, base: 'ba', uz: 'sakkiz' },
-    { hz: '拔', py: 'bá', tone: 2, base: 'ba', uz: 'sug‘urmoq' },
-    { hz: '靶', py: 'bǎ', tone: 3, base: 'ba', uz: 'nishon' },
-    { hz: '爸', py: 'bà', tone: 4, base: 'ba', uz: 'ota' },
-    { hz: '喝', py: 'hē', tone: 1, base: 'he', uz: 'ichmoq' },
-    { hz: '和', py: 'hé', tone: 2, base: 'he', uz: 'va / bilan' },
-    { hz: '好', py: 'hǎo', tone: 3, base: 'hao', uz: 'yaxshi' },
-    { hz: '号', py: 'hào', tone: 4, base: 'hao', uz: 'raqam / sana' },
-    { hz: '十', py: 'shí', tone: 2, base: 'shi', uz: 'o‘n' },
-    { hz: '是', py: 'shì', tone: 4, base: 'shi', uz: 'ha / bo‘lmoq' },
-    { hz: '买', py: 'mǎi', tone: 3, base: 'mai', uz: 'sotib olmoq' },
-    { hz: '卖', py: 'mài', tone: 4, base: 'mai', uz: 'sotmoq' },
-    { hz: '飞', py: 'fēi', tone: 1, base: 'fei', uz: 'uchmoq' },
-    { hz: '水', py: 'shuǐ', tone: 3, base: 'shui', uz: 'suv' },
-    { hz: '睡', py: 'shuì', tone: 4, base: 'shui', uz: 'uxlamoq' },
-    { hz: '书', py: 'shū', tone: 1, base: 'shu', uz: 'kitob' }
+    { hz: '八', py: 'bā', tone: 1, base: 'ba', sound: 'ba1', uz: 'sakkiz' },
+    { hz: '拔', py: 'bá', tone: 2, base: 'ba', sound: 'ba2', uz: 'sug‘urmoq' },
+    { hz: '靶', py: 'bǎ', tone: 3, base: 'ba', sound: 'ba3', uz: 'nishon' },
+    { hz: '爸', py: 'bà', tone: 4, base: 'ba', sound: 'ba4', uz: 'ota' },
+    { hz: '喝', py: 'hē', tone: 1, base: 'he', sound: 'he1', uz: 'ichmoq' },
+    { hz: '和', py: 'hé', tone: 2, base: 'he', sound: 'he2', uz: 'va / bilan' },
+    { hz: '好', py: 'hǎo', tone: 3, base: 'hao', sound: 'hao3', uz: 'yaxshi' },
+    { hz: '号', py: 'hào', tone: 4, base: 'hao', sound: 'hao4', uz: 'raqam / sana' },
+    { hz: '十', py: 'shí', tone: 2, base: 'shi', sound: 'shi2', uz: 'o‘n' },
+    { hz: '是', py: 'shì', tone: 4, base: 'shi', sound: 'shi4', uz: 'ha / bo‘lmoq' },
+    { hz: '买', py: 'mǎi', tone: 3, base: 'mai', sound: 'mai3', uz: 'sotib olmoq' },
+    { hz: '卖', py: 'mài', tone: 4, base: 'mai', sound: 'mai4', uz: 'sotmoq' },
+    { hz: '飞', py: 'fēi', tone: 1, base: 'fei', sound: 'fei1', uz: 'uchmoq' },
+    { hz: '水', py: 'shuǐ', tone: 3, base: 'shui', sound: 'shui3', uz: 'suv' },
+    { hz: '睡', py: 'shuì', tone: 4, base: 'shui', sound: 'shui4', uz: 'uxlamoq' },
+    { hz: '书', py: 'shū', tone: 1, base: 'shu', sound: 'shu1', uz: 'kitob' }
 ];
 
 let toneQuizIndex = 0;
@@ -4978,6 +4940,7 @@ function initToneLab(initialTab = 'chart') {
 }
 
 // Super Chinese: Plays Tone 1 -> Tone 2 -> Tone 3 -> Tone 4 in sequence with active glow!
+// Super Chinese: Plays Tone 1 -> Tone 2 -> Tone 3 -> Tone 4 in sequence with active glow!
 function playAllTonesSequentially() {
     const btn = document.getElementById('playAllTonesSeqBtn');
     if (!btn || btn.disabled) return;
@@ -4987,10 +4950,10 @@ function playAllTonesSequentially() {
     btn.innerHTML = '<span>🔊 Tinglanmoqda...</span>';
 
     const sequence = [
-        { tone: 1, hz: '妈' },
-        { tone: 2, hz: '麻' },
-        { tone: 3, hz: '马' },
-        { tone: 4, hz: '骂' }
+        { tone: 1, hz: '妈', sound: 'ma1' },
+        { tone: 2, hz: '麻', sound: 'ma2' },
+        { tone: 3, hz: '马', sound: 'ma3' },
+        { tone: 4, hz: '骂', sound: 'ma4' }
     ];
 
     let step = 0;
@@ -5010,15 +4973,14 @@ function playAllTonesSequentially() {
             if (on) activeCard = c;
         });
 
-        // pure contour first, then the real word
-        playToneDemo(item.tone, item.hz, activeCard);
+        playToneDemo(item.tone, item.hz, activeCard, 1.0);
         step++;
-        setTimeout(playStep, 2000);
+        setTimeout(playStep, 1400);
     }
 
     playStep();
 }
-// @@RENDER
+
 function renderToneContours() {
     const grid = document.getElementById('toneContoursGrid');
     if (!grid) return;
@@ -5035,8 +4997,12 @@ function renderToneContours() {
                     <span class="tc-hero-hanzi">${t.heroHz}</span>
                     <span class="tc-hero-pinyin">${t.heroPy}</span>
                     <div class="tc-hero-btns">
-                        <button type="button" class="tc-hero-tone-btn" data-tone="${t.num}">🎼 Ohang</button>
-                        <button type="button" class="tc-hero-play-btn" data-speak="${t.heroHz}">🔊 So‘z</button>
+                        <button type="button" class="tc-hero-play-btn" data-tone="${t.num}" data-sound="${t.heroSound}" data-speak="${t.heroHz}">
+                            🔊 Tinglash
+                        </button>
+                        <button type="button" class="tc-hero-slow-btn" data-tone="${t.num}" data-sound="${t.heroSound}" data-speak="${t.heroHz}">
+                            🐢 Sekin
+                        </button>
                     </div>
                 </div>
                 <div class="tc-desc-box">
@@ -5049,7 +5015,7 @@ function renderToneContours() {
                 <span class="tc-sb-title">🗣️ Talaffuz mashqi (Bosib eshiting):</span>
                 <div class="tc-sb-chips">
                     ${t.syllables.map(s => `
-                        <button type="button" class="tc-syllable-chip" data-speak="${s.hz}">
+                        <button type="button" class="tc-syllable-chip" data-sound="${s.sound || ''}" data-speak="${s.hz}">
                             <span>🔊</span>
                             <span class="chip-hanzi">${s.hz}</span>
                             <span>${s.py}</span>
@@ -5061,17 +5027,26 @@ function renderToneContours() {
         </div>
     `).join('');
 
-    grid.querySelectorAll('.tc-hero-tone-btn').forEach(btn => {
+    grid.querySelectorAll('.tc-hero-play-btn').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
-            playToneDemo(parseInt(btn.dataset.tone) || 1, null, btn.closest('.tone-card'));
+            const card = btn.closest('.tone-card');
+            playToneDemo(parseInt(btn.dataset.tone), btn.dataset.speak, card, 1.0);
         };
     });
 
-    grid.querySelectorAll('.tc-hero-play-btn, .tc-syllable-chip').forEach(btn => {
+    grid.querySelectorAll('.tc-hero-slow-btn').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
-            speakChineseText(btn.dataset.speak, 0.8);
+            const card = btn.closest('.tone-card');
+            playToneDemo(parseInt(btn.dataset.tone), btn.dataset.speak, card, 0.72);
+        };
+    });
+
+    grid.querySelectorAll('.tc-syllable-chip').forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            playNativeToneSound(btn.dataset.sound, btn.dataset.speak, 1.0);
         };
     });
 }
@@ -5084,13 +5059,13 @@ function renderMinimalPairs() {
         <div class="minimal-pair-card">
             <div class="mp-head">
                 <span class="mp-note-badge">${p.note}</span>
-                <button type="button" class="mp-compare-btn" data-words='${JSON.stringify(p.words.map(w => w.hz))}'>
+                <button type="button" class="mp-compare-btn" data-words='${JSON.stringify(p.words)}'>
                     ▶️ Solishtirish
                 </button>
             </div>
             <div class="mp-words-row">
                 ${p.words.map(w => `
-                    <div class="mp-word-item" data-speak="${w.hz}">
+                    <div class="mp-word-item" data-sound="${w.sound || ''}" data-speak="${w.hz}">
                         <span class="mp-w-hanzi">${w.hz}</span>
                         <span class="mp-w-pinyin">${w.py}</span>
                         <span class="mp-w-uzbek">${w.uz}</span>
@@ -5104,27 +5079,31 @@ function renderMinimalPairs() {
     container.querySelectorAll('.mp-word-item').forEach(item => {
         item.onclick = () => {
             item.classList.add('is-speaking');
-            speakChineseText(item.dataset.speak, 0.85);
-            setTimeout(() => item.classList.remove('is-speaking'), 500);
+            playNativeToneSound(item.dataset.sound, item.dataset.speak, 1.0);
+            setTimeout(() => item.classList.remove('is-speaking'), 800);
         };
     });
 
     container.querySelectorAll('.mp-compare-btn').forEach(btn => {
         btn.onclick = () => {
-            const list = JSON.parse(btn.dataset.words);
-            let idx = 0;
-            btn.disabled = true;
-
-            function playNext() {
-                if (idx >= list.length) {
-                    btn.disabled = false;
-                    return;
+            try {
+                const wordsList = JSON.parse(btn.dataset.words || '[]');
+                btn.disabled = true;
+                let idx = 0;
+                function playNext() {
+                    if (idx >= wordsList.length) {
+                        btn.disabled = false;
+                        return;
+                    }
+                    const w = wordsList[idx];
+                    playNativeToneSound(w.sound, w.hz, 0.9);
+                    idx++;
+                    setTimeout(playNext, 1000);
                 }
-                speakChineseText(list[idx], 0.85);
-                idx++;
-                setTimeout(playNext, 700);
+                playNext();
+            } catch (err) {
+                btn.disabled = false;
             }
-            playNext();
         };
     });
 }
@@ -5194,13 +5173,12 @@ function loadToneEarQuestion() {
     const streakEl = document.getElementById('toneEarStreak');
     const progEl = document.getElementById('toneEarProgressText');
     const playBtn = document.getElementById('toneEarPlayBtn');
+    const slowBtn = document.getElementById('toneEarSlowBtn');
     const optBox = document.getElementById('toneEarOptions');
     const feedBox = document.getElementById('toneEarFeedback');
     const actionsBox = document.getElementById('toneEarActions');
     const compareBtn = document.getElementById('toneEarCompareBtn');
     const nextBtn = document.getElementById('toneEarNextBtn');
-
-    if (!q || !playBtn || !optBox) return;
 
     if (scoreEl) scoreEl.textContent = toneQuizScore;
     if (streakEl) streakEl.textContent = toneQuizStreak;
@@ -5208,14 +5186,15 @@ function loadToneEarQuestion() {
     if (feedBox) feedBox.hidden = true;
     if (actionsBox) actionsBox.hidden = true;
 
-    // pure contour first, then the real word
-    function playEarQuestionAudio() {
-        const ms = playUniversalTonePitch(q.tone);
-        setTimeout(() => speakChineseText(q.hz, 0.8), ms + 300);
+    // Real native speaker sound playback (1.0x normal or 0.72x slow motion)
+    function playEarQuestionAudio(rate = 1.0) {
+        const soundKey = q.sound || `${q.base}${q.tone}`;
+        playNativeToneSound(soundKey, q.hz, rate);
     }
 
-    playBtn.onclick = playEarQuestionAudio;
-    setTimeout(playEarQuestionAudio, 300);
+    if (playBtn) playBtn.onclick = () => playEarQuestionAudio(1.0);
+    if (slowBtn) slowBtn.onclick = () => playEarQuestionAudio(0.72);
+    setTimeout(() => playEarQuestionAudio(1.0), 300);
 
     const basePinyin = {
         'ba': ['bā', 'bá', 'bǎ', 'bà'],
@@ -5230,26 +5209,33 @@ function loadToneEarQuestion() {
 
     const pyOptions = basePinyin[q.base] || ['1-ton', '2-ton', '3-ton', '4-ton'];
 
-    optBox.innerHTML = [1, 2, 3, 4].map(num => `
-        <button type="button" class="tone-opt-card" data-tone="${num}">
-            <span class="toc-num">${num}-ton</span>
-            <span class="toc-pinyin">${pyOptions[num - 1]}</span>
-            <span class="toc-curve">${getToneSvgContour(num)}</span>
+    optBox.innerHTML = [1, 2, 3, 4].map((toneNum, idx) => `
+        <button type="button" class="tone-opt-card" data-tone="${toneNum}">
+            <span class="toc-num">${toneNum}-ton</span>
+            <span class="toc-pinyin">${pyOptions[idx]}</span>
+            <div class="toc-curve-svg">${getToneSvgMini(toneNum)}</div>
         </button>
     `).join('');
 
+    let answered = false;
     optBox.querySelectorAll('.tone-opt-card').forEach(btn => {
         btn.onclick = () => {
+            if (answered) return;
+            answered = true;
             const chosen = parseInt(btn.dataset.tone);
-            toneQuizUserChoice = chosen;
             const isCorrect = chosen === q.tone;
 
             optBox.querySelectorAll('.tone-opt-card').forEach(b => {
-                b.disabled = true;
                 const bTone = parseInt(b.dataset.tone);
-                if (bTone === q.tone) b.classList.add('correct');
-                else if (b === btn && !isCorrect) b.classList.add('wrong');
+                b.disabled = true;
+                if (bTone === q.tone) {
+                    b.classList.add('correct');
+                } else if (bTone === chosen && !isCorrect) {
+                    b.classList.add('wrong');
+                }
             });
+
+            const chosenPy = pyOptions[chosen - 1] || `${chosen}-ton`;
 
             if (feedBox) {
                 feedBox.hidden = false;
@@ -5265,7 +5251,7 @@ function loadToneEarQuestion() {
                     toneQuizStreak = 0;
                     if (streakEl) streakEl.textContent = 0;
                     feedBox.className = 'tone-ear-feedback wrong';
-                    feedBox.innerHTML = `❌ <strong>Noto‘g‘ri.</strong> Siz <strong>${chosen}-ton</strong> tanladingiz, ammo bu <strong>${q.tone}-ton</strong> edi: <em>${q.py}</em> (${q.hz} — ${q.uz}).<br>Pastdagi tugma bilan ikkala ohangni solishtiring.`;
+                    feedBox.innerHTML = `❌ <strong>Noto‘g‘ri.</strong> Siz <strong>${chosen}-ton</strong> (<em>${chosenPy}</em>) tanladingiz, ammo bu <strong>${q.tone}-ton</strong> edi: <em>${q.py}</em> (${q.hz} — ${q.uz}).<br>Pastdagi tugma bilan ikkala ohangni solishtiring:`;
                 }
             }
 
@@ -5273,10 +5259,13 @@ function loadToneEarQuestion() {
                 actionsBox.hidden = false;
                 if (compareBtn) {
                     compareBtn.style.display = isCorrect ? 'none' : 'inline-flex';
-                    // your choice vs the correct tone, as pure contours
+                    compareBtn.innerHTML = `▶️ Farqini eshiting: <strong>${chosenPy}</strong> ➡️ <strong>${q.py}</strong>`;
+                    // Plays user's chosen option with native voice -> 750ms -> correct tone with native voice!
                     compareBtn.onclick = () => {
-                        const ms = playUniversalTonePitch(chosen);
-                        setTimeout(() => playUniversalTonePitch(q.tone), ms + 450);
+                        const chosenSound = `${q.base}${chosen}`;
+                        const correctSound = q.sound || `${q.base}${q.tone}`;
+                        playNativeToneSound(chosenSound, null, 0.85);
+                        setTimeout(() => playNativeToneSound(correctSound, q.hz, 0.85), 750);
                     };
                 }
             }
@@ -5288,7 +5277,6 @@ function loadToneEarQuestion() {
             const lastTone = q.tone;
             toneQuizIndex++;
             if (toneQuizIndex % total === 0) {
-                // new shuffled round; never start with the tone we just finished on
                 toneQuizOrder = buildToneQuizOrder(lastTone);
             }
             loadToneEarQuestion();

@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=28">
+    <link rel="stylesheet" href="styles.css?v=29">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -1015,9 +1015,14 @@
                         <span class="progress-tap-hint" id="toneEarProgressText">Savol #1 / 16</span>
                     </div>
                     <div class="tone-ear-sound-box">
-                        <button type="button" class="quiz-audio-hero-btn" id="toneEarPlayBtn">
-                            &#x1F50A; <span>Ovozni tinglash</span>
-                        </button>
+                        <div class="tone-ear-btns-row">
+                            <button type="button" class="quiz-audio-hero-btn" id="toneEarPlayBtn">
+                                &#x1F50A; <span>Ovozni tinglash</span>
+                            </button>
+                            <button type="button" class="quiz-audio-hero-btn tone-ear-slow-btn" id="toneEarSlowBtn" title="Sekinroq tinglash">
+                                &#x1F422; <span>Sekin (0.75x)</span>
+                            </button>
+                        </div>
                         <p class="tone-ear-hint" id="toneEarHint">Quloq soling: bu nechanchi ton va qaysi so&#x2018;z?</p>
                     </div>
                     <div class="tone-ear-options" id="toneEarOptions"></div>
@@ -1486,7 +1491,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=28"></script>
+    <script src="script.js?v=29"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1495,6 +1500,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=28"></script>
+    <script src="pwa.js?v=29"></script>
 </body>
 </html>

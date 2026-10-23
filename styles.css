@@ -9194,7 +9194,7 @@ body.has-pwa-banner {
     flex-wrap: wrap;
 }
 
-.tc-hero-tone-btn,
+.tc-hero-slow-btn,
 .tc-hero-play-btn {
     display: inline-flex;
     align-items: center;
@@ -9213,37 +9213,43 @@ body.has-pwa-banner {
     white-space: nowrap;
 }
 
-.tc-hero-tone-btn {
+.tc-hero-play-btn {
     border-color: #0284C7;
     background: rgba(2, 132, 199, 0.08);
     color: #0284C7;
 }
 
-.tone-card[data-tone="2"] .tc-hero-tone-btn {
+.tc-hero-slow-btn {
+    border-color: var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-secondary);
+}
+
+.tone-card[data-tone="2"] .tc-hero-play-btn {
     border-color: #10B981;
     background: rgba(16, 185, 129, 0.08);
     color: #059669;
 }
 
-.tone-card[data-tone="3"] .tc-hero-tone-btn {
+.tone-card[data-tone="3"] .tc-hero-play-btn {
     border-color: #F59E0B;
     background: rgba(245, 158, 11, 0.08);
     color: #D97706;
 }
 
-.tone-card[data-tone="4"] .tc-hero-tone-btn {
+.tone-card[data-tone="4"] .tc-hero-play-btn {
     border-color: #EF4444;
     background: rgba(239, 68, 68, 0.08);
     color: #DC2626;
 }
 
-.tone-card[data-tone="5"] .tc-hero-tone-btn {
+.tone-card[data-tone="5"] .tc-hero-play-btn {
     border-color: #64748B;
     background: rgba(100, 116, 139, 0.08);
     color: #475569;
 }
 
-.tc-hero-tone-btn:active,
+.tc-hero-slow-btn:active,
 .tc-hero-play-btn:active {
     transform: scale(0.93);
 }
@@ -9489,7 +9495,20 @@ body.has-pwa-banner {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.65rem;
+}
+
+.tone-ear-btns-row {
+    display: flex;
+    gap: 0.65rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tone-ear-slow-btn {
+    background: linear-gradient(135deg, #475569, #64748B) !important;
+    box-shadow: 0 4px 14px rgba(71, 85, 105, 0.25) !important;
 }
 
 .quiz-audio-hero-btn {
