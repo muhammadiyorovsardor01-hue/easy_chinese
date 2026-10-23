@@ -4306,49 +4306,83 @@ function getAudioContext() {
     return audioCtxInstance;
 }
 
-function playUniversalTonePitch(toneNum, duration = 0.55) {
+// Pure tone-contour synthesizer (formant vowel "a" on a sawtooth source).
+// Device TTS softens isolated single-syllable tones, so this gives a reliable,
+// clearly different pitch contour for tones 1-4 and the neutral tone.
+// Pitch levels follow Chao tone letters: T1=55, T2=35, T3=214, T4=51.
+function toneLevelToHz(level) {
+    const lo = 110;   // level 1 (low)
+    const hi = 260;   // level 5 (high)
+    return lo * Math.pow(hi / lo, (level - 1) / 4);
+}
+
+const TONE_SYNTH_PATHS = {
+    1: { levels: [5, 5], dur: 0.80 },
+    2: { levels: [3, 5], dur: 0.70 },
+    3: { levels: [2, 1, 4], dur: 0.95 },
+    4: { levels: [5, 1], dur: 0.60 },
+    5: { levels: [3, 2.6], dur: 0.28 }
+};
+
+// Returns the duration in milliseconds so callers can chain audio / animation.
+function playUniversalTonePitch(toneNum, durationScale = 1) {
     try {
         const ctx = getAudioContext();
-        if (!ctx) return;
+        if (!ctx) return 0;
+        const spec = TONE_SYNTH_PATHS[toneNum] || TONE_SYNTH_PATHS[1];
+        const dur = spec.dur * (durationScale > 0 ? durationScale : 1);
+        const now = ctx.currentTime + 0.02;
 
         const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'triangle'; // rich pleasant vocal-like harmonic
-
-        const now = ctx.currentTime;
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.exponentialRampToValueAtTime(0.35, now + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
-
-        if (toneNum === 1) {
-            // 1-ton (55): High and flat (440 Hz)
-            osc.frequency.setValueAtTime(440, now);
-            osc.frequency.setValueAtTime(440, now + duration);
-        } else if (toneNum === 2) {
-            // 2-ton (35): Rising (330 Hz -> 460 Hz)
-            osc.frequency.setValueAtTime(320, now);
-            osc.frequency.exponentialRampToValueAtTime(460, now + duration);
-        } else if (toneNum === 3) {
-            // 3-ton (214): Dipping (270 Hz -> 180 Hz -> 350 Hz)
-            osc.frequency.setValueAtTime(270, now);
-            osc.frequency.exponentialRampToValueAtTime(180, now + duration * 0.45);
-            osc.frequency.exponentialRampToValueAtTime(360, now + duration);
-        } else if (toneNum === 4) {
-            // 4-ton (51): Sharp falling (460 Hz -> 190 Hz)
-            osc.frequency.setValueAtTime(470, now);
-            osc.frequency.exponentialRampToValueAtTime(190, now + duration * 0.7);
-        } else {
-            // Neutral tone: soft gentle tap
-            osc.frequency.setValueAtTime(310, now);
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.type = 'sawtooth';
+        const levels = spec.levels;
+        osc.frequency.setValueAtTime(toneLevelToHz(levels[0]), now);
+        for (let i = 1; i < levels.length; i++) {
+            osc.frequency.exponentialRampToValueAtTime(toneLevelToHz(levels[i]), now + dur * (i / (levels.length - 1)));
         }
 
-        osc.connect(gain);
-        gain.connect(ctx.destination);
+        // Two formants (F1 ~ 800Hz, F2 ~ 1300Hz) make it sound like a voiced "a" instead of a beep
+        const f1 = ctx.createBiquadFilter();
+        f1.type = 'bandpass'; f1.frequency.value = 800; f1.Q.value = 5;
+        const f2 = ctx.createBiquadFilter();
+        f2.type = 'bandpass'; f2.frequency.value = 1300; f2.Q.value = 7;
+        const g1 = ctx.createGain(); g1.gain.value = 1.8;
+        const g2 = ctx.createGain(); g2.gain.value = 1.2;
+
+        const master = ctx.createGain();
+        master.gain.setValueAtTime(0.0001, now);
+        master.gain.exponentialRampToValueAtTime(0.55, now + 0.05);
+        master.gain.setValueAtTime(0.55, now + Math.max(0.06, dur - 0.1));
+        master.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+
+        osc.connect(f1); f1.connect(g1); g1.connect(master);
+        osc.connect(f2); f2.connect(g2); g2.connect(master);
+        master.connect(ctx.destination);
         osc.start(now);
-        osc.stop(now + duration + 0.05);
-    } catch (e) {}
+        osc.stop(now + dur + 0.05);
+        return Math.round(dur * 1000);
+    } catch (e) {
+        return 0;
+    }
+}
+
+// Plays the pure tone contour, animates the contour line on the card and
+// (optionally) speaks the real word afterwards.
+function playToneDemo(toneNum, hanzi, cardEl) {
+    const ms = playUniversalTonePitch(toneNum);
+    if (cardEl) {
+        const svg = cardEl.querySelector('.tc-wave-svg');
+        if (svg) {
+            svg.style.setProperty('--dur', ms + 'ms');
+            svg.classList.remove('drawing');
+            void svg.getBoundingClientRect();
+            svg.classList.add('drawing');
+        }
+    }
+    if (hanzi) {
+        setTimeout(() => speakChineseText(hanzi, 0.8), ms + 250);
+    }
+    return ms;
 }
 
 // Navigation triggers
@@ -4969,18 +5003,22 @@ function playAllTonesSequentially() {
         }
 
         const item = sequence[step];
+        let activeCard = null;
         document.querySelectorAll('.tone-card').forEach(c => {
-            c.classList.toggle('is-playing', parseInt(c.dataset.tone) === item.tone);
+            const on = parseInt(c.dataset.tone) === item.tone;
+            c.classList.toggle('is-playing', on);
+            if (on) activeCard = c;
         });
 
-        speakChineseText(item.hz, 0.85);
+        // pure contour first, then the real word
+        playToneDemo(item.tone, item.hz, activeCard);
         step++;
-        setTimeout(playStep, 850);
+        setTimeout(playStep, 2000);
     }
 
     playStep();
 }
-
+// @@RENDER
 function renderToneContours() {
     const grid = document.getElementById('toneContoursGrid');
     if (!grid) return;
@@ -4996,9 +5034,10 @@ function renderToneContours() {
                 <div class="tc-hero-box">
                     <span class="tc-hero-hanzi">${t.heroHz}</span>
                     <span class="tc-hero-pinyin">${t.heroPy}</span>
-                    <button type="button" class="tc-hero-play-btn" data-speak="${t.heroHz}">
-                        🔊 Tinglash
-                    </button>
+                    <div class="tc-hero-btns">
+                        <button type="button" class="tc-hero-tone-btn" data-tone="${t.num}">🎼 Ohang</button>
+                        <button type="button" class="tc-hero-play-btn" data-speak="${t.heroHz}">🔊 So‘z</button>
+                    </div>
                 </div>
                 <div class="tc-desc-box">
                     <p class="tc-exp-text">${t.exp}</p>
@@ -5022,10 +5061,17 @@ function renderToneContours() {
         </div>
     `).join('');
 
+    grid.querySelectorAll('.tc-hero-tone-btn').forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            playToneDemo(parseInt(btn.dataset.tone) || 1, null, btn.closest('.tone-card'));
+        };
+    });
+
     grid.querySelectorAll('.tc-hero-play-btn, .tc-syllable-chip').forEach(btn => {
         btn.onclick = (e) => {
             e.stopPropagation();
-            speakChineseText(btn.dataset.speak, 0.85);
+            speakChineseText(btn.dataset.speak, 0.8);
         };
     });
 }
@@ -5112,8 +5158,38 @@ function renderSandhiRules() {
     });
 }
 
+// Shuffled quiz order: the correct tone never repeats twice in a row
+let toneQuizOrder = [];
+
+function buildToneQuizOrder(previousTone) {
+    const total = TONE_QUIZ_QUESTIONS.length;
+    for (let attempt = 0; attempt < 300; attempt++) {
+        const remaining = [];
+        for (let i = 0; i < total; i++) remaining.push(i);
+        const order = [];
+        let prev = previousTone || 0;
+        let stuck = false;
+        while (remaining.length) {
+            const candidates = remaining.filter(i => TONE_QUIZ_QUESTIONS[i].tone !== prev);
+            if (!candidates.length) { stuck = true; break; }
+            const pick = candidates[Math.floor(Math.random() * candidates.length)];
+            order.push(pick);
+            remaining.splice(remaining.indexOf(pick), 1);
+            prev = TONE_QUIZ_QUESTIONS[pick].tone;
+        }
+        if (!stuck) return order;
+    }
+    const fallback = [];
+    for (let i = 0; i < total; i++) fallback.push(i);
+    return fallback;
+}
+
 function loadToneEarQuestion() {
-    const q = TONE_QUIZ_QUESTIONS[toneQuizIndex % TONE_QUIZ_QUESTIONS.length];
+    const total = TONE_QUIZ_QUESTIONS.length;
+    if (toneQuizOrder.length !== total) {
+        toneQuizOrder = buildToneQuizOrder(0);
+    }
+    const q = TONE_QUIZ_QUESTIONS[toneQuizOrder[toneQuizIndex % total]];
     const scoreEl = document.getElementById('toneEarScore');
     const streakEl = document.getElementById('toneEarStreak');
     const progEl = document.getElementById('toneEarProgressText');
@@ -5128,18 +5204,19 @@ function loadToneEarQuestion() {
 
     if (scoreEl) scoreEl.textContent = toneQuizScore;
     if (streakEl) streakEl.textContent = toneQuizStreak;
-    if (progEl) progEl.textContent = `Savol #${(toneQuizIndex % TONE_QUIZ_QUESTIONS.length) + 1} / ${TONE_QUIZ_QUESTIONS.length}`;
+    if (progEl) progEl.textContent = `Savol #${(toneQuizIndex % total) + 1} / ${total}`;
     if (feedBox) feedBox.hidden = true;
     if (actionsBox) actionsBox.hidden = true;
 
+    // pure contour first, then the real word
     function playEarQuestionAudio() {
-        speakChineseText(q.hz, 0.85);
+        const ms = playUniversalTonePitch(q.tone);
+        setTimeout(() => speakChineseText(q.hz, 0.8), ms + 300);
     }
 
     playBtn.onclick = playEarQuestionAudio;
     setTimeout(playEarQuestionAudio, 300);
 
-    // Prepare 4 tone choices for the syllable
     const basePinyin = {
         'ba': ['bā', 'bá', 'bǎ', 'bà'],
         'he': ['hē', 'hé', 'hě', 'hè'],
@@ -5188,7 +5265,7 @@ function loadToneEarQuestion() {
                     toneQuizStreak = 0;
                     if (streakEl) streakEl.textContent = 0;
                     feedBox.className = 'tone-ear-feedback wrong';
-                    feedBox.innerHTML = `❌ <strong>Noto‘g‘ri.</strong> Siz <strong>${chosen}-ton</strong> tanladingiz, ammo bu <strong>${q.tone}-ton</strong> edi: <em>${q.py}</em> (${q.hz} — ${q.uz}).`;
+                    feedBox.innerHTML = `❌ <strong>Noto‘g‘ri.</strong> Siz <strong>${chosen}-ton</strong> tanladingiz, ammo bu <strong>${q.tone}-ton</strong> edi: <em>${q.py}</em> (${q.hz} — ${q.uz}).<br>Pastdagi tugma bilan ikkala ohangni solishtiring.`;
                 }
             }
 
@@ -5196,13 +5273,10 @@ function loadToneEarQuestion() {
                 actionsBox.hidden = false;
                 if (compareBtn) {
                     compareBtn.style.display = isCorrect ? 'none' : 'inline-flex';
+                    // your choice vs the correct tone, as pure contours
                     compareBtn.onclick = () => {
-                        // Play user's chosen option, pause, then play correct answer
-                        const userHz = (chosen === 1) ? '妈' : (chosen === 2) ? '麻' : (chosen === 3) ? '马' : '骂';
-                        speakChineseText(userHz, 0.85);
-                        setTimeout(() => {
-                            speakChineseText(q.hz, 0.85);
-                        }, 700);
+                        const ms = playUniversalTonePitch(chosen);
+                        setTimeout(() => playUniversalTonePitch(q.tone), ms + 450);
                     };
                 }
             }
@@ -5211,12 +5285,16 @@ function loadToneEarQuestion() {
 
     if (nextBtn) {
         nextBtn.onclick = () => {
+            const lastTone = q.tone;
             toneQuizIndex++;
+            if (toneQuizIndex % total === 0) {
+                // new shuffled round; never start with the tone we just finished on
+                toneQuizOrder = buildToneQuizOrder(lastTone);
+            }
             loadToneEarQuestion();
         };
     }
 }
-
 
 function drawTonePitchGuideline(path, userPath = null) {
     const canvas = document.getElementById('tonePitchCanvas');

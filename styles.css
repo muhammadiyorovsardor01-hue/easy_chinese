@@ -9186,11 +9186,20 @@ body.has-pwa-banner {
 .tone-card[data-tone="4"] .tc-hero-pinyin { color: #EF4444; }
 .tone-card[data-tone="5"] .tc-hero-pinyin { color: #64748B; }
 
+.tc-hero-btns {
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tc-hero-tone-btn,
 .tc-hero-play-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.35rem 0.75rem;
+    gap: 0.3rem;
+    padding: 0.32rem 0.65rem;
     border-radius: 999px;
     border: 1.5px solid var(--border-color);
     background: var(--card-bg);
@@ -9200,13 +9209,64 @@ body.has-pwa-banner {
     font-weight: 800;
     cursor: pointer;
     box-shadow: var(--shadow-soft);
-    transition: transform 0.12s ease;
+    transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+    white-space: nowrap;
 }
 
+.tc-hero-tone-btn {
+    border-color: #0284C7;
+    background: rgba(2, 132, 199, 0.08);
+    color: #0284C7;
+}
+
+.tone-card[data-tone="2"] .tc-hero-tone-btn {
+    border-color: #10B981;
+    background: rgba(16, 185, 129, 0.08);
+    color: #059669;
+}
+
+.tone-card[data-tone="3"] .tc-hero-tone-btn {
+    border-color: #F59E0B;
+    background: rgba(245, 158, 11, 0.08);
+    color: #D97706;
+}
+
+.tone-card[data-tone="4"] .tc-hero-tone-btn {
+    border-color: #EF4444;
+    background: rgba(239, 68, 68, 0.08);
+    color: #DC2626;
+}
+
+.tone-card[data-tone="5"] .tc-hero-tone-btn {
+    border-color: #64748B;
+    background: rgba(100, 116, 139, 0.08);
+    color: #475569;
+}
+
+.tc-hero-tone-btn:active,
 .tc-hero-play-btn:active {
-    transform: scale(0.94);
+    transform: scale(0.93);
 }
 
+.tc-wave-svg path {
+    stroke-dasharray: 240;
+    stroke-dashoffset: 0;
+}
+
+.tc-wave-svg.drawing path {
+    animation: drawToneLine var(--dur, 700ms) ease-out forwards;
+}
+
+@keyframes drawToneLine {
+    from {
+        stroke-dashoffset: 240;
+        opacity: 0.3;
+    }
+    to {
+        stroke-dashoffset: 0;
+        opacity: 1;
+    }
+}
 .tc-desc-box {
     display: flex;
     flex-direction: column;
