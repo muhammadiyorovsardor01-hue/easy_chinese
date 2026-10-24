@@ -2045,12 +2045,87 @@ function populateLeaderboard() {
     }));
 }
 
-// View navigation
-function showView(viewToShow) {
+let isNavigatingBack = false;
+
+function updateBottomNavForView(viewId) {
+    let activeNav = 'home';
+    if (viewId === 'dashboard' || viewId === 'lessons') activeNav = 'home';
+    else if (viewId === 'practice' || viewId === 'practiceFlashcards' || viewId === 'toneLab' || viewId === 'survivalPhrases') activeNav = 'practice';
+    else if (viewId === 'aiLaoshi') activeNav = 'ai';
+    else if (viewId === 'canvas') activeNav = 'canvas';
+    else if (viewId === 'profile') activeNav = 'profile';
+
+    document.querySelectorAll('.nav-item').forEach(nav => {
+        nav.classList.toggle('active', nav.dataset.nav === activeNav);
+    });
+}
+
+// View navigation with Mobile Hardware / Gesture Back Button handling
+function showView(viewToShow, recordHistory = true) {
+    if (!viewToShow) return;
     if (canvasReturnToLesson && viewToShow !== lesson) restoreCanvasViewToStandalone();
     document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
     viewToShow.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    updateBottomNavForView(viewToShow.id);
+
+    // Mobile Hardware / Gesture Back Button handling via History API
+    if (recordHistory && !isNavigatingBack) {
+        const viewId = viewToShow.id;
+        try {
+            if (viewId === 'dashboard') {
+                history.replaceState({ viewId: 'dashboard' }, '');
+            } else if (!history.state || history.state.viewId !== viewId) {
+                history.pushState({ viewId: viewId }, '');
+            }
+        } catch (e) {}
+    }
 }
+
+// Global popstate event listener for hardware / gesture Back button on phones
+window.addEventListener('popstate', (event) => {
+    // 1. Close any open modals / sheets first
+    const openModal = document.querySelector('.modal.active, .sheet-modal.active, #strokeModal.active, .ios-install-sheet.active');
+    if (openModal) {
+        openModal.classList.remove('active');
+        const currentView = document.querySelector('.view.active');
+        if (currentView) {
+            try { history.pushState({ viewId: currentView.id }, ''); } catch (e) {}
+        }
+        return;
+    }
+
+    // 2. Stop any active speech recognition
+    if (activeSpeechRecognition) {
+        try { activeSpeechRecognition.stop(); } catch (e) {}
+        activeSpeechRecognition = null;
+    }
+
+    // 3. Smoothly navigate to previous view
+    const targetViewId = event.state?.viewId || 'dashboard';
+    const targetElement = document.getElementById(targetViewId) || document.getElementById('dashboard');
+    if (targetElement) {
+        isNavigatingBack = true;
+        if (targetViewId === 'dashboard') {
+            applyHskLevelTheme(currentHSK);
+            updateDashboardBentoUI();
+        } else if (targetViewId === 'practice') {
+            updatePracticeHubUI();
+        } else if (targetViewId === 'lessons') {
+            generateLessonsGrid();
+        }
+        showView(targetElement, false);
+        isNavigatingBack = false;
+    }
+});
+
+// Set initial root history state on load
+try {
+    if (!history.state || !history.state.viewId) {
+        history.replaceState({ viewId: 'dashboard' }, '');
+    }
+} catch (e) {}
 
 function showDashboard() {
     applyHskLevelTheme(currentHSK);
@@ -2761,6 +2836,15 @@ function clearMistakeWordIfMastered(wordId) {
     }
 }
 
+function getPinyinForText(text) {
+    if (!text) return '';
+    if (typeof vocabularyData !== 'undefined' && Array.isArray(vocabularyData)) {
+        const found = vocabularyData.find(w => w.hanzi === text);
+        if (found && found.pinyin) return found.pinyin.toLowerCase();
+    }
+    return '';
+}
+
 function startSpeechPronunciationCheck() {
     if (currentWords.length === 0) return;
     const word = currentWords[flashcardIndex];
@@ -2775,28 +2859,32 @@ function startSpeechPronunciationCheck() {
         if (banner) {
             banner.hidden = false;
             banner.className = 'speak-feedback-banner is-listening';
-            banner.textContent = `🔊 "${word.hanzi}" (${word.pinyin}) — ovoz chiqarib qaytarib ayting!`;
+            banner.innerHTML = `🔊 <strong>“${word.hanzi}”</strong> (${word.pinyin}) — ovoz chiqarib qaytarib ayting!`;
         }
         return;
     }
 
+    // Toggle stop if already recording
     if (activeSpeechRecognition) {
         try { activeSpeechRecognition.stop(); } catch (e) {}
         activeSpeechRecognition = null;
+        if (speakBtn) speakBtn.classList.remove('is-recording');
+        if (speakLbl) speakLbl.textContent = 'Talaffuz';
+        return;
     }
 
     const rec = new SpeechRec();
     activeSpeechRecognition = rec;
     rec.lang = 'zh-CN';
     rec.interimResults = false;
-    rec.maxAlternatives = 3;
+    rec.maxAlternatives = 5;
 
     if (speakBtn) speakBtn.classList.add('is-recording');
     if (speakLbl) speakLbl.textContent = 'Tinglanmoqda...';
     if (banner) {
         banner.hidden = false;
         banner.className = 'speak-feedback-banner is-listening';
-        banner.textContent = `🎙️ Mikrofonga "${word.hanzi}" (${word.pinyin}) deb ayting...`;
+        banner.innerHTML = `🎙️ Mikrofonga <strong>“${word.hanzi}”</strong> (${word.pinyin}) deb ayting...`;
     }
 
     rec.onresult = (event) => {
@@ -2805,29 +2893,84 @@ function startSpeechPronunciationCheck() {
             transcripts.push(event.results[0][i].transcript.trim());
         }
         const heard = transcripts[0] || '';
-        const cleanTarget = word.hanzi.replace(/[^一-龥]/g, '');
-        const matched = transcripts.some(t => t.includes(cleanTarget) || cleanTarget.includes(t.replace(/[^一-龥]/g, '')));
+        
+        // Intelligent Multi-factor Chinese Speech Matching
+        const cleanTarget = (word.hanzi || '').replace(/[，。！？\s.,!?]/g, '');
+        const cleanPinyin = (word.pinyin || '').toLowerCase().replace(/[^a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/g, '');
+        const pinyinNoTone = cleanPinyin.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-        if (matched) {
+        let isMatch = false;
+        let matchScore = 0;
+
+        for (const t of transcripts) {
+            const cleanT = t.replace(/[，。！？\s.,!?]/g, '');
+            // 1. Direct or substring Hanzi match
+            if (cleanT === cleanTarget || cleanT.includes(cleanTarget) || cleanTarget.includes(cleanT)) {
+                isMatch = true;
+                matchScore = 96;
+                break;
+            }
+            // 2. Homophone match via PINYIN_SPEECH_MAP or vocabularyData
+            const tPinyin = getPinyinForText(cleanT);
+            if (tPinyin && (tPinyin === cleanPinyin || tPinyin.replace(/[^a-z]/g, '') === pinyinNoTone)) {
+                isMatch = true;
+                matchScore = 94;
+                break;
+            }
+            // 3. Pinyin transcript match (if browser returned romanized text)
+            const cleanTRoman = cleanT.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            if (cleanTRoman === pinyinNoTone || cleanTRoman.includes(pinyinNoTone) || pinyinNoTone.includes(cleanTRoman)) {
+                isMatch = true;
+                matchScore = 90;
+                break;
+            }
+        }
+
+        // 4. Character overlap fallback
+        if (!isMatch && cleanTarget.length > 0) {
+            let matchedChars = 0;
+            const cleanHeard = heard.replace(/[，。！？\s.,!?]/g, '');
+            for (const ch of cleanTarget) {
+                if (cleanHeard.includes(ch)) matchedChars++;
+            }
+            const ratio = matchedChars / cleanTarget.length;
+            if (ratio >= 0.5) {
+                isMatch = true;
+                matchScore = Math.floor(75 + ratio * 20);
+            }
+        }
+
+        if (isMatch) {
             if (banner) {
                 banner.className = 'speak-feedback-banner is-correct';
-                banner.textContent = `🎉 Ajoyib talaffuz! Eshitildi: "${heard}" (+15 XP)`;
+                banner.innerHTML = `🎉 <strong>Ajoyib talaffuz (${matchScore}%)!</strong><br>Eshitildi: “${escapeHtml(heard)}” (+15 XP)`;
             }
             addXP(15);
             playSuccessSound();
+            if (typeof triggerHapticSuccess === 'function') triggerHapticSuccess();
         } else {
             if (banner) {
                 banner.className = 'speak-feedback-banner is-retry';
-                banner.textContent = `🔄 Eshitildi: "${heard || '...'}". Asli: ${word.hanzi} (${word.pinyin})`;
+                banner.innerHTML = `🔄 <strong>Eshitildi: “${escapeHtml(heard || '...')}”</strong> (Kerakli so‘z: “${word.hanzi}” ${word.pinyin})<br>Namunani eshitib, qaytadan urinib ko‘ring.`;
             }
             speakChineseText(word.hanzi);
         }
     };
 
-    rec.onerror = () => {
+    rec.onerror = (event) => {
+        const err = event && event.error;
+        if (err === 'aborted') return;
         if (banner) {
             banner.className = 'speak-feedback-banner is-retry';
-            banner.textContent = `🔊 Mikrofon ruxsati topilmadi. Namunani eshitib takrorlang: ${word.hanzi} (${word.pinyin})`;
+            if (err === 'no-speech') {
+                banner.innerHTML = `⚠️ <strong>Ovoz eshitilmadi.</strong> Mikrofonga yaqinroq va balandroq ovozda “${word.hanzi}” deb ayting.`;
+            } else if (err === 'not-allowed') {
+                banner.innerHTML = `🚫 <strong>Mikrofon ruxsati berilmagan.</strong> Brauzer sozlamalaridan mikrofonni yoqing.`;
+            } else if (err === 'network') {
+                banner.innerHTML = `🌐 <strong>Internet aloqasi sust.</strong> Ovozni aniqlash uchun internet kerak.`;
+            } else {
+                banner.innerHTML = `🔊 <strong>Namunani eshitib takrorlang:</strong> ${word.hanzi} (${word.pinyin})`;
+            }
         }
         speakChineseText(word.hanzi);
     };
@@ -2843,6 +2986,7 @@ function startSpeechPronunciationCheck() {
     } catch (e) {
         if (speakBtn) speakBtn.classList.remove('is-recording');
         if (speakLbl) speakLbl.textContent = 'Talaffuz';
+        activeSpeechRecognition = null;
     }
 }
 
@@ -5470,11 +5614,28 @@ function initToneMicPractice() {
                     const cleanTarget = word.speak.replace(/[，。！？\s.,!?]/g, '');
                     const cleanHeard = heard.replace(/[，。！？\s.,!?]/g, '');
 
-                    // Match logic
-                    const isDirectMatch = transcripts.some(t => {
+                    // Match logic with homophone and pinyin support
+                    const cleanPinyin = (word.pinyin || '').toLowerCase().replace(/[^a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/g, '');
+                    const pinyinNoTone = cleanPinyin.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+                    let isDirectMatch = false;
+                    for (const t of transcripts) {
                         const cleanT = t.replace(/[，。！？\s.,!?]/g, '');
-                        return cleanT === cleanTarget || cleanT.includes(cleanTarget) || cleanTarget.includes(cleanT);
-                    });
+                        if (cleanT === cleanTarget || cleanT.includes(cleanTarget) || cleanTarget.includes(cleanT)) {
+                            isDirectMatch = true;
+                            break;
+                        }
+                        const tPinyin = getPinyinForText(cleanT);
+                        if (tPinyin && (tPinyin === cleanPinyin || tPinyin.replace(/[^a-z]/g, '') === pinyinNoTone)) {
+                            isDirectMatch = true;
+                            break;
+                        }
+                        const cleanTRoman = cleanT.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                        if (cleanTRoman === pinyinNoTone || cleanTRoman.includes(pinyinNoTone) || pinyinNoTone.includes(cleanTRoman)) {
+                            isDirectMatch = true;
+                            break;
+                        }
+                    }
 
                     // Character overlap calculation
                     let matchCount = 0;
