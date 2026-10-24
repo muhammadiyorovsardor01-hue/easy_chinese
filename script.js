@@ -2085,7 +2085,34 @@ function showView(viewToShow, recordHistory = true) {
 
 // Global popstate event listener for hardware / gesture Back button on phones
 window.addEventListener('popstate', (event) => {
-    // 1. Close any open modals / sheets first
+    // 1. Close settings sheet if open
+    const openSettings = document.getElementById('settingsSheet');
+    if (openSettings && !openSettings.hidden && openSettings.classList.contains('open')) {
+        closeSettingsSheet();
+        const currentView = document.querySelector('.view.active');
+        if (currentView) { try { history.pushState({ viewId: currentView.id }, ''); } catch (e) {} }
+        return;
+    }
+
+    // 2. Close leaderboard modal if open
+    const lbModal = document.getElementById('leaderboardModal');
+    if (lbModal && !lbModal.classList.contains('hidden')) {
+        hideLeaderboardModal();
+        const currentView = document.querySelector('.view.active');
+        if (currentView) { try { history.pushState({ viewId: currentView.id }, ''); } catch (e) {} }
+        return;
+    }
+
+    // 3. Close pinyin syllable dock if open
+    const pinyinDock = document.getElementById('pinyinSyllableDock');
+    if (pinyinDock && !pinyinDock.hidden) {
+        pinyinDock.hidden = true;
+        const currentView = document.querySelector('.view.active');
+        if (currentView) { try { history.pushState({ viewId: currentView.id }, ''); } catch (e) {} }
+        return;
+    }
+
+    // 4. Close any open modals / sheets first
     const openModal = document.querySelector('.modal.active, .sheet-modal.active, #strokeModal.active, .ios-install-sheet.active');
     if (openModal) {
         openModal.classList.remove('active');
@@ -2897,7 +2924,7 @@ function startSpeechPronunciationCheck() {
         // Intelligent Multi-factor Chinese Speech Matching
         const cleanTarget = (word.hanzi || '').replace(/[，。！？\s.,!?]/g, '');
         const cleanPinyin = (word.pinyin || '').toLowerCase().replace(/[^a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/g, '');
-        const pinyinNoTone = cleanPinyin.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const pinyinNoTone = (word.pinyin || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
 
         let isMatch = false;
         let matchScore = 0;
@@ -2918,7 +2945,7 @@ function startSpeechPronunciationCheck() {
                 break;
             }
             // 3. Pinyin transcript match (if browser returned romanized text)
-            const cleanTRoman = cleanT.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const cleanTRoman = cleanT.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
             if (cleanTRoman === pinyinNoTone || cleanTRoman.includes(pinyinNoTone) || pinyinNoTone.includes(cleanTRoman)) {
                 isMatch = true;
                 matchScore = 90;
@@ -3856,7 +3883,7 @@ function toggleEraser() {
     // Reset the quiz to start over
     if (canvasHanziWriter) {
         canvasHanziWriter.cancelQuiz();
-        canvasFeedback.textContent = 'Canvas cleared. Start the character again.';
+        canvasFeedback.textContent = "Chizish maydoni tozalandi. Ieroglifni qaytadan yozing.";
         showTraceGuide();
     }
 }
@@ -3864,10 +3891,10 @@ function toggleEraser() {
 function checkCanvasDrawing() {
     if (!canvasHanziWriter) return;
     if (nextCanvasWord.disabled) {
-        canvasFeedback.textContent = 'Keep writing until all strokes are complete.';
+        canvasFeedback.textContent = "Barcha chiziqlar to'liq yozilmaguncha davom eting.";
         canvasFeedback.className = 'canvas-feedback';
     } else {
-        canvasFeedback.textContent = 'Character complete. You can continue to the next word.';
+        canvasFeedback.textContent = "Ieroglif to'liq yozildi! Keyingi so'zga o'tishingiz mumkin.";
         canvasFeedback.className = 'canvas-feedback success';
     }
 }
@@ -5453,7 +5480,7 @@ function loadToneEarQuestion() {
                     compareBtn.onclick = () => {
                         const chosenSound = `${q.base}${chosen}`;
                         const correctSound = q.sound || `${q.base}${q.tone}`;
-                        playNativeToneSound(chosenSound, null, 0.85);
+                        playNativeToneSound(chosenSound, chosenPy, 0.85);
                         setTimeout(() => playNativeToneSound(correctSound, q.hz, 0.85), 750);
                     };
                 }
@@ -5633,29 +5660,34 @@ function initToneMicPractice() {
                         transcripts.push(event.results[0][i].transcript.trim());
                     }
                     const heard = transcripts[0] || '';
-                    const cleanTarget = word.speak.replace(/[，。！？\s.,!?]/g, '');
-                    const cleanHeard = heard.replace(/[，。！？\s.,!?]/g, '');
-
-                    // Match logic with homophone and pinyin support
-                    const cleanPinyin = (word.pinyin || '').toLowerCase().replace(/[^a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/g, '');
-                    const pinyinNoTone = cleanPinyin.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                    const cleanTarget = (word.speak || word.hanzi || '').replace(/[,?!?\s.,!?]/g, '');
+                    const cleanHeard = heard.replace(/[,?!?\s.,!?]/g, '');
+                    const targetSound = (word.sound || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const pinyinNoTone = (word.pinyin || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
 
                     let isDirectMatch = false;
                     for (const t of transcripts) {
-                        const cleanT = t.replace(/[，。！？\s.,!?]/g, '');
-                        if (cleanT === cleanTarget || cleanT.includes(cleanTarget) || cleanTarget.includes(cleanT)) {
+                        const cleanT = t.replace(/[,?!?\s.,!?]/g, '');
+                        if (cleanTarget && (cleanT === cleanTarget || cleanT.includes(cleanTarget) || cleanTarget.includes(cleanT))) {
+                            isDirectMatch = true;
+                            break;
+                        }
+                        const cleanTRoman = cleanT.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+                        if (targetSound && (cleanTRoman === targetSound || cleanTRoman.includes(targetSound) || targetSound.includes(cleanTRoman))) {
+                            isDirectMatch = true;
+                            break;
+                        }
+                        if (pinyinNoTone && cleanTRoman && (cleanTRoman === pinyinNoTone || cleanTRoman.includes(pinyinNoTone) || pinyinNoTone.includes(cleanTRoman))) {
                             isDirectMatch = true;
                             break;
                         }
                         const tPinyin = getPinyinForText(cleanT);
-                        if (tPinyin && (tPinyin === cleanPinyin || tPinyin.replace(/[^a-z]/g, '') === pinyinNoTone)) {
-                            isDirectMatch = true;
-                            break;
-                        }
-                        const cleanTRoman = cleanT.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                        if (cleanTRoman === pinyinNoTone || cleanTRoman.includes(pinyinNoTone) || pinyinNoTone.includes(cleanTRoman)) {
-                            isDirectMatch = true;
-                            break;
+                        if (tPinyin) {
+                            const tPyClean = tPinyin.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+                            if (tPyClean === targetSound || tPyClean === pinyinNoTone) {
+                                isDirectMatch = true;
+                                break;
+                            }
                         }
                     }
 
@@ -6020,11 +6052,11 @@ function applyPinyinTone(syllable, tone) {
 }
 
 function playPinyinAudio(soundKey, fallbackText = null) {
-    if (!soundKey) return;
+    if (!soundKey && !fallbackText) return;
 
     // Direct playback of studio audio MP3
     if (typeof playNativeToneSound === 'function') {
-        const audio = playNativeToneSound(soundKey, null, 1.0);
+        const audio = playNativeToneSound(soundKey, fallbackText || soundKey, 1.0);
         if (audio) return;
     }
 
@@ -6247,11 +6279,11 @@ function selectSyllableInDock(syllable) {
     const tones = [1, 2, 3, 4].map(tone => {
         const tonePy = applyPinyinTone(syllable, tone);
         const meta = COMMON_SYLLABLE_HANZI[tonePy] || `${tone}-ton`;
-        return { tone, tonePy, meta };
+        return { tone, tonePy, soundKey: `${syllable}${tone}`, meta };
     });
 
     tonesBox.innerHTML = tones.map(item => `
-        <button type="button" class="pinyin-dock-tone-btn" data-tone-py="${item.tonePy}">
+        <button type="button" class="pinyin-dock-tone-btn" data-sound="${item.soundKey}" data-fallback="${item.tonePy}">
             <div>
                 <span class="pdt-tone-py">${item.tonePy}</span>
                 <span class="pdt-tone-meta">${item.meta}</span>
@@ -6262,7 +6294,7 @@ function selectSyllableInDock(syllable) {
 
     tonesBox.querySelectorAll('.pinyin-dock-tone-btn').forEach(btn => {
         btn.onclick = () => {
-            playPinyinAudio(btn.dataset.tonePy);
+            playPinyinAudio(btn.dataset.sound, btn.dataset.fallback);
         };
     });
 }

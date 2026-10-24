@@ -5493,10 +5493,10 @@ html, body {
         gap: 0.5rem;
     }
 
-    /* Bottom Navigation Bar: 4 equal columns that never overflow or wrap text */
+    /* Bottom Navigation Bar: 5 equal columns that never overflow or wrap text */
     .bottom-nav {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 0.25rem;
         padding: 0.45rem 0.5rem calc(0.45rem + env(safe-area-inset-bottom));
         justify-content: stretch;
