@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     /* Premium Chinese editorial palette — warm cream / red / jade / gold */
     --primary-color: #B91C2C;
     --primary-light: #D64550;
@@ -11212,22 +11212,92 @@ a.setting-action-btn { text-decoration: none; }
     gap: 0.4rem;
 }
 
+/* Segmented 4-column modern tab bar (fits 100% on any mobile screen without cut-off) */
+.pinyin-segmented-tabs {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0.35rem !important;
+    background: var(--bg-secondary) !important;
+    border: 1.5px solid var(--border-color) !important;
+    border-radius: 14px !important;
+    padding: 0.25rem !important;
+    margin-top: 0.5rem !important;
+    overflow: visible !important;
+}
+
+.pinyin-segmented-tabs .subview-tab {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.45rem 0.2rem !important;
+    border: none !important;
+    background: transparent !important;
+    border-radius: 10px !important;
+    color: var(--text-secondary) !important;
+    gap: 0.15rem !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+}
+
+.pinyin-segmented-tabs .subview-tab.active {
+    background: var(--card-bg) !important;
+    color: var(--primary-color) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+}
+
+.p-tab-icon {
+    font-size: 1.15rem !important;
+    line-height: 1 !important;
+}
+
+.p-tab-label {
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+}
+
+.p-tab-count {
+    font-size: 0.65rem !important;
+    opacity: 0.75 !important;
+    font-weight: 700 !important;
+}
+
+/* 2 Balanced columns on phone, 3 on tablet, 4 on desktop */
 .pinyin-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 0.65rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+@media (min-width: 560px) {
+    .pinyin-cards-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .pinyin-cards-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
 .pinyin-card {
-    background: var(--bg-secondary);
-    border: 1.5px solid var(--border-color);
-    border-radius: 14px;
-    padding: 0.75rem 0.65rem;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-bottom-width: 3px;
+    border-radius: 16px;
+    padding: 0.85rem 0.75rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     text-align: center;
-    gap: 0.35rem;
+    gap: 0.45rem;
     position: relative;
     transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
@@ -11238,8 +11308,15 @@ a.setting-action-btn { text-decoration: none; }
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
+.pinyin-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+}
+
 .pinyin-card-letter {
-    font-size: 1.55rem;
+    font-size: 1.7rem;
     font-weight: 900;
     color: var(--text-color);
     line-height: 1;
@@ -11247,91 +11324,135 @@ a.setting-action-btn { text-decoration: none; }
 }
 
 .pinyin-card-ipa {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 800;
     color: var(--primary-color);
     background: rgba(14, 165, 233, 0.1);
-    padding: 0.15rem 0.5rem;
+    padding: 0.2rem 0.55rem;
     border-radius: 999px;
+    line-height: 1;
 }
 
 .pinyin-card-uzbek {
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     color: var(--text-secondary);
-    line-height: 1.25;
-    margin-top: 0.1rem;
-    min-height: 2.2em;
-}
-
-.pinyin-card-actions {
+    line-height: 1.35;
+    min-height: 2.7em;
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    width: 100%;
-    margin-top: 0.2rem;
+    justify-content: center;
+    padding: 0 0.15rem;
 }
 
-.pinyin-play-btn {
-    flex: 1;
+/* Full width main audio button */
+.pinyin-play-main-btn {
+    width: 100%;
     background: var(--primary-color);
     color: #fff;
     border: none;
-    border-radius: 10px;
-    padding: 0.4rem 0.5rem;
-    font-size: 0.75rem;
+    border-radius: 12px;
+    padding: 0.55rem 0.5rem;
+    font-size: 0.82rem;
     font-weight: 800;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.3rem;
+    gap: 0.4rem;
     transition: filter 0.15s ease, transform 0.1s active;
+    box-shadow: 0 2px 6px rgba(14, 165, 233, 0.25);
 }
 
-.pinyin-play-btn:active {
-    transform: scale(0.96);
+.pinyin-play-main-btn:active {
+    transform: scale(0.97);
 }
 
-.pinyin-sample-btn {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    border-radius: 10px;
-    padding: 0.35rem 0.45rem;
+.pinyin-play-main-btn .p-icon {
+    font-size: 0.95rem;
+}
+
+.pinyin-play-main-btn .p-txt {
+    font-size: 0.88rem;
+    font-weight: 900;
+}
+
+.pinyin-play-main-btn .p-sub {
     font-size: 0.68rem;
-    font-weight: 700;
-    cursor: pointer;
-    white-space: nowrap;
+    opacity: 0.85;
+    font-weight: 600;
 }
 
-.pinyin-tones-row {
-    display: flex;
-    gap: 0.25rem;
+/* Full width sample word badge button */
+.pinyin-sample-pill-btn {
     width: 100%;
-    margin-top: 0.2rem;
-    justify-content: center;
-}
-
-.pinyin-tone-chip {
-    flex: 1;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 0.35rem 0.15rem;
-    font-size: 0.72rem;
-    font-weight: 800;
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
     color: var(--text-color);
     cursor: pointer;
-    text-align: center;
-    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    transition: background 0.12s ease, border-color 0.12s ease;
 }
 
-.pinyin-tone-chip:hover,
-.pinyin-tone-chip:active {
+.pinyin-sample-pill-btn:active {
     background: var(--primary-color);
     color: #fff;
     border-color: var(--primary-color);
 }
+
+.pinyin-sample-pill-btn .p-spk {
+    font-size: 0.8rem;
+}
+
+.pinyin-sample-pill-btn strong {
+    font-weight: 800;
+}
+
+.pinyin-sample-pill-btn .p-trn {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+}
+
+/* 4-Tone Grid for Finals */
+.pinyin-tones-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.3rem;
+    width: 100%;
+    margin-top: 0.2rem;
+}
+
+.pinyin-tone-chip-4 {
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--border-color);
+    border-radius: 9px;
+    padding: 0.45rem 0.15rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--text-color);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.12s ease;
+}
+
+.pinyin-tone-chip-4:hover,
+.pinyin-tone-chip-4:active {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+    transform: scale(0.95);
+}
+
+/* Mobile clearance so bottom navigation never covers content */
+#pinyinChart, #toneLab, #survivalPhrases, #practiceFlashcards, #practice, #aiLaoshi, #profile {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 20px)) !important;
+}
+
 
 .pinyin-matrix-controls {
     display: flex;

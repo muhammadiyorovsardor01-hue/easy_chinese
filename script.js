@@ -1,4 +1,4 @@
-// Global state
+﻿// Global state
 let vocabularyData = [
   // Lesson 1 - 你好 (Hello)
   { id: 1, hsk: 1, track: 'classic', lesson: 1, hanzi: "你", pinyin: "nǐ", uzbek: "Siz" },
@@ -3362,12 +3362,21 @@ function speakChineseText(text, customRate = null) {
         }
     }
 
+    try {
+        if (window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+        }
+    } catch (e) {}
+
     const utterance = new SpeechSynthesisUtterance(speakable);
+    window.activeSpeechUtterance = utterance;
     utterance.lang = 'zh-CN';
     utterance.rate = (typeof customRate === 'number' && customRate > 0) ? customRate : getSpeechRate();
     const voices = window.speechSynthesis.getVoices();
     const zhVoice = voices.find(v => v.lang === 'zh-CN') || voices.find(v => v.lang.startsWith('zh'));
     if (zhVoice) utterance.voice = zhVoice;
+    utterance.onend = () => { window.activeSpeechUtterance = null; };
+    utterance.onerror = () => { window.activeSpeechUtterance = null; };
     window.speechSynthesis.speak(utterance);
 }
 function renderLessonVocabPreview() {
@@ -5764,59 +5773,59 @@ const PINYIN_INITIALS = [
     {
         group: 'Labial (Lab-lab tovushlari)',
         items: [
-            { letter: 'b', ipa: 'bō', uz: 'Jarangli emas, qisqa "b"', egHz: '爸', egPy: 'bà', egUz: 'ota' },
-            { letter: 'p', ipa: 'pō', uz: 'Kuchli nafas bilan "p"', egHz: '跑', egPy: 'pǎo', egUz: 'yugurmoq' },
-            { letter: 'm', ipa: 'mō', uz: 'O‘zbekcha oddiy "m"', egHz: '妈', egPy: 'mā', egUz: 'ona' },
-            { letter: 'f', ipa: 'fō', uz: 'Yuqori tish labda, "f"', egHz: '飞', egPy: 'fēi', egUz: 'uchmoq' }
+            { letter: 'b', ipa: 'bō', uz: 'Jarangli emas, qisqa "b"', sound: 'bo1', egHz: '爸', egPy: 'bà', egUz: 'ota', egSound: 'ba4' },
+            { letter: 'p', ipa: 'pō', uz: 'Kuchli nafas bilan "p"', sound: 'po1', egHz: '跑', egPy: 'pǎo', egUz: 'yugurmoq', egSound: 'pao3' },
+            { letter: 'm', ipa: 'mō', uz: 'O‘zbekcha oddiy "m"', sound: 'mo1', egHz: '妈', egPy: 'mā', egUz: 'ona', egSound: 'ma1' },
+            { letter: 'f', ipa: 'fō', uz: 'Yuqori tish labda, "f"', sound: 'fo1', egHz: '飞', egPy: 'fēi', egUz: 'uchmoq', egSound: 'fei1' }
         ]
     },
     {
         group: 'Alveolar (Til uchi tovushlari)',
         items: [
-            { letter: 'd', ipa: 'dē', uz: 'Nafassiz yumshoq "d"/"t"', egHz: '大', egPy: 'dà', egUz: 'katta' },
-            { letter: 't', ipa: 'tē', uz: 'Kuchli nafas bilan "t"', egHz: '他', egPy: 'tā', egUz: 'u' },
-            { letter: 'n', ipa: 'nē', uz: 'Oddiy burun "n"', egHz: '你', egPy: 'nǐ', egUz: 'sen' },
-            { letter: 'l', ipa: 'lē', uz: 'Oddiy yon "l"', egHz: '来', egPy: 'lái', egUz: 'kelmoq' }
+            { letter: 'd', ipa: 'dē', uz: 'Nafassiz yumshoq "d"/"t"', sound: 'de1', egHz: '大', egPy: 'dà', egUz: 'katta', egSound: 'da4' },
+            { letter: 't', ipa: 'tē', uz: 'Kuchli nafas bilan "t"', sound: 'te1', egHz: '他', egPy: 'tā', egUz: 'u', egSound: 'ta1' },
+            { letter: 'n', ipa: 'nē', uz: 'Oddiy burun "n"', sound: 'ne1', egHz: '你', egPy: 'nǐ', egUz: 'sen', egSound: 'ni3' },
+            { letter: 'l', ipa: 'lē', uz: 'Oddiy yon "l"', sound: 'le1', egHz: '来', egPy: 'lái', egUz: 'kelmoq', egSound: 'lai2' }
         ]
     },
     {
         group: 'Velar (Til orqa tovushlari)',
         items: [
-            { letter: 'g', ipa: 'gē', uz: 'Nafassiz "g"/"k"', egHz: '高', egPy: 'gāo', egUz: 'baland' },
-            { letter: 'k', ipa: 'kē', uz: 'Kuchli nafas bilan "k"', egHz: '看', egPy: 'kàn', egUz: 'qaramoq' },
-            { letter: 'h', ipa: 'hē', uz: 'Bo‘g‘izdagi jarangli "h"/"x"', egHz: '好', egPy: 'hǎo', egUz: 'yaxshi' }
+            { letter: 'g', ipa: 'gē', uz: 'Nafassiz "g"/"k"', sound: 'ge1', egHz: '高', egPy: 'gāo', egUz: 'baland', egSound: 'gao1' },
+            { letter: 'k', ipa: 'kē', uz: 'Kuchli nafas bilan "k"', sound: 'ke1', egHz: '看', egPy: 'kàn', egUz: 'qaramoq', egSound: 'kan4' },
+            { letter: 'h', ipa: 'hē', uz: 'Bo‘g‘izdagi jarangli "h"/"x"', sound: 'he1', egHz: '好', egPy: 'hǎo', egUz: 'yaxshi', egSound: 'hao3' }
         ]
     },
     {
         group: 'Palatal (Til o‘rtasi tovushlari)',
         items: [
-            { letter: 'j', ipa: 'jī', uz: 'Yumshoq "ji" (tishlar orqasida)', egHz: '家', egPy: 'jiā', egUz: 'uy/oila' },
-            { letter: 'q', ipa: 'qī', uz: 'Kuchli nafas bilan "chi"', egHz: '去', egPy: 'qù', egUz: 'bormoq' },
-            { letter: 'x', ipa: 'xī', uz: 'Yumshoq "shi"', egHz: '小', egPy: 'xiǎo', egUz: 'kichik' }
+            { letter: 'j', ipa: 'jī', uz: 'Yumshoq "ji" (tishlar orqasida)', sound: 'ji1', egHz: '家', egPy: 'jiā', egUz: 'uy/oila', egSound: 'jia1' },
+            { letter: 'q', ipa: 'qī', uz: 'Kuchli nafas bilan "chi"', sound: 'qi1', egHz: '去', egPy: 'qù', egUz: 'bormoq', egSound: 'qu4' },
+            { letter: 'x', ipa: 'xī', uz: 'Yumshoq "shi"', sound: 'xi1', egHz: '小', egPy: 'xiǎo', egUz: 'kichik', egSound: 'xiao3' }
         ]
     },
     {
         group: 'Retroflex (Til orqaga bukilgan tovushlar)',
         items: [
-            { letter: 'zh', ipa: 'zhī', uz: 'Til bukilgan, nafassiz "j"', egHz: '中', egPy: 'zhōng', egUz: 'o‘rta' },
-            { letter: 'ch', ipa: 'chī', uz: 'Til bukilgan, nafasli "ch"', egHz: '吃', egPy: 'chī', egUz: 'yemoq' },
-            { letter: 'sh', ipa: 'shī', uz: 'Til bukilgan, qattiq "sh"', egHz: '是', egPy: 'shì', egUz: 'bo‘lmoq' },
-            { letter: 'r', ipa: 'rī', uz: 'Inglizcha "r" va o‘zbekcha "j"', egHz: '人', egPy: 'rén', egUz: 'odam' }
+            { letter: 'zh', ipa: 'zhī', uz: 'Til bukilgan, nafassiz "j"', sound: 'zhi1', egHz: '中', egPy: 'zhōng', egUz: 'o‘rta', egSound: 'zhong1' },
+            { letter: 'ch', ipa: 'chī', uz: 'Til bukilgan, nafasli "ch"', sound: 'chi1', egHz: '吃', egPy: 'chī', egUz: 'yemoq', egSound: 'chi1' },
+            { letter: 'sh', ipa: 'shī', uz: 'Til bukilgan, qattiq "sh"', sound: 'shi1', egHz: '是', egPy: 'shì', egUz: 'bo‘lmoq', egSound: 'shi4' },
+            { letter: 'r', ipa: 'rī', uz: 'Inglizcha "r" va o‘zbekcha "j"', sound: 'ri4', egHz: '人', egPy: 'rén', egUz: 'odam', egSound: 'ren2' }
         ]
     },
     {
         group: 'Dental (Tish oldi tovushlari)',
         items: [
-            { letter: 'z', ipa: 'zī', uz: 'Tishlar jips, "dz" kabi', egHz: '在', egPy: 'zài', egUz: 'bo‘lmoq/da' },
-            { letter: 'c', ipa: 'cī', uz: 'Tishlar jips, nafasli "ts"', egHz: '菜', egPy: 'cài', egUz: 'taom' },
-            { letter: 's', ipa: 'sī', uz: 'Tishlar orasidan "s"', egHz: '三', egPy: 'sān', egUz: 'uch' }
+            { letter: 'z', ipa: 'zī', uz: 'Tishlar jips, "dz" kabi', sound: 'zi1', egHz: '在', egPy: 'zài', egUz: 'bo‘lmoq/da', egSound: 'zai4' },
+            { letter: 'c', ipa: 'cī', uz: 'Tishlar jips, nafasli "ts"', sound: 'ci1', egHz: '菜', egPy: 'cài', egUz: 'taom', egSound: 'cai4' },
+            { letter: 's', ipa: 'sī', uz: 'Tishlar orasidan "s"', sound: 'si1', egHz: '三', egPy: 'sān', egUz: 'uch', egSound: 'san1' }
         ]
     },
     {
         group: 'Semi-vowels (Yarim unlilar / Maxsus)',
         items: [
-            { letter: 'y', ipa: 'yī', uz: '"y" yoki yolg‘iz "i" boshlanishi', egHz: '一', egPy: 'yī', egUz: 'bir' },
-            { letter: 'w', ipa: 'wū', uz: 'Inglizcha "w" yoki "v"/"u"', egHz: '五', egPy: 'wǔ', egUz: 'besh' }
+            { letter: 'y', ipa: 'yī', uz: '"y" yoki yolg‘iz "i" boshlanishi', sound: 'yi1', egHz: '一', egPy: 'yī', egUz: 'bir', egSound: 'yi1' },
+            { letter: 'w', ipa: 'wū', uz: 'Inglizcha "w" yoki "v"/"u"', sound: 'wu1', egHz: '五', egPy: 'wǔ', egUz: 'besh', egSound: 'wu3' }
         ]
     }
 ];
@@ -5825,40 +5834,40 @@ const PINYIN_FINALS = [
     {
         group: 'Oddiy unlilar (单韵母 - 6 ta)',
         items: [
-            { letter: 'a', tones: ['ā', 'á', 'ǎ', 'à'], uz: 'Og‘iz keng ochilib "a"', egHz: '阿', egPy: 'ā' },
-            { letter: 'o', tones: ['ō', 'ó', 'ǒ', 'ò'], uz: 'Lablar yumaloqlanib "o"', egHz: '喔', egPy: 'ō' },
-            { letter: 'e', tones: ['ē', 'é', 'ě', 'è'], uz: 'Tomoqdan "e"/"o‘" tovushi', egHz: '鹅', egPy: 'é' },
-            { letter: 'i', tones: ['ī', 'í', 'ǐ', 'ì'], uz: 'Lablar keng jilmayib "i"', egHz: '一', egPy: 'yī' },
-            { letter: 'u', tones: ['ū', 'ú', 'ǔ', 'ù'], uz: 'Lablar oldinga cho‘chchayib "u"', egHz: '五', egPy: 'wǔ' },
-            { letter: 'ü', tones: ['ǖ', 'ǘ', 'ǚ', 'ǜ'], uz: 'Nemischa "ü" (lab "u", til "i")', egHz: '鱼', egPy: 'yú' }
+            { letter: 'a', tones: ['ā', 'á', 'ǎ', 'à'], sounds: ['a1', 'a2', 'a3', 'a4'], uz: 'Og‘iz keng ochilib "a"' },
+            { letter: 'o', tones: ['ō', 'ó', 'ǒ', 'ò'], sounds: ['o1', 'o2', 'o3', 'o4'], uz: 'Lablar yumaloqlanib "o"' },
+            { letter: 'e', tones: ['ē', 'é', 'ě', 'è'], sounds: ['e1', 'e2', 'e3', 'e4'], uz: 'Tomoqdan "e"/"o‘" tovushi' },
+            { letter: 'i', tones: ['ī', 'í', 'ǐ', 'ì'], sounds: ['yi1', 'yi2', 'yi3', 'yi4'], uz: 'Lablar keng jilmayib "i"' },
+            { letter: 'u', tones: ['ū', 'ú', 'ǔ', 'ù'], sounds: ['wu1', 'wu2', 'wu3', 'wu4'], uz: 'Lablar cho‘chchayib "u"' },
+            { letter: 'ü', tones: ['ǖ', 'ǘ', 'ǚ', 'ǜ'], sounds: ['yu1', 'yu2', 'yu3', 'yu4'], uz: 'Nemischa "ü" (lab "u", til "i")' }
         ]
     },
     {
         group: 'Murakkab unlilar (复韵母 - 9 ta)',
         items: [
-            { letter: 'ai', tones: ['āi', 'ái', 'ǎi', 'ài'], uz: 'O‘zbekcha "ay"', egHz: '爱', egPy: 'ài' },
-            { letter: 'ei', tones: ['ēi', 'éi', 'ěi', 'èi'], uz: 'O‘zbekcha "ey"', egHz: '给', egPy: 'gěi' },
-            { letter: 'ui', tones: ['uī', 'uí', 'uǐ', 'uì'], uz: 'Aslida "uei" ("uey")', egHz: '水', egPy: 'shuǐ' },
-            { letter: 'ao', tones: ['āo', 'áo', 'ǎo', 'ào'], uz: 'O‘zbekcha "au"/"ao"', egHz: '好', egPy: 'hǎo' },
-            { letter: 'ou', tones: ['ōu', 'óu', 'ǒu', 'òu'], uz: 'O‘zbekcha "ou"', egHz: '狗', egPy: 'gǒu' },
-            { letter: 'iu', tones: ['iū', 'iú', 'iǔ', 'iù'], uz: 'Aslida "iou" ("you")', egHz: '六', egPy: 'liù' },
-            { letter: 'ie', tones: ['iē', 'ié', 'iě', 'iè'], uz: 'O‘zbekcha "ye"', egHz: '也', egPy: 'yě' },
-            { letter: 'üe', tones: ['yuē', 'yué', 'yuě', 'yuè'], uz: '"ü" va "e" birlashmasi', egHz: '月', egPy: 'yuè' },
-            { letter: 'er', tones: ['ēr', 'ér', 'ěr', 'èr'], uz: 'Til orqaga bukiladi "er"', egHz: '二', egPy: 'èr' }
+            { letter: 'ai', tones: ['āi', 'ái', 'ǎi', 'ài'], sounds: ['ai1', 'ai2', 'ai3', 'ai4'], uz: 'O‘zbekcha "ay"' },
+            { letter: 'ei', tones: ['ēi', 'éi', 'ěi', 'èi'], sounds: ['ei1', 'ei2', 'ei3', 'ei4'], uz: 'O‘zbekcha "ey"' },
+            { letter: 'ui', tones: ['uī', 'uí', 'uǐ', 'uì'], sounds: ['wei1', 'wei2', 'wei3', 'wei4'], uz: 'Aslida "uei" ("uey")' },
+            { letter: 'ao', tones: ['āo', 'áo', 'ǎo', 'ào'], sounds: ['ao1', 'ao2', 'ao3', 'ao4'], uz: 'O‘zbekcha "au"/"ao"' },
+            { letter: 'ou', tones: ['ōu', 'óu', 'ǒu', 'òu'], sounds: ['ou1', 'ou2', 'ou3', 'ou4'], uz: 'O‘zbekcha "ou"' },
+            { letter: 'iu', tones: ['iū', 'iú', 'iǔ', 'iù'], sounds: ['you1', 'you2', 'you3', 'you4'], uz: 'Aslida "iou" ("you")' },
+            { letter: 'ie', tones: ['iē', 'ié', 'iě', 'iè'], sounds: ['ye1', 'ye2', 'ye3', 'ye4'], uz: 'O‘zbekcha "ye"' },
+            { letter: 'üe', tones: ['yuē', 'yué', 'yuě', 'yuè'], sounds: ['yue1', 'yue2', 'yue3', 'yue4'], uz: '"ü" va "e" birlashmasi' },
+            { letter: 'er', tones: ['ēr', 'ér', 'ěr', 'èr'], sounds: ['er1', 'er2', 'er3', 'er4'], uz: 'Til orqaga bukiladi "er"' }
         ]
     },
     {
         group: 'Burun unlilari (鼻韵母 - 9 ta)',
         items: [
-            { letter: 'an', tones: ['ān', 'án', 'ǎn', 'àn'], uz: 'Old burun "an"', egHz: '安', egPy: 'ān' },
-            { letter: 'en', tones: ['ēn', 'én', 'ěn', 'èn'], uz: 'Old burun "en"', egHz: '门', egPy: 'mén' },
-            { letter: 'in', tones: ['īn', 'ín', 'ǐn', 'ìn'], uz: 'Old burun "in"', egHz: '您', egPy: 'nín' },
-            { letter: 'un', tones: ['ūn', 'ún', 'ǔn', 'ùn'], uz: 'Old burun "uen"', egHz: '文', egPy: 'wén' },
-            { letter: 'ün', tones: ['yūn', 'yún', 'yǔn', 'yùn'], uz: 'Old burun "yün"', egHz: '云', egPy: 'yún' },
-            { letter: 'ang', tones: ['āng', 'áng', 'ǎng', 'àng'], uz: 'Orqa burun chuqur "ang"', egHz: '忙', egPy: 'máng' },
-            { letter: 'eng', tones: ['ēng', 'éng', 'ěng', 'èng'], uz: 'Orqa burun "eng"', egHz: '冷', egPy: 'lěng' },
-            { letter: 'ing', tones: ['īng', 'íng', 'ǐng', 'ìng'], uz: 'Orqa burun "ing"', egHz: '明', egPy: 'míng' },
-            { letter: 'ong', tones: ['ōng', 'óng', 'ǒng', 'òng'], uz: 'Orqa burun "ong"', egHz: '红', egPy: 'hóng' }
+            { letter: 'an', tones: ['ān', 'án', 'ǎn', 'àn'], sounds: ['an1', 'an2', 'an3', 'an4'], uz: 'Old burun "an"' },
+            { letter: 'en', tones: ['ēn', 'én', 'ěn', 'èn'], sounds: ['en1', 'en2', 'en3', 'en4'], uz: 'Old burun "en"' },
+            { letter: 'in', tones: ['īn', 'ín', 'ǐn', 'ìn'], sounds: ['yin1', 'yin2', 'yin3', 'yin4'], uz: 'Old burun "in"' },
+            { letter: 'un', tones: ['ūn', 'ún', 'ǔn', 'ùn'], sounds: ['wen1', 'wen2', 'wen3', 'wen4'], uz: 'Old burun "uen"' },
+            { letter: 'ün', tones: ['yūn', 'yún', 'yǔn', 'yùn'], sounds: ['yun1', 'yun2', 'yun3', 'yun4'], uz: 'Old burun "yün"' },
+            { letter: 'ang', tones: ['āng', 'áng', 'ǎng', 'àng'], sounds: ['ang1', 'ang2', 'ang3', 'ang4'], uz: 'Orqa burun chuqur "ang"' },
+            { letter: 'eng', tones: ['ēng', 'éng', 'ěng', 'èng'], sounds: ['eng1', 'leng3', 'eng1', 'leng3'], uz: 'Orqa burun "eng"' },
+            { letter: 'ing', tones: ['īng', 'íng', 'ǐng', 'ìng'], sounds: ['ying1', 'ying2', 'ying3', 'ying4'], uz: 'Orqa burun "ing"' },
+            { letter: 'ong', tones: ['ōng', 'óng', 'ǒng', 'òng'], sounds: ['hong1', 'hong2', 'hong3', 'hong4'], uz: 'Orqa burun "ong"' }
         ]
     }
 ];
@@ -6010,31 +6019,18 @@ function applyPinyinTone(syllable, tone) {
     return s.substring(0, idx) + replacement + s.substring(idx + 1);
 }
 
-function playPinyinAudio(syllableWithTone, fallbackHz = null) {
-    if (!syllableWithTone) return;
+function playPinyinAudio(soundKey, fallbackText = null) {
+    if (!soundKey) return;
 
-    // Check if we have local studio MP3 in assets/audio/tones
-    const localTones = {
-        'mā': 'ma1', 'má': 'ma2', 'mǎ': 'ma3', 'mà': 'ma4',
-        'bā': 'ba1', 'bá': 'ba2', 'bǎ': 'ba3', 'bà': 'ba4',
-        'fēi': 'fei1', 'féi': 'fei2', 'fěi': 'fei3', 'fèi': 'fei4',
-        'gāo': 'gao1', 'hē': 'he1', 'hé': 'he2', 'hè': 'he4',
-        'hǎo': 'hao3', 'mǎi': 'mai3', 'mài': 'mai4', 'nǐ': 'ni3',
-        'shū': 'shu1', 'shú': 'shu2', 'shǔ': 'shu3', 'shù': 'shu4',
-        'shuǐ': 'shui3', 'shuì': 'shui4', 'sī': 'si1', 'sǐ': 'si3',
-        'sì': 'si4', 'shí': 'shi2', 'dà': 'da4', 'qù': 'qu4',
-        'lái': 'lai2', 'hóng': 'hong2'
-    };
-
-    const soundName = localTones[syllableWithTone];
-    if (soundName && typeof playNativeToneSound === 'function') {
-        playNativeToneSound(soundName, fallbackHz || syllableWithTone, 1.0);
-        return;
+    // Direct playback of studio audio MP3
+    if (typeof playNativeToneSound === 'function') {
+        const audio = playNativeToneSound(soundKey, null, 1.0);
+        if (audio) return;
     }
 
     // TTS fallback with native Chinese voice
-    const textToSpeak = fallbackHz || syllableWithTone;
-    speakChineseText(textToSpeak, 0.95);
+    const toSpeak = fallbackText || soundKey;
+    speakChineseText(toSpeak, 0.95);
 }
 
 let activePinyinFilter = 'all';
@@ -6077,34 +6073,38 @@ function renderPinyinInitials() {
             <div class="pinyin-cards-grid">
                 ${group.items.map(item => `
                     <div class="pinyin-card" data-letter="${item.letter}">
-                        <div class="pinyin-card-letter">${item.letter}</div>
-                        <span class="pinyin-card-ipa">[ ${item.ipa} ]</span>
-                        <div class="pinyin-card-uzbek">${item.uz}</div>
-                        <div class="pinyin-card-actions">
-                            <button type="button" class="pinyin-play-btn pinyin-initial-btn" data-sound="${item.ipa}" data-hz="${item.egHz}">
-                                🔊 Tinglash
-                            </button>
-                            <button type="button" class="pinyin-sample-btn pinyin-initial-eg" data-sound="${item.egPy}" data-hz="${item.egHz}">
-                                ${item.egHz} ${item.egPy}
-                            </button>
+                        <div class="pinyin-card-header">
+                            <span class="pinyin-card-letter">${item.letter}</span>
+                            <span class="pinyin-card-ipa">[ ${item.ipa} ]</span>
                         </div>
+                        <div class="pinyin-card-uzbek">${item.uz}</div>
+                        <button type="button" class="pinyin-play-main-btn" data-sound="${item.sound}" data-fallback="${item.ipa}">
+                            <span class="p-icon">🔊</span>
+                            <span class="p-txt">${item.ipa}</span>
+                            <span class="p-sub">Tinglash</span>
+                        </button>
+                        <button type="button" class="pinyin-sample-pill-btn" data-sound="${item.egSound}" data-fallback="${item.egHz}">
+                            <span class="p-spk">🗣️</span>
+                            <strong>${item.egHz} ${item.egPy}</strong>
+                            <span class="p-trn">(${item.egUz})</span>
+                        </button>
                     </div>
                 `).join('')}
             </div>
         </div>
     `).join('');
 
-    container.querySelectorAll('.pinyin-initial-btn').forEach(btn => {
+    container.querySelectorAll('.pinyin-play-main-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            playPinyinAudio(btn.dataset.sound, btn.dataset.hz);
+            playPinyinAudio(btn.dataset.sound, btn.dataset.fallback);
         });
     });
 
-    container.querySelectorAll('.pinyin-initial-eg').forEach(btn => {
+    container.querySelectorAll('.pinyin-sample-pill-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            playPinyinAudio(btn.dataset.sound, btn.dataset.hz);
+            playPinyinAudio(btn.dataset.sound, btn.dataset.fallback);
         });
     });
 }
@@ -6119,11 +6119,13 @@ function renderPinyinFinals() {
             <div class="pinyin-cards-grid">
                 ${group.items.map(item => `
                     <div class="pinyin-card" data-letter="${item.letter}">
-                        <div class="pinyin-card-letter">${item.letter}</div>
+                        <div class="pinyin-card-header">
+                            <span class="pinyin-card-letter">${item.letter}</span>
+                        </div>
                         <div class="pinyin-card-uzbek">${item.uz}</div>
-                        <div class="pinyin-tones-row">
+                        <div class="pinyin-tones-grid-4">
                             ${item.tones.map((t, idx) => `
-                                <button type="button" class="pinyin-tone-chip" data-tone-py="${t}" title="${idx + 1}-ton: ${t}">
+                                <button type="button" class="pinyin-tone-chip-4" data-sound="${item.sounds[idx]}" data-py="${t}">
                                     ${t}
                                 </button>
                             `).join('')}
@@ -6134,13 +6136,14 @@ function renderPinyinFinals() {
         </div>
     `).join('');
 
-    container.querySelectorAll('.pinyin-tone-chip').forEach(btn => {
+    container.querySelectorAll('.pinyin-tone-chip-4').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            playPinyinAudio(btn.dataset.tonePy);
+            playPinyinAudio(btn.dataset.sound, btn.dataset.py);
         });
     });
 }
+
 
 function renderPinyinMatrix() {
     const grid = document.getElementById('pinyinSyllablesGrid');

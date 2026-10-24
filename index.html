@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=33">
+    <link rel="stylesheet" href="styles.css?v=34">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -993,11 +993,11 @@
                 <h2 class="section-title">Tonlar Laboratoriyasi (4 Tones)</h2>
                 <p class="lessons-kicker">Super Chinese uslubida: jonli 4 ta ton talaffuzi, eshitib topish viktorinasi, taqqoslash juftliklari va Tone Sandhi</p>
                 <div class="subview-tabs" id="toneLabTabs">
-                    <button type="button" class="subview-tab active" data-tone-tab="chart">&#x1F4CA; 4 Ton Grafigi &amp; Mashq</button>
-                    <button type="button" class="subview-tab" data-tone-tab="ear">&#x1F3A7; Eshitib Topish (Viktorina)</button>
-                    <button type="button" class="subview-tab" data-tone-tab="pairs">&#x2696;&#xFE0F; Taqqoslash Juftliklari</button>
-                    <button type="button" class="subview-tab" data-tone-tab="sandhi">&#x1F517; Tone Sandhi</button>
-                    <button type="button" class="subview-tab" data-tone-tab="mic">&#x1F399;&#xFE0F; Talaffuz &amp; Pitch</button>
+                    <button type="button" class="subview-tab active" data-tone-tab="chart">📊 4 Ton</button>
+                    <button type="button" class="subview-tab" data-tone-tab="ear">🎧 Viktorina</button>
+                    <button type="button" class="subview-tab" data-tone-tab="pairs">⚖️ Juftliklar</button>
+                    <button type="button" class="subview-tab" data-tone-tab="sandhi">🔗 Sandhi</button>
+                    <button type="button" class="subview-tab" data-tone-tab="mic">🎙️ Pitch</button>
                 </div>
             </div>
 
@@ -1095,11 +1095,23 @@
                 </div>
                 <h2 class="section-title">🎹 Interaktiv Pinyin Jadvali</h2>
                 <p class="lessons-kicker">Xitoy tili fonetikasi: 23 ta undosh (声母), 24 ta unli (韵母) va to‘liq audio matritsa</p>
-                <div class="subview-tabs" id="pinyinChartTabs">
-                    <button type="button" class="subview-tab active" data-pinyin-tab="initials">🔤 Undoshlar (声母 · 23)</button>
-                    <button type="button" class="subview-tab" data-pinyin-tab="finals">🅰️ Unlilar (韵母 · 24)</button>
-                    <button type="button" class="subview-tab" data-pinyin-tab="matrix">📊 Matritsa &amp; Qidiruv</button>
-                    <button type="button" class="subview-tab" data-pinyin-tab="rules">💡 O‘qish Qoidalari</button>
+                <div class="subview-tabs pinyin-segmented-tabs" id="pinyinChartTabs">
+                    <button type="button" class="subview-tab active" data-pinyin-tab="initials">
+                        <span class="p-tab-icon">🔤</span>
+                        <span class="p-tab-label">Undoshlar <span class="p-tab-count">23</span></span>
+                    </button>
+                    <button type="button" class="subview-tab" data-pinyin-tab="finals">
+                        <span class="p-tab-icon">🅰️</span>
+                        <span class="p-tab-label">Unlilar <span class="p-tab-count">24</span></span>
+                    </button>
+                    <button type="button" class="subview-tab" data-pinyin-tab="matrix">
+                        <span class="p-tab-icon">📊</span>
+                        <span class="p-tab-label">Matritsa</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-pinyin-tab="rules">
+                        <span class="p-tab-icon">💡</span>
+                        <span class="p-tab-label">Qoidalar</span>
+                    </button>
                 </div>
             </div>
 
@@ -1177,10 +1189,10 @@
                 <h2 class="section-title">Xitoyda Kunlik Muloqot</h2>
                 <p class="lessons-kicker">Auditoriyada, oshxonada, WeChat to&#x2018;lovida, kuryer bilan va ko&#x2018;chada har kuni kerak bo&#x2018;ladigan iboralar</p>
                 <div class="subview-tabs" id="survivalCategoryTabs">
-                    <button type="button" class="subview-tab active" data-surv-cat="classroom">&#x1F3EB; Darsda (&#x6559;&#x5BA4;)</button>
-                    <button type="button" class="subview-tab" data-surv-cat="canteen">&#x1F35C; Oshxona (&#x98DF;&#x5802;)</button>
-                    <button type="button" class="subview-tab" data-surv-cat="delivery">&#x1F4E6; Kuryer &amp; Do&#x2018;kon</button>
-                    <button type="button" class="subview-tab" data-surv-cat="transport">&#x1F687; Metro &amp; Taksi</button>
+                    <button type="button" class="subview-tab active" data-surv-cat="classroom">🏫 Darsda</button>
+                    <button type="button" class="subview-tab" data-surv-cat="canteen">🍜 Oshxona</button>
+                    <button type="button" class="subview-tab" data-surv-cat="delivery">📦 Kuryer</button>
+                    <button type="button" class="subview-tab" data-surv-cat="transport">🚇 Metro</button>
                 </div>
             </div>
             <div class="survival-phrases-list" id="survivalPhrasesList"></div>
@@ -1585,7 +1597,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=33"></script>
+    <script src="script.js?v=34"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1594,6 +1606,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=33"></script>
+    <script src="pwa.js?v=34"></script>
 </body>
 </html>
