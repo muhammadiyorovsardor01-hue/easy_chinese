@@ -1,4 +1,4 @@
-<!-- Last updated: August 31, 2026 - Added HSK filters, search bar, and streak tracker -->
+﻿<!-- Last updated: August 31, 2026 - Added HSK filters, search bar, and streak tracker -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=34">
+    <link rel="stylesheet" href="styles.css?v=35">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -992,12 +992,27 @@
                 </div>
                 <h2 class="section-title">Tonlar Laboratoriyasi (4 Tones)</h2>
                 <p class="lessons-kicker">Super Chinese uslubida: jonli 4 ta ton talaffuzi, eshitib topish viktorinasi, taqqoslash juftliklari va Tone Sandhi</p>
-                <div class="subview-tabs" id="toneLabTabs">
-                    <button type="button" class="subview-tab active" data-tone-tab="chart">📊 4 Ton</button>
-                    <button type="button" class="subview-tab" data-tone-tab="ear">🎧 Viktorina</button>
-                    <button type="button" class="subview-tab" data-tone-tab="pairs">⚖️ Juftliklar</button>
-                    <button type="button" class="subview-tab" data-tone-tab="sandhi">🔗 Sandhi</button>
-                    <button type="button" class="subview-tab" data-tone-tab="mic">🎙️ Pitch</button>
+                <div class="subview-tabs segmented-tabs-5" id="toneLabTabs">
+                    <button type="button" class="subview-tab active" data-tone-tab="chart">
+                        <span class="p-tab-icon">&#x1F4CA;</span>
+                        <span class="p-tab-label">4 Ton</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-tone-tab="ear">
+                        <span class="p-tab-icon">&#x1F3A7;</span>
+                        <span class="p-tab-label">Viktorina</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-tone-tab="pairs">
+                        <span class="p-tab-icon">&#x2696;&#xFE0F;</span>
+                        <span class="p-tab-label">Juftlik</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-tone-tab="sandhi">
+                        <span class="p-tab-icon">&#x1F517;</span>
+                        <span class="p-tab-label">Sandhi</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-tone-tab="mic">
+                        <span class="p-tab-icon">&#x1F399;&#xFE0F;</span>
+                        <span class="p-tab-label">Pitch</span>
+                    </button>
                 </div>
             </div>
 
@@ -1188,11 +1203,23 @@
                 </div>
                 <h2 class="section-title">Xitoyda Kunlik Muloqot</h2>
                 <p class="lessons-kicker">Auditoriyada, oshxonada, WeChat to&#x2018;lovida, kuryer bilan va ko&#x2018;chada har kuni kerak bo&#x2018;ladigan iboralar</p>
-                <div class="subview-tabs" id="survivalCategoryTabs">
-                    <button type="button" class="subview-tab active" data-surv-cat="classroom">🏫 Darsda</button>
-                    <button type="button" class="subview-tab" data-surv-cat="canteen">🍜 Oshxona</button>
-                    <button type="button" class="subview-tab" data-surv-cat="delivery">📦 Kuryer</button>
-                    <button type="button" class="subview-tab" data-surv-cat="transport">🚇 Metro</button>
+                <div class="subview-tabs segmented-tabs-4" id="survivalCategoryTabs">
+                    <button type="button" class="subview-tab active" data-surv-cat="classroom">
+                        <span class="p-tab-icon">&#x1F3EB;</span>
+                        <span class="p-tab-label">Darsda</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-surv-cat="canteen">
+                        <span class="p-tab-icon">&#x1F35C;</span>
+                        <span class="p-tab-label">Oshxona</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-surv-cat="delivery">
+                        <span class="p-tab-icon">&#x1F4E6;</span>
+                        <span class="p-tab-label">Kuryer</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-surv-cat="transport">
+                        <span class="p-tab-icon">&#x1F687;</span>
+                        <span class="p-tab-label">Metro</span>
+                    </button>
                 </div>
             </div>
             <div class="survival-phrases-list" id="survivalPhrasesList"></div>
@@ -1597,7 +1624,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=34"></script>
+    <script src="script.js?v=35"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1606,6 +1633,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=34"></script>
+    <script src="pwa.js?v=35"></script>
 </body>
 </html>

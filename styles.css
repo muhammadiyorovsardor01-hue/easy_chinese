@@ -11212,7 +11212,20 @@ a.setting-action-btn { text-decoration: none; }
     gap: 0.4rem;
 }
 
-/* Segmented 4-column modern tab bar (fits 100% on any mobile screen without cut-off) */
+/* Segmented 5-column and 4-column modern tab bar (fits 100% on any mobile screen without cut-off) */
+.segmented-tabs-5 {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 0.2rem !important;
+    background: var(--bg-secondary) !important;
+    border: 1.5px solid var(--border-color) !important;
+    border-radius: 14px !important;
+    padding: 0.25rem !important;
+    margin-top: 0.5rem !important;
+    overflow: visible !important;
+}
+
+.segmented-tabs-4,
 .pinyin-segmented-tabs {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
@@ -11225,12 +11238,14 @@ a.setting-action-btn { text-decoration: none; }
     overflow: visible !important;
 }
 
+.segmented-tabs-5 .subview-tab,
+.segmented-tabs-4 .subview-tab,
 .pinyin-segmented-tabs .subview-tab {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 0.45rem 0.2rem !important;
+    padding: 0.45rem 0.15rem !important;
     border: none !important;
     background: transparent !important;
     border-radius: 10px !important;
@@ -11240,8 +11255,11 @@ a.setting-action-btn { text-decoration: none; }
     width: 100% !important;
     box-shadow: none !important;
     transition: all 0.15s ease !important;
+    cursor: pointer !important;
 }
 
+.segmented-tabs-5 .subview-tab.active,
+.segmented-tabs-4 .subview-tab.active,
 .pinyin-segmented-tabs .subview-tab.active {
     background: var(--card-bg) !important;
     color: var(--primary-color) !important;
