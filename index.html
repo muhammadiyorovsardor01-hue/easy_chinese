@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=32">
+    <link rel="stylesheet" href="styles.css?v=33">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -818,8 +818,20 @@
 
             <!-- Group 1: Fonetika & Tonlar -->
             <div class="practice-group-section">
-                <h3 class="practice-group-heading">🎵 <span data-i18n="practice.g1">Fonetika &amp; Tonlar</span> (语音与声调)</h3>
+                <h3 class="practice-group-heading">🎵 <span data-i18n="practice.g1">Fonetika &amp; Pinyin Asoslari</span> (语音与拼音)</h3>
                 <div class="practice-tiles-grid">
+                    <button type="button" class="hub-tile-card tile-pinyin" id="hubOpenPinyinChartBtn">
+                        <div class="hub-tile-icon pinyin-icon">🎹</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong>Interaktiv Pinyin Jadvali</strong>
+                                <span class="hub-pill-badge hub-pill-new">23 Undosh + 24 Unli + Ovoz</span>
+                            </div>
+                            <p>Barcha 声母 va 韵母 tovushlari, to‘liq kombinatsiyalar matritsasi va muhim o‘qish qoidalari</p>
+                        </div>
+                        <span class="hub-tile-arrow">→</span>
+                    </button>
+
                     <button type="button" class="hub-tile-card tile-tone" id="hubOpenToneBtn">
                         <div class="hub-tile-icon tone-icon">🎵</div>
                         <div class="hub-tile-content">
@@ -1074,6 +1086,88 @@
         </section>
 
         <!-- China Survival Phrases View (ä¸­å›½ç”Ÿæ´»å£è¯­) -->
+        <!-- Interactive Pinyin Chart View (拼音图表) -->
+        <section id="pinyinChart" class="view">
+            <div class="subview-header-card pinyin-chart-banner">
+                <div class="lessons-banner-top">
+                    <button type="button" class="back-btn" id="backFromPinyinChartBtn">&larr; Practice</button>
+                    <span class="lessons-cn-badge">汉语拼音 · Pinyin Chart</span>
+                </div>
+                <h2 class="section-title">🎹 Interaktiv Pinyin Jadvali</h2>
+                <p class="lessons-kicker">Xitoy tili fonetikasi: 23 ta undosh (声母), 24 ta unli (韵母) va to‘liq audio matritsa</p>
+                <div class="subview-tabs" id="pinyinChartTabs">
+                    <button type="button" class="subview-tab active" data-pinyin-tab="initials">🔤 Undoshlar (声母 · 23)</button>
+                    <button type="button" class="subview-tab" data-pinyin-tab="finals">🅰️ Unlilar (韵母 · 24)</button>
+                    <button type="button" class="subview-tab" data-pinyin-tab="matrix">📊 Matritsa &amp; Qidiruv</button>
+                    <button type="button" class="subview-tab" data-pinyin-tab="rules">💡 O‘qish Qoidalari</button>
+                </div>
+            </div>
+
+            <!-- Tab 1: Initials (声母 Shengmu - 23) -->
+            <div class="pinyin-tab-panel active" id="pinyinTabInitials">
+                <div class="pinyin-helper-note">
+                    <span class="pinyin-note-icon">💡</span>
+                    <div>
+                        <strong>声母 (Shēngmǔ) — Undosh tovushlar (23 ta):</strong>
+                        <p>Xitoy tilidagi bo‘g‘in boshlovchi undoshlar. Kartochkani bosib standart talaffuzini tinglang va o‘zbekcha talaffuz yo‘riqnomasini o‘rganing.</p>
+                    </div>
+                </div>
+                <div class="pinyin-groups-container" id="pinyinInitialsList"></div>
+            </div>
+
+            <!-- Tab 2: Finals (韵母 Yunmu - 24) -->
+            <div class="pinyin-tab-panel" id="pinyinTabFinals">
+                <div class="pinyin-helper-note">
+                    <span class="pinyin-note-icon">🎵</span>
+                    <div>
+                        <strong>韵母 (Yùnmǔ) — Unli tovushlar (24 ta):</strong>
+                        <p>6 oddiy, 9 murakkab va 9 burun unlisi. Har bir kartochkadagi 1-4 ton tugmachalarini bosib, ohanglar bilan tinglang.</p>
+                    </div>
+                </div>
+                <div class="pinyin-groups-container" id="pinyinFinalsList"></div>
+            </div>
+
+            <!-- Tab 3: Interactive Matrix & Search -->
+            <div class="pinyin-tab-panel" id="pinyinTabMatrix">
+                <div class="pinyin-matrix-controls">
+                    <div class="pinyin-search-box">
+                        <span class="pinyin-search-icon">🔍</span>
+                        <input type="text" id="pinyinSearchInput" placeholder="Bo‘g‘in qidiring (masalan: ma, ni, hao, zhong, xue)..." autocomplete="off" autocorrect="off" autocapitalize="none">
+                        <button type="button" id="pinyinSearchClearBtn" class="pinyin-clear-btn" aria-label="Tozalash" hidden>&times;</button>
+                    </div>
+                    <div class="pinyin-filter-pills" id="pinyinGroupFilters">
+                        <button type="button" class="pinyin-filter-pill active" data-filter="all">Barchasi</button>
+                        <button type="button" class="pinyin-filter-pill" data-filter="bpmf">b p m f</button>
+                        <button type="button" class="pinyin-filter-pill" data-filter="dtnl">d t n l</button>
+                        <button type="button" class="pinyin-filter-pill" data-filter="gkh">g k h</button>
+                        <button type="button" class="pinyin-filter-pill" data-filter="jqx">j q x</button>
+                        <button type="button" class="pinyin-filter-pill" data-filter="zhchshr">zh ch sh r</button>
+                        <button type="button" class="pinyin-filter-pill" data-filter="zcs">z c s</button>
+                        <button type="button" class="pinyin-filter-pill" data-filter="yw">y w</button>
+                    </div>
+                </div>
+
+                <!-- Syllable Quick Tone Player Dock (shown when syllable clicked or searched) -->
+                <div class="pinyin-dock-card" id="pinyinSyllableDock">
+                    <div class="pinyin-dock-head">
+                        <div>
+                            <span class="pinyin-dock-tag">Tanlangan bo‘g‘in</span>
+                            <div class="pinyin-dock-syllable" id="dockSyllableText">ma</div>
+                        </div>
+                        <button type="button" class="pinyin-dock-close" id="dockCloseBtn" aria-label="Yopish">&times;</button>
+                    </div>
+                    <div class="pinyin-dock-tones" id="dockToneButtons"></div>
+                </div>
+
+                <div class="pinyin-syllables-grid" id="pinyinSyllablesGrid"></div>
+            </div>
+
+            <!-- Tab 4: Phonetic & Spelling Rules -->
+            <div class="pinyin-tab-panel" id="pinyinTabRules">
+                <div class="pinyin-rules-container" id="pinyinRulesList"></div>
+            </div>
+        </section>
+
         <section id="survivalPhrases" class="view">
             <div class="subview-header-card survival-banner">
                 <div class="lessons-banner-top">
@@ -1491,7 +1585,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=32"></script>
+    <script src="script.js?v=33"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1500,6 +1594,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=32"></script>
+    <script src="pwa.js?v=33"></script>
 </body>
 </html>

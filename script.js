@@ -2050,7 +2050,7 @@ let isNavigatingBack = false;
 function updateBottomNavForView(viewId) {
     let activeNav = 'home';
     if (viewId === 'dashboard' || viewId === 'lessons') activeNav = 'home';
-    else if (viewId === 'practice' || viewId === 'practiceFlashcards' || viewId === 'toneLab' || viewId === 'survivalPhrases') activeNav = 'practice';
+    else if (viewId === 'practice' || viewId === 'practiceFlashcards' || viewId === 'toneLab' || viewId === 'survivalPhrases' || viewId === 'pinyinChart') activeNav = 'practice';
     else if (viewId === 'aiLaoshi') activeNav = 'ai';
     else if (viewId === 'canvas') activeNav = 'canvas';
     else if (viewId === 'profile') activeNav = 'profile';
@@ -4340,6 +4340,7 @@ function updateAchievements() {
 const practiceView = document.getElementById('practice');
 const pfcView = document.getElementById('practiceFlashcards');
 const toneLabView = document.getElementById('toneLab');
+const pinyinChartView = document.getElementById('pinyinChart');
 const survivalView = document.getElementById('survivalPhrases');
 const aiLaoshiView = document.getElementById('aiLaoshi');
 
@@ -4659,6 +4660,12 @@ function nextPfcCard() {
     renderCurrentPfcCard();
 }
 
+function showPinyinChartView(initialTab = 'initials') {
+    showView(pinyinChartView);
+    initPinyinChart(initialTab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function showToneLabView(initialTab = 'chart') {
     showView(toneLabView);
     initToneLab(initialTab);
@@ -4733,6 +4740,9 @@ function showLessonAiModal(word) {
 
 // Attach event listeners for Practice Hub & In-lesson AI
 document.addEventListener('DOMContentLoaded', () => {
+    const hubPinyin = document.getElementById('hubOpenPinyinChartBtn');
+    if (hubPinyin) hubPinyin.addEventListener('click', () => showPinyinChartView('initials'));
+
     const hubTone = document.getElementById('hubOpenToneBtn');
     if (hubTone) hubTone.addEventListener('click', () => showToneLabView('chart'));
 
@@ -4763,6 +4773,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Subview Back buttons -> Return to Practice Hub!
+    const backFromPinyin = document.getElementById('backFromPinyinChartBtn');
+    if (backFromPinyin) backFromPinyin.addEventListener('click', showPracticeView);
+
     const backFromTone = document.getElementById('backFromToneLabBtn');
     if (backFromTone) backFromTone.addEventListener('click', showPracticeView);
 
@@ -5742,6 +5755,549 @@ const SURVIVAL_CATEGORIES = {
         { hanzi: '下车，谢谢！', pinyin: 'Xià chē, xièxie!', uzbek: 'Shu yerda tushaman, rahmat!' }
     ]
 };
+
+// ==============================================================================
+// 🎹 INTERACTIVE PINYIN CHART (拼音图表 · 23 Initials + 24 Finals + Matrix + Rules)
+// ==============================================================================
+
+const PINYIN_INITIALS = [
+    {
+        group: 'Labial (Lab-lab tovushlari)',
+        items: [
+            { letter: 'b', ipa: 'bō', uz: 'Jarangli emas, qisqa "b"', egHz: '爸', egPy: 'bà', egUz: 'ota' },
+            { letter: 'p', ipa: 'pō', uz: 'Kuchli nafas bilan "p"', egHz: '跑', egPy: 'pǎo', egUz: 'yugurmoq' },
+            { letter: 'm', ipa: 'mō', uz: 'O‘zbekcha oddiy "m"', egHz: '妈', egPy: 'mā', egUz: 'ona' },
+            { letter: 'f', ipa: 'fō', uz: 'Yuqori tish labda, "f"', egHz: '飞', egPy: 'fēi', egUz: 'uchmoq' }
+        ]
+    },
+    {
+        group: 'Alveolar (Til uchi tovushlari)',
+        items: [
+            { letter: 'd', ipa: 'dē', uz: 'Nafassiz yumshoq "d"/"t"', egHz: '大', egPy: 'dà', egUz: 'katta' },
+            { letter: 't', ipa: 'tē', uz: 'Kuchli nafas bilan "t"', egHz: '他', egPy: 'tā', egUz: 'u' },
+            { letter: 'n', ipa: 'nē', uz: 'Oddiy burun "n"', egHz: '你', egPy: 'nǐ', egUz: 'sen' },
+            { letter: 'l', ipa: 'lē', uz: 'Oddiy yon "l"', egHz: '来', egPy: 'lái', egUz: 'kelmoq' }
+        ]
+    },
+    {
+        group: 'Velar (Til orqa tovushlari)',
+        items: [
+            { letter: 'g', ipa: 'gē', uz: 'Nafassiz "g"/"k"', egHz: '高', egPy: 'gāo', egUz: 'baland' },
+            { letter: 'k', ipa: 'kē', uz: 'Kuchli nafas bilan "k"', egHz: '看', egPy: 'kàn', egUz: 'qaramoq' },
+            { letter: 'h', ipa: 'hē', uz: 'Bo‘g‘izdagi jarangli "h"/"x"', egHz: '好', egPy: 'hǎo', egUz: 'yaxshi' }
+        ]
+    },
+    {
+        group: 'Palatal (Til o‘rtasi tovushlari)',
+        items: [
+            { letter: 'j', ipa: 'jī', uz: 'Yumshoq "ji" (tishlar orqasida)', egHz: '家', egPy: 'jiā', egUz: 'uy/oila' },
+            { letter: 'q', ipa: 'qī', uz: 'Kuchli nafas bilan "chi"', egHz: '去', egPy: 'qù', egUz: 'bormoq' },
+            { letter: 'x', ipa: 'xī', uz: 'Yumshoq "shi"', egHz: '小', egPy: 'xiǎo', egUz: 'kichik' }
+        ]
+    },
+    {
+        group: 'Retroflex (Til orqaga bukilgan tovushlar)',
+        items: [
+            { letter: 'zh', ipa: 'zhī', uz: 'Til bukilgan, nafassiz "j"', egHz: '中', egPy: 'zhōng', egUz: 'o‘rta' },
+            { letter: 'ch', ipa: 'chī', uz: 'Til bukilgan, nafasli "ch"', egHz: '吃', egPy: 'chī', egUz: 'yemoq' },
+            { letter: 'sh', ipa: 'shī', uz: 'Til bukilgan, qattiq "sh"', egHz: '是', egPy: 'shì', egUz: 'bo‘lmoq' },
+            { letter: 'r', ipa: 'rī', uz: 'Inglizcha "r" va o‘zbekcha "j"', egHz: '人', egPy: 'rén', egUz: 'odam' }
+        ]
+    },
+    {
+        group: 'Dental (Tish oldi tovushlari)',
+        items: [
+            { letter: 'z', ipa: 'zī', uz: 'Tishlar jips, "dz" kabi', egHz: '在', egPy: 'zài', egUz: 'bo‘lmoq/da' },
+            { letter: 'c', ipa: 'cī', uz: 'Tishlar jips, nafasli "ts"', egHz: '菜', egPy: 'cài', egUz: 'taom' },
+            { letter: 's', ipa: 'sī', uz: 'Tishlar orasidan "s"', egHz: '三', egPy: 'sān', egUz: 'uch' }
+        ]
+    },
+    {
+        group: 'Semi-vowels (Yarim unlilar / Maxsus)',
+        items: [
+            { letter: 'y', ipa: 'yī', uz: '"y" yoki yolg‘iz "i" boshlanishi', egHz: '一', egPy: 'yī', egUz: 'bir' },
+            { letter: 'w', ipa: 'wū', uz: 'Inglizcha "w" yoki "v"/"u"', egHz: '五', egPy: 'wǔ', egUz: 'besh' }
+        ]
+    }
+];
+
+const PINYIN_FINALS = [
+    {
+        group: 'Oddiy unlilar (单韵母 - 6 ta)',
+        items: [
+            { letter: 'a', tones: ['ā', 'á', 'ǎ', 'à'], uz: 'Og‘iz keng ochilib "a"', egHz: '阿', egPy: 'ā' },
+            { letter: 'o', tones: ['ō', 'ó', 'ǒ', 'ò'], uz: 'Lablar yumaloqlanib "o"', egHz: '喔', egPy: 'ō' },
+            { letter: 'e', tones: ['ē', 'é', 'ě', 'è'], uz: 'Tomoqdan "e"/"o‘" tovushi', egHz: '鹅', egPy: 'é' },
+            { letter: 'i', tones: ['ī', 'í', 'ǐ', 'ì'], uz: 'Lablar keng jilmayib "i"', egHz: '一', egPy: 'yī' },
+            { letter: 'u', tones: ['ū', 'ú', 'ǔ', 'ù'], uz: 'Lablar oldinga cho‘chchayib "u"', egHz: '五', egPy: 'wǔ' },
+            { letter: 'ü', tones: ['ǖ', 'ǘ', 'ǚ', 'ǜ'], uz: 'Nemischa "ü" (lab "u", til "i")', egHz: '鱼', egPy: 'yú' }
+        ]
+    },
+    {
+        group: 'Murakkab unlilar (复韵母 - 9 ta)',
+        items: [
+            { letter: 'ai', tones: ['āi', 'ái', 'ǎi', 'ài'], uz: 'O‘zbekcha "ay"', egHz: '爱', egPy: 'ài' },
+            { letter: 'ei', tones: ['ēi', 'éi', 'ěi', 'èi'], uz: 'O‘zbekcha "ey"', egHz: '给', egPy: 'gěi' },
+            { letter: 'ui', tones: ['uī', 'uí', 'uǐ', 'uì'], uz: 'Aslida "uei" ("uey")', egHz: '水', egPy: 'shuǐ' },
+            { letter: 'ao', tones: ['āo', 'áo', 'ǎo', 'ào'], uz: 'O‘zbekcha "au"/"ao"', egHz: '好', egPy: 'hǎo' },
+            { letter: 'ou', tones: ['ōu', 'óu', 'ǒu', 'òu'], uz: 'O‘zbekcha "ou"', egHz: '狗', egPy: 'gǒu' },
+            { letter: 'iu', tones: ['iū', 'iú', 'iǔ', 'iù'], uz: 'Aslida "iou" ("you")', egHz: '六', egPy: 'liù' },
+            { letter: 'ie', tones: ['iē', 'ié', 'iě', 'iè'], uz: 'O‘zbekcha "ye"', egHz: '也', egPy: 'yě' },
+            { letter: 'üe', tones: ['yuē', 'yué', 'yuě', 'yuè'], uz: '"ü" va "e" birlashmasi', egHz: '月', egPy: 'yuè' },
+            { letter: 'er', tones: ['ēr', 'ér', 'ěr', 'èr'], uz: 'Til orqaga bukiladi "er"', egHz: '二', egPy: 'èr' }
+        ]
+    },
+    {
+        group: 'Burun unlilari (鼻韵母 - 9 ta)',
+        items: [
+            { letter: 'an', tones: ['ān', 'án', 'ǎn', 'àn'], uz: 'Old burun "an"', egHz: '安', egPy: 'ān' },
+            { letter: 'en', tones: ['ēn', 'én', 'ěn', 'èn'], uz: 'Old burun "en"', egHz: '门', egPy: 'mén' },
+            { letter: 'in', tones: ['īn', 'ín', 'ǐn', 'ìn'], uz: 'Old burun "in"', egHz: '您', egPy: 'nín' },
+            { letter: 'un', tones: ['ūn', 'ún', 'ǔn', 'ùn'], uz: 'Old burun "uen"', egHz: '文', egPy: 'wén' },
+            { letter: 'ün', tones: ['yūn', 'yún', 'yǔn', 'yùn'], uz: 'Old burun "yün"', egHz: '云', egPy: 'yún' },
+            { letter: 'ang', tones: ['āng', 'áng', 'ǎng', 'àng'], uz: 'Orqa burun chuqur "ang"', egHz: '忙', egPy: 'máng' },
+            { letter: 'eng', tones: ['ēng', 'éng', 'ěng', 'èng'], uz: 'Orqa burun "eng"', egHz: '冷', egPy: 'lěng' },
+            { letter: 'ing', tones: ['īng', 'íng', 'ǐng', 'ìng'], uz: 'Orqa burun "ing"', egHz: '明', egPy: 'míng' },
+            { letter: 'ong', tones: ['ōng', 'óng', 'ǒng', 'òng'], uz: 'Orqa burun "ong"', egHz: '红', egPy: 'hóng' }
+        ]
+    }
+];
+
+const PINYIN_SYLLABLES_BY_GROUP = {
+    bpmf: [
+        'ba', 'bo', 'bai', 'bei', 'bao', 'ban', 'ben', 'bang', 'beng', 'bi', 'bie', 'biao', 'bian', 'bin', 'bing', 'bu',
+        'pa', 'po', 'pai', 'pei', 'pao', 'pou', 'pan', 'pen', 'pang', 'peng', 'pi', 'pie', 'piao', 'pian', 'pin', 'ping', 'pu',
+        'ma', 'mo', 'me', 'mai', 'mei', 'mao', 'mou', 'man', 'men', 'mang', 'meng', 'mi', 'mie', 'miao', 'miu', 'mian', 'min', 'ming', 'mu',
+        'fa', 'fo', 'fei', 'fou', 'fan', 'fen', 'fang', 'feng', 'fu'
+    ],
+    dtnl: [
+        'da', 'de', 'dai', 'dei', 'dao', 'dou', 'dan', 'dang', 'deng', 'dong', 'di', 'die', 'diao', 'diu', 'dian', 'ding', 'du', 'duo', 'dui', 'duan', 'dun',
+        'ta', 'te', 'tai', 'tao', 'tou', 'tan', 'tang', 'teng', 'tong', 'ti', 'tie', 'tiao', 'tian', 'ting', 'tu', 'tuo', 'tui', 'tuan', 'tun',
+        'na', 'ne', 'nai', 'nei', 'nao', 'nou', 'nan', 'nen', 'nang', 'neng', 'nong', 'ni', 'nie', 'niao', 'niu', 'nian', 'nin', 'niang', 'ning', 'nu', 'nuo', 'nuan', 'nü', 'nüe',
+        'la', 'le', 'lai', 'lei', 'lao', 'lou', 'lan', 'lang', 'leng', 'long', 'li', 'lia', 'lie', 'liao', 'liu', 'lian', 'lin', 'liang', 'ling', 'lu', 'luo', 'luan', 'lun', 'lü', 'lüe'
+    ],
+    gkh: [
+        'ga', 'ge', 'gai', 'gei', 'gao', 'gou', 'gan', 'gen', 'gang', 'geng', 'gong', 'gu', 'gua', 'guo', 'guai', 'gui', 'guan', 'gun', 'guang',
+        'ka', 'ke', 'kai', 'kei', 'kao', 'kou', 'kan', 'ken', 'kang', 'keng', 'kong', 'ku', 'kua', 'kuo', 'kuai', 'kui', 'kuan', 'kun', 'kuang',
+        'ha', 'he', 'hai', 'hei', 'hao', 'hou', 'han', 'hen', 'hang', 'heng', 'hong', 'hu', 'hua', 'huo', 'huai', 'hui', 'huan', 'hun', 'huang'
+    ],
+    jqx: [
+        'ji', 'jia', 'jie', 'jiao', 'jiu', 'jian', 'jin', 'jiang', 'jing', 'jiong', 'ju', 'jue', 'juan', 'jun',
+        'qi', 'qia', 'qie', 'qiao', 'qiu', 'qian', 'qin', 'qiang', 'qing', 'qiong', 'qu', 'que', 'quan', 'qun',
+        'xi', 'xia', 'xie', 'xiao', 'xiu', 'xian', 'xin', 'xiang', 'xing', 'xiong', 'xu', 'xue', 'xuan', 'xun'
+    ],
+    zhchshr: [
+        'zha', 'zhe', 'zhi', 'zhai', 'zhei', 'zhao', 'zhou', 'zhan', 'zhen', 'zhang', 'zheng', 'zhong', 'zhu', 'zhua', 'zhuo', 'zhuai', 'zhui', 'zhuan', 'zhun', 'zhuang',
+        'cha', 'che', 'chi', 'chai', 'chao', 'chou', 'chan', 'chen', 'chang', 'cheng', 'chong', 'chu', 'chua', 'chuo', 'chuai', 'chui', 'chuan', 'chun', 'chuang',
+        'sha', 'she', 'shi', 'shai', 'shei', 'shao', 'shou', 'shan', 'shen', 'shang', 'sheng', 'shu', 'shua', 'shuo', 'shuai', 'shui', 'shuan', 'shun', 'shuang',
+        're', 'ri', 'rao', 'rou', 'ran', 'ren', 'rang', 'reng', 'rong', 'ru', 'ruo', 'rui', 'ruan', 'run'
+    ],
+    zcs: [
+        'za', 'ze', 'zi', 'zai', 'zei', 'zao', 'zou', 'zan', 'zen', 'zang', 'zeng', 'zong', 'zu', 'zuo', 'zui', 'zuan', 'zun',
+        'ca', 'ce', 'ci', 'cai', 'cao', 'cou', 'can', 'cen', 'cang', 'ceng', 'cong', 'cu', 'cuo', 'cui', 'cuan', 'cun',
+        'sa', 'se', 'si', 'sai', 'sao', 'sou', 'san', 'sen', 'sang', 'seng', 'song', 'su', 'suo', 'sui', 'suan', 'sun'
+    ],
+    yw: [
+        'yi', 'ya', 'yao', 'ye', 'you', 'yan', 'yang', 'yin', 'ying', 'yong', 'yu', 'yue', 'yuan', 'yun',
+        'wu', 'wa', 'wo', 'wai', 'wei', 'wan', 'wen', 'wang', 'weng'
+    ]
+};
+
+const COMMON_SYLLABLE_HANZI = {
+    'mā': '妈 (Ona)', 'má': '麻 (Zig‘ir)', 'mǎ': '马 (Ot)', 'mà': '骂 (Urishmoq)',
+    'bā': '八 (Sakkiz)', 'bá': '拔 (Sug‘urmoq)', 'bǎ': '把 (Ushlamoq)', 'bà': '爸 (Ota)',
+    'dā': '搭 (Minmoq)', 'dá': '答 (Javob)', 'dǎ': '打 (Urmoq)', 'dà': '大 (Katta)',
+    'tā': '他 (U)', 'tá': '抬 (Ko‘tarmoq)', 'tǎ': '塔 (Minora)', 'tà': '踏 (Bosmoq)',
+    'nī': '妮 (Qiz)', 'ní': '泥 (Loy)', 'nǐ': '你 (Sen)', 'nì': '逆 (Qarshi)',
+    'lī': '哩 (Milya)', 'lí': '梨 (Nok)', 'lǐ': '里 (Ichida)', 'lì': '力 (Kuch)',
+    'gāo': '高 (Baland)', 'gǎo': '稿 (Qoralama)', 'gào': '告 (Aytmoq)',
+    'hē': '喝 (Ichmoq)', 'hé': '和 (Va)', 'hǎo': '好 (Yaxshi)', 'hào': '号 (Raqam)',
+    'fēi': '飞 (Uchmoq)', 'féi': '肥 (Semiz)', 'fěi': '匪 (Qaroqchi)', 'fèi': '费 (Xarajat)',
+    'shī': '师 (Ustoz)', 'shí': '十 (O‘n)', 'shǐ': '使 (Ishlatmoq)', 'shì': '是 (Ha/Esa)',
+    'chī': '吃 (Yemoq)', 'chí': '迟 (Kech)', 'chǐ': '尺 (Chizg‘ich)', 'chì': '翅 (Qanot)',
+    'zhī': '知 (Bilmoq)', 'zhí': '直 (To‘g‘ri)', 'zhǐ': '只 (Faqat)', 'zhì': '志 (Iroda)',
+    'rī': '日', 'rì': '日 (Quyosh/Kun)',
+    'sī': '思 (O‘ylamoq)', 'sǐ': '死 (O‘lmoq)', 'sì': '四 (To‘rt)',
+    'qī': '七 (Yetti)', 'qí': '骑 (Minmoq)', 'qǐ': '起 (Turmoq)', 'qì': '气 (Havo)',
+    'xī': '西 (G‘arb)', 'xí': '习 (O‘rganmoq)', 'xǐ': '洗 (Yuvmoq)', 'xì': '细 (Yupqa)',
+    'shuī': '说', 'shuí': '谁 (Kim)', 'shuǐ': '水 (Suv)', 'shuì': '睡 (Uxlamoq)',
+    'yī': '一 (Bir)', 'yí': '移 (Ko‘chirmoq)', 'yǐ': '以 (Bilan)', 'yì': '意 (Ma’no)',
+    'wū': '屋 (Xona)', 'wú': '无 (Yo‘q)', 'wǔ': '五 (Besh)', 'wù': '物 (Narsa)',
+    'zhōng': '中 (O‘rta)', 'zhǒng': '种 (Urug‘)', 'zhòng': '重 (Og‘ir)',
+    'guō': '锅 (Qozon)', 'guó': '国 (Mamlakat)', 'guǒ': '果 (Meva)', 'guò': '过 (O‘tmoq)'
+};
+
+const PINYIN_RULES = [
+    {
+        tag: 'Muhim qoida #1',
+        title: '🎯 j, q, x + ü qoidasi (Nuqtalar tushib qolishi)',
+        desc: 'Xitoy tilida "ü" (ikkita nuqtali unli) faqat <code>j, q, x</code> yoki <code>y</code> harflari bilan kelganda uning ustidagi ikki nuqtasi yozilmaydi, lekin baribir "ü" deb o‘qiladi ("u" emas!). Boshqa <code>n, l</code> harflari bilan esa nuqtasi saqlanadi.',
+        formula: 'j / q / x + ü ➔ ju, qu, xu (talaffuz: [jü], [qü], [xü])',
+        examples: [
+            { hz: '去', py: 'qù', uz: 'bormoq' },
+            { hz: '句子', py: 'jùzi', uz: 'gap' },
+            { hz: '需要', py: 'xūyào', uz: 'kerak' },
+            { hz: '月亮', py: 'yuèliang', uz: 'oy' },
+            { hz: '绿茶', py: 'lǜchá', uz: 'ko‘k choy (nuqta qoladi!)' }
+        ]
+    },
+    {
+        tag: 'Muhim qoida #2',
+        title: '👅 Maxsus "Bo‘sh unli" i (空韵 Kongyun)',
+        desc: 'Retroflex (<code>zh, ch, sh, r</code>) va Dental (<code>z, c, s</code>) undoshlari orqasidan kelgan "i" harfi odatdagi o‘zbekcha "i" kabi o‘qilmaydi! Til o‘sha pozitsiyada turib qisqa, bo‘g‘iq, xirillagan "ы" tovushini chiqaradi.',
+        formula: 'zh, ch, sh, r / z, c, s + i ➔ "i" deb emas, maxsus "ы" deb o‘qiladi',
+        examples: [
+            { hz: '老师', py: 'lǎoshī', uz: 'ustoz' },
+            { hz: '四', py: 'sì', uz: 'to‘rt ("si" emas, "sы")' },
+            { hz: '吃饭', py: 'chīfàn', uz: 'ovqat yemoq' },
+            { hz: '日', py: 'rì', uz: 'kun / quyosh' }
+        ]
+    },
+    {
+        tag: 'Muhim qoida #3',
+        title: '🔄 3-3 Ton Sandhi (Ketma-ket uchinchi tonlar)',
+        desc: 'Ikkita 3-ton ketma-ket kelsa, til qulay harakat qilishi uchun 1-chi bo‘g‘in avtomatik ravishda 2-tonga aylanadi. Bu pinyin yozuvida o‘zgarmaydi, lekin talaffuzda aniq 2-ton qilinadi.',
+        formula: '3-ton + 3-ton ➔ 2-ton + 3-ton',
+        examples: [
+            { hz: '你好', py: 'nǐ hǎo ➔ ní hǎo', uz: 'salom' },
+            { hz: '很好', py: 'hěn hǎo ➔ hén hǎo', uz: 'juda yaxshi' },
+            { hz: '可以', py: 'kě yǐ ➔ ké yǐ', uz: 'mumkin' },
+            { hz: '手表', py: 'shǒu biǎo ➔ shóu biǎo', uz: 'qo‘l soati' }
+        ]
+    },
+    {
+        tag: 'Muhim qoida #4',
+        title: '⚡ "不" (bù) va "一" (yī) ning maxsus o‘zgarishlari',
+        desc: '1. "不" (bù) aslida 4-ton. Ammo orqasidan yana 4-ton kelsa, u 2-tonga aylanadi (bú shì).<br>2. "一" (yī) aslida 1-ton. 4-ton oldidan 2-tonga (yí gè), 1/2/3-tonlar oldidan esa 4-tonga aylanadi (yì tiān, yì qǐ).',
+        formula: 'bù (4) + 4-ton ➔ bú (2) | yī (1) + 4-ton ➔ yí (2)',
+        examples: [
+            { hz: '不是', py: 'bú shì', uz: 'emas' },
+            { hz: '不要', py: 'bú yào', uz: 'kerak emas' },
+            { hz: '一个', py: 'yí gè', uz: 'bitta' },
+            { hz: '一天', py: 'yì tiān', uz: 'bir kun' },
+            { hz: '一起', py: 'yì qǐ', uz: 'birga' }
+        ]
+    }
+];
+
+function applyPinyinTone(syllable, tone) {
+    if (!syllable || tone < 1 || tone > 4) return syllable;
+    const toneMap = {
+        'a': ['ā', 'á', 'ǎ', 'à'],
+        'o': ['ō', 'ó', 'ǒ', 'ò'],
+        'e': ['ē', 'é', 'ě', 'è'],
+        'i': ['ī', 'í', 'ǐ', 'ì'],
+        'u': ['ū', 'ú', 'ǔ', 'ù'],
+        'ü': ['ǖ', 'ǘ', 'ǚ', 'ǜ'],
+        'v': ['ǖ', 'ǘ', 'ǚ', 'ǜ']
+    };
+    const s = syllable.toLowerCase();
+    let targetChar = '';
+    if (s.includes('a')) targetChar = 'a';
+    else if (s.includes('e')) targetChar = 'e';
+    else if (s.includes('ou')) targetChar = 'o';
+    else {
+        for (let i = s.length - 1; i >= 0; i--) {
+            if (toneMap[s[i]]) {
+                targetChar = s[i];
+                break;
+            }
+        }
+    }
+    if (!targetChar) return syllable;
+    const replacement = toneMap[targetChar][tone - 1];
+    const idx = (targetChar === 'o' && s.includes('ou')) ? s.indexOf('o') : s.lastIndexOf(targetChar);
+    return s.substring(0, idx) + replacement + s.substring(idx + 1);
+}
+
+function playPinyinAudio(syllableWithTone, fallbackHz = null) {
+    if (!syllableWithTone) return;
+
+    // Check if we have local studio MP3 in assets/audio/tones
+    const localTones = {
+        'mā': 'ma1', 'má': 'ma2', 'mǎ': 'ma3', 'mà': 'ma4',
+        'bā': 'ba1', 'bá': 'ba2', 'bǎ': 'ba3', 'bà': 'ba4',
+        'fēi': 'fei1', 'féi': 'fei2', 'fěi': 'fei3', 'fèi': 'fei4',
+        'gāo': 'gao1', 'hē': 'he1', 'hé': 'he2', 'hè': 'he4',
+        'hǎo': 'hao3', 'mǎi': 'mai3', 'mài': 'mai4', 'nǐ': 'ni3',
+        'shū': 'shu1', 'shú': 'shu2', 'shǔ': 'shu3', 'shù': 'shu4',
+        'shuǐ': 'shui3', 'shuì': 'shui4', 'sī': 'si1', 'sǐ': 'si3',
+        'sì': 'si4', 'shí': 'shi2', 'dà': 'da4', 'qù': 'qu4',
+        'lái': 'lai2', 'hóng': 'hong2'
+    };
+
+    const soundName = localTones[syllableWithTone];
+    if (soundName && typeof playNativeToneSound === 'function') {
+        playNativeToneSound(soundName, fallbackHz || syllableWithTone, 1.0);
+        return;
+    }
+
+    // TTS fallback with native Chinese voice
+    const textToSpeak = fallbackHz || syllableWithTone;
+    speakChineseText(textToSpeak, 0.95);
+}
+
+let activePinyinFilter = 'all';
+let selectedPinyinSyllable = 'ma';
+
+function initPinyinChart(initialTab = 'initials') {
+    const tabs = document.querySelectorAll('#pinyinChartTabs .subview-tab');
+    const panels = {
+        initials: document.getElementById('pinyinTabInitials'),
+        finals: document.getElementById('pinyinTabFinals'),
+        matrix: document.getElementById('pinyinTabMatrix'),
+        rules: document.getElementById('pinyinTabRules')
+    };
+
+    function switchPinyinTab(tabKey) {
+        tabs.forEach(t => t.classList.toggle('active', t.dataset.pinyinTab === tabKey));
+        Object.keys(panels).forEach(k => {
+            if (panels[k]) panels[k].classList.toggle('active', k === tabKey);
+        });
+    }
+
+    tabs.forEach(tab => {
+        tab.onclick = () => switchPinyinTab(tab.dataset.pinyinTab);
+    });
+
+    switchPinyinTab(initialTab);
+    renderPinyinInitials();
+    renderPinyinFinals();
+    renderPinyinMatrix();
+    renderPinyinRules();
+}
+
+function renderPinyinInitials() {
+    const container = document.getElementById('pinyinInitialsList');
+    if (!container) return;
+
+    container.innerHTML = PINYIN_INITIALS.map(group => `
+        <div class="pinyin-group-block">
+            <div class="pinyin-group-title">🏷️ ${group.group}</div>
+            <div class="pinyin-cards-grid">
+                ${group.items.map(item => `
+                    <div class="pinyin-card" data-letter="${item.letter}">
+                        <div class="pinyin-card-letter">${item.letter}</div>
+                        <span class="pinyin-card-ipa">[ ${item.ipa} ]</span>
+                        <div class="pinyin-card-uzbek">${item.uz}</div>
+                        <div class="pinyin-card-actions">
+                            <button type="button" class="pinyin-play-btn pinyin-initial-btn" data-sound="${item.ipa}" data-hz="${item.egHz}">
+                                🔊 Tinglash
+                            </button>
+                            <button type="button" class="pinyin-sample-btn pinyin-initial-eg" data-sound="${item.egPy}" data-hz="${item.egHz}">
+                                ${item.egHz} ${item.egPy}
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+
+    container.querySelectorAll('.pinyin-initial-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            playPinyinAudio(btn.dataset.sound, btn.dataset.hz);
+        });
+    });
+
+    container.querySelectorAll('.pinyin-initial-eg').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            playPinyinAudio(btn.dataset.sound, btn.dataset.hz);
+        });
+    });
+}
+
+function renderPinyinFinals() {
+    const container = document.getElementById('pinyinFinalsList');
+    if (!container) return;
+
+    container.innerHTML = PINYIN_FINALS.map(group => `
+        <div class="pinyin-group-block">
+            <div class="pinyin-group-title">🎵 ${group.group}</div>
+            <div class="pinyin-cards-grid">
+                ${group.items.map(item => `
+                    <div class="pinyin-card" data-letter="${item.letter}">
+                        <div class="pinyin-card-letter">${item.letter}</div>
+                        <div class="pinyin-card-uzbek">${item.uz}</div>
+                        <div class="pinyin-tones-row">
+                            ${item.tones.map((t, idx) => `
+                                <button type="button" class="pinyin-tone-chip" data-tone-py="${t}" title="${idx + 1}-ton: ${t}">
+                                    ${t}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+
+    container.querySelectorAll('.pinyin-tone-chip').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            playPinyinAudio(btn.dataset.tonePy);
+        });
+    });
+}
+
+function renderPinyinMatrix() {
+    const grid = document.getElementById('pinyinSyllablesGrid');
+    const searchInput = document.getElementById('pinyinSearchInput');
+    const clearBtn = document.getElementById('pinyinSearchClearBtn');
+    const filterPills = document.querySelectorAll('#pinyinGroupFilters .pinyin-filter-pill');
+
+    function getAllSyllables() {
+        if (activePinyinFilter === 'all') {
+            const list = [];
+            Object.keys(PINYIN_SYLLABLES_BY_GROUP).forEach(k => {
+                list.push(...PINYIN_SYLLABLES_BY_GROUP[k]);
+            });
+            return Array.from(new Set(list)).sort();
+        }
+        return (PINYIN_SYLLABLES_BY_GROUP[activePinyinFilter] || []).slice().sort();
+    }
+
+    function renderTiles() {
+        if (!grid) return;
+        const query = (searchInput?.value || '').trim().toLowerCase();
+        let list = getAllSyllables();
+        if (query) {
+            list = list.filter(s => s.toLowerCase().includes(query));
+        }
+
+        if (list.length === 0) {
+            grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary); padding: 2rem 0; font-size: 0.88rem;">Bo‘g‘in topilmadi. Boshqa so‘z yozib ko‘ring.</div>';
+            return;
+        }
+
+        grid.innerHTML = list.map(s => `
+            <button type="button" class="pinyin-syllable-tile ${s === selectedPinyinSyllable ? 'is-active' : ''}" data-syllable="${s}">
+                ${s}
+            </button>
+        `).join('');
+
+        grid.querySelectorAll('.pinyin-syllable-tile').forEach(tile => {
+            tile.onclick = () => {
+                selectSyllableInDock(tile.dataset.syllable);
+            };
+        });
+    }
+
+    filterPills.forEach(pill => {
+        pill.onclick = () => {
+            filterPills.forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            activePinyinFilter = pill.dataset.filter;
+            renderTiles();
+        };
+    });
+
+    if (searchInput) {
+        searchInput.oninput = () => {
+            const val = searchInput.value.trim();
+            if (clearBtn) clearBtn.hidden = val.length === 0;
+            renderTiles();
+            const lower = val.toLowerCase();
+            const all = getAllSyllables();
+            if (all.includes(lower)) {
+                selectSyllableInDock(lower);
+            }
+        };
+    }
+
+    if (clearBtn) {
+        clearBtn.onclick = () => {
+            searchInput.value = '';
+            clearBtn.hidden = true;
+            renderTiles();
+        };
+    }
+
+    const dockClose = document.getElementById('dockCloseBtn');
+    if (dockClose) {
+        dockClose.onclick = () => {
+            const dock = document.getElementById('pinyinSyllableDock');
+            if (dock) dock.hidden = true;
+        };
+    }
+
+    renderTiles();
+    selectSyllableInDock(selectedPinyinSyllable || 'ma');
+}
+
+function selectSyllableInDock(syllable) {
+    selectedPinyinSyllable = syllable;
+    const dock = document.getElementById('pinyinSyllableDock');
+    const textEl = document.getElementById('dockSyllableText');
+    const tonesBox = document.getElementById('dockToneButtons');
+    if (!dock || !textEl || !tonesBox) return;
+
+    dock.hidden = false;
+    textEl.textContent = syllable;
+
+    document.querySelectorAll('.pinyin-syllable-tile').forEach(t => {
+        t.classList.toggle('is-active', t.dataset.syllable === syllable);
+    });
+
+    const tones = [1, 2, 3, 4].map(tone => {
+        const tonePy = applyPinyinTone(syllable, tone);
+        const meta = COMMON_SYLLABLE_HANZI[tonePy] || `${tone}-ton`;
+        return { tone, tonePy, meta };
+    });
+
+    tonesBox.innerHTML = tones.map(item => `
+        <button type="button" class="pinyin-dock-tone-btn" data-tone-py="${item.tonePy}">
+            <div>
+                <span class="pdt-tone-py">${item.tonePy}</span>
+                <span class="pdt-tone-meta">${item.meta}</span>
+            </div>
+            <span class="pdt-tone-sound-icon">🔊</span>
+        </button>
+    `).join('');
+
+    tonesBox.querySelectorAll('.pinyin-dock-tone-btn').forEach(btn => {
+        btn.onclick = () => {
+            playPinyinAudio(btn.dataset.tonePy);
+        };
+    });
+}
+
+function renderPinyinRules() {
+    const container = document.getElementById('pinyinRulesList');
+    if (!container) return;
+
+    container.innerHTML = PINYIN_RULES.map(rule => `
+        <div class="pinyin-rule-card">
+            <div class="pinyin-rule-head">
+                <span class="pinyin-rule-tag">${rule.tag}</span>
+                <h3 class="pinyin-rule-title">${rule.title}</h3>
+            </div>
+            <p class="pinyin-rule-desc">${rule.desc}</p>
+            <div class="pinyin-rule-formula">
+                <span>⚡ Qoida formulasi:</span>
+                <code>${rule.formula}</code>
+            </div>
+            <div class="pinyin-rule-examples">
+                ${rule.examples.map(eg => `
+                    <button type="button" class="pinyin-rule-chip" data-speak="${eg.hz}" data-py="${eg.py}">
+                        <span>🔊</span>
+                        <strong>${eg.hz}</strong>
+                        <span>[ ${eg.py} ]</span>
+                        <small style="opacity: 0.7;">${eg.uz}</small>
+                    </button>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+
+    container.querySelectorAll('.pinyin-rule-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            speakChineseText(chip.dataset.speak || chip.dataset.py);
+        });
+    });
+}
 
 function initSurvivalPhrases(initialCat = 'classroom') {
     const tabs = document.querySelectorAll('#survivalCategoryTabs .subview-tab');

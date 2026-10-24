@@ -11124,3 +11124,508 @@ a.setting-action-btn { text-decoration: none; }
     .settings-gear-btn .gear-label { display: none; }
     .lang-grid, .data-actions-grid { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   21. Interactive Pinyin Chart Styles (拼音图表)
+   ========================================================================== */
+.tile-pinyin .hub-tile-icon {
+    background: linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%);
+    color: #fff;
+}
+
+.hub-pill-new {
+    background: #e0f2fe !important;
+    color: #0369a1 !important;
+    border-color: #bae6fd !important;
+    font-weight: 800 !important;
+}
+
+[data-theme="dark"] .hub-pill-new {
+    background: rgba(14, 165, 233, 0.18) !important;
+    color: #38bdf8 !important;
+    border-color: rgba(14, 165, 233, 0.35) !important;
+}
+
+.pinyin-tab-panel {
+    display: none;
+}
+
+.pinyin-tab-panel.active {
+    display: block;
+    animation: fadeInTab 0.2s ease;
+}
+
+.pinyin-helper-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--border-color);
+    border-radius: 16px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1rem;
+}
+
+.pinyin-note-icon {
+    font-size: 1.35rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.pinyin-helper-note strong {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-color);
+    margin-bottom: 0.15rem;
+}
+
+.pinyin-helper-note p {
+    margin: 0;
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.pinyin-groups-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.pinyin-group-block {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-color);
+    border-radius: 18px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.pinyin-group-title {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.pinyin-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.65rem;
+}
+
+.pinyin-card {
+    background: var(--bg-secondary);
+    border: 1.5px solid var(--border-color);
+    border-radius: 14px;
+    padding: 0.75rem 0.65rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.35rem;
+    position: relative;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pinyin-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.pinyin-card-letter {
+    font-size: 1.55rem;
+    font-weight: 900;
+    color: var(--text-color);
+    line-height: 1;
+    font-family: inherit;
+}
+
+.pinyin-card-ipa {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    background: rgba(14, 165, 233, 0.1);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+}
+
+.pinyin-card-uzbek {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    line-height: 1.25;
+    margin-top: 0.1rem;
+    min-height: 2.2em;
+}
+
+.pinyin-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    margin-top: 0.2rem;
+}
+
+.pinyin-play-btn {
+    flex: 1;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    transition: filter 0.15s ease, transform 0.1s active;
+}
+
+.pinyin-play-btn:active {
+    transform: scale(0.96);
+}
+
+.pinyin-sample-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 10px;
+    padding: 0.35rem 0.45rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.pinyin-tones-row {
+    display: flex;
+    gap: 0.25rem;
+    width: 100%;
+    margin-top: 0.2rem;
+    justify-content: center;
+}
+
+.pinyin-tone-chip {
+    flex: 1;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.35rem 0.15rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--text-color);
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.pinyin-tone-chip:hover,
+.pinyin-tone-chip:active {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+.pinyin-matrix-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-bottom: 0.85rem;
+}
+
+.pinyin-search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.pinyin-search-icon {
+    position: absolute;
+    left: 0.85rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.pinyin-search-box input {
+    width: 100%;
+    padding: 0.7rem 2.2rem 0.7rem 2.4rem;
+    border-radius: 14px;
+    border: 1.5px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-color);
+    font-size: 0.88rem;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pinyin-search-box input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+}
+
+.pinyin-clear-btn {
+    position: absolute;
+    right: 0.65rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.2rem 0.4rem;
+}
+
+.pinyin-filter-pills {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: none;
+}
+
+.pinyin-filter-pills::-webkit-scrollbar {
+    display: none;
+}
+
+.pinyin-filter-pill {
+    padding: 0.4rem 0.75rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.pinyin-filter-pill.active {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+.pinyin-dock-card {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+    border: 2px solid var(--primary-color);
+    border-radius: 18px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.12);
+    animation: fadeInTab 0.2s ease;
+}
+
+.pinyin-dock-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.pinyin-dock-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--primary-color);
+    letter-spacing: 0.04em;
+    display: block;
+}
+
+.pinyin-dock-syllable {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--text-color);
+    line-height: 1.1;
+}
+
+.pinyin-dock-close {
+    background: rgba(0, 0, 0, 0.06);
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .pinyin-dock-close {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.pinyin-dock-tones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.65rem;
+}
+
+.pinyin-dock-tone-btn {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-color);
+    border-radius: 14px;
+    padding: 0.65rem 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.pinyin-dock-tone-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.pinyin-dock-tone-btn:active {
+    transform: scale(0.97);
+}
+
+.pdt-tone-py {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--text-color);
+}
+
+.pdt-tone-meta {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    display: block;
+    margin-top: 0.1rem;
+}
+
+.pdt-tone-sound-icon {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.pinyin-syllables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+    gap: 0.5rem;
+}
+
+.pinyin-syllable-tile {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.6rem 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text-color);
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.pinyin-syllable-tile:hover {
+    background: var(--bg-secondary);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.pinyin-syllable-tile.is-active {
+    background: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+.pinyin-rules-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.pinyin-rule-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-color);
+    border-radius: 18px;
+    padding: 1.1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.pinyin-rule-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.pinyin-rule-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 0.2rem 0.55rem;
+    border-radius: 8px;
+    background: rgba(14, 165, 233, 0.12);
+    color: var(--primary-color);
+}
+
+.pinyin-rule-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.pinyin-rule-desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0 0 0.85rem;
+}
+
+.pinyin-rule-formula {
+    background: var(--bg-secondary);
+    border: 1px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.85rem;
+}
+
+.pinyin-rule-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.pinyin-rule-chip {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.4rem 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-color);
+    transition: border-color 0.12s ease;
+}
+
+.pinyin-rule-chip:hover {
+    border-color: var(--primary-color);
+}
