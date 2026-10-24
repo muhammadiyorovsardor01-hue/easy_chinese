@@ -9639,6 +9639,27 @@ body.has-pwa-banner {
 
 
 /* 16.8 Pitch Canvas & Microphone practice */
+.tone-mic-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-bottom-width: 4px;
+    border-radius: 20px;
+    padding: 1.5rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.1rem;
+    box-shadow: var(--shadow-soft);
+}
+
+.tone-mic-target {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+}
+
 .tone-pitch-canvas {
     width: 100%;
     max-width: 320px;
@@ -9670,9 +9691,44 @@ body.has-pwa-banner {
 .tone-mic-actions {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
     width: 100%;
-    max-width: 360px;
+    max-width: 420px;
+}
+
+#toneMicRecordBtn.is-recording {
+    background: linear-gradient(135deg, #EF4444, #DC2626) !important;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.35) !important;
+    animation: micPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes micPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+}
+
+#toneMicFeedback {
+    width: 100%;
+    max-width: 420px;
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+#toneMicFeedback.feedback-correct {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1.5px solid rgba(16, 185, 129, 0.35);
+    color: #047857;
+}
+
+#toneMicFeedback.feedback-retry {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1.5px solid rgba(245, 158, 11, 0.35);
+    color: #B45309;
 }
 
 /* 16.9 China Survival Phrases */

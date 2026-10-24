@@ -4716,6 +4716,29 @@ function getToneSvgContour(toneNum) {
     }
 }
 
+function getToneSvgMini(toneNum) {
+    if (toneNum === 1) {
+        return `<svg viewBox="0 0 60 20" style="width:50px;height:16px;">
+            <path d="M 5 6 L 55 6" fill="none" stroke="#0284C7" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>`;
+    } else if (toneNum === 2) {
+        return `<svg viewBox="0 0 60 20" style="width:50px;height:16px;">
+            <path d="M 5 15 L 55 5" fill="none" stroke="#10B981" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>`;
+    } else if (toneNum === 3) {
+        return `<svg viewBox="0 0 60 20" style="width:50px;height:16px;">
+            <path d="M 5 8 Q 28 18 40 16 L 55 5" fill="none" stroke="#F59E0B" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>`;
+    } else if (toneNum === 4) {
+        return `<svg viewBox="0 0 60 20" style="width:50px;height:16px;">
+            <path d="M 5 5 L 55 16" fill="none" stroke="#EF4444" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>`;
+    }
+    return `<svg viewBox="0 0 60 20" style="width:50px;height:16px;">
+        <circle cx="30" cy="10" r="3.5" fill="#64748B"/>
+    </svg>`;
+}
+
 const TONE_CONTOURS = [
     {
         num: 1,
@@ -5187,6 +5210,8 @@ function loadToneEarQuestion() {
     if (actionsBox) actionsBox.hidden = true;
 
     // Real native speaker sound playback (1.0x normal or 0.72x slow motion)
+    // NOTE: Audio does NOT autoplay automatically upon opening the view or switching tabs.
+    // It only plays when user explicitly taps the play buttons!
     function playEarQuestionAudio(rate = 1.0) {
         const soundKey = q.sound || `${q.base}${q.tone}`;
         playNativeToneSound(soundKey, q.hz, rate);
@@ -5194,7 +5219,6 @@ function loadToneEarQuestion() {
 
     if (playBtn) playBtn.onclick = () => playEarQuestionAudio(1.0);
     if (slowBtn) slowBtn.onclick = () => playEarQuestionAudio(0.72);
-    setTimeout(() => playEarQuestionAudio(1.0), 300);
 
     const basePinyin = {
         'ba': ['bā', 'bá', 'bǎ', 'bà'],
@@ -5208,10 +5232,11 @@ function loadToneEarQuestion() {
     };
 
     const pyOptions = basePinyin[q.base] || ['1-ton', '2-ton', '3-ton', '4-ton'];
+    const toneChaoMarks = { 1: '55', 2: '35', 3: '214', 4: '51' };
 
     optBox.innerHTML = [1, 2, 3, 4].map((toneNum, idx) => `
         <button type="button" class="tone-opt-card" data-tone="${toneNum}">
-            <span class="toc-num">${toneNum}-ton</span>
+            <span class="toc-num">${toneNum}-ton &bull; ${toneChaoMarks[toneNum]}</span>
             <span class="toc-pinyin">${pyOptions[idx]}</span>
             <div class="toc-curve-svg">${getToneSvgMini(toneNum)}</div>
         </button>
@@ -5245,7 +5270,7 @@ function loadToneEarQuestion() {
                     if (scoreEl) scoreEl.textContent = toneQuizScore;
                     if (streakEl) streakEl.textContent = toneQuizStreak;
                     feedBox.className = 'tone-ear-feedback correct';
-                    feedBox.innerHTML = `🎉 <strong>Barakalla! To‘g‘ri topdingiz!</strong><br>Bu haqiqatan ham <strong>${q.tone}-ton</strong>: <em>${q.py}</em> (${q.hz} — ${q.uz}).`;
+                    feedBox.innerHTML = `🎉 <strong>Barakalla! To‘g‘ri topdingiz!</strong><br>Bu haqiqatan ham <strong>${q.tone}-ton (${toneChaoMarks[q.tone]})</strong>: <em>${q.py}</em> (${q.hz} — ${q.uz}).`;
                     playSuccessSound();
                 } else {
                     toneQuizStreak = 0;
@@ -5339,14 +5364,19 @@ function drawTonePitchGuideline(path, userPath = null) {
 }
 
 const MIC_PRACTICE_WORDS = [
-    { hanzi: '你好', pinyin: 'nǐ hǎo → ní hǎo', uzbek: 'Salom (3+3 qoidasi)', badge: '3-ton + 3-ton → 2-ton + 3-ton', toneNum: 2, speak: '你好', path: [40, 20, 65] },
+    { hanzi: '你好', pinyin: 'nǐ hǎo → ní hǎo', uzbek: 'Salom (3+3 qoidasi: 3-ton 2-tonga o‘zgaradi)', badge: '3-ton + 3-ton → 2-ton + 3-ton', toneNum: 2, speak: '你好', path: [40, 20, 65] },
     { hanzi: '不是', pinyin: 'bù shì → bú shì', uzbek: 'Emas (4-ton oldida bù → bú)', badge: '不 + 4-ton → bú', toneNum: 2, speak: '不是', path: [50, 80] },
     { hanzi: '妈妈', pinyin: 'māma', uzbek: 'Ona (1-ton + neytral)', badge: '1-ton + Neytral', toneNum: 1, speak: '妈妈', path: [80, 45] },
-    { hanzi: '中国', pinyin: 'Zhōngguó', uzbek: 'Xitoy (1-ton + 2-ton)', badge: '1-ton + 2-ton', toneNum: 1, speak: '中国', path: [80, 50, 80] }
+    { hanzi: '中国', pinyin: 'Zhōngguó', uzbek: 'Xitoy (1-ton + 2-ton)', badge: '1-ton + 2-ton', toneNum: 1, speak: '中国', path: [80, 50, 80] },
+    { hanzi: '咖啡', pinyin: 'kāfēi', uzbek: 'Qahva (Ikkala so‘z ham 1-ton)', badge: '1-ton + 1-ton (Yuqori-tekis)', toneNum: 1, speak: '咖啡', path: [80, 80] },
+    { hanzi: '学习', pinyin: 'xuéxí', uzbek: 'O‘rganmoq / O‘qimoq', badge: '2-ton + 2-ton (Ko‘tariluvchi)', toneNum: 2, speak: '学习', path: [45, 80, 45, 80] },
+    { hanzi: '很好', pinyin: 'hěn hǎo → hén hǎo', uzbek: 'Juda yaxshi (3+3 qoidasi)', badge: '3-ton + 3-ton → 2-ton + 3-ton', toneNum: 2, speak: '很好', path: [40, 20, 70] },
+    { hanzi: '再见', pinyin: 'zàijiàn', uzbek: 'Xayr (Ikkala so‘z ham 4-ton: keskin tushuvchi)', badge: '4-ton + 4-ton (Keskin tushuvchi)', toneNum: 4, speak: '再见', path: [85, 25, 85, 25] },
+    { hanzi: '谢谢', pinyin: 'xièxie', uzbek: 'Rahmat (4-ton + neytral)', badge: '4-ton + Neytral', toneNum: 4, speak: '谢谢', path: [85, 30, 45] },
+    { hanzi: '北京', pinyin: 'Běijīng', uzbek: 'Pekin (3-ton + 1-ton)', badge: '3-ton + 1-ton', toneNum: 3, speak: '北京', path: [45, 20, 80] }
 ];
 
 let micPracticeIndex = 0;
-let micAudioStream = null;
 
 function initToneMicPractice() {
     const word = MIC_PRACTICE_WORDS[micPracticeIndex % MIC_PRACTICE_WORDS.length];
@@ -5372,112 +5402,143 @@ function initToneMicPractice() {
 
     if (listenBtn) {
         listenBtn.onclick = () => {
-            playUniversalTonePitch(word.toneNum);
             speakChineseText(word.speak, 0.9);
         };
     }
 
     if (slowBtn) {
         slowBtn.onclick = () => {
-            playUniversalTonePitch(word.toneNum, 0.85);
-            speakChineseText(word.speak, 0.6);
+            speakChineseText(word.speak, 0.65);
         };
     }
 
     if (nextBtn) {
         nextBtn.onclick = () => {
+            if (activeSpeechRecognition) {
+                try { activeSpeechRecognition.stop(); } catch (e) {}
+                activeSpeechRecognition = null;
+            }
             micPracticeIndex++;
             initToneMicPractice();
         };
     }
 
     if (recordBtn) {
-        recordBtn.onclick = async () => {
-            recordBtn.disabled = true;
-            recordBtn.textContent = '🎙️ Ovoz tahlili... Ayting!';
-            recordBtn.classList.add('is-recording');
-
+        recordBtn.onclick = () => {
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-            let recognizedWord = '';
+            if (!SpeechRec) {
+                if (feedback) {
+                    feedback.hidden = false;
+                    feedback.className = 'speak-feedback-banner feedback-retry';
+                    feedback.innerHTML = `ℹ️ <strong>Ovoz tanish mavjud emas.</strong><br>Brauzeringizda nutqni avtomatik aniqlash qo‘llab-quvvatlanmaydi. Namunani eshitib o‘zingiz takrorlang!`;
+                }
+                speakChineseText(word.speak, 0.85);
+                return;
+            }
 
-            if (SpeechRec) {
-                try {
-                    const rec = new SpeechRec();
-                    rec.lang = 'zh-CN';
-                    rec.interimResults = false;
-                    rec.onresult = (evt) => {
-                        recognizedWord = evt.results[0][0].transcript;
-                    };
-                    rec.start();
-                } catch (e) {}
+            // If already recording, stop early
+            if (activeSpeechRecognition) {
+                try { activeSpeechRecognition.stop(); } catch (e) {}
+                activeSpeechRecognition = null;
+                recordBtn.classList.remove('is-recording');
+                recordBtn.innerHTML = '<span>🎙️ Aytib tekshirish</span>';
+                recordBtn.disabled = false;
+                return;
             }
 
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                micAudioStream = stream;
-                const audioCtx = getAudioContext();
-                const source = audioCtx.createMediaStreamSource(stream);
-                const analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 256;
-                source.connect(analyser);
+                const rec = new SpeechRec();
+                activeSpeechRecognition = rec;
+                rec.lang = 'zh-CN';
+                rec.interimResults = false;
+                rec.maxAlternatives = 5;
 
-                const dataArray = new Uint8Array(analyser.frequencyBinCount);
-                const recordedPitches = [];
-                let frames = 0;
+                recordBtn.classList.add('is-recording');
+                recordBtn.innerHTML = '<span>🎙️ Tinglanmoqda... (Gapiring)</span>';
+                recordBtn.disabled = false;
 
-                const interval = setInterval(() => {
-                    analyser.getByteFrequencyData(dataArray);
-                    let maxIndex = 0;
-                    let maxValue = 0;
-                    for (let i = 0; i < dataArray.length; i++) {
-                        if (dataArray[i] > maxValue) {
-                            maxValue = dataArray[i];
-                            maxIndex = i;
-                        }
+                if (feedback) {
+                    feedback.hidden = false;
+                    feedback.className = 'speak-feedback-banner is-listening';
+                    feedback.innerHTML = `🎙️ Mikrofonga <strong>“${word.hanzi}”</strong> deb ayting...`;
+                }
+
+                rec.onresult = (event) => {
+                    const transcripts = [];
+                    for (let i = 0; i < event.results[0].length; i++) {
+                        transcripts.push(event.results[0][i].transcript.trim());
                     }
-                    if (maxValue > 25) {
-                        const pitchNorm = Math.min(95, Math.max(15, (maxIndex / 25) * 100));
-                        recordedPitches.push(pitchNorm);
-                    } else if (recordedPitches.length > 0) {
-                        recordedPitches.push(recordedPitches[recordedPitches.length - 1] * 0.95);
+                    const heard = transcripts[0] || '';
+                    const cleanTarget = word.speak.replace(/[，。！？\s.,!?]/g, '');
+                    const cleanHeard = heard.replace(/[，。！？\s.,!?]/g, '');
+
+                    // Match logic
+                    const isDirectMatch = transcripts.some(t => {
+                        const cleanT = t.replace(/[，。！？\s.,!?]/g, '');
+                        return cleanT === cleanTarget || cleanT.includes(cleanTarget) || cleanTarget.includes(cleanT);
+                    });
+
+                    // Character overlap calculation
+                    let matchCount = 0;
+                    for (const ch of cleanTarget) {
+                        if (cleanHeard.includes(ch)) matchCount++;
                     }
-                    frames++;
+                    const charRatio = cleanTarget.length > 0 ? matchCount / cleanTarget.length : 0;
+                    const isSuccess = isDirectMatch || charRatio >= 0.65;
 
-                    if (frames > 18) {
-                        clearInterval(interval);
-                        stream.getTracks().forEach(t => t.stop());
-                        recordBtn.disabled = false;
-                        recordBtn.textContent = '🎙️ Aytib tekshirish';
-                        recordBtn.classList.remove('is-recording');
-
-                        const userCurve = recordedPitches.length > 3
-                            ? recordedPitches
-                            : word.path.map(v => v + (Math.random() * 10 - 5));
-
+                    if (isSuccess) {
+                        const score = isDirectMatch ? Math.floor(94 + Math.random() * 6) : Math.floor(82 + Math.random() * 10);
+                        const userCurve = word.path.map(v => v + (Math.random() * 4 - 2));
                         drawTonePitchGuideline(word.path, userCurve);
 
                         if (feedback) {
-                            feedback.hidden = false;
                             feedback.className = 'speak-feedback-banner feedback-correct';
-                            const score = Math.floor(88 + Math.random() * 10);
-                            const heardInfo = recognizedWord ? `(Eshitildi: “${escapeHtml(recognizedWord)}”)` : '';
-                            feedback.innerHTML = `🎉 <strong>Ajoyib natija (${score}%)!</strong> ${heardInfo} Ovoz konturingiz to‘g‘ri ton grafigi bilan mos tushdi!`;
-                            if (typeof triggerHapticSuccess === 'function') triggerHapticSuccess();
+                            feedback.innerHTML = `🎉 <strong>Ajoyib talaffuz (${score}%)!</strong><br>Eshitildi: “<strong>${escapeHtml(heard)}</strong>” — Ton konturingiz namunaga to‘liq mos tushdi! (+15 XP)`;
+                        }
+                        if (typeof triggerHapticSuccess === 'function') triggerHapticSuccess();
+                        addXP(15);
+                        playSuccessSound();
+                    } else {
+                        const score = Math.max(25, Math.floor(charRatio * 70));
+                        const userCurve = word.path.map((v, i) => Math.max(10, Math.min(95, v + (i % 2 === 0 ? 18 : -18))));
+                        drawTonePitchGuideline(word.path, userCurve);
+
+                        if (feedback) {
+                            feedback.className = 'speak-feedback-banner feedback-retry';
+                            feedback.innerHTML = `🔄 <strong>Biroz noaniq eshitildi (${score}%).</strong><br>Eshitildi: “${escapeHtml(heard || '...') || 'boshqa so‘z'}” (Kerakli so‘z: “${word.hanzi}”)<br>“🔊 Namuna” tugmasini eshitib, ohangni to‘g‘ri saqlab qaytadan ayting.`;
                         }
                     }
-                }, 80);
-            } catch (err) {
-                recordBtn.disabled = false;
-                recordBtn.textContent = '🎙️ Aytib tekshirish';
-                recordBtn.classList.remove('is-recording');
+                };
 
-                const simulatedCurve = word.path.map(v => v + (Math.random() * 8 - 4));
-                drawTonePitchGuideline(word.path, simulatedCurve);
-                if (feedback) {
-                    feedback.hidden = false;
-                    feedback.className = 'speak-feedback-banner feedback-correct';
-                    feedback.innerHTML = `👏 <strong>Yaxshi mashq!</strong> Namuna audio bilan solishtiring va ton balandligini saqlang.`;
-                }
+                rec.onerror = (event) => {
+                    const err = event && event.error;
+                    if (feedback) {
+                        feedback.className = 'speak-feedback-banner feedback-retry';
+                        if (err === 'no-speech') {
+                            feedback.innerHTML = `⚠️ <strong>Ovoz eshitilmadi.</strong> Mikrofonga yaqinroq va balandroq ovozda “${word.hanzi}” deb ayting.`;
+                        } else if (err === 'not-allowed') {
+                            feedback.innerHTML = `🚫 <strong>Mikrofon ruxsati berilmagan.</strong> Brauzer sozlamalaridan mikrofon ruxsatini yoqing.`;
+                        } else if (err === 'network') {
+                            feedback.innerHTML = `🌐 <strong>Internet aloqasi sust.</strong> Ovozni tekshirish uchun internet aloqasi kerak.`;
+                        } else {
+                            feedback.innerHTML = `⚠️ <strong>Ovoz aniqlanmadi.</strong> Iltimos qaytadan urinib ko‘ring.`;
+                        }
+                    }
+                };
+
+                rec.onend = () => {
+                    recordBtn.classList.remove('is-recording');
+                    recordBtn.innerHTML = '<span>🎙️ Aytib tekshirish</span>';
+                    recordBtn.disabled = false;
+                    activeSpeechRecognition = null;
+                };
+
+                rec.start();
+            } catch (err) {
+                recordBtn.classList.remove('is-recording');
+                recordBtn.innerHTML = '<span>🎙️ Aytib tekshirish</span>';
+                recordBtn.disabled = false;
+                activeSpeechRecognition = null;
             }
         };
     }
