@@ -4941,7 +4941,7 @@ function initToneLab(initialTab = 'chart') {
         Object.keys(panels).forEach(k => {
             if (panels[k]) panels[k].classList.toggle('active', k === tabKey);
         });
-        if (tabKey === 'mic') drawTonePitchGuideline([40, 20, 65]);
+        if (tabKey === 'mic') initToneMicPractice();
     }
 
     tabs.forEach(tab => {
@@ -5232,11 +5232,9 @@ function loadToneEarQuestion() {
     };
 
     const pyOptions = basePinyin[q.base] || ['1-ton', '2-ton', '3-ton', '4-ton'];
-    const toneChaoMarks = { 1: '55', 2: '35', 3: '214', 4: '51' };
-
     optBox.innerHTML = [1, 2, 3, 4].map((toneNum, idx) => `
         <button type="button" class="tone-opt-card" data-tone="${toneNum}">
-            <span class="toc-num">${toneNum}-ton &bull; ${toneChaoMarks[toneNum]}</span>
+            <span class="toc-num">${toneNum}-ton</span>
             <span class="toc-pinyin">${pyOptions[idx]}</span>
             <div class="toc-curve-svg">${getToneSvgMini(toneNum)}</div>
         </button>
@@ -5270,7 +5268,7 @@ function loadToneEarQuestion() {
                     if (scoreEl) scoreEl.textContent = toneQuizScore;
                     if (streakEl) streakEl.textContent = toneQuizStreak;
                     feedBox.className = 'tone-ear-feedback correct';
-                    feedBox.innerHTML = `🎉 <strong>Barakalla! To‘g‘ri topdingiz!</strong><br>Bu haqiqatan ham <strong>${q.tone}-ton (${toneChaoMarks[q.tone]})</strong>: <em>${q.py}</em> (${q.hz} — ${q.uz}).`;
+                    feedBox.innerHTML = `🎉 <strong>Barakalla! To‘g‘ri topdingiz!</strong><br>Bu haqiqatan ham <strong>${q.tone}-ton</strong>: <em>${q.py}</em> (${q.hz} — ${q.uz}).`;
                     playSuccessSound();
                 } else {
                     toneQuizStreak = 0;
@@ -5364,16 +5362,16 @@ function drawTonePitchGuideline(path, userPath = null) {
 }
 
 const MIC_PRACTICE_WORDS = [
-    { hanzi: '你好', pinyin: 'nǐ hǎo → ní hǎo', uzbek: 'Salom (3+3 qoidasi: 3-ton 2-tonga o‘zgaradi)', badge: '3-ton + 3-ton → 2-ton + 3-ton', toneNum: 2, speak: '你好', path: [40, 20, 65] },
-    { hanzi: '不是', pinyin: 'bù shì → bú shì', uzbek: 'Emas (4-ton oldida bù → bú)', badge: '不 + 4-ton → bú', toneNum: 2, speak: '不是', path: [50, 80] },
-    { hanzi: '妈妈', pinyin: 'māma', uzbek: 'Ona (1-ton + neytral)', badge: '1-ton + Neytral', toneNum: 1, speak: '妈妈', path: [80, 45] },
-    { hanzi: '中国', pinyin: 'Zhōngguó', uzbek: 'Xitoy (1-ton + 2-ton)', badge: '1-ton + 2-ton', toneNum: 1, speak: '中国', path: [80, 50, 80] },
-    { hanzi: '咖啡', pinyin: 'kāfēi', uzbek: 'Qahva (Ikkala so‘z ham 1-ton)', badge: '1-ton + 1-ton (Yuqori-tekis)', toneNum: 1, speak: '咖啡', path: [80, 80] },
-    { hanzi: '学习', pinyin: 'xuéxí', uzbek: 'O‘rganmoq / O‘qimoq', badge: '2-ton + 2-ton (Ko‘tariluvchi)', toneNum: 2, speak: '学习', path: [45, 80, 45, 80] },
-    { hanzi: '很好', pinyin: 'hěn hǎo → hén hǎo', uzbek: 'Juda yaxshi (3+3 qoidasi)', badge: '3-ton + 3-ton → 2-ton + 3-ton', toneNum: 2, speak: '很好', path: [40, 20, 70] },
-    { hanzi: '再见', pinyin: 'zàijiàn', uzbek: 'Xayr (Ikkala so‘z ham 4-ton: keskin tushuvchi)', badge: '4-ton + 4-ton (Keskin tushuvchi)', toneNum: 4, speak: '再见', path: [85, 25, 85, 25] },
-    { hanzi: '谢谢', pinyin: 'xièxie', uzbek: 'Rahmat (4-ton + neytral)', badge: '4-ton + Neytral', toneNum: 4, speak: '谢谢', path: [85, 30, 45] },
-    { hanzi: '北京', pinyin: 'Běijīng', uzbek: 'Pekin (3-ton + 1-ton)', badge: '3-ton + 1-ton', toneNum: 3, speak: '北京', path: [45, 20, 80] }
+    { hanzi: '你好', pinyin: 'nǐ hǎo → ní hǎo', uzbek: 'Salom (3+3 qoidasi: 3-ton 2-tonga o‘zgaradi)', badge: '3-ton + 3-ton → 2-ton + 3-ton', toneNum: 2, speak: '你好', sound: 'nihao', path: [40, 20, 65] },
+    { hanzi: '不是', pinyin: 'bù shì → bú shì', uzbek: 'Emas (4-ton oldida bù → bú)', badge: '不 + 4-ton → bú', toneNum: 2, speak: '不是', sound: 'bushi', path: [50, 80] },
+    { hanzi: '妈妈', pinyin: 'māma', uzbek: 'Ona (1-ton + neytral)', badge: '1-ton + Neytral', toneNum: 1, speak: '妈妈', sound: 'mama', path: [80, 45] },
+    { hanzi: '中国', pinyin: 'Zhōngguó', uzbek: 'Xitoy (1-ton + 2-ton)', badge: '1-ton + 2-ton', toneNum: 1, speak: '中国', sound: 'zhongguo', path: [80, 50, 80] },
+    { hanzi: '咖啡', pinyin: 'kāfēi', uzbek: 'Qahva (Ikkala so‘z ham 1-ton)', badge: '1-ton + 1-ton (Yuqori-tekis)', toneNum: 1, speak: '咖啡', sound: 'kafei', path: [80, 80] },
+    { hanzi: '学习', pinyin: 'xuéxí', uzbek: 'O‘rganmoq / O‘qimoq', badge: '2-ton + 2-ton (Ko‘tariluvchi)', toneNum: 2, speak: '学习', sound: 'xuexi', path: [45, 80, 45, 80] },
+    { hanzi: '很好', pinyin: 'hěn hǎo → hén hǎo', uzbek: 'Juda yaxshi (3+3 qoidasi)', badge: '3-ton + 3-ton → 2-ton + 3-ton', toneNum: 2, speak: '很好', sound: 'henhao', path: [40, 20, 70] },
+    { hanzi: '再见', pinyin: 'zàijiàn', uzbek: 'Xayr (Ikkala so‘z ham 4-ton: keskin tushuvchi)', badge: '4-ton + 4-ton (Keskin tushuvchi)', toneNum: 4, speak: '再见', sound: 'zaijian', path: [85, 25, 85, 25] },
+    { hanzi: '谢谢', pinyin: 'xièxie', uzbek: 'Rahmat (4-ton + neytral)', badge: '4-ton + Neytral', toneNum: 4, speak: '谢谢', sound: 'xiexie', path: [85, 30, 45] },
+    { hanzi: '北京', pinyin: 'Běijīng', uzbek: 'Pekin (3-ton + 1-ton)', badge: '3-ton + 1-ton', toneNum: 3, speak: '北京', sound: 'beijing', path: [45, 20, 80] }
 ];
 
 let micPracticeIndex = 0;
@@ -5402,13 +5400,13 @@ function initToneMicPractice() {
 
     if (listenBtn) {
         listenBtn.onclick = () => {
-            speakChineseText(word.speak, 0.9);
+            playNativeToneSound(word.sound, word.speak, 1.0);
         };
     }
 
     if (slowBtn) {
         slowBtn.onclick = () => {
-            speakChineseText(word.speak, 0.65);
+            playNativeToneSound(word.sound, word.speak, 0.65);
         };
     }
 
