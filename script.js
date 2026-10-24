@@ -1215,8 +1215,8 @@ const successModal = document.getElementById('successModal');
 const closeSuccessModal = document.getElementById('closeSuccessModal');
 const nextWordFromModal = document.getElementById('nextWordFromModal');
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize - Robust loader that triggers whether DOM is still loading or already parsed
+function initMainApp() {
     initializeTheme();
     applyHskLevelTheme(currentHSK);
     setupEventListeners();
@@ -1234,7 +1234,13 @@ document.addEventListener('DOMContentLoaded', () => {
             window.speechSynthesis.getVoices();
         };
     }
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMainApp);
+} else {
+    initMainApp();
+}
 
 // Theme toggle
 function initializeTheme() {
@@ -1840,7 +1846,7 @@ function displayLearningContent(lessonNumber, track) {
     `).join('');
 
     exampleSentencesContainer.querySelectorAll('.sentence-audio-btn').forEach(btn => {
-        btn.addEventListener('click', () => speakChineseText(btn.dataset.speak));
+        btn.addEventListener('click', () => playWordAudio(btn.dataset.speak));
     });
 
     // Display grammar note
@@ -2637,101 +2643,107 @@ function updateFlashcard() {
 }
 
 // Web Speech API for Chinese pronunciation
-function playPronunciation() {
-    if (currentWords.length === 0) return;
-    
-    const word = currentWords[flashcardIndex];
-    
-    if (!('speechSynthesis' in window)) {
-        console.error('Text-to-speech not supported in this browser.');
-        alert('Text-to-speech is not supported in your browser.');
-        return;
+// Universal Audio Player for HSK Words (Studio MP3 -> Youdao Native Speaker Stream -> SpeechSynthesis)
+let currentWordAudio = null;
+
+const WORD_STUDIO_MAP = {
+    '\u4F60': 'ni3',
+    '\u597D': 'hao3',
+    '\u4F60\u597D': 'nihao',
+    '\u518D\u89C1': 'zaijian',
+    '\u8C22\u8C22': 'xiexie',
+    '\u4E0D\u662F': 'bushi',
+    '\u5F88\u597D': 'henhao',
+    '\u5496\u5561': 'kafei',
+    '\u5317\u4EAC': 'beijing',
+    '\u4E2D\u56FD': 'zhongguo',
+    '\u5B66\u4E60': 'xuexi',
+    '\u5988\u5988': 'mama',
+    '\u6211': 'wo3',
+    '\u662F': 'shi4',
+    '\u770B': 'kan4',
+    '\u5403': 'chi1',
+    '\u53BB': 'qu4',
+    '\u6765': 'lai2',
+    '\u6709': 'you3',
+    '\u5927': 'da4',
+    '\u5C0F': 'xiao3',
+    '\u51B7': 'leng3',
+    '\u6C34': 'shui3',
+    '\u83DC': 'cai4',
+    '\u5728': 'zai4',
+    '\u4E09': 'san1',
+    '\u56DB': 'si4',
+    '\u516D': 'liu4',
+    '\u4E03': 'qi1',
+    '\u516B': 'ba1',
+    '\u4E70': 'mai3',
+    '\u559D': 'he1',
+    '\u4E66': 'shu1',
+    '\u98DE': 'fei1',
+    '\u4EEC': 'men2',
+    '\u7684': 'de5',
+    '\u4E86': 'le5'
+};
+
+function playWordAudio(wordOrText) {
+    if (!wordOrText) return null;
+    const hanzi = (typeof wordOrText === 'object') ? (wordOrText.hanzi || wordOrText.speak) : String(wordOrText);
+    if (!hanzi) return null;
+
+    const clean = hanzi.trim();
+
+    // 1. Try local studio MP3 recording first (if available in assets/audio/tones/)
+    const localSoundKey = (typeof wordOrText === 'object' && wordOrText.sound) || WORD_STUDIO_MAP[clean];
+    if (localSoundKey && typeof playNativeToneSound === 'function') {
+        const audio = playNativeToneSound(localSoundKey, clean, 0.95);
+        if (audio) return audio;
     }
-    
-    // Cancel any ongoing speech immediately
-    window.speechSynthesis.cancel();
-    
-    // For iOS/Android mobile compatibility - resume if paused
-    if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-    }
-    
+
+    // 2. Try native human speaker voice stream from Youdao CDN
     try {
-        const utterance = new SpeechSynthesisUtterance(word.hanzi);
-        utterance.lang = 'zh-CN';
-        utterance.rate = getSpeechRate();
-        utterance.pitch = 1;
-        utterance.volume = 1;
-        
-        // Get available voices immediately
-        const voices = window.speechSynthesis.getVoices();
-        
-        // Try to find Chinese voice with fallback hierarchy
-        let chineseVoice = voices.find(voice => voice.lang === 'zh-CN');
-        if (!chineseVoice) {
-            chineseVoice = voices.find(voice => voice.lang === 'zh-TW');
+        if (currentWordAudio) {
+            currentWordAudio.pause();
+            currentWordAudio.currentTime = 0;
+            currentWordAudio = null;
         }
-        if (!chineseVoice) {
-            chineseVoice = voices.find(voice => voice.lang.startsWith('zh'));
+        const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(clean)}&type=1`;
+        const audio = new Audio(audioUrl);
+        currentWordAudio = audio;
+        audio.playbackRate = (typeof getSpeechRate === 'function') ? getSpeechRate() : 0.95;
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                // 3. Fallback to browser SpeechSynthesis if online CDN fails or offline
+                speakChineseText(clean, 0.95);
+            });
         }
-        if (!chineseVoice) {
-            // Fallback: try any Asian language voice
-            chineseVoice = voices.find(voice => 
-                voice.lang.startsWith('ja') || voice.lang.startsWith('ko')
-            );
-        }
-        
-        // Set voice if found
-        if (chineseVoice) {
-            utterance.voice = chineseVoice;
-            utterance.lang = chineseVoice.lang; // Use the voice's actual language
-            console.log('Using voice:', chineseVoice.name, chineseVoice.lang);
-        } else {
-            console.warn('No Chinese voice available, using default with zh-CN lang');
-            // Show user-friendly message on mobile
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if (isMobile) {
-                console.warn('Chinese voice pack may not be installed on this device');
-            }
-        }
-        
-        // Handle errors with user feedback
-        utterance.onerror = (event) => {
-            console.error('Speech synthesis error:', event.error);
-            if (event.error !== 'canceled' && event.error !== 'interrupted') {
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                if (isMobile) {
-                    console.warn('Audio playback failed. Chinese voice pack may not be installed.');
-                }
-            }
-        };
-        
-        utterance.onend = () => {
-            console.log('Speech synthesis completed');
-            if (window.speechSynthesis.paused) {
-                window.speechSynthesis.resume();
-            }
-        };
-        
-        // Speak immediately (no delay for mobile compatibility)
-        window.speechSynthesis.speak(utterance);
-        
-        // iOS-specific workaround to keep speech synthesis alive
-        const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (iOS) {
-            const interval = setInterval(() => {
-                if (!window.speechSynthesis.speaking) {
-                    clearInterval(interval);
-                } else {
-                    window.speechSynthesis.pause();
-                    window.speechSynthesis.resume();
-                }
-            }, 10000);
-        }
-    } catch (error) {
-        console.error('Error in speech synthesis:', error);
-        alert('Unable to play audio. Please check your device settings.');
+        return audio;
+    } catch (e) {
+        // 3. Fallback to SpeechSynthesis
+        speakChineseText(clean, 0.95);
     }
+}
+
+function playPronunciation() {
+    if (!currentWords || currentWords.length === 0) return;
+    const idx = (typeof flashcardIndex === 'number' && flashcardIndex >= 0 && flashcardIndex < currentWords.length) ? flashcardIndex : 0;
+    const word = currentWords[idx];
+    if (!word) return;
+
+    // Visual pulse feedback on audio buttons
+    const aBtn = document.getElementById('audioBtn');
+    const faBtn = document.getElementById('flashcardAudioBtn');
+    if (aBtn) {
+        aBtn.classList.add('playing');
+        setTimeout(() => aBtn.classList.remove('playing'), 650);
+    }
+    if (faBtn) {
+        faBtn.classList.add('playing');
+        setTimeout(() => faBtn.classList.remove('playing'), 650);
+    }
+
+    playWordAudio(word);
 }
 
 // HanziWriter stroke order animation
@@ -3422,7 +3434,7 @@ function renderLessonVocabPreview() {
         </div>
     `).join('');
     container.querySelectorAll('.vocab-preview-audio').forEach(btn => {
-        btn.addEventListener('click', () => speakChineseText(btn.dataset.speak));
+        btn.addEventListener('click', () => playWordAudio(btn.dataset.speak));
     });
 }
 
@@ -4756,7 +4768,7 @@ function showLessonAiModal(word) {
     `;
 
     const speakBtn = document.getElementById('laiModalSpeakBtn');
-    if (speakBtn) speakBtn.onclick = () => speakChineseText(word.hanzi);
+    if (speakBtn) speakBtn.onclick = () => playWordAudio(word);
 
     function hideModal() {
         modal.classList.remove('active');
@@ -4775,7 +4787,7 @@ function showLessonAiModal(word) {
 }
 
 // Attach event listeners for Practice Hub & In-lesson AI
-document.addEventListener('DOMContentLoaded', () => {
+function initPracticeHubListeners() {
     const hubPinyin = document.getElementById('hubOpenPinyinChartBtn');
     if (hubPinyin) hubPinyin.addEventListener('click', () => showPinyinChartView('initials'));
 
@@ -4828,7 +4840,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPracticeHubListeners);
+} else {
+    initPracticeHubListeners();
+}
 
 // ------------------------------------------------------------------------------
 // ==============================================================================

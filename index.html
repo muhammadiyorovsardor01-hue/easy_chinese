@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <!-- Security: Content Security Policy — only trusted sources may load scripts/connect -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.gstatic.com https://apis.google.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob:; connect-src 'self' https://cdn.jsdelivr.net https://translate.googleapis.com https://api.mymemory.translated.net https://*.googleapis.com https://www.gstatic.com https://*.firebaseio.com wss://*.firebaseio.com https://easy-chinese-2e2d6.firebaseapp.com; frame-src https://easy-chinese-2e2d6.firebaseapp.com https://accounts.google.com https://apis.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.gstatic.com https://apis.google.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https://dict.youdao.com; connect-src 'self' https://dict.youdao.com https://cdn.jsdelivr.net https://translate.googleapis.com https://api.mymemory.translated.net https://*.googleapis.com https://www.gstatic.com https://*.firebaseio.com wss://*.firebaseio.com https://easy-chinese-2e2d6.firebaseapp.com; frame-src https://easy-chinese-2e2d6.firebaseapp.com https://accounts.google.com https://apis.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <meta name="description" content="Learn Chinese HSK vocabulary with flashcards, quizzes, and stroke order animations">
@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=36">
+    <link rel="stylesheet" href="styles.css?v=37">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -1624,7 +1624,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=36"></script>
+    <script src="script.js?v=37"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1633,6 +1633,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=36"></script>
+    <script src="pwa.js?v=37"></script>
 </body>
 </html>
