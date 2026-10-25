@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=37">
+    <link rel="stylesheet" href="styles.css?v=38">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -79,15 +79,15 @@
                     <div class="hsk-number">1</div>
                     <div class="hsk-card-body">
                         <div class="hsk-card-top">
-                            <span class="hsk-label">HSK 1 · Foundations</span>
-                            <span class="hsk-level-badge">150 words</span>
+                            <span class="hsk-label" data-i18n="hsk.1_label">HSK 1 · Foundations</span>
+                            <span class="hsk-level-badge" data-i18n="hsk.1_words">150 words</span>
                         </div>
-                        <span class="hsk-subtitle">Classic HSK & New HSK 3.0 · 15 lessons</span>
+                        <span class="hsk-subtitle" data-i18n="hsk.1_sub">Classic HSK & New HSK 3.0 · 15 lessons</span>
                         <div class="hsk-mini-progress" aria-hidden="true">
                             <div class="hsk-mini-fill" id="dashboardHsk1Fill" style="width: 0%"></div>
                         </div>
                     </div>
-                    <span class="hsk-cta">Start →</span>
+                    <span class="hsk-cta" data-i18n="hsk.start">Start →</span>
                 </button>
                 <button class="hsk-btn" data-hsk="2">
                     <div class="hsk-card-top">
@@ -95,10 +95,10 @@
                         <span class="hsk-level-badge">&#x4E8C;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label">HSK 2 &middot; Elementary</span>
-                        <span class="hsk-subtitle">New HSK 3.0 &middot; 15 lessons</span>
+                        <span class="hsk-label" data-i18n="hsk.2_label">HSK 2 &middot; Elementary</span>
+                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 &middot; 15 lessons</span>
                     </div>
-                    <span class="hsk-cta">Continue &rarr;</span>
+                    <span class="hsk-cta" data-i18n="hsk.continue">Continue &rarr;</span>
                 </button>
                 <button class="hsk-btn" data-hsk="3">
                     <div class="hsk-card-top">
@@ -106,10 +106,10 @@
                         <span class="hsk-level-badge">&#x4E09;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label">HSK 3 &middot; Intermediate</span>
-                        <span class="hsk-subtitle">New HSK 3.0 &middot; 15 lessons</span>
+                        <span class="hsk-label" data-i18n="hsk.3_label">HSK 3 &middot; Intermediate</span>
+                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 &middot; 15 lessons</span>
                     </div>
-                    <span class="hsk-cta">Continue &rarr;</span>
+                    <span class="hsk-cta" data-i18n="hsk.continue">Continue &rarr;</span>
                 </button>
                 <button class="hsk-btn" data-hsk="4">
                     <div class="hsk-card-top">
@@ -117,10 +117,10 @@
                         <span class="hsk-level-badge">&#x56DB;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label">HSK 4 &middot; Upper-Inter</span>
-                        <span class="hsk-subtitle">New HSK 3.0 &middot; 15 lessons</span>
+                        <span class="hsk-label" data-i18n="hsk.4_label">HSK 4 &middot; Upper-Inter</span>
+                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 &middot; 15 lessons</span>
                     </div>
-                    <span class="hsk-cta">Continue &rarr;</span>
+                    <span class="hsk-cta" data-i18n="hsk.continue">Continue &rarr;</span>
                 </button>
                 <button class="hsk-btn" data-hsk="5">
                     <div class="hsk-card-top">
@@ -128,10 +128,10 @@
                         <span class="hsk-level-badge">&#x4E94;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label">HSK 5 &middot; Advanced</span>
-                        <span class="hsk-subtitle">New HSK 3.0 &middot; 15 lessons</span>
+                        <span class="hsk-label" data-i18n="hsk.5_label">HSK 5 &middot; Advanced</span>
+                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 &middot; 15 lessons</span>
                     </div>
-                    <span class="hsk-cta">Continue &rarr;</span>
+                    <span class="hsk-cta" data-i18n="hsk.continue">Continue &rarr;</span>
                 </button>
             </div>
 
@@ -140,16 +140,16 @@
                 <button class="smart-bento-card smart-mistakes-card" id="dashboardMistakesBtn" type="button">
                     <span class="smart-bento-icon" aria-hidden="true">&#x1F9E0;</span>
                     <span class="smart-bento-copy">
-                        <strong>Xatolar ustida ishlash</strong>
-                        <small id="dashboardMistakesSub">Xato qilingan so&#x2018;zlarni takrorlash</small>
+                        <strong data-i18n="dash.mistakesTitle">Xatolar ustida ishlash</strong>
+                        <small id="dashboardMistakesSub" data-i18n="dash.mistakesSub">Xato qilingan so&#x2018;zlarni takrorlash</small>
                     </span>
                     <span class="smart-bento-badge" id="dashboardMistakesCount">0</span>
                 </button>
                 <button class="smart-bento-card smart-bookmarks-card" id="dashboardBookmarksBtn" type="button">
                     <span class="smart-bento-icon" aria-hidden="true">&#x2B50;</span>
                     <span class="smart-bento-copy">
-                        <strong>Saqlangan so&#x2018;zlar</strong>
-                        <small id="dashboardBookmarksSub">Sevimli so&#x2018;zlar to&#x2018;plami</small>
+                        <strong data-i18n="dash.bookmarksTitle">Saqlangan so&#x2018;zlar</strong>
+                        <small id="dashboardBookmarksSub" data-i18n="dash.bookmarksSub">Sevimli so&#x2018;zlar to&#x2018;plami</small>
                     </span>
                     <span class="smart-bento-badge" id="dashboardBookmarksCount">0</span>
                 </button>
@@ -161,7 +161,7 @@
                     <strong id="dashboardContinueTitle">HSK 1 · Lesson 1 dan boshlash</strong>
                     <small id="dashboardContinueSub">Classic HSK 1 · 15 ta dars</small>
                 </span>
-                <span class="continue-cta-pill">Kirish →</span>
+                <span class="continue-cta-pill" data-i18n="dash.enterLesson">Kirish →</span>
             </button>
         </section>
 
@@ -184,7 +184,7 @@
 
             <div class="lessons-level-banner">
                 <div class="lessons-banner-top">
-                    <button class="back-btn" id="backToDashboard">← Darajalar</button>
+                    <button class="back-btn" id="backToDashboard" data-i18n="dash.backToLevels">← Darajalar</button>
                     <span class="lessons-cn-badge" id="lessonsCnBadge">一级 · 150 words</span>
                 </div>
                 <div class="lessons-banner-main">
@@ -196,14 +196,14 @@
                 </div>
                 <!-- HSK 1 lesson versions (JS toggles .active only â€” keep both track buttons) -->
                 <div class="hsk-filters" aria-label="HSK 1 lesson version">
-                    <button class="hsk-filter-btn active" data-track="classic" type="button">Classic HSK 1 &middot; 15 lessons</button>
-                    <button class="hsk-filter-btn" data-track="new" type="button">New HSK 3.0 &middot; 15 lessons</button>
+                    <button class="hsk-filter-btn active" data-track="classic" type="button" data-i18n="lesson.trackClassic">Classic HSK 1 &middot; 15 lessons</button>
+                    <button class="hsk-filter-btn" data-track="new" type="button" data-i18n="lesson.trackNew">New HSK 3.0 &middot; 15 lessons</button>
                 </div>
             </div>
 
             <!-- Search Bar -->
             <div class="search-container">
-                <input type="text" class="search-input" id="searchInput" placeholder="Search by Uzbek, Pinyin, or Hanzi...">
+                <input type="text" class="search-input" id="searchInput" data-i18n-ph="lesson.searchPlaceholder" placeholder="Search by Uzbek, Pinyin, or Hanzi...">
                 <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
             </div>
 
@@ -220,9 +220,9 @@
         <!-- Lesson View -->
         <section id="lesson" class="view">
             <div class="lesson-top-bar">
-                <button class="back-btn" id="backToLessons">&larr; Darslar</button>
+                <button class="back-btn" id="backToLessons" data-i18n="lesson.backToLessons">&larr; Darslar</button>
                 <h2 class="section-title" id="lessonTitle">Lesson 1</h2>
-                <button type="button" class="lesson-ai-ask-btn" id="askAiFromLessonBtn" title="Shu so'zni AI Laoshi'dan so'rash">&#x1F916; AI Tahlil</button>
+                <button type="button" class="lesson-ai-ask-btn" id="askAiFromLessonBtn" title="Shu so'zni AI Laoshi'dan so'rash" data-i18n="lesson.aiAskBtn">&#x1F916; AI Tahlil</button>
             </div>
 
             <section class="lesson-flow-panel" aria-label="Lesson progress">
@@ -232,15 +232,15 @@
                 </div>
                 <div class="lesson-flow-action">
                     <p id="lessonFlowStatus" aria-live="polite"></p>
-                    <button class="lesson-flow-continue" id="lessonFlowContinue" type="button">Continue</button>
+                    <button class="lesson-flow-continue" id="lessonFlowContinue" type="button" data-i18n="lesson.continue">Continue</button>
                 </div>
             </section>
 
             <div class="mode-tabs" aria-hidden="true">
-                <button class="tab-btn" id="learningContentTab" data-mode="learning">Learning</button>
-                <button class="tab-btn active" data-mode="flashcard">Flashcards</button>
-                <button class="tab-btn" data-mode="quiz">Quiz</button>
-                <button class="tab-btn" id="writingTab" data-mode="writing">Writing</button>
+                <button class="tab-btn" id="learningContentTab" data-mode="learning" data-i18n="lesson.tabLearning">Learning</button>
+                <button class="tab-btn active" data-mode="flashcard" data-i18n="lesson.tabFlashcard">Flashcards</button>
+                <button class="tab-btn" data-mode="quiz" data-i18n="lesson.tabQuiz">Quiz</button>
+                <button class="tab-btn" id="writingTab" data-mode="writing" data-i18n="lesson.tabWriting">Writing</button>
             </div>
 
             <!-- Stage 2: Flashcard Mode -->
@@ -252,7 +252,7 @@
                                 <div class="hanzi" id="flashcardHanzi">你好</div>
                                 <button class="word-audio-btn" id="flashcardAudioBtn" type="button" aria-label="Pronounce word">🔊</button>
                             </div>
-                            <div class="tap-hint">Tap to flip</div>
+                            <div class="tap-hint" data-i18n="card.tapHint">Tap to flip</div>
                         </div>
                         <div class="flashcard-back">
                             <div class="pinyin" id="flashcardPinyin">nǐ hǎo</div>
@@ -268,34 +268,34 @@
                 <div class="action-buttons">
                     <button class="action-btn audio-action-btn" id="audioBtn" aria-label="Play pronunciation">
                         <span class="btn-icon">&#x1F50A;</span>
-                        <span class="btn-label">Audio</span>
+                        <span class="btn-label" data-i18n="card.audio">Audio</span>
                     </button>
                     <button class="action-btn speak-action-btn" id="speakPracticeBtn" type="button" aria-label="Pronunciation check">
                         <span class="btn-icon">&#x1F399;&#xFE0F;</span>
-                        <span class="btn-label" id="speakPracticeLabel">Talaffuz</span>
+                        <span class="btn-label" id="speakPracticeLabel" data-i18n="card.speak">Talaffuz</span>
                     </button>
                     <button class="action-btn draw-action-btn" id="strokeBtn" aria-label="Show stroke order">
                         <span class="btn-icon">&#x270F;&#xFE0F;</span>
-                        <span class="btn-label">Draw</span>
+                        <span class="btn-label" data-i18n="card.draw">Draw</span>
                     </button>
                     <button class="action-btn next-action-btn" id="nextCard" aria-label="Next card">
                         <span class="btn-icon">&#x27A1;&#xFE0F;</span>
-                        <span class="btn-label" id="nextCardLabel">Next</span>
+                        <span class="btn-label" id="nextCardLabel" data-i18n="card.next">Next</span>
                     </button>
                 </div>
                 <div id="speakFeedbackBanner" class="speak-feedback-banner" hidden aria-live="polite"></div>
                 
                 <!-- Secondary Controls -->
                 <div class="secondary-controls">
-                    <button class="secondary-btn" id="prevCard">&larr; Prev</button>
-                    <button class="secondary-btn" id="shuffleCards">&#x1F500; Shuffle</button>
-                    <button class="secondary-btn" id="bookmarkWordBtn" type="button">&#x2B50; Saqlash</button>
-                    <button class="secondary-btn" id="markLearned">&#x2713; Learned</button>
+                    <button class="secondary-btn" id="prevCard" data-i18n="card.prev">&larr; Prev</button>
+                    <button class="secondary-btn" id="shuffleCards" data-i18n="card.shuffle">&#x1F500; Shuffle</button>
+                    <button class="secondary-btn" id="bookmarkWordBtn" type="button" data-i18n="card.bookmark">&#x2B50; Saqlash</button>
+                    <button class="secondary-btn" id="markLearned" data-i18n="card.learned">&#x2713; Learned</button>
                 </div>
                 
                 <div class="card-counter">
                     <span id="currentCard">1</span> / <span id="totalCards">5</span>
-                    <span class="learned-counter">Learned: <span id="learnedCount">0</span></span>
+                    <span class="learned-counter"><span data-i18n="card.learnedLabel">Learned</span>: <span id="learnedCount">0</span></span>
                     <span class="word-progress" id="wordProgress" aria-live="polite">Word 1 of 5</span>
                 </div>
             </div>
@@ -304,27 +304,27 @@
             <div id="quizMode" class="mode-content">
                 <div class="quiz-header">
                     <div class="score-tracker">
-                        Score: <span id="quizScore">0</span>
+                        <span data-i18n="quiz.scoreLabel">Score</span>: <span id="quizScore">0</span>
                     </div>
                     <div class="quiz-type-selector" role="group" aria-label="Quiz type">
-                        <button class="quiz-type-btn active" data-quiz-type="meaning" type="button">Hanzi &rarr; Ma&rsquo;no</button>
-                        <button class="quiz-type-btn" data-quiz-type="pinyin" type="button">Ma&rsquo;no &rarr; Pinyin</button>
-                        <button class="quiz-type-btn" data-quiz-type="hanzi" type="button">Pinyin &rarr; Hanzi</button>
-                        <button class="quiz-type-btn" data-quiz-type="audio" type="button">&#x1F3A7; Eshitib topish</button>
+                        <button class="quiz-type-btn active" data-quiz-type="meaning" type="button" data-i18n="quiz.typeMeaning">Hanzi &rarr; Ma&rsquo;no</button>
+                        <button class="quiz-type-btn" data-quiz-type="pinyin" type="button" data-i18n="quiz.typePinyin">Ma&rsquo;no &rarr; Pinyin</button>
+                        <button class="quiz-type-btn" data-quiz-type="hanzi" type="button" data-i18n="quiz.typeHanzi">Pinyin &rarr; Hanzi</button>
+                        <button class="quiz-type-btn" data-quiz-type="audio" type="button" data-i18n="quiz.typeAudio">&#x1F3A7; Eshitib topish</button>
                     </div>
                 </div>
                 <div class="quiz-container">
                     <div class="quiz-question">
                         <div class="quiz-hanzi" id="quizHanzi">你好</div>
-                        <p class="quiz-prompt" id="quizPrompt">What does this mean?</p>
+                        <p class="quiz-prompt" id="quizPrompt" data-i18n="quiz.promptMeaning">What does this mean?</p>
                     </div>
                     <div class="quiz-options" id="quizOptions"></div>
                 </div>
                 <div class="quiz-controls">
-                    <button class="control-btn" id="nextQuizQuestion">Next Question</button>
+                    <button class="control-btn" id="nextQuizQuestion" data-i18n="quiz.nextQuestion">Next Question</button>
                 </div>
                 <div class="quiz-counter">
-                    Question: <span id="currentQuestion">1</span> / <span id="totalQuestions">5</span>
+                    <span data-i18n="quiz.questionLabel">Question</span>: <span id="currentQuestion">1</span> / <span id="totalQuestions">5</span>
                 </div>
             </div>
 
@@ -1302,16 +1302,16 @@
     <div class="modal" id="successModal">
         <div class="modal-content success-modal">
             <div class="modal-header">
-                <h3>Correct! 🎉</h3>
+                <h3 data-i18n="modal.correctTitle">Correct! 🎉</h3>
                 <button class="modal-close" id="closeSuccessModal">✕</button>
             </div>
             <div class="modal-body">
                 <div class="success-animation">🎊</div>
-                <p class="success-message">Great job! You completed the character.</p>
-                <p class="xp-earned">+10 XP earned!</p>
+                <p class="success-message" data-i18n="modal.successMessage">Great job! You completed the character.</p>
+                <p class="xp-earned" data-i18n="modal.xpEarned">+10 XP earned!</p>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn save-btn" id="nextWordFromModal">Next Word</button>
+                <button class="modal-btn save-btn" id="nextWordFromModal" data-i18n="modal.nextWord">Next Word</button>
             </div>
         </div>
     </div>
@@ -1320,7 +1320,7 @@
     <div class="modal" id="editProfileModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Edit Profile</h3>
+                <h3 data-i18n="modal.editProfile">Edit Profile</h3>
                 <button class="modal-close" id="closeModalBtn">✕</button>
             </div>
             <div class="modal-body">
@@ -1360,8 +1360,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn cancel-btn" id="cancelModalBtn">Cancel</button>
-                <button class="modal-btn save-btn" id="saveProfileBtn">Save Changes</button>
+                <button class="modal-btn cancel-btn" id="cancelModalBtn" data-i18n="modal.cancel">Cancel</button>
+                <button class="modal-btn save-btn" id="saveProfileBtn" data-i18n="modal.save">Save Changes</button>
             </div>
         </div>
     </div>
@@ -1586,9 +1586,9 @@
 
     <div id="leaderboardModal" class="modal hidden">
         <div class="modal-content">
-            <h2>🏆 Leaderboard</h2>
+            <h2 data-i18n="modal.leaderboard">🏆 Leaderboard</h2>
             <div id="leaderboardList"></div>
-            <button id="closeLeaderboard">Close</button>
+            <button id="closeLeaderboard" data-i18n="modal.close">Close</button>
         </div>
     </div>
 
@@ -1624,7 +1624,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=37"></script>
+    <script src="script.js?v=38"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1633,6 +1633,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=37"></script>
+    <script src="pwa.js?v=38"></script>
 </body>
 </html>

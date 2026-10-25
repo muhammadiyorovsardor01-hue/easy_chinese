@@ -109,7 +109,7 @@
         window.location.reload();
       });
 
-      navigator.serviceWorker.register('./sw.js?v=37', { updateViaCache: 'none' }).then((reg) => {
+      navigator.serviceWorker.register('./sw.js?v=38', { updateViaCache: 'none' }).then((reg) => {
         if (reg.waiting) {
           reg.waiting.postMessage({ type: 'SKIP_WAITING' });
         }

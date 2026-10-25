@@ -1220,6 +1220,7 @@ function initMainApp() {
     initializeTheme();
     applyHskLevelTheme(currentHSK);
     setupEventListeners();
+    if (typeof applyAppLanguage === 'function') applyAppLanguage();
     updateStreak();
     updateTotalLearned();
     updateXP();
@@ -1305,8 +1306,8 @@ function updateDashboardBentoUI() {
     const nextLesson = lessonNums.find(num => !isLessonComplete(num, 'classic')) || lessonNums[0] || 1;
     const completedCount = lessonNums.filter(num => isLessonComplete(num, 'classic')).length;
     const levelTrackText = currentHSK >= 2 ? `New HSK 3.0 · HSK ${currentHSK}` : `Classic HSK 1`;
-    if (contTitle) contTitle.textContent = `HSK ${currentHSK} · Lesson ${nextLesson} dan davom etish`;
-    if (contSub) contSub.textContent = `${levelTrackText} · ${completedCount} / ${lessonNums.length || 15} dars tugallangan`;
+    if (contTitle) contTitle.textContent = t('dash.continueTitle', { hsk: currentHSK, lesson: nextLesson });
+    if (contSub) contSub.textContent = t('dash.continueSub', { track: levelTrackText, completed: completedCount, total: lessonNums.length || 15 });
 
     const validMistakes = mistakeWords.filter(id => vocabularyData.some(w => w.id === id));
     const validBookmarks = bookmarkedWords.filter(id => vocabularyData.some(w => w.id === id));
@@ -1317,14 +1318,14 @@ function updateDashboardBentoUI() {
     if (mistakesCountEl) mistakesCountEl.textContent = String(validMistakes.length);
     if (mistakesSubEl) {
         mistakesSubEl.textContent = validMistakes.length > 0
-            ? `${validMistakes.length} ta xato so‘zni takrorlash`
-            : 'Quizda xato qilingan so‘zlar shu yerga tushadi';
+            ? t('dash.mistakesActive', { count: validMistakes.length })
+            : t('dash.mistakesEmpty');
     }
     if (bookmarksCountEl) bookmarksCountEl.textContent = String(validBookmarks.length);
     if (bookmarksSubEl) {
         bookmarksSubEl.textContent = validBookmarks.length > 0
-            ? `${validBookmarks.length} ta saqlangan so‘zni mashq qilish`
-            : 'Kartochkada ⭐ Saqlash tugmasini bosing';
+            ? t('dash.bookmarksActive', { count: validBookmarks.length })
+            : t('dash.bookmarksEmpty');
     }
 }
 
@@ -2269,7 +2270,7 @@ function updateLessonsHeader() {
     const lessonNums = [...new Set(trackLessons.map(word => word.lesson))].sort((a, b) => a - b);
     const completed = lessonNums.filter(num => isLessonComplete(num, selectedTrack.dataTrack)).length;
     if (kicker) kicker.textContent = `HSK ${currentHSK} · ${trackLabel}`;
-    if (progress) progress.textContent = `${completed} of ${lessonNums.length} lessons complete`;
+    if (progress) progress.textContent = t('lesson.lessonsCompleted', { completed: completed, total: lessonNums.length });
 }
 
 function loadLessonFlowProgress() {
@@ -2346,11 +2347,11 @@ function updateLessonFlowUI() {
     const viewedFlashcardIds = new Set(progress.flashcardWordIds.filter(id => lessonWordIds.includes(id)));
 
     const shortLabels = {
-        learning: 'Learn',
-        flashcards: 'Cards',
-        quiz: 'Quiz',
-        writing: 'Write',
-        complete: 'Done'
+        learning: t('lesson.stepLearning'),
+        flashcards: t('lesson.stepCards'),
+        quiz: t('lesson.stepQuiz'),
+        writing: t('lesson.stepWriting'),
+        complete: t('lesson.stepDone')
     };
 
     lessonFlowStepsElement.innerHTML = lessonFlowSteps.map((step, index) => {
@@ -2372,24 +2373,24 @@ function updateLessonFlowUI() {
     }
 
     if (activeStep === 'complete' || progress.completed) {
-        lessonFlowStatus.textContent = '🎉 5/5 · Dars yakunlandi! Keyingi dars ochildi.';
-        lessonFlowContinue.textContent = 'Complete';
+        lessonFlowStatus.textContent = t('lesson.flowStatusComplete');
+        lessonFlowContinue.textContent = t('lesson.flowBtnComplete');
         lessonFlowContinue.disabled = true;
     } else if (activeStep === 'learning') {
-        lessonFlowStatus.textContent = `1/5 · So‘zlar va misollar bilan tanishing (${currentWords.length} ta so‘z)`;
-        lessonFlowContinue.textContent = 'Flashcards →';
+        lessonFlowStatus.textContent = t('lesson.flowStatusLearning', { count: currentWords.length });
+        lessonFlowContinue.textContent = t('lesson.flowBtnToCards');
         lessonFlowContinue.disabled = false;
     } else if (activeStep === 'flashcards') {
-        lessonFlowStatus.textContent = `2/5 · Kartochka ${flashcardIndex + 1} / ${currentWords.length} (oxirgisidan so‘ng avtomatik Quiz)`;
-        lessonFlowContinue.textContent = 'Quiz →';
+        lessonFlowStatus.textContent = t('lesson.flowStatusCards', { current: flashcardIndex + 1, total: currentWords.length });
+        lessonFlowContinue.textContent = t('lesson.flowBtnToQuiz');
         lessonFlowContinue.disabled = false;
     } else if (activeStep === 'quiz') {
-        lessonFlowStatus.textContent = `3/5 · Quiz: ${quizIndex + 1} / ${currentWords.length} savol (javobdan so‘ng avtomatik o‘tadi)`;
-        lessonFlowContinue.textContent = 'Writing →';
+        lessonFlowStatus.textContent = t('lesson.flowStatusQuiz', { current: quizIndex + 1, total: currentWords.length });
+        lessonFlowContinue.textContent = t('lesson.flowBtnToWriting');
         lessonFlowContinue.disabled = false;
     } else if (activeStep === 'writing') {
-        lessonFlowStatus.textContent = `4/5 · Yozish: ${progress.writingWordIds.length} / ${lessonWordIds.length} so‘z (tugagach avtomatik yakunlanadi)`;
-        lessonFlowContinue.textContent = 'Finish →';
+        lessonFlowStatus.textContent = t('lesson.flowStatusWriting', { current: progress.writingWordIds.length, total: lessonWordIds.length });
+        lessonFlowContinue.textContent = t('lesson.flowBtnFinish');
         lessonFlowContinue.disabled = false;
     }
 }
@@ -2586,11 +2587,11 @@ function generateLessonsGrid() {
         }
         const lessonLabel = document.createElement('span');
         lessonLabel.className = 'lesson-btn-title';
-        lessonLabel.textContent = `Lesson ${lessonNum}`;
+        lessonLabel.textContent = t('lesson.lessonNum', { num: lessonNum });
         const wordCountLabel = document.createElement('span');
         wordCountLabel.className = 'lesson-word-count';
         const sampleHanzi = lessonWords.slice(0, 2).map(w => w.hanzi).join(' · ');
-        wordCountLabel.textContent = sampleHanzi ? `${wordCount} so‘z · ${sampleHanzi}` : `${wordCount} words`;
+        wordCountLabel.textContent = sampleHanzi ? `${t('lesson.wordsCount', { count: wordCount })} · ${sampleHanzi}` : t('lesson.wordsCount', { count: wordCount });
         lessonBtn.appendChild(lessonLabel);
         lessonBtn.appendChild(wordCountLabel);
         lessonBtn.addEventListener('click', () => showLessonView(lessonNum));
@@ -2616,7 +2617,7 @@ function updateFlashcard() {
     totalCards.textContent = currentWords.length;
     const wordProgressEl = document.getElementById('wordProgress');
     if (wordProgressEl) {
-        wordProgressEl.textContent = `Word ${flashcardIndex + 1} of ${currentWords.length}`;
+        wordProgressEl.textContent = t('card.wordProgress', { current: flashcardIndex + 1, total: currentWords.length });
     }
     
     // Reset flip state
@@ -2638,7 +2639,7 @@ function updateFlashcard() {
 
     const nextCardLabel = document.getElementById('nextCardLabel');
     if (nextCardLabel) {
-        nextCardLabel.textContent = (flashcardIndex >= currentWords.length - 1) ? 'Quiz →' : 'Next';
+        nextCardLabel.textContent = (flashcardIndex >= currentWords.length - 1) ? t('card.toQuiz') : t('card.next');
     }
 }
 
@@ -2823,10 +2824,10 @@ function updateLearnedButton() {
     
     if (learnedWords.includes(wordId)) {
         markLearned.classList.add('learned');
-        markLearned.textContent = '✓ Learned';
+        markLearned.textContent = t('card.learned');
     } else {
         markLearned.classList.remove('learned');
-        markLearned.textContent = '✓ Learned';
+        markLearned.textContent = t('card.markLearned');
     }
 }
 
@@ -2853,7 +2854,7 @@ function updateBookmarkButton() {
     const word = currentWords[flashcardIndex];
     const isSaved = word && bookmarkedWords.includes(word.id);
     btn.classList.toggle('bookmarked', Boolean(isSaved));
-    btn.textContent = isSaved ? '⭐ Saqlangan' : '☆ Saqlash';
+    btn.textContent = isSaved ? t('card.bookmarked') : t('card.bookmark');
 }
 
 function recordMistakeWord(wordId) {
@@ -3261,8 +3262,8 @@ function updateQuiz() {
     
     const word = currentWords[quizIndex];
     if (quizType === 'audio') {
-        quizHanzi.innerHTML = `<button type="button" class="quiz-audio-hero-btn" id="quizAudioReplayBtn">🔊<span>Qayta eshitish</span></button>`;
-        quizPrompt.textContent = 'So‘zni eshiting va to‘g‘ri ma’noni tanlang:';
+        quizHanzi.innerHTML = `<button type="button" class="quiz-audio-hero-btn" id="quizAudioReplayBtn">🔊<span>${t('quiz.replayAudio')}</span></button>`;
+        quizPrompt.textContent = t('quiz.listenPrompt');
         const replayBtn = document.getElementById('quizAudioReplayBtn');
         if (replayBtn) {
             replayBtn.addEventListener('click', () => speakChineseText(word.hanzi));
@@ -3272,10 +3273,10 @@ function updateQuiz() {
         const question = quizType === 'meaning' ? word.hanzi : quizType === 'pinyin' ? word.uzbek : word.pinyin;
         quizHanzi.textContent = question;
         quizPrompt.textContent = quizType === 'meaning'
-            ? 'Bu so‘zning ma’nosi nima?'
+            ? t('quiz.promptMeaning')
             : quizType === 'pinyin'
-                ? 'To‘g‘ri Pinyin talaffuzini tanlang:'
-                : 'To‘g‘ri Hanzi iyeroglifini tanlang:';
+                ? t('quiz.selectPinyinPrompt')
+                : t('quiz.selectHanziPrompt');
     }
     quizScoreElement.textContent = quizScore;
     currentQuestion.textContent = quizIndex + 1;
@@ -6865,136 +6866,300 @@ var EC_SETTINGS_KEYS = {
 
 var EC_I18N = {
     uz: {
-        'nav.home': 'Bosh sahifa', 'nav.practice': 'Mashq', 'nav.canvas': 'Yozish', 'nav.profile': 'Profil',
-        'profile.kicker': 'Shaxsiy kabinet', 'profile.title': 'Mening profilim', 'profile.edit': 'Tahrirlash',
-        'profile.weekly': 'Haftalik faollik', 'profile.progress': 'HSK 1–5 natijalar', 'profile.tapHint': 'Bosib darsga o‘ting →',
-        'profile.learnedWords': 'Yodlangan so‘zlarim', 'profile.quests': 'Kunlik vazifalar', 'profile.achievements': 'Yutuqlar vitrinasi',
-        'stat.streak': 'Kunlik streak', 'stat.learned': 'Yodlangan', 'stat.xp': 'Jami XP',
+        'nav.home': 'Bosh sahifa', 'nav.practice': 'Mashq', 'nav.ai': 'AI Ustoz', 'nav.canvas': 'Yozish', 'nav.profile': 'Profil',
+        'hero.kicker': 'æ±‰è¯­ Â· Xitoy tili', 'hero.title': 'Har bir iyeroglif â€” yangi olamga ochilgan eshik.',
+        'hero.subtitle': 'HSK soâ€˜zlarini bosqichma-bosqich oâ€˜rganing â€” oâ€˜qing, eshiting, yozing va eslab qoling.',
+        'hero.quote': 'Â« åƒé‡Œä¹‹è¡Œï¼Œå§‹äºŽè¶³ä¸‹ Â» â€” ming chaqirimlik yoâ€˜l birinchi qadamdan boshlanadi.',
         'home.selectLevel': 'HSK darajasini tanlang', 'home.selectLevelSub': 'Boshlash yoki davom ettirish uchun darajani tanlang',
-        'practice.title': 'Amaliyot markazi', 'practice.kicker': 'Tonlar, jonli muloqot, so‘zlar va viktorinalar orqali xitoy tilingizni charxlang',
-        'practice.g1': 'Fonetika va tonlar', 'practice.g2': 'Xitoyda jonli hayot va muloqot', 'practice.g3': 'So‘z boyligi va xotira mashqi',
-        'settings.title': 'Ilova sozlamalari', 'settings.short': 'Sozlamalar', 'settings.subtitle': 'Ilovani o‘zingizga moslang',
-        'settings.group.language': '🌐 Ilova tili', 'settings.languageNote': 'Menyular va tugmalar tanlangan tilda ko‘rsatiladi. So‘z tarjimalari o‘zbekcha qoladi.',
-        'settings.group.appearance': '🎨 Ko‘rinish', 'settings.theme': 'Tungi rejim',
-        'settings.themeLight': '☀️ Kunduzgi yorug‘ mavzu', 'settings.themeDark': '🌙 Tungi qorong‘u mavzu',
-        'settings.pinyin': 'Pinyin ko‘rsatish', 'settings.pinyinHint': 'Yashirilsa, bosganda ochiladi — o‘zingizni sinang',
-        'settings.show': 'Doim', 'settings.hide': 'Yashirish', 'settings.hanziSize': 'Iyeroglif o‘lchami',
-        'settings.group.sound': '🔊 Ovoz', 'settings.speechRate': 'Talaffuz tezligi', 'settings.speechRateHint': 'Xitoycha ovoz tezligi',
+        'hsk.1_label': 'HSK 1 Â· Boshlangâ€˜ich', 'hsk.1_words': '150 ta soâ€˜z', 'hsk.1_sub': 'Klassik HSK va yangi HSK 3.0 Â· 15 dars',
+        'hsk.2_label': 'HSK 2 Â· Elementar', 'hsk.3_label': 'HSK 3 Â· Oâ€˜rta daraja', 'hsk.4_label': 'HSK 4 Â· Yuqori oâ€˜rta', 'hsk.5_label': 'HSK 5 Â· Ilgâ€˜or',
+        'hsk.lessons': 'Yangi HSK 3.0 Â· 15 dars', 'hsk.start': 'Boshlash â†’', 'hsk.continue': 'Davom etish â†’',
+        'dash.mistakesTitle': 'Xatolar ustida ishlash', 'dash.mistakesSub': 'Xato qilingan soâ€˜zlarni takrorlash',
+        'dash.bookmarksTitle': 'Saqlangan soâ€˜zlar', 'dash.bookmarksSub': 'Sevimli soâ€˜zlar toâ€˜plami',
+        'dash.enterLesson': 'Kirish â†’', 'dash.backToLevels': 'â† Darajalar',
+        'dash.continueTitle': 'HSK {hsk} Â· {lesson}-darsdan davom etish',
+        'dash.continueSub': '{track} Â· {completed} / {total} dars tugallangan',
+        'dash.mistakesActive': '{count} ta xato soâ€˜zni takrorlash', 'dash.mistakesEmpty': 'Quizda xato qilingan soâ€˜zlar shu yerga tushadi',
+        'dash.bookmarksActive': '{count} ta saqlangan soâ€˜zni mashq qilish', 'dash.bookmarksEmpty': 'Kartochkada â­ Saqlash tugmasini bosing',
+        'lesson.trackClassic': 'Classic HSK 1 Â· 15 dars', 'lesson.trackNew': 'New HSK 3.0 Â· 15 dars',
+        'lesson.searchPlaceholder': 'Soâ€˜z, pinyin yoki iyeroglif boâ€˜yicha qidirish...',
+        'lesson.legendCompleted': 'âœ“ Bajarildi Â· Completed', 'lesson.legendCurrent': 'â— Joriy Â· Current', 'lesson.legendLocked': 'ðŸ”’ Qulflangan Â· Locked',
+        'lesson.backToLessons': 'â† Darslar', 'lesson.aiAskBtn': 'ðŸ¤– AI Tahlil', 'lesson.continue': 'Davom etish',
+        'lesson.tabLearning': 'Oâ€˜rganish', 'lesson.tabFlashcard': 'Kartochkalar', 'lesson.tabQuiz': 'Test', 'lesson.tabWriting': 'Yozish',
+        'lesson.lessonNum': '{num}-dars', 'lesson.wordsCount': '{count} ta soâ€˜z', 'lesson.lessonsCompleted': '{completed} / {total} ta dars yakunlandi',
+        'lesson.stepLearning': 'Oâ€˜rganish', 'lesson.stepCards': 'Kartochka', 'lesson.stepQuiz': 'Test', 'lesson.stepWriting': 'Yozish', 'lesson.stepDone': 'Tayyor',
+        'lesson.flowStatusComplete': 'ðŸŽ‰ 5/5 Â· Dars yakunlandi! Keyingi dars ochildi.', 'lesson.flowBtnComplete': 'Yakunlandi',
+        'lesson.flowStatusLearning': '1/5 Â· Soâ€˜zlar va misollar bilan tanishing ({count} ta soâ€˜z)', 'lesson.flowBtnToCards': 'Kartochkalar â†’',
+        'lesson.flowStatusCards': '2/5 Â· Kartochka {current} / {total} (oxirgisidan soâ€˜ng Quiz)', 'lesson.flowBtnToQuiz': 'Test â†’',
+        'lesson.flowStatusQuiz': '3/5 Â· Test: {current} / {total} savol (javobdan soâ€˜ng oâ€˜tadi)', 'lesson.flowBtnToWriting': 'Yozish â†’',
+        'lesson.flowStatusWriting': '4/5 Â· Yozish: {current} / {total} soâ€˜z', 'lesson.flowBtnFinish': 'Tugatish â†’',
+        'card.tapHint': 'Aylantirish uchun bosing', 'card.audio': 'Ovoz', 'card.speak': 'Talaffuz', 'card.draw': 'Chizish',
+        'card.next': 'Keyingi', 'card.toQuiz': 'Test â†’', 'card.prev': 'â† Oldingi', 'card.shuffle': 'ðŸ”€ Aralashtirish',
+        'card.bookmark': 'â­ Saqlash', 'card.bookmarked': 'â­ Saqlangan', 'card.learned': 'âœ“ Yodlandi', 'card.markLearned': 'âœ“ Yodlash',
+        'card.learnedLabel': 'Yodlandi', 'card.wordProgress': '{current} / {total}-soâ€˜z',
+        'quiz.scoreLabel': 'Ball', 'quiz.typeMeaning': 'Hanzi â†’ Maâ€™no', 'quiz.typePinyin': 'Maâ€™no â†’ Pinyin', 'quiz.typeHanzi': 'Pinyin â†’ Hanzi',
+        'quiz.typeAudio': 'ðŸŽ§ Eshitib topish', 'quiz.promptMeaning': 'Bu soâ€˜z nimani anglatadi?',
+        'quiz.selectPinyinPrompt': 'Toâ€˜gâ€˜ri Pinyin talaffuzini tanlang:', 'quiz.selectHanziPrompt': 'Toâ€˜gâ€˜ri Hanzi iyeroglifini tanlang:',
+        'quiz.listenPrompt': 'Soâ€˜zni eshiting va toâ€˜gâ€˜ri maâ€™noni tanlang:', 'quiz.replayAudio': 'Qayta eshitish',
+        'quiz.nextQuestion': 'Keyingi savol â†’', 'quiz.questionLabel': 'Savol',
+        'practice.title': 'Amaliyot markazi', 'practice.kicker': 'Tonlar, jonli muloqot, soâ€˜zlar va viktorinalar orqali xitoy tilingizni charxlang',
+        'practice.g1': 'Fonetika va tonlar', 'practice.g2': 'Xitoyda jonli hayot va muloqot', 'practice.g3': 'Soâ€˜z boyligi va xotira mashqi',
+        'modal.correctTitle': 'Toâ€˜gâ€˜ri! ðŸŽ‰', 'modal.successMessage': 'Ajoyib ish! Siz iyeroglifni toâ€˜gâ€˜ri yozdingiz.', 'modal.xpEarned': '+10 XP olindi!',
+        'modal.nextWord': 'Keyingi soâ€˜z', 'modal.editProfile': 'Profilni tahrirlash', 'modal.nickname': 'Taxallus', 'modal.optional': '(ixtiyoriy)',
+        'modal.nicknamePh': 'Ismingiz yoki taxallusingiz', 'modal.avatarPref': 'Avatar turi', 'modal.avatarGoogle': 'Google rasmi',
+        'modal.avatarEmoji': 'Emoji', 'modal.avatarHint': 'Google profilingizdagi suratdan foydalanish', 'modal.avatarChoose': 'Avatar emojisi',
+        'modal.cancel': 'Bekor qilish', 'modal.save': 'Saqlash', 'modal.leaderboard': 'ðŸ† Peshqadamlar', 'modal.close': 'Yopish',
+        'modal.backToLesson': 'âœ• Darsga qaytish', 'modal.toAiChat': 'ðŸ’¬ AI Laoshi suhbati â†’',
+        'modal.goal5': '5 ta soâ€˜z', 'modal.goal10': '10 ta soâ€˜z', 'modal.goal20': '20 ta soâ€˜z', 'modal.goal30': '30 ta soâ€˜z',
+        'profile.kicker': 'Shaxsiy kabinet', 'profile.title': 'Mening profilim', 'profile.edit': 'Tahrirlash',
+        'profile.weekly': 'Haftalik faollik', 'profile.progress': 'HSK 1â€“5 natijalar', 'profile.tapHint': 'Bosib darsga oâ€˜ting â†’',
+        'profile.learnedWords': 'Yodlangan soâ€˜zlarim', 'profile.quests': 'Kunlik vazifalar', 'profile.achievements': 'Yutuqlar vitrinasi',
+        'stat.streak': 'Kunlik streak', 'stat.learned': 'Yodlangan', 'stat.xp': 'Jami XP',
+        'settings.title': 'Ilova sozlamalari', 'settings.short': 'Sozlamalar', 'settings.subtitle': 'Ilovani oâ€˜zingizga moslang',
+        'settings.group.language': 'ðŸŒ Ilova tili', 'settings.languageNote': 'Menyular, tugmalar va darslar tanlangan tilda koâ€˜rsatiladi.',
+        'settings.group.appearance': 'ðŸŽ¨ Koâ€˜rinish', 'settings.theme': 'Tungi rejim',
+        'settings.themeLight': 'â˜€ï¸ Kunduzgi yorugâ€˜ mavzu', 'settings.themeDark': 'ðŸŒ™ Tungi qorongâ€˜u mavzu',
+        'settings.pinyin': 'Pinyin koâ€˜rsatish', 'settings.pinyinHint': 'Yashirilsa, bosganda ochiladi â€” oâ€˜zingizni sinang',
+        'settings.show': 'Doim', 'settings.hide': 'Yashirish', 'settings.hanziSize': 'Iyeroglif oâ€˜lchami',
+        'settings.group.sound': 'ðŸ”Š Ovoz', 'settings.speechRate': 'Talaffuz tezligi', 'settings.speechRateHint': 'Xitoycha ovoz tezligi',
         'settings.slow': 'Sekin', 'settings.normal': 'Normal', 'settings.fast': 'Tez',
-        'settings.sfx': 'Ovoz effektlari', 'settings.sfxHint': 'To‘g‘ri javob va yutuq ovozlari',
-        'settings.group.study': '🎯 O‘qish', 'settings.dailyGoal': 'Kunlik maqsad', 'settings.dailyGoalHint': 'Har kuni nechta so‘z o‘rganasiz',
-        'settings.reminder': 'Kunlik eslatma', 'settings.reminderHint': 'O‘qish vaqti kelganda eslatadi',
-        'settings.reminderOn': '🔔 Har kuni {time} da eslatiladi',
+        'settings.sfx': 'Ovoz effektlari', 'settings.sfxHint': 'Toâ€˜gâ€˜ri javob va yutuq ovozlari',
+        'settings.group.study': 'ðŸŽ¯ Oâ€˜qish', 'settings.dailyGoal': 'Kunlik maqsad', 'settings.dailyGoalHint': 'Har kuni nechta soâ€˜z oâ€˜rganasiz',
+        'settings.reminder': 'Kunlik eslatma', 'settings.reminderHint': 'Oâ€˜qish vaqti kelganda eslatadi',
+        'settings.reminderOn': 'ðŸ”” Har kuni {time} da eslatiladi',
         'settings.reminderDenied': 'Bildirishnomaga ruxsat berilmadi. Brauzer sozlamalaridan yoqing.',
-        'settings.reminderUnsupported': 'Bu brauzer bildirishnomalarni qo‘llamaydi.',
-        'settings.group.data': '💾 Ma’lumotlar', 'settings.export': 'Zaxira nusxa olish', 'settings.import': 'Zaxiradan tiklash',
-        'settings.backupNote': 'Telefon almashtirsangiz ham progressingiz yo‘qolmaydi.',
+        'settings.reminderUnsupported': 'Bu brauzer bildirishnomalarni qoâ€˜llamaydi.',
+        'settings.group.data': 'ðŸ’¾ Maâ€™lumotlar', 'settings.export': 'Zaxira nusxa olish', 'settings.import': 'Zaxiradan tiklash',
+        'settings.backupNote': 'Telefon almashtirsangiz ham progressingiz yoâ€˜qolmaydi.',
         'settings.reset': 'Progressni nolga tushirish',
-        'settings.resetConfirm': 'Rostdan ham barcha progress (so‘zlar, XP, streak) o‘chirilsinmi? Buni qaytarib bo‘lmaydi.',
-        'settings.resetDone': 'Progress tozalandi 🧹', 'settings.importDone': 'Progress tiklandi ✅', 'settings.importError': 'Fayl noto‘g‘ri yoki buzilgan ❌',
-        'settings.exportDone': 'Zaxira fayli yuklab olindi 📤',
-        'settings.group.app': '📱 Ilova', 'settings.installTitle': 'Easy Chinese ilovasi', 'settings.installHint': 'Telefonga 1 bosishda o‘rnatish',
-        'settings.install': 'O‘rnatish', 'settings.about': 'Ilova haqida', 'settings.saved': 'Saqlandi ✅',
-        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Bugungi xitoy tili mashqi vaqti keldi! 加油! 🔥'
+        'settings.resetConfirm': 'Rostdan ham barcha progress (soâ€˜zlar, XP, streak) oâ€˜chirilsinmi? Buni qaytarib boâ€˜lmaydi.',
+        'settings.resetDone': 'Progress tozalandi ðŸ§¹', 'settings.importDone': 'Progress tiklandi âœ…', 'settings.importError': 'Fayl notoâ€˜gâ€˜ri yoki buzilgan âŒ',
+        'settings.exportDone': 'Zaxira fayli yuklab olindi ðŸ“¤',
+        'settings.group.app': 'ðŸ“± Ilova', 'settings.installTitle': 'Easy Chinese ilovasi', 'settings.installHint': 'Telefonga 1 bosishda oâ€˜rnatish',
+        'settings.install': 'Oâ€˜rnatish', 'settings.about': 'Ilova haqida', 'settings.saved': 'Saqlandi âœ…',
+        'reminder.title': 'Easy Chinese ðŸ€„', 'reminder.body': 'Bugungi xitoy tili mashqi vaqti keldi! åŠ æ²¹! ðŸ”¥'
     },
     'uz-cyrl': {
-        'nav.home': 'Бош саҳифа', 'nav.practice': 'Машқ', 'nav.canvas': 'Ёзиш', 'nav.profile': 'Профил',
-        'profile.kicker': 'Шахсий кабинет', 'profile.title': 'Менинг профилим', 'profile.edit': 'Таҳрирлаш',
-        'profile.weekly': 'Ҳафталик фаоллик', 'profile.progress': 'HSK 1–5 натижалар', 'profile.tapHint': 'Босиб дарсга ўтинг →',
-        'profile.learnedWords': 'Ёдланган сўзларим', 'profile.quests': 'Кунлик вазифалар', 'profile.achievements': 'Ютуқлар витринаси',
-        'stat.streak': 'Кунлик стрик', 'stat.learned': 'Ёдланган', 'stat.xp': 'Жами XP',
-        'home.selectLevel': 'HSK даражасини танланг', 'home.selectLevelSub': 'Бошлаш ёки давом эттириш учун даражани танланг',
-        'practice.title': 'Амалиёт маркази', 'practice.kicker': 'Тонлар, жонли мулоқот, сўзлар ва викториналар орқали хитой тилингизни чархланг',
-        'practice.g1': 'Фонетика ва тонлар', 'practice.g2': 'Хитойда жонли ҳаёт ва мулоқот', 'practice.g3': 'Сўз бойлиги ва хотира машқи',
-        'settings.title': 'Илова созламалари', 'settings.short': 'Созламалар', 'settings.subtitle': 'Иловани ўзингизга мосланг',
-        'settings.group.language': '🌐 Илова тили', 'settings.languageNote': 'Менюлар ва тугмалар танланган тилда кўрсатилади. Сўз таржималари ўзбекча қолади.',
-        'settings.group.appearance': '🎨 Кўриниш', 'settings.theme': 'Тунги режим',
-        'settings.themeLight': '☀️ Кундузги ёруғ мавзу', 'settings.themeDark': '🌙 Тунги қоронғу мавзу',
-        'settings.pinyin': 'Пиньин кўрсатиш', 'settings.pinyinHint': 'Яширилса, босганда очилади — ўзингизни синанг',
-        'settings.show': 'Доим', 'settings.hide': 'Яшириш', 'settings.hanziSize': 'Иероглиф ўлчами',
-        'settings.group.sound': '🔊 Овоз', 'settings.speechRate': 'Талаффуз тезлиги', 'settings.speechRateHint': 'Хитойча овоз тезлиги',
-        'settings.slow': 'Секин', 'settings.normal': 'Нормал', 'settings.fast': 'Тез',
-        'settings.sfx': 'Овоз эффектлари', 'settings.sfxHint': 'Тўғри жавоб ва ютуқ овозлари',
-        'settings.group.study': '🎯 Ўқиш', 'settings.dailyGoal': 'Кунлик мақсад', 'settings.dailyGoalHint': 'Ҳар куни нечта сўз ўрганасиз',
-        'settings.reminder': 'Кунлик эслатма', 'settings.reminderHint': 'Ўқиш вақти келганда эслатади',
-        'settings.reminderOn': '🔔 Ҳар куни {time} да эслатилади',
-        'settings.reminderDenied': 'Билдиришномага рухсат берилмади. Браузер созламаларидан ёқинг.',
-        'settings.reminderUnsupported': 'Бу браузер билдиришномаларни қўлламайди.',
-        'settings.group.data': '💾 Маълумотлар', 'settings.export': 'Захира нусха олиш', 'settings.import': 'Захирадан тиклаш',
-        'settings.backupNote': 'Телефон алмаштирсангиз ҳам прогрессингиз йўқолмайди.',
-        'settings.reset': 'Прогрессни нолга тушириш',
-        'settings.resetConfirm': 'Ростдан ҳам барча прогресс (сўзлар, XP, стрик) ўчирилсинми? Буни қайтариб бўлмайди.',
-        'settings.resetDone': 'Прогресс тозаланди 🧹', 'settings.importDone': 'Прогресс тикланди ✅', 'settings.importError': 'Файл нотўғри ёки бузилган ❌',
-        'settings.exportDone': 'Захира файли юклаб олинди 📤',
-        'settings.group.app': '📱 Илова', 'settings.installTitle': 'Easy Chinese иловаси', 'settings.installHint': 'Телефонга 1 босишда ўрнатиш',
-        'settings.install': 'Ўрнатиш', 'settings.about': 'Илова ҳақида', 'settings.saved': 'Сақланди ✅',
-        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Бугунги хитой тили машқи вақти келди! 加油! 🔥'
+        'nav.home': 'Ð‘Ð¾Ñˆ ÑÐ°Ò³Ð¸Ñ„Ð°', 'nav.practice': 'ÐœÐ°ÑˆÒ›', 'nav.ai': 'AI Ð£ÑÑ‚Ð¾Ð·', 'nav.canvas': 'ÐÐ·Ð¸Ñˆ', 'nav.profile': 'ÐŸÑ€Ð¾Ñ„Ð¸Ð»',
+        'hero.kicker': 'æ±‰è¯­ Â· Ð¥Ð¸Ñ‚Ð¾Ð¹ Ñ‚Ð¸Ð»Ð¸', 'hero.title': 'Ò²Ð°Ñ€ Ð±Ð¸Ñ€ Ð¸ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„ â€” ÑÐ½Ð³Ð¸ Ð¾Ð»Ð°Ð¼Ð³Ð° Ð¾Ñ‡Ð¸Ð»Ð³Ð°Ð½ ÑÑˆÐ¸Ðº.',
+        'hero.subtitle': 'HSK ÑÑžÐ·Ð»Ð°Ñ€Ð¸Ð½Ð¸ Ð±Ð¾ÑÒ›Ð¸Ñ‡Ð¼Ð°-Ð±Ð¾ÑÒ›Ð¸Ñ‡ ÑžÑ€Ð³Ð°Ð½Ð¸Ð½Ð³ â€” ÑžÒ›Ð¸Ð½Ð³, ÑÑˆÐ¸Ñ‚Ð¸Ð½Ð³, Ñ‘Ð·Ð¸Ð½Ð³ Ð²Ð° ÑÑÐ»Ð°Ð± Ò›Ð¾Ð»Ð¸Ð½Ð³.',
+        'hero.quote': 'Â« åƒé‡Œä¹‹è¡Œï¼Œå§‹äºŽè¶³ä¸‹ Â» â€” Ð¼Ð¸Ð½Ð³ Ñ‡Ð°Ò›Ð¸Ñ€Ð¸Ð¼Ð»Ð¸Ðº Ð¹ÑžÐ» Ð±Ð¸Ñ€Ð¸Ð½Ñ‡Ð¸ Ò›Ð°Ð´Ð°Ð¼Ð´Ð°Ð½ Ð±Ð¾ÑˆÐ»Ð°Ð½Ð°Ð´Ð¸.',
+        'home.selectLevel': 'HSK Ð´Ð°Ñ€Ð°Ð¶Ð°ÑÐ¸Ð½Ð¸ Ñ‚Ð°Ð½Ð»Ð°Ð½Ð³', 'home.selectLevelSub': 'Ð‘Ð¾ÑˆÐ»Ð°Ñˆ Ñ‘ÐºÐ¸ Ð´Ð°Ð²Ð¾Ð¼ ÑÑ‚Ñ‚Ð¸Ñ€Ð¸Ñˆ ÑƒÑ‡ÑƒÐ½ Ð´Ð°Ñ€Ð°Ð¶Ð°Ð½Ð¸ Ñ‚Ð°Ð½Ð»Ð°Ð½Ð³',
+        'hsk.1_label': 'HSK 1 Â· Ð‘Ð¾ÑˆÐ»Ð°Ð½Ò“Ð¸Ñ‡', 'hsk.1_words': '150 Ñ‚Ð° ÑÑžÐ·', 'hsk.1_sub': 'ÐšÐ»Ð°ÑÑÐ¸Ðº HSK Ð²Ð° ÑÐ½Ð³Ð¸ HSK 3.0 Â· 15 Ð´Ð°Ñ€Ñ',
+        'hsk.2_label': 'HSK 2 Â· Ð­Ð»ÐµÐ¼ÐµÐ½Ñ‚Ð°Ñ€', 'hsk.3_label': 'HSK 3 Â· ÐŽÑ€Ñ‚Ð° Ð´Ð°Ñ€Ð°Ð¶Ð°', 'hsk.4_label': 'HSK 4 Â· Ð®Ò›Ð¾Ñ€Ð¸ ÑžÑ€Ñ‚Ð°', 'hsk.5_label': 'HSK 5 Â· Ð˜Ð»Ò“Ð¾Ñ€',
+        'hsk.lessons': 'Ð¯Ð½Ð³Ð¸ HSK 3.0 Â· 15 Ð´Ð°Ñ€Ñ', 'hsk.start': 'Ð‘Ð¾ÑˆÐ»Ð°Ñˆ â†’', 'hsk.continue': 'Ð”Ð°Ð²Ð¾Ð¼ ÑÑ‚Ð¸Ñˆ â†’',
+        'dash.mistakesTitle': 'Ð¥Ð°Ñ‚Ð¾Ð»Ð°Ñ€ ÑƒÑÑ‚Ð¸Ð´Ð° Ð¸ÑˆÐ»Ð°Ñˆ', 'dash.mistakesSub': 'Ð¥Ð°Ñ‚Ð¾ Ò›Ð¸Ð»Ð¸Ð½Ð³Ð°Ð½ ÑÑžÐ·Ð»Ð°Ñ€Ð½Ð¸ Ñ‚Ð°ÐºÑ€Ð¾Ñ€Ð»Ð°Ñˆ',
+        'dash.bookmarksTitle': 'Ð¡Ð°Ò›Ð»Ð°Ð½Ð³Ð°Ð½ ÑÑžÐ·Ð»Ð°Ñ€', 'dash.bookmarksSub': 'Ð¡ÐµÐ²Ð¸Ð¼Ð»Ð¸ ÑÑžÐ·Ð»Ð°Ñ€ Ñ‚ÑžÐ¿Ð»Ð°Ð¼Ð¸',
+        'dash.enterLesson': 'ÐšÐ¸Ñ€Ð¸Ñˆ â†’', 'dash.backToLevels': 'â† Ð”Ð°Ñ€Ð°Ð¶Ð°Ð»Ð°Ñ€',
+        'dash.continueTitle': 'HSK {hsk} Â· {lesson}-Ð´Ð°Ñ€ÑÐ´Ð°Ð½ Ð´Ð°Ð²Ð¾Ð¼ ÑÑ‚Ð¸Ñˆ',
+        'dash.continueSub': '{track} Â· {completed} / {total} Ð´Ð°Ñ€Ñ Ñ‚ÑƒÐ³Ð°Ð»Ð»Ð°Ð½Ð³Ð°Ð½',
+        'dash.mistakesActive': '{count} Ñ‚Ð° Ñ…Ð°Ñ‚Ð¾ ÑÑžÐ·Ð½Ð¸ Ñ‚Ð°ÐºÑ€Ð¾Ñ€Ð»Ð°Ñˆ', 'dash.mistakesEmpty': 'QuizÐ´Ð° Ñ…Ð°Ñ‚Ð¾ Ò›Ð¸Ð»Ð¸Ð½Ð³Ð°Ð½ ÑÑžÐ·Ð»Ð°Ñ€ ÑˆÑƒ ÐµÑ€Ð³Ð° Ñ‚ÑƒÑˆÐ°Ð´Ð¸',
+        'dash.bookmarksActive': '{count} Ñ‚Ð° ÑÐ°Ò›Ð»Ð°Ð½Ð³Ð°Ð½ ÑÑžÐ·Ð½Ð¸ Ð¼Ð°ÑˆÒ› Ò›Ð¸Ð»Ð¸Ñˆ', 'dash.bookmarksEmpty': 'ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ°Ð´Ð° â­ Ð¡Ð°Ò›Ð»Ð°Ñˆ Ñ‚ÑƒÐ³Ð¼Ð°ÑÐ¸Ð½Ð¸ Ð±Ð¾ÑÐ¸Ð½Ð³',
+        'lesson.trackClassic': 'Classic HSK 1 Â· 15 Ð´Ð°Ñ€Ñ', 'lesson.trackNew': 'New HSK 3.0 Â· 15 Ð´Ð°Ñ€Ñ',
+        'lesson.searchPlaceholder': 'Ð¡ÑžÐ·, Ð¿Ð¸Ð½ÑŒÐ¸Ð½ Ñ‘ÐºÐ¸ Ð¸ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„ Ð±ÑžÐ¹Ð¸Ñ‡Ð° Ò›Ð¸Ð´Ð¸Ñ€Ð¸Ñˆ...',
+        'lesson.legendCompleted': 'âœ“ Ð‘Ð°Ð¶Ð°Ñ€Ð¸Ð»Ð´Ð¸ Â· Completed', 'lesson.legendCurrent': 'â— Ð–Ð¾Ñ€Ð¸Ð¹ Â· Current', 'lesson.legendLocked': 'ðŸ”’ ÒšÑƒÐ»Ñ„Ð»Ð°Ð½Ð³Ð°Ð½ Â· Locked',
+        'lesson.backToLessons': 'â† Ð”Ð°Ñ€ÑÐ»Ð°Ñ€', 'lesson.aiAskBtn': 'ðŸ¤– AI Ð¢Ð°Ò³Ð»Ð¸Ð»', 'lesson.continue': 'Ð”Ð°Ð²Ð¾Ð¼ ÑÑ‚Ð¸Ñˆ',
+        'lesson.tabLearning': 'ÐŽÑ€Ð³Ð°Ð½Ð¸Ñˆ', 'lesson.tabFlashcard': 'ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ°Ð»Ð°Ñ€', 'lesson.tabQuiz': 'Ð¢ÐµÑÑ‚', 'lesson.tabWriting': 'ÐÐ·Ð¸Ñˆ',
+        'lesson.lessonNum': '{num}-Ð´Ð°Ñ€Ñ', 'lesson.wordsCount': '{count} Ñ‚Ð° ÑÑžÐ·', 'lesson.lessonsCompleted': '{completed} / {total} Ñ‚Ð° Ð´Ð°Ñ€Ñ ÑÐºÑƒÐ½Ð»Ð°Ð½Ð´Ð¸',
+        'lesson.stepLearning': 'ÐŽÑ€Ð³Ð°Ð½Ð¸Ñˆ', 'lesson.stepCards': 'ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ°', 'lesson.stepQuiz': 'Ð¢ÐµÑÑ‚', 'lesson.stepWriting': 'ÐÐ·Ð¸Ñˆ', 'lesson.stepDone': 'Ð¢Ð°Ð¹Ñ‘Ñ€',
+        'lesson.flowStatusComplete': 'ðŸŽ‰ 5/5 Â· Ð”Ð°Ñ€Ñ ÑÐºÑƒÐ½Ð»Ð°Ð½Ð´Ð¸! ÐšÐµÐ¹Ð¸Ð½Ð³Ð¸ Ð´Ð°Ñ€Ñ Ð¾Ñ‡Ð¸Ð»Ð´Ð¸.', 'lesson.flowBtnComplete': 'Ð¯ÐºÑƒÐ½Ð»Ð°Ð½Ð´Ð¸',
+        'lesson.flowStatusLearning': '1/5 Â· Ð¡ÑžÐ·Ð»Ð°Ñ€ Ð²Ð° Ð¼Ð¸ÑÐ¾Ð»Ð»Ð°Ñ€ Ð±Ð¸Ð»Ð°Ð½ Ñ‚Ð°Ð½Ð¸ÑˆÐ¸Ð½Ð³ ({count} Ñ‚Ð° ÑÑžÐ·)', 'lesson.flowBtnToCards': 'ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ°Ð»Ð°Ñ€ â†’',
+        'lesson.flowStatusCards': '2/5 Â· ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ° {current} / {total} (Ð¾Ñ…Ð¸Ñ€Ð³Ð¸ÑÐ¸Ð´Ð°Ð½ ÑÑžÐ½Ð³ Quiz)', 'lesson.flowBtnToQuiz': 'Ð¢ÐµÑÑ‚ â†’',
+        'lesson.flowStatusQuiz': '3/5 Â· Ð¢ÐµÑÑ‚: {current} / {total} ÑÐ°Ð²Ð¾Ð»', 'lesson.flowBtnToWriting': 'ÐÐ·Ð¸Ñˆ â†’',
+        'lesson.flowStatusWriting': '4/5 Â· ÐÐ·Ð¸Ñˆ: {current} / {total} ÑÑžÐ·', 'lesson.flowBtnFinish': 'Ð¢ÑƒÐ³Ð°Ñ‚Ð¸Ñˆ â†’',
+        'card.tapHint': 'ÐÐ¹Ð»Ð°Ð½Ñ‚Ð¸Ñ€Ð¸Ñˆ ÑƒÑ‡ÑƒÐ½ Ð±Ð¾ÑÐ¸Ð½Ð³', 'card.audio': 'ÐžÐ²Ð¾Ð·', 'card.speak': 'Ð¢Ð°Ð»Ð°Ñ„Ñ„ÑƒÐ·', 'card.draw': 'Ð§Ð¸Ð·Ð¸Ñˆ',
+        'card.next': 'ÐšÐµÐ¹Ð¸Ð½Ð³Ð¸', 'card.toQuiz': 'Ð¢ÐµÑÑ‚ â†’', 'card.prev': 'â† ÐžÐ»Ð´Ð¸Ð½Ð³Ð¸', 'card.shuffle': 'ðŸ”€ ÐÑ€Ð°Ð»Ð°ÑˆÑ‚Ð¸Ñ€Ð¸Ñˆ',
+        'card.bookmark': 'â­ Ð¡Ð°Ò›Ð»Ð°Ñˆ', 'card.bookmarked': 'â­ Ð¡Ð°Ò›Ð»Ð°Ð½Ð³Ð°Ð½', 'card.learned': 'âœ“ ÐÐ´Ð»Ð°Ð½Ð´Ð¸', 'card.markLearned': 'âœ“ ÐÐ´Ð»Ð°Ñˆ',
+        'card.learnedLabel': 'ÐÐ´Ð»Ð°Ð½Ð´Ð¸', 'card.wordProgress': '{current} / {total}-ÑÑžÐ·',
+        'quiz.scoreLabel': 'Ð‘Ð°Ð»Ð»', 'quiz.typeMeaning': 'Hanzi â†’ ÐœÐ°ÑŠÐ½Ð¾', 'quiz.typePinyin': 'ÐœÐ°ÑŠÐ½Ð¾ â†’ Pinyin', 'quiz.typeHanzi': 'Pinyin â†’ Hanzi',
+        'quiz.typeAudio': 'ðŸŽ§ Ð­ÑˆÐ¸Ñ‚Ð¸Ð± Ñ‚Ð¾Ð¿Ð¸Ñˆ', 'quiz.promptMeaning': 'Ð‘Ñƒ ÑÑžÐ· Ð½Ð¸Ð¼Ð°Ð½Ð¸ Ð°Ð½Ð³Ð»Ð°Ñ‚Ð°Ð´Ð¸?',
+        'quiz.selectPinyinPrompt': 'Ð¢ÑžÒ“Ñ€Ð¸ Pinyin Ñ‚Ð°Ð»Ð°Ñ„Ñ„ÑƒÐ·Ð¸Ð½Ð¸ Ñ‚Ð°Ð½Ð»Ð°Ð½Ð³:', 'quiz.selectHanziPrompt': 'Ð¢ÑžÒ“Ñ€Ð¸ Hanzi Ð¸ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„Ð¸Ð½Ð¸ Ñ‚Ð°Ð½Ð»Ð°Ð½Ð³:',
+        'quiz.listenPrompt': 'Ð¡ÑžÐ·Ð½Ð¸ ÑÑˆÐ¸Ñ‚Ð¸Ð½Ð³ Ð²Ð° Ñ‚ÑžÒ“Ñ€Ð¸ Ð¼Ð°ÑŠÐ½Ð¾Ð½Ð¸ Ñ‚Ð°Ð½Ð»Ð°Ð½Ð³:', 'quiz.replayAudio': 'ÒšÐ°Ð¹Ñ‚Ð° ÑÑˆÐ¸Ñ‚Ð¸Ñˆ',
+        'quiz.nextQuestion': 'ÐšÐµÐ¹Ð¸Ð½Ð³Ð¸ ÑÐ°Ð²Ð¾Ð» â†’', 'quiz.questionLabel': 'Ð¡Ð°Ð²Ð¾Ð»',
+        'practice.title': 'ÐÐ¼Ð°Ð»Ð¸Ñ‘Ñ‚ Ð¼Ð°Ñ€ÐºÐ°Ð·Ð¸', 'practice.kicker': 'Ð¢Ð¾Ð½Ð»Ð°Ñ€, Ð¶Ð¾Ð½Ð»Ð¸ Ð¼ÑƒÐ»Ð¾Ò›Ð¾Ñ‚, ÑÑžÐ·Ð»Ð°Ñ€ Ð²Ð° Ð²Ð¸ÐºÑ‚Ð¾Ñ€Ð¸Ð½Ð°Ð»Ð°Ñ€ Ð¾Ñ€Ò›Ð°Ð»Ð¸ Ñ…Ð¸Ñ‚Ð¾Ð¹ Ñ‚Ð¸Ð»Ð¸Ð½Ð³Ð¸Ð·Ð½Ð¸ Ñ‡Ð°Ñ€Ñ…Ð»Ð°Ð½Ð³',
+        'practice.g1': 'Ð¤Ð¾Ð½ÐµÑ‚Ð¸ÐºÐ° Ð²Ð° Ñ‚Ð¾Ð½Ð»Ð°Ñ€', 'practice.g2': 'Ð¥Ð¸Ñ‚Ð¾Ð¹Ð´Ð° Ð¶Ð¾Ð½Ð»Ð¸ Ò³Ð°Ñ‘Ñ‚ Ð²Ð° Ð¼ÑƒÐ»Ð¾Ò›Ð¾Ñ‚', 'practice.g3': 'Ð¡ÑžÐ· Ð±Ð¾Ð¹Ð»Ð¸Ð³Ð¸ Ð²Ð° Ñ…Ð¾Ñ‚Ð¸Ñ€Ð° Ð¼Ð°ÑˆÒ›Ð¸',
+        'modal.correctTitle': 'Ð¢ÑžÒ“Ñ€Ð¸! ðŸŽ‰', 'modal.successMessage': 'ÐÐ¶Ð¾Ð¹Ð¸Ð± Ð¸Ñˆ! Ð¡Ð¸Ð· Ð¸ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„Ð½Ð¸ Ñ‚ÑžÒ“Ñ€Ð¸ Ñ‘Ð·Ð´Ð¸Ð½Ð³Ð¸Ð·.', 'modal.xpEarned': '+10 XP Ð¾Ð»Ð¸Ð½Ð´Ð¸!',
+        'modal.nextWord': 'ÐšÐµÐ¹Ð¸Ð½Ð³Ð¸ ÑÑžÐ·', 'modal.editProfile': 'ÐŸÑ€Ð¾Ñ„Ð¸Ð»Ð½Ð¸ Ñ‚Ð°Ò³Ñ€Ð¸Ñ€Ð»Ð°Ñˆ', 'modal.nickname': 'Ð¢Ð°Ñ…Ð°Ð»Ð»ÑƒÑ', 'modal.optional': '(Ð¸Ñ…Ñ‚Ð¸Ñ‘Ñ€Ð¸Ð¹)',
+        'modal.nicknamePh': 'Ð˜ÑÐ¼Ð¸Ð½Ð³Ð¸Ð· Ñ‘ÐºÐ¸ Ñ‚Ð°Ñ…Ð°Ð»Ð»ÑƒÑÐ¸Ð½Ð³Ð¸Ð·', 'modal.avatarPref': 'ÐÐ²Ð°Ñ‚Ð°Ñ€ Ñ‚ÑƒÑ€Ð¸', 'modal.avatarGoogle': 'Google Ñ€Ð°ÑÐ¼Ð¸',
+        'modal.avatarEmoji': 'Emoji', 'modal.avatarHint': 'Google Ð¿Ñ€Ð¾Ñ„Ð¸Ð»Ð¸Ð½Ð³Ð¸Ð·Ð´Ð°Ð³Ð¸ ÑÑƒÑ€Ð°Ñ‚Ð´Ð°Ð½ Ñ„Ð¾Ð¹Ð´Ð°Ð»Ð°Ð½Ð¸Ñˆ', 'modal.avatarChoose': 'ÐÐ²Ð°Ñ‚Ð°Ñ€ ÑÐ¼Ð¾Ð´Ð·Ð¸ÑÐ¸',
+        'modal.cancel': 'Ð‘ÐµÐºÐ¾Ñ€ Ò›Ð¸Ð»Ð¸Ñˆ', 'modal.save': 'Ð¡Ð°Ò›Ð»Ð°Ñˆ', 'modal.leaderboard': 'ðŸ† ÐŸÐµÑˆÒ›Ð°Ð´Ð°Ð¼Ð»Ð°Ñ€', 'modal.close': 'ÐÐ¿Ð¸Ñˆ',
+        'modal.backToLesson': 'âœ• Ð”Ð°Ñ€ÑÐ³Ð° Ò›Ð°Ð¹Ñ‚Ð¸Ñˆ', 'modal.toAiChat': 'ðŸ’¬ AI Laoshi ÑÑƒÒ³Ð±Ð°Ñ‚Ð¸ â†’',
+        'modal.goal5': '5 Ñ‚Ð° ÑÑžÐ·', 'modal.goal10': '10 Ñ‚Ð° ÑÑžÐ·', 'modal.goal20': '20 Ñ‚Ð° ÑÑžÐ·', 'modal.goal30': '30 Ñ‚Ð° ÑÑžÐ·',
+        'profile.kicker': 'Ð¨Ð°Ñ…ÑÐ¸Ð¹ ÐºÐ°Ð±Ð¸Ð½ÐµÑ‚', 'profile.title': 'ÐœÐµÐ½Ð¸Ð½Ð³ Ð¿Ñ€Ð¾Ñ„Ð¸Ð»Ð¸Ð¼', 'profile.edit': 'Ð¢Ð°Ò³Ñ€Ð¸Ñ€Ð»Ð°Ñˆ',
+        'profile.weekly': 'Ò²Ð°Ñ„Ñ‚Ð°Ð»Ð¸Ðº Ñ„Ð°Ð¾Ð»Ð»Ð¸Ðº', 'profile.progress': 'HSK 1â€“5 Ð½Ð°Ñ‚Ð¸Ð¶Ð°Ð»Ð°Ñ€', 'profile.tapHint': 'Ð‘Ð¾ÑÐ¸Ð± Ð´Ð°Ñ€ÑÐ³Ð° ÑžÑ‚Ð¸Ð½Ð³ â†’',
+        'profile.learnedWords': 'ÐÐ´Ð»Ð°Ð½Ð³Ð°Ð½ ÑÑžÐ·Ð»Ð°Ñ€Ð¸Ð¼', 'profile.quests': 'ÐšÑƒÐ½Ð»Ð¸Ðº Ð²Ð°Ð·Ð¸Ñ„Ð°Ð»Ð°Ñ€', 'profile.achievements': 'Ð®Ñ‚ÑƒÒ›Ð»Ð°Ñ€ Ð²Ð¸Ñ‚Ñ€Ð¸Ð½Ð°ÑÐ¸',
+        'stat.streak': 'ÐšÑƒÐ½Ð»Ð¸Ðº ÑÑ‚Ñ€Ð¸Ðº', 'stat.learned': 'ÐÐ´Ð»Ð°Ð½Ð³Ð°Ð½', 'stat.xp': 'Ð–Ð°Ð¼Ð¸ XP',
+        'settings.title': 'Ð˜Ð»Ð¾Ð²Ð° ÑÐ¾Ð·Ð»Ð°Ð¼Ð°Ð»Ð°Ñ€Ð¸', 'settings.short': 'Ð¡Ð¾Ð·Ð»Ð°Ð¼Ð°Ð»Ð°Ñ€', 'settings.subtitle': 'Ð˜Ð»Ð¾Ð²Ð°Ð½Ð¸ ÑžÐ·Ð¸Ð½Ð³Ð¸Ð·Ð³Ð° Ð¼Ð¾ÑÐ»Ð°Ð½Ð³',
+        'settings.group.language': 'ðŸŒ Ð˜Ð»Ð¾Ð²Ð° Ñ‚Ð¸Ð»Ð¸', 'settings.languageNote': 'ÐœÐµÐ½ÑŽÐ»Ð°Ñ€, Ñ‚ÑƒÐ³Ð¼Ð°Ð»Ð°Ñ€ Ð²Ð° Ð´Ð°Ñ€ÑÐ»Ð°Ñ€ Ñ‚Ð°Ð½Ð»Ð°Ð½Ð³Ð°Ð½ Ñ‚Ð¸Ð»Ð´Ð° ÐºÑžÑ€ÑÐ°Ñ‚Ð¸Ð»Ð°Ð´Ð¸.',
+        'settings.group.appearance': 'ðŸŽ¨ ÐšÑžÑ€Ð¸Ð½Ð¸Ñˆ', 'settings.theme': 'Ð¢ÑƒÐ½Ð³Ð¸ Ñ€ÐµÐ¶Ð¸Ð¼',
+        'settings.themeLight': 'â˜€ï¸ ÐšÑƒÐ½Ð´ÑƒÐ·Ð³Ð¸ Ñ‘Ñ€ÑƒÒ“ Ð¼Ð°Ð²Ð·Ñƒ', 'settings.themeDark': 'ðŸŒ™ Ð¢ÑƒÐ½Ð³Ð¸ Ò›Ð¾Ñ€Ð¾Ð½Ò“Ñƒ Ð¼Ð°Ð²Ð·Ñƒ',
+        'settings.pinyin': 'ÐŸÐ¸Ð½ÑŒÐ¸Ð½ ÐºÑžÑ€ÑÐ°Ñ‚Ð¸Ñˆ', 'settings.pinyinHint': 'Ð¯ÑˆÐ¸Ñ€Ð¸Ð»ÑÐ°, Ð±Ð¾ÑÐ³Ð°Ð½Ð´Ð° Ð¾Ñ‡Ð¸Ð»Ð°Ð´Ð¸ â€” ÑžÐ·Ð¸Ð½Ð³Ð¸Ð·Ð½Ð¸ ÑÐ¸Ð½Ð°Ð½Ð³',
+        'settings.show': 'Ð”Ð¾Ð¸Ð¼', 'settings.hide': 'Ð¯ÑˆÐ¸Ñ€Ð¸Ñˆ', 'settings.hanziSize': 'Ð˜ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„ ÑžÐ»Ñ‡Ð°Ð¼Ð¸',
+        'settings.group.sound': 'ðŸ”Š ÐžÐ²Ð¾Ð·', 'settings.speechRate': 'Ð¢Ð°Ð»Ð°Ñ„Ñ„ÑƒÐ· Ñ‚ÐµÐ·Ð»Ð¸Ð³Ð¸', 'settings.speechRateHint': 'Ð¥Ð¸Ñ‚Ð¾Ð¹Ñ‡Ð° Ð¾Ð²Ð¾Ð· Ñ‚ÐµÐ·Ð»Ð¸Ð³Ð¸',
+        'settings.slow': 'Ð¡ÐµÐºÐ¸Ð½', 'settings.normal': 'ÐÐ¾Ñ€Ð¼Ð°Ð»', 'settings.fast': 'Ð¢ÐµÐ·',
+        'settings.sfx': 'ÐžÐ²Ð¾Ð· ÑÑ„Ñ„ÐµÐºÑ‚Ð»Ð°Ñ€Ð¸', 'settings.sfxHint': 'Ð¢ÑžÒ“Ñ€Ð¸ Ð¶Ð°Ð²Ð¾Ð± Ð²Ð° ÑŽÑ‚ÑƒÒ› Ð¾Ð²Ð¾Ð·Ð»Ð°Ñ€Ð¸',
+        'settings.group.study': 'ðŸŽ¯ ÐŽÒ›Ð¸Ñˆ', 'settings.dailyGoal': 'ÐšÑƒÐ½Ð»Ð¸Ðº Ð¼Ð°Ò›ÑÐ°Ð´', 'settings.dailyGoalHint': 'Ò²Ð°Ñ€ ÐºÑƒÐ½Ð¸ Ð½ÐµÑ‡Ñ‚Ð° ÑÑžÐ· ÑžÑ€Ð³Ð°Ð½Ð°ÑÐ¸Ð·',
+        'settings.reminder': 'ÐšÑƒÐ½Ð»Ð¸Ðº ÑÑÐ»Ð°Ñ‚Ð¼Ð°', 'settings.reminderHint': 'ÐŽÒ›Ð¸Ñˆ Ð²Ð°Ò›Ñ‚Ð¸ ÐºÐµÐ»Ð³Ð°Ð½Ð´Ð° ÑÑÐ»Ð°Ñ‚Ð°Ð´Ð¸',
+        'settings.reminderOn': 'ðŸ”” Ò²Ð°Ñ€ ÐºÑƒÐ½Ð¸ {time} Ð´Ð° ÑÑÐ»Ð°Ñ‚Ð¸Ð»Ð°Ð´Ð¸',
+        'settings.reminderDenied': 'Ð‘Ð¸Ð»Ð´Ð¸Ñ€Ð¸ÑˆÐ½Ð¾Ð¼Ð°Ð³Ð° Ñ€ÑƒÑ…ÑÐ°Ñ‚ Ð±ÐµÑ€Ð¸Ð»Ð¼Ð°Ð´Ð¸. Ð‘Ñ€Ð°ÑƒÐ·ÐµÑ€ ÑÐ¾Ð·Ð»Ð°Ð¼Ð°Ð»Ð°Ñ€Ð¸Ð´Ð°Ð½ Ñ‘Ò›Ð¸Ð½Ð³.',
+        'settings.reminderUnsupported': 'Ð‘Ñƒ Ð±Ñ€Ð°ÑƒÐ·ÐµÑ€ Ð±Ð¸Ð»Ð´Ð¸Ñ€Ð¸ÑˆÐ½Ð¾Ð¼Ð°Ð»Ð°Ñ€Ð½Ð¸ Ò›ÑžÐ»Ð»Ð°Ð¼Ð°Ð¹Ð´Ð¸.',
+        'settings.group.data': 'ðŸ’¾ ÐœÐ°ÑŠÐ»ÑƒÐ¼Ð¾Ñ‚Ð»Ð°Ñ€', 'settings.export': 'Ð—Ð°Ñ…Ð¸Ñ€Ð° Ð½ÑƒÑÑ…Ð° Ð¾Ð»Ð¸Ñˆ', 'settings.import': 'Ð—Ð°Ñ…Ð¸Ñ€Ð°Ð´Ð°Ð½ Ñ‚Ð¸ÐºÐ»Ð°Ñˆ',
+        'settings.backupNote': 'Ð¢ÐµÐ»ÐµÑ„Ð¾Ð½ Ð°Ð»Ð¼Ð°ÑˆÑ‚Ð¸Ñ€ÑÐ°Ð½Ð³Ð¸Ð· Ò³Ð°Ð¼ Ð¿Ñ€Ð¾Ð³Ñ€ÐµÑÑÐ¸Ð½Ð³Ð¸Ð· Ð¹ÑžÒ›Ð¾Ð»Ð¼Ð°Ð¹Ð´Ð¸.',
+        'settings.reset': 'ÐŸÑ€Ð¾Ð³Ñ€ÐµÑÑÐ½Ð¸ Ð½Ð¾Ð»Ð³Ð° Ñ‚ÑƒÑˆÐ¸Ñ€Ð¸Ñˆ',
+        'settings.resetConfirm': 'Ð Ð¾ÑÑ‚Ð´Ð°Ð½ Ò³Ð°Ð¼ Ð±Ð°Ñ€Ñ‡Ð° Ð¿Ñ€Ð¾Ð³Ñ€ÐµÑÑ (ÑÑžÐ·Ð»Ð°Ñ€, XP, ÑÑ‚Ñ€Ð¸Ðº) ÑžÑ‡Ð¸Ñ€Ð¸Ð»ÑÐ¸Ð½Ð¼Ð¸? Ð‘ÑƒÐ½Ð¸ Ò›Ð°Ð¹Ñ‚Ð°Ñ€Ð¸Ð± Ð±ÑžÐ»Ð¼Ð°Ð¹Ð´Ð¸.',
+        'settings.resetDone': 'ÐŸÑ€Ð¾Ð³Ñ€ÐµÑÑ Ñ‚Ð¾Ð·Ð°Ð»Ð°Ð½Ð´Ð¸ ðŸ§¹', 'settings.importDone': 'ÐŸÑ€Ð¾Ð³Ñ€ÐµÑÑ Ñ‚Ð¸ÐºÐ»Ð°Ð½Ð´Ð¸ âœ…', 'settings.importError': 'Ð¤Ð°Ð¹Ð» Ð½Ð¾Ñ‚ÑžÒ“Ñ€Ð¸ Ñ‘ÐºÐ¸ Ð±ÑƒÐ·Ð¸Ð»Ð³Ð°Ð½ âŒ',
+        'settings.exportDone': 'Ð—Ð°Ñ…Ð¸Ñ€Ð° Ñ„Ð°Ð¹Ð»Ð¸ ÑŽÐºÐ»Ð°Ð± Ð¾Ð»Ð¸Ð½Ð´Ð¸ ðŸ“¤',
+        'settings.group.app': 'ðŸ“± Ð˜Ð»Ð¾Ð²Ð°', 'settings.installTitle': 'Easy Chinese Ð¸Ð»Ð¾Ð²Ð°ÑÐ¸', 'settings.installHint': 'Ð¢ÐµÐ»ÐµÑ„Ð¾Ð½Ð³Ð° 1 Ð±Ð¾ÑÐ¸ÑˆÐ´Ð° ÑžÑ€Ð½Ð°Ñ‚Ð¸Ñˆ',
+        'settings.install': 'ÐŽÑ€Ð½Ð°Ñ‚Ð¸Ñˆ', 'settings.about': 'Ð˜Ð»Ð¾Ð²Ð° Ò³Ð°Ò›Ð¸Ð´Ð°', 'settings.saved': 'Ð¡Ð°Ò›Ð»Ð°Ð½Ð´Ð¸ âœ…',
+        'reminder.title': 'Easy Chinese ðŸ€„', 'reminder.body': 'Ð‘ÑƒÐ³ÑƒÐ½Ð³Ð¸ Ñ…Ð¸Ñ‚Ð¾Ð¹ Ñ‚Ð¸Ð»Ð¸ Ð¼Ð°ÑˆÒ›Ð¸ Ð²Ð°Ò›Ñ‚Ð¸ ÐºÐµÐ»Ð´Ð¸! åŠ æ²¹! ðŸ”¥'
     },
     ru: {
-        'nav.home': 'Главная', 'nav.practice': 'Практика', 'nav.canvas': 'Письмо', 'nav.profile': 'Профиль',
-        'profile.kicker': 'Личный кабинет', 'profile.title': 'Мой профиль', 'profile.edit': 'Изменить',
-        'profile.weekly': 'Активность за неделю', 'profile.progress': 'Прогресс HSK 1–5', 'profile.tapHint': 'Нажмите, чтобы перейти →',
-        'profile.learnedWords': 'Выученные слова', 'profile.quests': 'Ежедневные задания', 'profile.achievements': 'Достижения',
-        'stat.streak': 'Дней подряд', 'stat.learned': 'Выучено', 'stat.xp': 'Всего XP',
-        'home.selectLevel': 'Выберите уровень HSK', 'home.selectLevelSub': 'Выберите уровень, чтобы начать или продолжить',
-        'practice.title': 'Центр практики', 'practice.kicker': 'Тренируйте китайский: тоны, живое общение, слова и викторины',
-        'practice.g1': 'Фонетика и тоны', 'practice.g2': 'Жизнь и общение в Китае', 'practice.g3': 'Словарный запас и память',
-        'settings.title': 'Настройки приложения', 'settings.short': 'Настройки', 'settings.subtitle': 'Настройте приложение под себя',
-        'settings.group.language': '🌐 Язык приложения', 'settings.languageNote': 'Меню и кнопки отображаются на выбранном языке. Переводы слов остаются на узбекском.',
-        'settings.group.appearance': '🎨 Внешний вид', 'settings.theme': 'Тёмная тема',
-        'settings.themeLight': '☀️ Светлая тема включена', 'settings.themeDark': '🌙 Тёмная тема включена',
-        'settings.pinyin': 'Показ пиньиня', 'settings.pinyinHint': 'Если скрыт — откроется по нажатию. Проверьте себя',
-        'settings.show': 'Всегда', 'settings.hide': 'Скрыть', 'settings.hanziSize': 'Размер иероглифов',
-        'settings.group.sound': '🔊 Звук', 'settings.speechRate': 'Скорость произношения', 'settings.speechRateHint': 'Скорость китайской озвучки',
-        'settings.slow': 'Медленно', 'settings.normal': 'Обычно', 'settings.fast': 'Быстро',
-        'settings.sfx': 'Звуковые эффекты', 'settings.sfxHint': 'Звуки верных ответов и наград',
-        'settings.group.study': '🎯 Учёба', 'settings.dailyGoal': 'Дневная цель', 'settings.dailyGoalHint': 'Сколько слов учить в день',
-        'settings.reminder': 'Ежедневное напоминание', 'settings.reminderHint': 'Напомнит, когда пора заниматься',
-        'settings.reminderOn': '🔔 Напоминание каждый день в {time}',
-        'settings.reminderDenied': 'Уведомления запрещены. Разрешите их в настройках браузера.',
-        'settings.reminderUnsupported': 'Этот браузер не поддерживает уведомления.',
-        'settings.group.data': '💾 Данные', 'settings.export': 'Создать резервную копию', 'settings.import': 'Восстановить из копии',
-        'settings.backupNote': 'Прогресс сохранится даже при смене телефона.',
-        'settings.reset': 'Сбросить прогресс',
-        'settings.resetConfirm': 'Удалить весь прогресс (слова, XP, серию)? Это действие нельзя отменить.',
-        'settings.resetDone': 'Прогресс сброшен 🧹', 'settings.importDone': 'Прогресс восстановлен ✅', 'settings.importError': 'Файл неверный или повреждён ❌',
-        'settings.exportDone': 'Резервная копия скачана 📤',
-        'settings.group.app': '📱 Приложение', 'settings.installTitle': 'Приложение Easy Chinese', 'settings.installHint': 'Установить на телефон в 1 нажатие',
-        'settings.install': 'Установить', 'settings.about': 'О приложении', 'settings.saved': 'Сохранено ✅',
-        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Пора позаниматься китайским! 加油! 🔥'
+        'nav.home': 'Ð“Ð»Ð°Ð²Ð½Ð°Ñ', 'nav.practice': 'ÐŸÑ€Ð°ÐºÑ‚Ð¸ÐºÐ°', 'nav.ai': 'AI Ð£Ñ‡Ð¸Ñ‚ÐµÐ»ÑŒ', 'nav.canvas': 'ÐŸÐ¸ÑÑŒÐ¼Ð¾', 'nav.profile': 'ÐŸÑ€Ð¾Ñ„Ð¸Ð»ÑŒ',
+        'hero.kicker': 'æ±‰è¯­ Â· ÐšÐ¸Ñ‚Ð°Ð¹ÑÐºÐ¸Ð¹ ÑÐ·Ñ‹Ðº', 'hero.title': 'ÐšÐ°Ð¶Ð´Ñ‹Ð¹ Ð¸ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„ â€” ÑÑ‚Ð¾ Ð¼Ð°Ð»ÐµÐ½ÑŒÐºÐ°Ñ Ð´Ð²ÐµÑ€ÑŒ Ð² Ð½Ð¾Ð²Ñ‹Ð¹ Ð¼Ð¸Ñ€.',
+        'hero.subtitle': 'Ð˜Ð·ÑƒÑ‡Ð°Ð¹Ñ‚Ðµ ÑÐ»Ð¾Ð²Ð° HSK ÑˆÐ°Ð³ Ð·Ð° ÑˆÐ°Ð³Ð¾Ð¼ â€” Ñ‡Ð¸Ñ‚Ð°Ð¹Ñ‚Ðµ, ÑÐ»ÑƒÑˆÐ°Ð¹Ñ‚Ðµ, Ð¿Ð¸ÑˆÐ¸Ñ‚Ðµ Ð¸ Ð·Ð°Ð¿Ð¾Ð¼Ð¸Ð½Ð°Ð¹Ñ‚Ðµ.',
+        'hero.quote': 'Â« åƒé‡Œä¹‹è¡Œï¼Œå§‹äºŽè¶³ä¸‹ Â» â€” Ð¿ÑƒÑ‚ÑŒ Ð² Ñ‚Ñ‹ÑÑÑ‡Ñƒ Ð»Ð¸ Ð½Ð°Ñ‡Ð¸Ð½Ð°ÐµÑ‚ÑÑ Ñ Ð¿ÐµÑ€Ð²Ð¾Ð³Ð¾ ÑˆÐ°Ð³Ð°.',
+        'home.selectLevel': 'Ð’Ñ‹Ð±ÐµÑ€Ð¸Ñ‚Ðµ ÑƒÑ€Ð¾Ð²ÐµÐ½ÑŒ HSK', 'home.selectLevelSub': 'Ð’Ñ‹Ð±ÐµÑ€Ð¸Ñ‚Ðµ ÑƒÑ€Ð¾Ð²ÐµÐ½ÑŒ, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð½Ð°Ñ‡Ð°Ñ‚ÑŒ Ð¸Ð»Ð¸ Ð¿Ñ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÑŒ',
+        'hsk.1_label': 'HSK 1 Â· ÐÐ°Ñ‡Ð°Ð»ÑŒÐ½Ñ‹Ð¹', 'hsk.1_words': '150 ÑÐ»Ð¾Ð²', 'hsk.1_sub': 'ÐšÐ»Ð°ÑÑÐ¸Ñ‡ÐµÑÐºÐ¸Ð¹ HSK Ð¸ Ð½Ð¾Ð²Ñ‹Ð¹ HSK 3.0 Â· 15 ÑƒÑ€Ð¾ÐºÐ¾Ð²',
+        'hsk.2_label': 'HSK 2 Â· Ð‘Ð°Ð·Ð¾Ð²Ñ‹Ð¹', 'hsk.3_label': 'HSK 3 Â· Ð¡Ñ€ÐµÐ´Ð½Ð¸Ð¹', 'hsk.4_label': 'HSK 4 Â· Ð’Ñ‹ÑˆÐµ ÑÑ€ÐµÐ´Ð½ÐµÐ³Ð¾', 'hsk.5_label': 'HSK 5 Â· ÐŸÑ€Ð¾Ð´Ð²Ð¸Ð½ÑƒÑ‚Ñ‹Ð¹',
+        'hsk.lessons': 'ÐÐ¾Ð²Ñ‹Ð¹ HSK 3.0 Â· 15 ÑƒÑ€Ð¾ÐºÐ¾Ð²', 'hsk.start': 'ÐÐ°Ñ‡Ð°Ñ‚ÑŒ â†’', 'hsk.continue': 'ÐŸÑ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÑŒ â†’',
+        'dash.mistakesTitle': 'Ð Ð°Ð±Ð¾Ñ‚Ð° Ð½Ð°Ð´ Ð¾ÑˆÐ¸Ð±ÐºÐ°Ð¼Ð¸', 'dash.mistakesSub': 'ÐŸÐ¾Ð²Ñ‚Ð¾Ñ€ÐµÐ½Ð¸Ðµ ÑÐ»Ð¾Ð² Ñ Ð¾ÑˆÐ¸Ð±ÐºÐ°Ð¼Ð¸',
+        'dash.bookmarksTitle': 'Ð¡Ð¾Ñ…Ñ€Ð°Ð½Ñ‘Ð½Ð½Ñ‹Ðµ ÑÐ»Ð¾Ð²Ð°', 'dash.bookmarksSub': 'ÐšÐ¾Ð»Ð»ÐµÐºÑ†Ð¸Ñ Ð¸Ð·Ð±Ñ€Ð°Ð½Ð½Ñ‹Ñ… ÑÐ»Ð¾Ð²',
+        'dash.enterLesson': 'Ð’Ð¾Ð¹Ñ‚Ð¸ â†’', 'dash.backToLevels': 'â† Ð£Ñ€Ð¾Ð²Ð½Ð¸',
+        'dash.continueTitle': 'HSK {hsk} Â· ÐŸÑ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÑŒ Ñ ÑƒÑ€Ð¾ÐºÐ° {lesson}',
+        'dash.continueSub': '{track} Â· Ð—Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¾ {completed} Ð¸Ð· {total} ÑƒÑ€Ð¾ÐºÐ¾Ð²',
+        'dash.mistakesActive': 'ÐŸÐ¾Ð²Ñ‚Ð¾Ñ€Ð¸Ñ‚ÑŒ {count} ÑÐ»Ð¾Ð² Ñ Ð¾ÑˆÐ¸Ð±ÐºÐ°Ð¼Ð¸', 'dash.mistakesEmpty': 'Ð¡Ð»Ð¾Ð²Ð° Ñ Ð¾ÑˆÐ¸Ð±ÐºÐ°Ð¼Ð¸ Ð¸Ð· Ñ‚ÐµÑÑ‚Ð¾Ð² Ð¿Ð¾Ð¿Ð°Ð´ÑƒÑ‚ ÑÑŽÐ´Ð°',
+        'dash.bookmarksActive': 'Ð¢Ñ€ÐµÐ½Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ {count} ÑÐ¾Ñ…Ñ€Ð°Ð½Ñ‘Ð½Ð½Ñ‹Ñ… ÑÐ»Ð¾Ð²', 'dash.bookmarksEmpty': 'ÐÐ°Ð¶Ð¼Ð¸Ñ‚Ðµ â­ Ð¡Ð¾Ñ…Ñ€Ð°Ð½Ð¸Ñ‚ÑŒ Ð½Ð° ÐºÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐµ',
+        'lesson.trackClassic': 'ÐšÐ»Ð°ÑÑÐ¸Ñ‡ÐµÑÐºÐ¸Ð¹ HSK 1 Â· 15 ÑƒÑ€Ð¾ÐºÐ¾Ð²', 'lesson.trackNew': 'ÐÐ¾Ð²Ñ‹Ð¹ HSK 3.0 Â· 15 ÑƒÑ€Ð¾ÐºÐ¾Ð²',
+        'lesson.searchPlaceholder': 'ÐŸÐ¾Ð¸ÑÐº Ð¿Ð¾ ÑÐ»Ð¾Ð²Ñƒ, Ð¿Ð¸Ð½ÑŒÐ¸Ð½ÑŒ Ð¸Ð»Ð¸ Ð¸ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„Ñƒ...',
+        'lesson.legendCompleted': 'âœ“ ÐŸÑ€Ð¾Ð¹Ð´ÐµÐ½Ð¾ Â· Completed', 'lesson.legendCurrent': 'â— Ð¢ÐµÐºÑƒÑ‰Ð¸Ð¹ Â· Current', 'lesson.legendLocked': 'ðŸ”’ Ð—Ð°Ð±Ð»Ð¾ÐºÐ¸Ñ€Ð¾Ð²Ð°Ð½Ð¾ Â· Locked',
+        'lesson.backToLessons': 'â† Ð£Ñ€Ð¾ÐºÐ¸', 'lesson.aiAskBtn': 'ðŸ¤– AI Ð Ð°Ð·Ð±Ð¾Ñ€', 'lesson.continue': 'ÐŸÑ€Ð¾Ð´Ð¾Ð»Ð¶Ð¸Ñ‚ÑŒ',
+        'lesson.tabLearning': 'ÐžÐ±ÑƒÑ‡ÐµÐ½Ð¸Ðµ', 'lesson.tabFlashcard': 'ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸', 'lesson.tabQuiz': 'Ð¢ÐµÑÑ‚', 'lesson.tabWriting': 'ÐŸÐ¸ÑÑŒÐ¼Ð¾',
+        'lesson.lessonNum': 'Ð£Ñ€Ð¾Ðº {num}', 'lesson.wordsCount': '{count} ÑÐ»Ð¾Ð²', 'lesson.lessonsCompleted': 'Ð—Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¾ {completed} Ð¸Ð· {total} ÑƒÑ€Ð¾ÐºÐ¾Ð²',
+        'lesson.stepLearning': 'Ð£Ñ‡Ñ‘Ð±Ð°', 'lesson.stepCards': 'ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸', 'lesson.stepQuiz': 'Ð¢ÐµÑÑ‚', 'lesson.stepWriting': 'ÐŸÐ¸ÑÑŒÐ¼Ð¾', 'lesson.stepDone': 'Ð“Ð¾Ñ‚Ð¾Ð²Ð¾',
+        'lesson.flowStatusComplete': 'ðŸŽ‰ 5/5 Â· Ð£Ñ€Ð¾Ðº Ð·Ð°Ð²ÐµÑ€ÑˆÑ‘Ð½! Ð¡Ð»ÐµÐ´ÑƒÑŽÑ‰Ð¸Ð¹ ÑƒÑ€Ð¾Ðº Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚.', 'lesson.flowBtnComplete': 'Ð—Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¾',
+        'lesson.flowStatusLearning': '1/5 Â· ÐŸÐ¾Ð·Ð½Ð°ÐºÐ¾Ð¼ÑŒÑ‚ÐµÑÑŒ ÑÐ¾ ÑÐ»Ð¾Ð²Ð°Ð¼Ð¸ Ð¸ Ð¿Ñ€Ð¸Ð¼ÐµÑ€Ð°Ð¼Ð¸ ({count} ÑÐ»Ð¾Ð²)', 'lesson.flowBtnToCards': 'ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ¸ â†’',
+        'lesson.flowStatusCards': '2/5 Â· ÐšÐ°Ñ€Ñ‚Ð¾Ñ‡ÐºÐ° {current} Ð¸Ð· {total} (Ð´Ð°Ð»ÐµÐµ Ñ‚ÐµÑÑ‚)', 'lesson.flowBtnToQuiz': 'Ð¢ÐµÑÑ‚ â†’',
+        'lesson.flowStatusQuiz': '3/5 Â· Ð¢ÐµÑÑ‚: Ð²Ð¾Ð¿Ñ€Ð¾Ñ {current} Ð¸Ð· {total}', 'lesson.flowBtnToWriting': 'ÐŸÐ¸ÑÑŒÐ¼Ð¾ â†’',
+        'lesson.flowStatusWriting': '4/5 Â· ÐŸÐ¸ÑÑŒÐ¼Ð¾: {current} Ð¸Ð· {total} ÑÐ»Ð¾Ð²', 'lesson.flowBtnFinish': 'Ð—Ð°Ð²ÐµÑ€ÑˆÐ¸Ñ‚ÑŒ â†’',
+        'card.tapHint': 'ÐÐ°Ð¶Ð¼Ð¸Ñ‚Ðµ, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð¿ÐµÑ€ÐµÐ²ÐµÑ€Ð½ÑƒÑ‚ÑŒ', 'card.audio': 'ÐÑƒÐ´Ð¸Ð¾', 'card.speak': 'Ð“Ð¾Ð²Ð¾Ñ€Ð¸Ñ‚ÑŒ', 'card.draw': 'ÐŸÐ¸ÑÐ°Ñ‚ÑŒ',
+        'card.next': 'Ð”Ð°Ð»ÐµÐµ', 'card.toQuiz': 'Ð¢ÐµÑÑ‚ â†’', 'card.prev': 'â† ÐÐ°Ð·Ð°Ð´', 'card.shuffle': 'ðŸ”€ ÐŸÐµÑ€ÐµÐ¼ÐµÑˆÐ°Ñ‚ÑŒ',
+        'card.bookmark': 'â­ Ð¡Ð¾Ñ…Ñ€Ð°Ð½Ð¸Ñ‚ÑŒ', 'card.bookmarked': 'â­ Ð¡Ð¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¾', 'card.learned': 'âœ“ Ð’Ñ‹ÑƒÑ‡ÐµÐ½Ð¾', 'card.markLearned': 'âœ“ Ð’Ñ‹ÑƒÑ‡Ð¸Ñ‚ÑŒ',
+        'card.learnedLabel': 'Ð’Ñ‹ÑƒÑ‡ÐµÐ½Ð¾', 'card.wordProgress': 'Ð¡Ð»Ð¾Ð²Ð¾ {current} Ð¸Ð· {total}',
+        'quiz.scoreLabel': 'Ð¡Ñ‡Ñ‘Ñ‚', 'quiz.typeMeaning': 'Ð˜ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„ â†’ ÐŸÐµÑ€ÐµÐ²Ð¾Ð´', 'quiz.typePinyin': 'ÐŸÐµÑ€ÐµÐ²Ð¾Ð´ â†’ ÐŸÐ¸Ð½ÑŒÐ¸Ð½ÑŒ', 'quiz.typeHanzi': 'ÐŸÐ¸Ð½ÑŒÐ¸Ð½ÑŒ â†’ Ð˜ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„',
+        'quiz.typeAudio': 'ðŸŽ§ ÐÐ° ÑÐ»ÑƒÑ…', 'quiz.promptMeaning': 'Ð§Ñ‚Ð¾ Ð¾Ð·Ð½Ð°Ñ‡Ð°ÐµÑ‚ ÑÑ‚Ð¾ ÑÐ»Ð¾Ð²Ð¾?',
+        'quiz.selectPinyinPrompt': 'Ð’Ñ‹Ð±ÐµÑ€Ð¸Ñ‚Ðµ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ñ‹Ð¹ Ð¿Ð¸Ð½ÑŒÐ¸Ð½ÑŒ:', 'quiz.selectHanziPrompt': 'Ð’Ñ‹Ð±ÐµÑ€Ð¸Ñ‚Ðµ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ñ‹Ð¹ Ð¸ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„:',
+        'quiz.listenPrompt': 'ÐŸÐ¾ÑÐ»ÑƒÑˆÐ°Ð¹Ñ‚Ðµ Ð¸ Ð²Ñ‹Ð±ÐµÑ€Ð¸Ñ‚Ðµ Ð¿ÐµÑ€ÐµÐ²Ð¾Ð´:', 'quiz.replayAudio': 'Ð¡Ð»ÑƒÑˆÐ°Ñ‚ÑŒ ÑÐ½Ð¾Ð²Ð°',
+        'quiz.nextQuestion': 'Ð¡Ð»ÐµÐ´ÑƒÑŽÑ‰Ð¸Ð¹ Ð²Ð¾Ð¿Ñ€Ð¾Ñ â†’', 'quiz.questionLabel': 'Ð’Ð¾Ð¿Ñ€Ð¾Ñ',
+        'practice.title': 'Ð¦ÐµÐ½Ñ‚Ñ€ Ð¿Ñ€Ð°ÐºÑ‚Ð¸ÐºÐ¸', 'practice.kicker': 'Ð¢Ñ€ÐµÐ½Ð¸Ñ€ÑƒÐ¹Ñ‚Ðµ ÐºÐ¸Ñ‚Ð°Ð¹ÑÐºÐ¸Ð¹: Ñ‚Ð¾Ð½Ñ‹, Ð¶Ð¸Ð²Ð¾Ðµ Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ, ÑÐ»Ð¾Ð²Ð° Ð¸ Ð²Ð¸ÐºÑ‚Ð¾Ñ€Ð¸Ð½Ñ‹',
+        'practice.g1': 'Ð¤Ð¾Ð½ÐµÑ‚Ð¸ÐºÐ° Ð¸ Ñ‚Ð¾Ð½Ñ‹', 'practice.g2': 'Ð–Ð¸Ð·Ð½ÑŒ Ð¸ Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ð² ÐšÐ¸Ñ‚Ð°Ðµ', 'practice.g3': 'Ð¡Ð»Ð¾Ð²Ð°Ñ€Ð½Ñ‹Ð¹ Ð·Ð°Ð¿Ð°Ñ Ð¸ Ð¿Ð°Ð¼ÑÑ‚ÑŒ',
+        'modal.correctTitle': 'ÐžÑ‚Ð»Ð¸Ñ‡Ð½Ð¾! ðŸŽ‰', 'modal.successMessage': 'ÐŸÑ€ÐµÐºÑ€Ð°ÑÐ½Ð¾! Ð’Ñ‹ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾ Ð½Ð°Ð¿Ð¸ÑÐ°Ð»Ð¸ Ð¸ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„.', 'modal.xpEarned': '+10 XP Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ð¾!',
+        'modal.nextWord': 'Ð¡Ð»ÐµÐ´ÑƒÑŽÑ‰ÐµÐµ ÑÐ»Ð¾Ð²Ð¾', 'modal.editProfile': 'Ð ÐµÐ´Ð°ÐºÑ‚Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ Ð¿Ñ€Ð¾Ñ„Ð¸Ð»ÑŒ', 'modal.nickname': 'ÐÐ¸ÐºÐ½ÐµÐ¹Ð¼', 'modal.optional': '(Ð½ÐµÐ¾Ð±ÑÐ·Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾)',
+        'modal.nicknamePh': 'Ð’Ð°ÑˆÐµ Ð¸Ð¼Ñ Ð¸Ð»Ð¸ Ð½Ð¸ÐºÐ½ÐµÐ¹Ð¼', 'modal.avatarPref': 'Ð’Ð¸Ð´ Ð°Ð²Ð°Ñ‚Ð°Ñ€Ð°', 'modal.avatarGoogle': 'Ð¤Ð¾Ñ‚Ð¾ Google',
+        'modal.avatarEmoji': 'Emoji', 'modal.avatarHint': 'Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÑŒ Ñ„Ð¾Ñ‚Ð¾ Ð¸Ð· Ð°ÐºÐºÐ°ÑƒÐ½Ñ‚Ð° Google', 'modal.avatarChoose': 'Ð­Ð¼Ð¾Ð´Ð·Ð¸ Ð°Ð²Ð°Ñ‚Ð°Ñ€Ð°',
+        'modal.cancel': 'ÐžÑ‚Ð¼ÐµÐ½Ð°', 'modal.save': 'Ð¡Ð¾Ñ…Ñ€Ð°Ð½Ð¸Ñ‚ÑŒ', 'modal.leaderboard': 'ðŸ† Ð¢Ð°Ð±Ð»Ð¸Ñ†Ð° Ð»Ð¸Ð´ÐµÑ€Ð¾Ð²', 'modal.close': 'Ð—Ð°ÐºÑ€Ñ‹Ñ‚ÑŒ',
+        'modal.backToLesson': 'âœ• Ð’ÐµÑ€Ð½ÑƒÑ‚ÑŒÑÑ Ðº ÑƒÑ€Ð¾ÐºÑƒ', 'modal.toAiChat': 'ðŸ’¬ Ð”Ð¸Ð°Ð»Ð¾Ð³ Ñ AI Laoshi â†’',
+        'modal.goal5': '5 ÑÐ»Ð¾Ð²', 'modal.goal10': '10 ÑÐ»Ð¾Ð²', 'modal.goal20': '20 ÑÐ»Ð¾Ð²', 'modal.goal30': '30 ÑÐ»Ð¾Ð²',
+        'profile.kicker': 'Ð›Ð¸Ñ‡Ð½Ñ‹Ð¹ ÐºÐ°Ð±Ð¸Ð½ÐµÑ‚', 'profile.title': 'ÐœÐ¾Ð¹ Ð¿Ñ€Ð¾Ñ„Ð¸Ð»ÑŒ', 'profile.edit': 'Ð˜Ð·Ð¼ÐµÐ½Ð¸Ñ‚ÑŒ',
+        'profile.weekly': 'ÐÐºÑ‚Ð¸Ð²Ð½Ð¾ÑÑ‚ÑŒ Ð·Ð° Ð½ÐµÐ´ÐµÐ»ÑŽ', 'profile.progress': 'ÐŸÑ€Ð¾Ð³Ñ€ÐµÑÑ HSK 1â€“5', 'profile.tapHint': 'ÐÐ°Ð¶Ð¼Ð¸Ñ‚Ðµ, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð¿ÐµÑ€ÐµÐ¹Ñ‚Ð¸ â†’',
+        'profile.learnedWords': 'Ð’Ñ‹ÑƒÑ‡ÐµÐ½Ð½Ñ‹Ðµ ÑÐ»Ð¾Ð²Ð°', 'profile.quests': 'Ð•Ð¶ÐµÐ´Ð½ÐµÐ²Ð½Ñ‹Ðµ Ð·Ð°Ð´Ð°Ð½Ð¸Ñ', 'profile.achievements': 'Ð”Ð¾ÑÑ‚Ð¸Ð¶ÐµÐ½Ð¸Ñ',
+        'stat.streak': 'Ð”Ð½ÐµÐ¹ Ð¿Ð¾Ð´Ñ€ÑÐ´', 'stat.learned': 'Ð’Ñ‹ÑƒÑ‡ÐµÐ½Ð¾', 'stat.xp': 'Ð’ÑÐµÐ³Ð¾ XP',
+        'settings.title': 'ÐÐ°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ¸ Ð¿Ñ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ', 'settings.short': 'ÐÐ°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ¸', 'settings.subtitle': 'ÐÐ°ÑÑ‚Ñ€Ð¾Ð¹Ñ‚Ðµ Ð¿Ñ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Ð¿Ð¾Ð´ ÑÐµÐ±Ñ',
+        'settings.group.language': 'ðŸŒ Ð¯Ð·Ñ‹Ðº Ð¿Ñ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ñ', 'settings.languageNote': 'ÐœÐµÐ½ÑŽ, ÐºÐ½Ð¾Ð¿ÐºÐ¸ Ð¸ ÑƒÑ€Ð¾ÐºÐ¸ Ð¾Ñ‚Ð¾Ð±Ñ€Ð°Ð¶Ð°ÑŽÑ‚ÑÑ Ð½Ð° Ð²Ñ‹Ð±Ñ€Ð°Ð½Ð½Ð¾Ð¼ ÑÐ·Ñ‹ÐºÐµ.',
+        'settings.group.appearance': 'ðŸŽ¨ Ð’Ð½ÐµÑˆÐ½Ð¸Ð¹ Ð²Ð¸Ð´', 'settings.theme': 'Ð¢Ñ‘Ð¼Ð½Ð°Ñ Ñ‚ÐµÐ¼Ð°',
+        'settings.themeLight': 'â˜€ï¸ Ð¡Ð²ÐµÑ‚Ð»Ð°Ñ Ñ‚ÐµÐ¼Ð° Ð²ÐºÐ»ÑŽÑ‡ÐµÐ½Ð°', 'settings.themeDark': 'ðŸŒ™ Ð¢Ñ‘Ð¼Ð½Ð°Ñ Ñ‚ÐµÐ¼Ð° Ð²ÐºÐ»ÑŽÑ‡ÐµÐ½Ð°',
+        'settings.pinyin': 'ÐŸÐ¾ÐºÐ°Ð· Ð¿Ð¸Ð½ÑŒÐ¸Ð½Ñ', 'settings.pinyinHint': 'Ð•ÑÐ»Ð¸ ÑÐºÑ€Ñ‹Ñ‚ â€” Ð¾Ñ‚ÐºÑ€Ð¾ÐµÑ‚ÑÑ Ð¿Ð¾ Ð½Ð°Ð¶Ð°Ñ‚Ð¸ÑŽ. ÐŸÑ€Ð¾Ð²ÐµÑ€ÑŒÑ‚Ðµ ÑÐµÐ±Ñ',
+        'settings.show': 'Ð’ÑÐµÐ³Ð´Ð°', 'settings.hide': 'Ð¡ÐºÑ€Ñ‹Ñ‚ÑŒ', 'settings.hanziSize': 'Ð Ð°Ð·Ð¼ÐµÑ€ Ð¸ÐµÑ€Ð¾Ð³Ð»Ð¸Ñ„Ð¾Ð²',
+        'settings.group.sound': 'ðŸ”Š Ð—Ð²ÑƒÐº', 'settings.speechRate': 'Ð¡ÐºÐ¾Ñ€Ð¾ÑÑ‚ÑŒ Ð¿Ñ€Ð¾Ð¸Ð·Ð½Ð¾ÑˆÐµÐ½Ð¸Ñ', 'settings.speechRateHint': 'Ð¡ÐºÐ¾Ñ€Ð¾ÑÑ‚ÑŒ ÐºÐ¸Ñ‚Ð°Ð¹ÑÐºÐ¾Ð¹ Ð¾Ð·Ð²ÑƒÑ‡ÐºÐ¸',
+        'settings.slow': 'ÐœÐµÐ´Ð»ÐµÐ½Ð½Ð¾', 'settings.normal': 'ÐžÐ±Ñ‹Ñ‡Ð½Ð¾', 'settings.fast': 'Ð‘Ñ‹ÑÑ‚Ñ€Ð¾',
+        'settings.sfx': 'Ð—Ð²ÑƒÐºÐ¾Ð²Ñ‹Ðµ ÑÑ„Ñ„ÐµÐºÑ‚Ñ‹', 'settings.sfxHint': 'Ð—Ð²ÑƒÐºÐ¸ Ð²ÐµÑ€Ð½Ñ‹Ñ… Ð¾Ñ‚Ð²ÐµÑ‚Ð¾Ð² Ð¸ Ð½Ð°Ð³Ñ€Ð°Ð´',
+        'settings.group.study': 'ðŸŽ¯ Ð£Ñ‡Ñ‘Ð±Ð°', 'settings.dailyGoal': 'Ð”Ð½ÐµÐ²Ð½Ð°Ñ Ñ†ÐµÐ»ÑŒ', 'settings.dailyGoalHint': 'Ð¡ÐºÐ¾Ð»ÑŒÐºÐ¾ ÑÐ»Ð¾Ð² ÑƒÑ‡Ð¸Ñ‚ÑŒ Ð² Ð´ÐµÐ½ÑŒ',
+        'settings.reminder': 'Ð•Ð¶ÐµÐ´Ð½ÐµÐ²Ð½Ð¾Ðµ Ð½Ð°Ð¿Ð¾Ð¼Ð¸Ð½Ð°Ð½Ð¸Ðµ', 'settings.reminderHint': 'ÐÐ°Ð¿Ð¾Ð¼Ð½Ð¸Ñ‚, ÐºÐ¾Ð³Ð´Ð° Ð¿Ð¾Ñ€Ð° Ð·Ð°Ð½Ð¸Ð¼Ð°Ñ‚ÑŒÑÑ',
+        'settings.reminderOn': 'ðŸ”” ÐÐ°Ð¿Ð¾Ð¼Ð¸Ð½Ð°Ð½Ð¸Ðµ ÐºÐ°Ð¶Ð´Ñ‹Ð¹ Ð´ÐµÐ½ÑŒ Ð² {time}',
+        'settings.reminderDenied': 'Ð£Ð²ÐµÐ´Ð¾Ð¼Ð»ÐµÐ½Ð¸Ñ Ð·Ð°Ð¿Ñ€ÐµÑ‰ÐµÐ½Ñ‹. Ð Ð°Ð·Ñ€ÐµÑˆÐ¸Ñ‚Ðµ Ð¸Ñ… Ð² Ð½Ð°ÑÑ‚Ñ€Ð¾Ð¹ÐºÐ°Ñ… Ð±Ñ€Ð°ÑƒÐ·ÐµÑ€Ð°.',
+        'settings.reminderUnsupported': 'Ð­Ñ‚Ð¾Ñ‚ Ð±Ñ€Ð°ÑƒÐ·ÐµÑ€ Ð½Ðµ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÑ‚ ÑƒÐ²ÐµÐ´Ð¾Ð¼Ð»ÐµÐ½Ð¸Ñ.',
+        'settings.group.data': 'ðŸ’¾ Ð”Ð°Ð½Ð½Ñ‹Ðµ', 'settings.export': 'Ð¡Ð¾Ð·Ð´Ð°Ñ‚ÑŒ Ñ€ÐµÐ·ÐµÑ€Ð²Ð½ÑƒÑŽ ÐºÐ¾Ð¿Ð¸ÑŽ', 'settings.import': 'Ð’Ð¾ÑÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ Ð¸Ð· ÐºÐ¾Ð¿Ð¸Ð¸',
+        'settings.backupNote': 'ÐŸÑ€Ð¾Ð³Ñ€ÐµÑÑ ÑÐ¾Ñ…Ñ€Ð°Ð½Ð¸Ñ‚ÑÑ Ð´Ð°Ð¶Ðµ Ð¿Ñ€Ð¸ ÑÐ¼ÐµÐ½Ðµ Ñ‚ÐµÐ»ÐµÑ„Ð¾Ð½Ð°.',
+        'settings.reset': 'Ð¡Ð±Ñ€Ð¾ÑÐ¸Ñ‚ÑŒ Ð¿Ñ€Ð¾Ð³Ñ€ÐµÑÑ',
+        'settings.resetConfirm': 'Ð£Ð´Ð°Ð»Ð¸Ñ‚ÑŒ Ð²ÐµÑÑŒ Ð¿Ñ€Ð¾Ð³Ñ€ÐµÑÑ (ÑÐ»Ð¾Ð²Ð°, XP, ÑÐµÑ€Ð¸ÑŽ)? Ð­Ñ‚Ð¾ Ð´ÐµÐ¹ÑÑ‚Ð²Ð¸Ðµ Ð½ÐµÐ»ÑŒÐ·Ñ Ð¾Ñ‚Ð¼ÐµÐ½Ð¸Ñ‚ÑŒ.',
+        'settings.resetDone': 'ÐŸÑ€Ð¾Ð³Ñ€ÐµÑÑ ÑÐ±Ñ€Ð¾ÑˆÐµÐ½ ðŸ§¹', 'settings.importDone': 'ÐŸÑ€Ð¾Ð³Ñ€ÐµÑÑ Ð²Ð¾ÑÑÑ‚Ð°Ð½Ð¾Ð²Ð»ÐµÐ½ âœ…', 'settings.importError': 'Ð¤Ð°Ð¹Ð» Ð½ÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ Ð¸Ð»Ð¸ Ð¿Ð¾Ð²Ñ€ÐµÐ¶Ð´Ñ‘Ð½ âŒ',
+        'settings.exportDone': 'Ð ÐµÐ·ÐµÑ€Ð²Ð½Ð°Ñ ÐºÐ¾Ð¿Ð¸Ñ ÑÐºÐ°Ñ‡Ð°Ð½Ð° ðŸ“¤',
+        'settings.group.app': 'ðŸ“± ÐŸÑ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ', 'settings.installTitle': 'ÐŸÑ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ðµ Easy Chinese', 'settings.installHint': 'Ð£ÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ Ð½Ð° Ñ‚ÐµÐ»ÐµÑ„Ð¾Ð½ Ð² 1 Ð½Ð°Ð¶Ð°Ñ‚Ð¸Ðµ',
+        'settings.install': 'Ð£ÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ', 'settings.about': 'Ðž Ð¿Ñ€Ð¸Ð»Ð¾Ð¶ÐµÐ½Ð¸Ð¸', 'settings.saved': 'Ð¡Ð¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¾ âœ…',
+        'reminder.title': 'Easy Chinese ðŸ€„', 'reminder.body': 'ÐŸÐ¾Ñ€Ð° Ð¿Ð¾Ð·Ð°Ð½Ð¸Ð¼Ð°Ñ‚ÑŒÑÑ ÐºÐ¸Ñ‚Ð°Ð¹ÑÐºÐ¸Ð¼! åŠ æ²¹! ðŸ”¥'
     },
     en: {
-        'nav.home': 'Home', 'nav.practice': 'Practice', 'nav.canvas': 'Writing', 'nav.profile': 'Profile',
-        'profile.kicker': 'Personal Center', 'profile.title': 'My Profile', 'profile.edit': 'Edit',
-        'profile.weekly': 'Weekly Activity', 'profile.progress': 'HSK 1–5 Progress', 'profile.tapHint': 'Tap to open lessons →',
-        'profile.learnedWords': 'My Learned Words', 'profile.quests': 'Daily Quests', 'profile.achievements': 'Achievements',
-        'stat.streak': 'Day Streak', 'stat.learned': 'Learned', 'stat.xp': 'Total XP',
+        'nav.home': 'Home', 'nav.practice': 'Practice', 'nav.ai': 'AI Teacher', 'nav.canvas': 'Writing', 'nav.profile': 'Profile',
+        'hero.kicker': 'æ±‰è¯­ Â· Learn Chinese', 'hero.title': 'Every character is a small door into a new world.',
+        'hero.subtitle': 'Learn HSK vocabulary step by step â€” read, listen, write and remember with calm, focused practice.',
+        'hero.quote': 'Â« åƒé‡Œä¹‹è¡Œï¼Œå§‹äºŽè¶³ä¸‹ Â» â€” a journey of a thousand miles begins with a single step.',
         'home.selectLevel': 'Select HSK Level', 'home.selectLevelSub': 'Choose a level to start or continue your practice',
+        'hsk.1_label': 'HSK 1 Â· Foundations', 'hsk.1_words': '150 words', 'hsk.1_sub': 'Classic HSK & New HSK 3.0 Â· 15 lessons',
+        'hsk.2_label': 'HSK 2 Â· Elementary', 'hsk.3_label': 'HSK 3 Â· Intermediate', 'hsk.4_label': 'HSK 4 Â· Upper-Inter', 'hsk.5_label': 'HSK 5 Â· Advanced',
+        'hsk.lessons': 'New HSK 3.0 Â· 15 lessons', 'hsk.start': 'Start â†’', 'hsk.continue': 'Continue â†’',
+        'dash.mistakesTitle': 'Mistakes Review', 'dash.mistakesSub': 'Practice words you missed',
+        'dash.bookmarksTitle': 'Saved Words', 'dash.bookmarksSub': 'Your starred vocabulary',
+        'dash.enterLesson': 'Start â†’', 'dash.backToLevels': 'â† Levels',
+        'dash.continueTitle': 'HSK {hsk} Â· Continue from Lesson {lesson}',
+        'dash.continueSub': '{track} Â· {completed} of {total} lessons complete',
+        'dash.mistakesActive': 'Review {count} missed words', 'dash.mistakesEmpty': 'Words missed during quizzes will appear here',
+        'dash.bookmarksActive': 'Practice {count} saved words', 'dash.bookmarksEmpty': 'Tap â­ Save on any flashcard',
+        'lesson.trackClassic': 'Classic HSK 1 Â· 15 lessons', 'lesson.trackNew': 'New HSK 3.0 Â· 15 lessons',
+        'lesson.searchPlaceholder': 'Search by word, Pinyin, or Hanzi...',
+        'lesson.legendCompleted': 'âœ“ Completed', 'lesson.legendCurrent': 'â— Current', 'lesson.legendLocked': 'ðŸ”’ Locked',
+        'lesson.backToLessons': 'â† Lessons', 'lesson.aiAskBtn': 'ðŸ¤– AI Breakdown', 'lesson.continue': 'Continue',
+        'lesson.tabLearning': 'Learning', 'lesson.tabFlashcard': 'Flashcards', 'lesson.tabQuiz': 'Quiz', 'lesson.tabWriting': 'Writing',
+        'lesson.lessonNum': 'Lesson {num}', 'lesson.wordsCount': '{count} words', 'lesson.lessonsCompleted': '{completed} of {total} lessons complete',
+        'lesson.stepLearning': 'Learn', 'lesson.stepCards': 'Cards', 'lesson.stepQuiz': 'Quiz', 'lesson.stepWriting': 'Write', 'lesson.stepDone': 'Done',
+        'lesson.flowStatusComplete': 'ðŸŽ‰ 5/5 Â· Lesson completed! Next lesson unlocked.', 'lesson.flowBtnComplete': 'Complete',
+        'lesson.flowStatusLearning': '1/5 Â· Explore vocabulary and examples ({count} words)', 'lesson.flowBtnToCards': 'Flashcards â†’',
+        'lesson.flowStatusCards': '2/5 Â· Card {current} of {total} (auto-quiz after last)', 'lesson.flowBtnToQuiz': 'Quiz â†’',
+        'lesson.flowStatusQuiz': '3/5 Â· Quiz: question {current} of {total}', 'lesson.flowBtnToWriting': 'Writing â†’',
+        'lesson.flowStatusWriting': '4/5 Â· Writing: {current} of {total} words', 'lesson.flowBtnFinish': 'Finish â†’',
+        'card.tapHint': 'Tap to flip', 'card.audio': 'Audio', 'card.speak': 'Pronounce', 'card.draw': 'Draw',
+        'card.next': 'Next', 'card.toQuiz': 'Quiz â†’', 'card.prev': 'â† Prev', 'card.shuffle': 'ðŸ”€ Shuffle',
+        'card.bookmark': 'â­ Save', 'card.bookmarked': 'â­ Saved', 'card.learned': 'âœ“ Learned', 'card.markLearned': 'âœ“ Learn',
+        'card.learnedLabel': 'Learned', 'card.wordProgress': 'Word {current} of {total}',
+        'quiz.scoreLabel': 'Score', 'quiz.typeMeaning': 'Hanzi â†’ Meaning', 'quiz.typePinyin': 'Meaning â†’ Pinyin', 'quiz.typeHanzi': 'Pinyin â†’ Hanzi',
+        'quiz.typeAudio': 'ðŸŽ§ Listening', 'quiz.promptMeaning': 'What does this mean?',
+        'quiz.selectPinyinPrompt': 'Select the correct Pinyin:', 'quiz.selectHanziPrompt': 'Select the correct Hanzi:',
+        'quiz.listenPrompt': 'Listen and choose the correct meaning:', 'quiz.replayAudio': 'Listen Again',
+        'quiz.nextQuestion': 'Next Question â†’', 'quiz.questionLabel': 'Question',
         'practice.title': 'Practice Center', 'practice.kicker': 'Sharpen your Chinese with tones, real-life dialogues, words and quizzes',
         'practice.g1': 'Phonetics & Tones', 'practice.g2': 'Real Life in China', 'practice.g3': 'Vocabulary & Memory',
+        'modal.correctTitle': 'Correct! ðŸŽ‰', 'modal.successMessage': 'Great job! You completed the character.', 'modal.xpEarned': '+10 XP earned!',
+        'modal.nextWord': 'Next Word', 'modal.editProfile': 'Edit Profile', 'modal.nickname': 'Nickname', 'modal.optional': '(optional)',
+        'modal.nicknamePh': 'Your name or nickname', 'modal.avatarPref': 'Avatar preference', 'modal.avatarGoogle': 'Google photo',
+        'modal.avatarEmoji': 'Emoji', 'modal.avatarHint': 'Use photo from your Google account', 'modal.avatarChoose': 'Avatar Emoji',
+        'modal.cancel': 'Cancel', 'modal.save': 'Save Changes', 'modal.leaderboard': 'ðŸ† Leaderboard', 'modal.close': 'Close',
+        'modal.backToLesson': 'âœ• Back to lesson', 'modal.toAiChat': 'ðŸ’¬ Chat with AI Laoshi â†’',
+        'modal.goal5': '5 words', 'modal.goal10': '10 words', 'modal.goal20': '20 words', 'modal.goal30': '30 words',
+        'profile.kicker': 'Personal Center', 'profile.title': 'My Profile', 'profile.edit': 'Edit',
+        'profile.weekly': 'Weekly Activity', 'profile.progress': 'HSK 1â€“5 Progress', 'profile.tapHint': 'Tap to open lessons â†’',
+        'profile.learnedWords': 'My Learned Words', 'profile.quests': 'Daily Quests', 'profile.achievements': 'Achievements',
+        'stat.streak': 'Day Streak', 'stat.learned': 'Learned', 'stat.xp': 'Total XP',
         'settings.title': 'App Settings', 'settings.short': 'Settings', 'settings.subtitle': 'Make the app yours',
-        'settings.group.language': '🌐 App Language', 'settings.languageNote': 'Menus and buttons use the selected language. Word translations stay in Uzbek.',
-        'settings.group.appearance': '🎨 Appearance', 'settings.theme': 'Dark Mode',
-        'settings.themeLight': '☀️ Light theme is on', 'settings.themeDark': '🌙 Dark theme is on',
-        'settings.pinyin': 'Show Pinyin', 'settings.pinyinHint': 'When hidden, tap to reveal — test yourself',
+        'settings.group.language': 'ðŸŒ App Language', 'settings.languageNote': 'Menus, buttons, and lessons are displayed in the selected language.',
+        'settings.group.appearance': 'ðŸŽ¨ Appearance', 'settings.theme': 'Dark Mode',
+        'settings.themeLight': 'â˜€ï¸ Light theme is on', 'settings.themeDark': 'ðŸŒ™ Dark theme is on',
+        'settings.pinyin': 'Show Pinyin', 'settings.pinyinHint': 'When hidden, tap to reveal â€” test yourself',
         'settings.show': 'Always', 'settings.hide': 'Hide', 'settings.hanziSize': 'Character Size',
-        'settings.group.sound': '🔊 Sound', 'settings.speechRate': 'Speech Speed', 'settings.speechRateHint': 'Chinese voice speed',
+        'settings.group.sound': 'ðŸ”Š Sound', 'settings.speechRate': 'Speech Speed', 'settings.speechRateHint': 'Chinese voice speed',
         'settings.slow': 'Slow', 'settings.normal': 'Normal', 'settings.fast': 'Fast',
         'settings.sfx': 'Sound Effects', 'settings.sfxHint': 'Correct answer & reward sounds',
-        'settings.group.study': '🎯 Study', 'settings.dailyGoal': 'Daily Goal', 'settings.dailyGoalHint': 'Words to learn every day',
+        'settings.group.study': 'ðŸŽ¯ Study', 'settings.dailyGoal': 'Daily Goal', 'settings.dailyGoalHint': 'Words to learn every day',
         'settings.reminder': 'Daily Reminder', 'settings.reminderHint': 'Reminds you when it is study time',
-        'settings.reminderOn': '🔔 Reminder every day at {time}',
+        'settings.reminderOn': 'ðŸ”” Reminder every day at {time}',
         'settings.reminderDenied': 'Notifications are blocked. Enable them in browser settings.',
         'settings.reminderUnsupported': 'This browser does not support notifications.',
-        'settings.group.data': '💾 Data', 'settings.export': 'Back up progress', 'settings.import': 'Restore backup',
+        'settings.group.data': 'ðŸ’¾ Data', 'settings.export': 'Back up progress', 'settings.import': 'Restore backup',
         'settings.backupNote': 'Keep your progress even when you switch phones.',
         'settings.reset': 'Reset progress',
         'settings.resetConfirm': 'Delete all progress (words, XP, streak)? This cannot be undone.',
-        'settings.resetDone': 'Progress reset 🧹', 'settings.importDone': 'Progress restored ✅', 'settings.importError': 'Invalid or corrupted file ❌',
-        'settings.exportDone': 'Backup file downloaded 📤',
-        'settings.group.app': '📱 App', 'settings.installTitle': 'Easy Chinese App', 'settings.installHint': 'Install on your phone in 1 tap',
-        'settings.install': 'Install', 'settings.about': 'About', 'settings.saved': 'Saved ✅',
-        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Time for today’s Chinese practice! 加油! 🔥'
+        'settings.resetDone': 'Progress reset ðŸ§¹', 'settings.importDone': 'Progress restored âœ…', 'settings.importError': 'Invalid or corrupted file âŒ',
+        'settings.exportDone': 'Backup file downloaded ðŸ“¤',
+        'settings.group.app': 'ðŸ“± App', 'settings.installTitle': 'Easy Chinese App', 'settings.installHint': 'Install on your phone in 1 tap',
+        'settings.install': 'Install', 'settings.about': 'About', 'settings.saved': 'Saved âœ…',
+        'reminder.title': 'Easy Chinese ðŸ€„', 'reminder.body': 'Time for todayâ€™s Chinese practice! åŠ æ²¹! ðŸ”¥'
     }
 };
 
@@ -7018,6 +7183,9 @@ function applyAppLanguage() {
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
         el.textContent = t(el.dataset.i18n);
     });
+    document.querySelectorAll('[data-i18n-ph]').forEach(function (el) {
+        el.setAttribute('placeholder', t(el.dataset.i18nPh));
+    });
     document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
         el.setAttribute('aria-label', t(el.dataset.i18nAria));
     });
@@ -7025,7 +7193,24 @@ function applyAppLanguage() {
         btn.classList.toggle('active', btn.dataset.lang === lang);
     });
     if (typeof syncProfileThemeUI === 'function') syncProfileThemeUI();
-    syncReminderUI();
+    if (typeof syncReminderUI === 'function') syncReminderUI();
+
+    try {
+        if (typeof updateDashboardBentoUI === 'function') updateDashboardBentoUI();
+        if (typeof generateLessonsGrid === 'function' && document.getElementById('lessons') && document.getElementById('lessons').classList.contains('active')) {
+            generateLessonsGrid();
+        }
+        if (document.getElementById('lesson') && document.getElementById('lesson').classList.contains('active')) {
+            if (typeof updateFlashcard === 'function') updateFlashcard();
+            if (typeof updateLessonFlowUI === 'function') updateLessonFlowUI();
+            if (typeof updateQuiz === 'function') updateQuiz();
+        }
+        if (document.getElementById('practice') && document.getElementById('practice').classList.contains('active')) {
+            if (typeof updatePracticeHubUI === 'function') updatePracticeHubUI();
+        }
+    } catch (e) {
+        console.warn('applyAppLanguage view refresh error', e);
+    }
 }
 
 // ---- Pinyin visibility & Hanzi size --------------------------------------------
