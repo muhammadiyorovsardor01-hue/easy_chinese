@@ -1,8 +1,9 @@
 <!-- Last updated: August 31, 2026 - Added HSK filters, search bar, and streak tracker -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz" translate="no">
 <head>
     <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
     <!-- Security: Content Security Policy — only trusted sources may load scripts/connect -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://www.gstatic.com https://apis.google.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https://dict.youdao.com; connect-src 'self' https://dict.youdao.com https://cdn.jsdelivr.net https://translate.googleapis.com https://api.mymemory.translated.net https://*.googleapis.com https://www.gstatic.com https://*.firebaseio.com wss://*.firebaseio.com https://easy-chinese-2e2d6.firebaseapp.com; frame-src https://easy-chinese-2e2d6.firebaseapp.com https://accounts.google.com https://apis.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -21,7 +22,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=38">
+    <link rel="stylesheet" href="styles.css?v=39">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -59,17 +60,17 @@
                     <span class="hero-blossom hero-blossom-3" aria-hidden="true">🌸</span>
                 </div>
                 <div class="hero-inner">
-                    <span class="hero-kicker">汉语 · Learn Chinese</span>
-                    <h2 class="hero-title">Every character is a small door into a new world.</h2>
-                    <p class="hero-subtitle">Learn HSK vocabulary step by step — read, listen, write and remember with calm, focused practice.</p>
-                    <p class="hero-quote">« 千里之行，始于足下 » — a journey of a thousand miles begins with a single step.</p>
+                    <span class="hero-kicker" data-i18n="hero.kicker">汉语 · Xitoy tilini o'rganing</span>
+                    <h2 class="hero-title" data-i18n="hero.title">Har bir iyeroglif — yangi dunyoga ochiladigan kichik eshik.</h2>
+                    <p class="hero-subtitle" data-i18n="hero.subtitle">HSK so'z boyligini bosqichma-bosqich o'rganing — o'qing, tinglang, yozing va xotirada mustahkamlang.</p>
+                    <p class="hero-quote" data-i18n="hero.quote">« 千里之行，始于足下 » — ming chaqirimlik yo'l birinchi qadamdan boshlanadi.</p>
                 </div>
             </div>
 
             <div class="dashboard-bento-header">
                 <div>
-                    <h2 class="section-title" data-i18n="home.selectLevel">Select HSK Level</h2>
-                    <p class="dashboard-bento-sub" data-i18n="home.selectLevelSub">Choose a level to start or continue your practice</p>
+                    <h2 class="section-title" data-i18n="home.selectLevel">HSK darajasini tanlang</h2>
+                    <p class="dashboard-bento-sub" data-i18n="home.selectLevelSub">Boshlash yoki davom ettirish uchun darajani tanlang</p>
                 </div>
                 <span class="dashboard-level-pill" id="dashboardLevelPill">HSK 1</span>
             </div>
@@ -79,15 +80,15 @@
                     <div class="hsk-number">1</div>
                     <div class="hsk-card-body">
                         <div class="hsk-card-top">
-                            <span class="hsk-label" data-i18n="hsk.1_label">HSK 1 · Foundations</span>
-                            <span class="hsk-level-badge" data-i18n="hsk.1_words">150 words</span>
+                            <span class="hsk-label" data-i18n="hsk.1_label">HSK 1 · Boshlang'ich</span>
+                            <span class="hsk-level-badge" data-i18n="hsk.1_words">150 so'z</span>
                         </div>
-                        <span class="hsk-subtitle" data-i18n="hsk.1_sub">Classic HSK & New HSK 3.0 · 15 lessons</span>
+                        <span class="hsk-subtitle" data-i18n="hsk.1_sub">Classic HSK va New HSK 3.0 · 15 ta dars</span>
                         <div class="hsk-mini-progress" aria-hidden="true">
                             <div class="hsk-mini-fill" id="dashboardHsk1Fill" style="width: 0%"></div>
                         </div>
                     </div>
-                    <span class="hsk-cta" data-i18n="hsk.start">Start →</span>
+                    <span class="hsk-cta" data-i18n="hsk.start">Boshlash →</span>
                 </button>
                 <button class="hsk-btn" data-hsk="2">
                     <div class="hsk-card-top">
@@ -95,10 +96,10 @@
                         <span class="hsk-level-badge">&#x4E8C;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label" data-i18n="hsk.2_label">HSK 2 &middot; Elementary</span>
-                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 &middot; 15 lessons</span>
+                        <span class="hsk-label" data-i18n="hsk.2_label">HSK 2 · Quyi daraja</span>
+                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 · 15 ta dars</span>
                     </div>
-                    <span class="hsk-cta" data-i18n="hsk.continue">Continue &rarr;</span>
+                    <span class="hsk-cta" data-i18n="hsk.continue">Davom etish &rarr;</span>
                 </button>
                 <button class="hsk-btn" data-hsk="3">
                     <div class="hsk-card-top">
@@ -106,10 +107,10 @@
                         <span class="hsk-level-badge">&#x4E09;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label" data-i18n="hsk.3_label">HSK 3 &middot; Intermediate</span>
-                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 &middot; 15 lessons</span>
+                        <span class="hsk-label" data-i18n="hsk.3_label">HSK 3 · O'rta daraja</span>
+                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 · 15 ta dars</span>
                     </div>
-                    <span class="hsk-cta" data-i18n="hsk.continue">Continue &rarr;</span>
+                    <span class="hsk-cta" data-i18n="hsk.continue">Davom etish &rarr;</span>
                 </button>
                 <button class="hsk-btn" data-hsk="4">
                     <div class="hsk-card-top">
@@ -117,10 +118,10 @@
                         <span class="hsk-level-badge">&#x56DB;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label" data-i18n="hsk.4_label">HSK 4 &middot; Upper-Inter</span>
-                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 &middot; 15 lessons</span>
+                        <span class="hsk-label" data-i18n="hsk.4_label">HSK 4 · Yuqori o'rta</span>
+                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 · 15 ta dars</span>
                     </div>
-                    <span class="hsk-cta" data-i18n="hsk.continue">Continue &rarr;</span>
+                    <span class="hsk-cta" data-i18n="hsk.continue">Davom etish &rarr;</span>
                 </button>
                 <button class="hsk-btn" data-hsk="5">
                     <div class="hsk-card-top">
@@ -128,10 +129,10 @@
                         <span class="hsk-level-badge">&#x4E94;&#x7EA7; &middot; 3.0</span>
                     </div>
                     <div class="hsk-card-body">
-                        <span class="hsk-label" data-i18n="hsk.5_label">HSK 5 &middot; Advanced</span>
-                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 &middot; 15 lessons</span>
+                        <span class="hsk-label" data-i18n="hsk.5_label">HSK 5 · Yuqori daraja</span>
+                        <span class="hsk-subtitle" data-i18n="hsk.lessons">New HSK 3.0 · 15 ta dars</span>
                     </div>
-                    <span class="hsk-cta" data-i18n="hsk.continue">Continue &rarr;</span>
+                    <span class="hsk-cta" data-i18n="hsk.continue">Davom etish &rarr;</span>
                 </button>
             </div>
 
@@ -141,15 +142,15 @@
                     <span class="smart-bento-icon" aria-hidden="true">&#x1F9E0;</span>
                     <span class="smart-bento-copy">
                         <strong data-i18n="dash.mistakesTitle">Xatolar ustida ishlash</strong>
-                        <small id="dashboardMistakesSub" data-i18n="dash.mistakesSub">Xato qilingan so&#x2018;zlarni takrorlash</small>
+                        <small id="dashboardMistakesSub" data-i18n="dash.mistakesSub">Xato qilingan so'zlarni takrorlash</small>
                     </span>
                     <span class="smart-bento-badge" id="dashboardMistakesCount">0</span>
                 </button>
                 <button class="smart-bento-card smart-bookmarks-card" id="dashboardBookmarksBtn" type="button">
                     <span class="smart-bento-icon" aria-hidden="true">&#x2B50;</span>
                     <span class="smart-bento-copy">
-                        <strong data-i18n="dash.bookmarksTitle">Saqlangan so&#x2018;zlar</strong>
-                        <small id="dashboardBookmarksSub" data-i18n="dash.bookmarksSub">Sevimli so&#x2018;zlar to&#x2018;plami</small>
+                        <strong data-i18n="dash.bookmarksTitle">Saqlangan so'zlar</strong>
+                        <small id="dashboardBookmarksSub" data-i18n="dash.bookmarksSub">Sevimli so'zlar to'plami</small>
                     </span>
                     <span class="smart-bento-badge" id="dashboardBookmarksCount">0</span>
                 </button>
@@ -196,22 +197,22 @@
                 </div>
                 <!-- HSK 1 lesson versions (JS toggles .active only â€” keep both track buttons) -->
                 <div class="hsk-filters" aria-label="HSK 1 lesson version">
-                    <button class="hsk-filter-btn active" data-track="classic" type="button" data-i18n="lesson.trackClassic">Classic HSK 1 &middot; 15 lessons</button>
-                    <button class="hsk-filter-btn" data-track="new" type="button" data-i18n="lesson.trackNew">New HSK 3.0 &middot; 15 lessons</button>
+                    <button class="hsk-filter-btn active" data-track="classic" type="button" data-i18n="lesson.trackClassic">Classic HSK 1 · 15 ta dars</button>
+                    <button class="hsk-filter-btn" data-track="new" type="button" data-i18n="lesson.trackNew">New HSK 3.0 · 15 ta dars</button>
                 </div>
             </div>
 
             <!-- Search Bar -->
             <div class="search-container">
-                <input type="text" class="search-input" id="searchInput" data-i18n-ph="lesson.searchPlaceholder" placeholder="Search by Uzbek, Pinyin, or Hanzi...">
+                <input type="text" class="search-input" id="searchInput" data-i18n-ph="lesson.searchPlaceholder" placeholder="O'zbekcha, Pinyin yoki Hanzi bo'yicha qidirish...">
                 <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
             </div>
 
             <!-- Node-state legend: completed / current / locked -->
             <div class="map-legend">
-                <span class="map-legend-item lg-completed">✓ 已完成 · Completed</span>
-                <span class="map-legend-item lg-current">● 进行中 · Current</span>
-                <span class="map-legend-item lg-locked">🔒 未解锁 · Locked</span>
+                <span class="map-legend-item lg-completed" data-i18n="lesson.legendCompleted">✓ 已完成 · Tugallangan</span>
+                <span class="map-legend-item lg-current" data-i18n="lesson.legendCurrent">● 进行中 · Joriy dars</span>
+                <span class="map-legend-item lg-locked" data-i18n="lesson.legendLocked">🔒 未解锁 · Yopiq</span>
             </div>
 
             <div class="lessons-grid" id="lessonsGrid"></div>
@@ -221,8 +222,8 @@
         <section id="lesson" class="view">
             <div class="lesson-top-bar">
                 <button class="back-btn" id="backToLessons" data-i18n="lesson.backToLessons">&larr; Darslar</button>
-                <h2 class="section-title" id="lessonTitle">Lesson 1</h2>
-                <button type="button" class="lesson-ai-ask-btn" id="askAiFromLessonBtn" title="Shu so'zni AI Laoshi'dan so'rash" data-i18n="lesson.aiAskBtn">&#x1F916; AI Tahlil</button>
+                <h2 class="section-title" id="lessonTitle">1-dars</h2>
+                <button type="button" class="lesson-ai-ask-btn" id="askAiFromLessonBtn" data-i18n="lesson.aiAskBtn" title="Shu so'zni AI Laoshi'dan so'rash">&#x1F916; AI Tahlil</button>
             </div>
 
             <section class="lesson-flow-panel" aria-label="Lesson progress">
@@ -232,15 +233,15 @@
                 </div>
                 <div class="lesson-flow-action">
                     <p id="lessonFlowStatus" aria-live="polite"></p>
-                    <button class="lesson-flow-continue" id="lessonFlowContinue" type="button" data-i18n="lesson.continue">Continue</button>
+                    <button class="lesson-flow-continue" id="lessonFlowContinue" type="button" data-i18n="lesson.continue">Davom etish</button>
                 </div>
             </section>
 
             <div class="mode-tabs" aria-hidden="true">
-                <button class="tab-btn" id="learningContentTab" data-mode="learning" data-i18n="lesson.tabLearning">Learning</button>
-                <button class="tab-btn active" data-mode="flashcard" data-i18n="lesson.tabFlashcard">Flashcards</button>
-                <button class="tab-btn" data-mode="quiz" data-i18n="lesson.tabQuiz">Quiz</button>
-                <button class="tab-btn" id="writingTab" data-mode="writing" data-i18n="lesson.tabWriting">Writing</button>
+                <button class="tab-btn" id="learningContentTab" data-mode="learning" data-i18n="lesson.tabLearning">O'rganish</button>
+                <button class="tab-btn active" data-mode="flashcard" data-i18n="lesson.tabFlashcard">Kartochkalar</button>
+                <button class="tab-btn" data-mode="quiz" data-i18n="lesson.tabQuiz">Test</button>
+                <button class="tab-btn" id="writingTab" data-mode="writing" data-i18n="lesson.tabWriting">Yozish</button>
             </div>
 
             <!-- Stage 2: Flashcard Mode -->
@@ -252,7 +253,7 @@
                                 <div class="hanzi" id="flashcardHanzi">你好</div>
                                 <button class="word-audio-btn" id="flashcardAudioBtn" type="button" aria-label="Pronounce word">🔊</button>
                             </div>
-                            <div class="tap-hint" data-i18n="card.tapHint">Tap to flip</div>
+                            <div class="tap-hint" data-i18n="card.tapHint">Aylantirish uchun bosing</div>
                         </div>
                         <div class="flashcard-back">
                             <div class="pinyin" id="flashcardPinyin">nǐ hǎo</div>
@@ -268,7 +269,7 @@
                 <div class="action-buttons">
                     <button class="action-btn audio-action-btn" id="audioBtn" aria-label="Play pronunciation">
                         <span class="btn-icon">&#x1F50A;</span>
-                        <span class="btn-label" data-i18n="card.audio">Audio</span>
+                        <span class="btn-label" data-i18n="card.audio">Ovoz</span>
                     </button>
                     <button class="action-btn speak-action-btn" id="speakPracticeBtn" type="button" aria-label="Pronunciation check">
                         <span class="btn-icon">&#x1F399;&#xFE0F;</span>
@@ -276,26 +277,26 @@
                     </button>
                     <button class="action-btn draw-action-btn" id="strokeBtn" aria-label="Show stroke order">
                         <span class="btn-icon">&#x270F;&#xFE0F;</span>
-                        <span class="btn-label" data-i18n="card.draw">Draw</span>
+                        <span class="btn-label" data-i18n="card.draw">Chizish</span>
                     </button>
                     <button class="action-btn next-action-btn" id="nextCard" aria-label="Next card">
                         <span class="btn-icon">&#x27A1;&#xFE0F;</span>
-                        <span class="btn-label" id="nextCardLabel" data-i18n="card.next">Next</span>
+                        <span class="btn-label" id="nextCardLabel" data-i18n="card.next">Keyingi</span>
                     </button>
                 </div>
                 <div id="speakFeedbackBanner" class="speak-feedback-banner" hidden aria-live="polite"></div>
                 
                 <!-- Secondary Controls -->
                 <div class="secondary-controls">
-                    <button class="secondary-btn" id="prevCard" data-i18n="card.prev">&larr; Prev</button>
-                    <button class="secondary-btn" id="shuffleCards" data-i18n="card.shuffle">&#x1F500; Shuffle</button>
+                    <button class="secondary-btn" id="prevCard" data-i18n="card.prev">&larr; Oldingi</button>
+                    <button class="secondary-btn" id="shuffleCards" data-i18n="card.shuffle">&#x1F500; Aralashtirish</button>
                     <button class="secondary-btn" id="bookmarkWordBtn" type="button" data-i18n="card.bookmark">&#x2B50; Saqlash</button>
-                    <button class="secondary-btn" id="markLearned" data-i18n="card.learned">&#x2713; Learned</button>
+                    <button class="secondary-btn" id="markLearned" data-i18n="card.learned">&#x2713; Bilaman</button>
                 </div>
                 
                 <div class="card-counter">
                     <span id="currentCard">1</span> / <span id="totalCards">5</span>
-                    <span class="learned-counter"><span data-i18n="card.learnedLabel">Learned</span>: <span id="learnedCount">0</span></span>
+                    <span class="learned-counter"><span data-i18n="card.learnedLabel">Yodlangan:</span> <span id="learnedCount">0</span></span>
                     <span class="word-progress" id="wordProgress" aria-live="polite">Word 1 of 5</span>
                 </div>
             </div>
@@ -304,11 +305,11 @@
             <div id="quizMode" class="mode-content">
                 <div class="quiz-header">
                     <div class="score-tracker">
-                        <span data-i18n="quiz.scoreLabel">Score</span>: <span id="quizScore">0</span>
+                        <span data-i18n="quiz.scoreLabel">Ball:</span> <span id="quizScore">0</span>
                     </div>
                     <div class="quiz-type-selector" role="group" aria-label="Quiz type">
-                        <button class="quiz-type-btn active" data-quiz-type="meaning" type="button" data-i18n="quiz.typeMeaning">Hanzi &rarr; Ma&rsquo;no</button>
-                        <button class="quiz-type-btn" data-quiz-type="pinyin" type="button" data-i18n="quiz.typePinyin">Ma&rsquo;no &rarr; Pinyin</button>
+                        <button class="quiz-type-btn active" data-quiz-type="meaning" type="button" data-i18n="quiz.typeMeaning">Hanzi &rarr; Ma'no</button>
+                        <button class="quiz-type-btn" data-quiz-type="pinyin" type="button" data-i18n="quiz.typePinyin">Ma'no &rarr; Pinyin</button>
                         <button class="quiz-type-btn" data-quiz-type="hanzi" type="button" data-i18n="quiz.typeHanzi">Pinyin &rarr; Hanzi</button>
                         <button class="quiz-type-btn" data-quiz-type="audio" type="button" data-i18n="quiz.typeAudio">&#x1F3A7; Eshitib topish</button>
                     </div>
@@ -316,15 +317,15 @@
                 <div class="quiz-container">
                     <div class="quiz-question">
                         <div class="quiz-hanzi" id="quizHanzi">你好</div>
-                        <p class="quiz-prompt" id="quizPrompt" data-i18n="quiz.promptMeaning">What does this mean?</p>
+                        <p class="quiz-prompt" id="quizPrompt" data-i18n="quiz.promptMeaning">Bu so'zning ma'nosi nima?</p>
                     </div>
                     <div class="quiz-options" id="quizOptions"></div>
                 </div>
                 <div class="quiz-controls">
-                    <button class="control-btn" id="nextQuizQuestion" data-i18n="quiz.nextQuestion">Next Question</button>
+                    <button class="control-btn" id="nextQuizQuestion" data-i18n="quiz.nextQuestion">Keyingi savol</button>
                 </div>
                 <div class="quiz-counter">
-                    <span data-i18n="quiz.questionLabel">Question</span>: <span id="currentQuestion">1</span> / <span id="totalQuestions">5</span>
+                    <span data-i18n="quiz.questionLabel">Savol:</span> <span id="currentQuestion">1</span> / <span id="totalQuestions">5</span>
                 </div>
             </div>
 
@@ -332,13 +333,13 @@
             <div id="learningMode" class="mode-content">
                 <div class="learning-content-container">
                     <div class="learning-section" id="vocabOverviewSection">
-                        <h3 class="learning-section-title">Dars so‘zlari (Vocabulary)</h3>
+                        <h3 class="learning-section-title" data-i18n="learning.vocabTitle">Dars so'zlari</h3>
                         <div id="lessonVocabPreview" class="lesson-vocab-grid"></div>
                     </div>
 
                     <!-- Example Sentences Section -->
                     <div class="learning-section" id="exampleSentencesSection">
-                        <h3 class="learning-section-title">Example Sentences</h3>
+                        <h3 class="learning-section-title" data-i18n="learning.examplesTitle">Misol gaplar</h3>
                         <div id="exampleSentences" class="example-sentences-list">
                             <p class="learning-placeholder">Loading learning content...</p>
                         </div>
@@ -346,7 +347,7 @@
 
                     <!-- Grammar Note Section -->
                     <div class="learning-section" id="grammarNoteSection">
-                        <h3 class="learning-section-title">Grammar Note (Grammatika)</h3>
+                        <h3 class="learning-section-title" data-i18n="learning.grammarTitle">Grammatika izohi</h3>
                         <div id="grammarNote" class="grammar-note-container">
                             <p class="learning-placeholder">Loading learning content...</p>
                         </div>
@@ -355,16 +356,14 @@
                     <!-- Sentence Builder Mini-Game Section -->
                     <div class="learning-section" id="sentenceBuilderSection">
                         <div class="section-head-row">
-                            <h3 class="learning-section-title">&#x1F9E9; Gap tuzish mashqi (Sentence Builder)</h3>
+                            <h3 class="learning-section-title" data-i18n="learning.builderTitle">&#x1F9E9; Gap tuzish mashqi</h3>
                             <span class="builder-xp-pill">+15 XP</span>
                         </div>
                         <div id="sentenceBuilderContainer" class="sentence-builder-box"></div>
                     </div>
 
                     <div class="stage-next-bar">
-                        <button class="stage-next-btn" id="startFlashcardsFromLearn" type="button">
-                            2-bosqichga o‘tish: Flashcards →
-                        </button>
+                        <button class="stage-next-btn" id="startFlashcardsFromLearn" type="button" data-i18n="learning.nextStageBtn">2-bosqichga o'tish: Kartochkalar →</button>
                     </div>
                 </div>
             </div>
@@ -377,24 +376,24 @@
                 <div class="lesson-complete-card">
                     <div class="complete-badge-icon">🎉</div>
                     <h3 class="complete-heading" id="completeLessonHeading">Lesson 1 yakunlandi!</h3>
-                    <p class="complete-subtitle" id="completeLessonSub">Barcha bosqichlarni (Learn, Flashcards, Quiz, Writing) muvaffaqiyatli tugatdingiz!</p>
+                    <p class="complete-subtitle" id="completeLessonSub" data-i18n="complete.sub">Barcha bosqichlarni muvaffaqiyatli tugatdingiz!</p>
                     <div class="complete-stats-row">
                         <div class="complete-stat-box">
                             <span class="complete-stat-val">+50 XP</span>
-                            <span class="complete-stat-lbl">Mukofot</span>
+                            <span class="complete-stat-lbl" data-i18n="complete.rewardLbl">Mukofot</span>
                         </div>
                         <div class="complete-stat-box">
                             <span class="complete-stat-val" id="completeWordsCount">6 ta</span>
-                            <span class="complete-stat-lbl">O‘rganilgan so‘zlar</span>
+                            <span class="complete-stat-lbl" data-i18n="complete.wordsLbl">O'rganilgan so'zlar</span>
                         </div>
                         <div class="complete-stat-box">
                             <span class="complete-stat-val">100%</span>
-                            <span class="complete-stat-lbl">Natija</span>
+                            <span class="complete-stat-lbl" data-i18n="complete.scoreLbl">Natija</span>
                         </div>
                     </div>
                     <div class="complete-actions">
-                        <button class="stage-next-btn" id="nextLessonAutoBtn" type="button">Keyingi dars (Lesson 2) →</button>
-                        <button class="secondary-btn complete-back-btn" id="backToLessonsFromComplete" type="button">← Darslar xaritasiga qaytish</button>
+                        <button class="stage-next-btn" id="nextLessonAutoBtn" type="button">Keyingi dars →</button>
+                        <button class="secondary-btn complete-back-btn" id="backToLessonsFromComplete" type="button" data-i18n="complete.backBtn">← Darslar xaritasiga qaytish</button>
                     </div>
                 </div>
             </div>
@@ -402,13 +401,13 @@
 
         <!-- Canvas View -->
         <section id="canvas" class="view">
-            <button class="back-btn" id="backToLessonsFromCanvas">← Back to Lessons</button>
+            <button class="back-btn" id="backToLessonsFromCanvas" data-i18n="canvas.backToLessons">← Darslarga qaytish</button>
             
             <div class="canvas-layout">
                 <!-- Side Menu -->
                 <div class="canvas-sidebar">
                     <div class="sidebar-section">
-                        <h3 class="sidebar-title">HSK Level</h3>
+                        <h3 class="sidebar-title" data-i18n="canvas.hskLevel">HSK darajasi</h3>
                         <div class="hsk-selector">
                             <button class="hsk-option active" data-hsk="1">HSK 1</button>
                             <button class="hsk-option" data-hsk="2">HSK 2</button>
@@ -419,7 +418,7 @@
                     </div>
                     
                     <div class="sidebar-section">
-                        <h3 class="sidebar-title">Lesson</h3>
+                        <h3 class="sidebar-title" data-i18n="canvas.lesson">Dars</h3>
                         <select class="lesson-selector" id="canvasLessonSelector">
                             <option value="1">Lesson 1</option>
                             <option value="2">Lesson 2</option>
@@ -428,7 +427,7 @@
                     </div>
                     
                     <div class="sidebar-section" id="canvasTrackSection">
-                        <h3 class="sidebar-title">Version</h3>
+                        <h3 class="sidebar-title" data-i18n="canvas.version">Versiya</h3>
                         <select class="lesson-selector" id="canvasTrackSelector" aria-label="Curriculum version">
                             <option value="classic">Classic HSK</option>
                             <option value="new">New HSK 3.0</option>
@@ -436,11 +435,11 @@
                     </div>
                     
                     <div class="sidebar-section">
-                        <h3 class="sidebar-title">Writing Mode</h3>
+                        <h3 class="sidebar-title" data-i18n="canvas.writingMode">Yozish rejimi</h3>
                         <div class="mode-selector">
-                            <button class="mode-option active" data-mode="trace">Trace</button>
-                            <button class="mode-option" data-mode="write">Write</button>
-                            <button class="mode-option" data-mode="test">Test</button>
+                            <button class="mode-option active" data-mode="trace" data-i18n="canvas.trace">Chizish</button>
+                            <button class="mode-option" data-mode="write" data-i18n="canvas.write">Yozish</button>
+                            <button class="mode-option" data-mode="test" data-i18n="canvas.test">Sinov</button>
                         </div>
                     </div>
                 </div>
@@ -461,15 +460,15 @@
                         </select>
                         <select class="canvas-mobile-select" id="canvasMobileLessonSelector" aria-label="Lesson"></select>
                         <div class="canvas-mobile-modes" role="group" aria-label="Writing mode">
-                            <button class="mobile-mode-option active" data-mode="trace" type="button">Trace</button>
-                            <button class="mobile-mode-option" data-mode="write" type="button">Write</button>
-                            <button class="mobile-mode-option" data-mode="test" type="button">Test</button>
+                            <button class="mobile-mode-option active" data-mode="trace" type="button" data-i18n="canvas.trace">Chizish</button>
+                            <button class="mobile-mode-option" data-mode="write" type="button" data-i18n="canvas.write">Yozish</button>
+                            <button class="mobile-mode-option" data-mode="test" type="button" data-i18n="canvas.test">Sinov</button>
                         </div>
                     </div>
                     
                     <!-- New Duolingo-style Canvas Header -->
                     <div class="canvas-header">
-                        <div class="canvas-category">Trace Practice</div>
+                        <div class="canvas-category" data-i18n="canvas.category">Chizish mashqi</div>
                         <div class="canvas-cn-kicker">汉字练习 · Hanzi Practice</div>
                         <div class="canvas-word-progress" aria-live="polite">
                             <span>Word: <strong id="canvasWordLabel">&#x4F60;</strong></span>
@@ -516,7 +515,7 @@
                                 <line x1="10" y1="14" x2="21" y2="3"></line>
                             </svg>
                         </button>
-                        <button class="canvas-check-btn" id="canvasCheckBtn" type="button">Check</button>
+                        <button class="canvas-check-btn" id="canvasCheckBtn" type="button" data-i18n="canvas.check">Tekshirish</button>
                         <button class="canvas-control-btn" id="canvasHintBtn" type="button" aria-label="Show hint">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -526,14 +525,14 @@
                     </div>
                     
                     <!-- Continue Button -->
-                    <button class="canvas-continue-btn" id="canvasContinueBtn" type="button" style="display: none;">Next Word →</button>
+                    <button class="canvas-continue-btn" id="canvasContinueBtn" type="button" style="display: none;" data-i18n="canvas.nextWord">Keyingi so'z →</button>
                     
                     <div class="canvas-instructions">
                         <p id="modeInstructions">Trace the character by following the guide dots.</p>
                         <p id="canvasFeedback" class="canvas-feedback" role="status" aria-live="polite"></p>
                         <div class="canvas-progress">
-                            <span>Points: <strong id="canvasScore">0</strong></span>
-                            <button class="control-btn next-word-btn" id="nextCanvasWord" type="button" disabled>Next Word →</button>
+                            <span><span data-i18n="canvas.points">Ball:</span> <strong id="canvasScore">0</strong></span>
+                            <button class="control-btn next-word-btn" id="nextCanvasWord" type="button" disabled data-i18n="canvas.nextWord">Keyingi so'z →</button>
                         </div>
                     </div>
                 </div>
@@ -824,10 +823,10 @@
                         <div class="hub-tile-icon pinyin-icon">🎹</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
-                                <strong>Interaktiv Pinyin Jadvali</strong>
-                                <span class="hub-pill-badge hub-pill-new">23 Undosh + 24 Unli + Ovoz</span>
+                                <strong data-i18n="practice.tile.pinyin.title">Interaktiv Pinyin Jadvali</strong>
+                                <span class="hub-pill-badge hub-pill-new" data-i18n="practice.tile.pinyin.badge">23 Undosh + 24 Unli + Ovoz</span>
                             </div>
-                            <p>Barcha 声母 va 韵母 tovushlari, to‘liq kombinatsiyalar matritsasi va muhim o‘qish qoidalari</p>
+                            <p data-i18n="practice.tile.pinyin.desc">Barcha 声母 va 韵母 tovushlari, to'liq kombinatsiyalar matritsasi va muhim o'qish qoidalari</p>
                         </div>
                         <span class="hub-tile-arrow">→</span>
                     </button>
@@ -836,10 +835,10 @@
                         <div class="hub-tile-icon tone-icon">🎵</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
-                                <strong>Tonlar Laboratoriyasi</strong>
-                                <span class="hub-pill-badge">4 Ton + Sandhi</span>
+                                <strong data-i18n="practice.tile.tone.title">Tonlar Laboratoriyasi</strong>
+                                <span class="hub-pill-badge" data-i18n="practice.tile.tone.badge">4 Ton + Sandhi</span>
                             </div>
-                            <p>1–4 tonlar grafigi, o‘xshash so‘zlar (mā/má/mǎ/mà) va eshitib topish viktorinasi</p>
+                            <p data-i18n="practice.tile.tone.desc">1-4 tonlar grafigi, o'xshash so'zlar (mā/má/mǎ/mà) va eshitib topish viktorinasi</p>
                         </div>
                         <span class="hub-tile-arrow">→</span>
                     </button>
@@ -848,10 +847,10 @@
                         <div class="hub-tile-icon mic-icon">🎙️</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
-                                <strong>Talaffuz &amp; Pitch Mashqi</strong>
-                                <span class="hub-pill-badge">Ovozli tekshirish</span>
+                                <strong data-i18n="practice.tile.pitch.title">Talaffuz va Pitch Mashqi</strong>
+                                <span class="hub-pill-badge" data-i18n="practice.tile.pitch.badge">Ovozli tekshirish</span>
                             </div>
-                            <p>Mikrofonga aytib, ovoz konturingiz to‘g‘ri tushayotganini tekshiring</p>
+                            <p data-i18n="practice.tile.pitch.desc">Mikrofonga aytib, ovoz konturingiz to'g'ri tushayotganini tekshiring</p>
                         </div>
                         <span class="hub-tile-arrow">→</span>
                     </button>
@@ -866,10 +865,10 @@
                         <div class="hub-tile-icon surv-icon">🏮</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
-                                <strong>Xitoyda Kunlik Muloqot</strong>
-                                <span class="hub-pill-badge">Jonli Iboralar</span>
+                                <strong data-i18n="practice.tile.survival.title">Xitoyda Kunlik Muloqot</strong>
+                                <span class="hub-pill-badge" data-i18n="practice.tile.survival.badge">Jonli iboralar</span>
                             </div>
-                            <p>Darsda (教室), oshxonada (食堂), WeChat to‘lov (微信), metro va kuryer (外卖) gaplari</p>
+                            <p data-i18n="practice.tile.survival.desc">Darsda (教室), oshxonada (食堂), WeChat to'lov (微信), metro va kuryer (外卖) gaplari</p>
                         </div>
                         <span class="hub-tile-arrow">→</span>
                     </button>
@@ -878,10 +877,10 @@
                         <div class="hub-tile-icon ai-icon">👩‍🏫</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
-                                <strong>AI Laoshi (Li Ustoz)</strong>
-                                <span class="hub-pill-badge">SuperChinese uslubida</span>
+                                <strong data-i18n="practice.tile.ai.title">AI Laoshi (Li Ustoz)</strong>
+                                <span class="hub-pill-badge" data-i18n="practice.tile.ai.badge">SuperChinese uslubida</span>
                             </div>
-                            <p>Istalgan savolni bering, ton tahlili yoki real dialog mashq qiling</p>
+                            <p data-i18n="practice.tile.ai.desc">Istalgan savolni bering, ton tahlili yoki real dialog mashq qiling</p>
                         </div>
                         <span class="hub-tile-arrow">→</span>
                     </button>
@@ -896,10 +895,10 @@
                         <div class="hub-tile-icon card-icon">🗂️</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
-                                <strong>Interaktiv Flashcards Trenajyori</strong>
+                                <strong data-i18n="practice.tile.cards.title">Interaktiv Kartochkalar Trenajyori</strong>
                                 <span class="hub-pill-badge" id="hubFlashcardsBadge">Spaced Repetition</span>
                             </div>
-                            <p>3D o‘giriluvchi kartochkalar, audio talaffuz va o‘z-o‘zini baholash (Bilaman / Qaytarish)</p>
+                            <p data-i18n="practice.tile.cards.desc">3D aylanuvchi kartochkalar, audio talaffuz va o'z-o'zini baholash (Bilaman / Qaytarish)</p>
                         </div>
                         <span class="hub-tile-arrow">→</span>
                     </button>
@@ -908,10 +907,10 @@
                         <div class="hub-tile-icon review-icon">🧠</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
-                                <strong>Xatolar Ustida Ishlash</strong>
-                                <span class="hub-pill-badge" id="hubMistakesBadge">0 ta so‘z</span>
+                                <strong data-i18n="practice.tile.mistakes.title">Xatolar Ustida Ishlash</strong>
+                                <span class="hub-pill-badge" id="hubMistakesBadge">0 ta so'z</span>
                             </div>
-                            <p>Dars va viktorinalarda noaniq bo‘lgan so‘zlarni qayta mustahkamlash</p>
+                            <p data-i18n="practice.tile.mistakes.desc">Dars va testlarda xato bo'lgan so'zlarni qayta mustahkamlash</p>
                         </div>
                         <span class="hub-tile-arrow">→</span>
                     </button>
@@ -920,10 +919,10 @@
                         <div class="hub-tile-icon fav-icon">⭐</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
-                                <strong>Saqlangan So‘zlar</strong>
-                                <span class="hub-pill-badge" id="hubBookmarksBadge">0 ta so‘z</span>
+                                <strong data-i18n="practice.tile.bookmarks.title">Saqlangan So'zlar</strong>
+                                <span class="hub-pill-badge" id="hubBookmarksBadge">0 ta so'z</span>
                             </div>
-                            <p>O‘zingiz yulduzcha qo‘ygan maxsus so‘zlar to‘plamini takrorlash</p>
+                            <p data-i18n="practice.tile.bookmarks.desc">O'zingiz yulduzcha qo'ygan maxsus so'zlar to'plamini takrorlash</p>
                         </div>
                         <span class="hub-tile-arrow">→</span>
                     </button>
@@ -1302,16 +1301,16 @@
     <div class="modal" id="successModal">
         <div class="modal-content success-modal">
             <div class="modal-header">
-                <h3 data-i18n="modal.correctTitle">Correct! 🎉</h3>
+                <h3 data-i18n="modal.correctTitle">To'g'ri! 🎉</h3>
                 <button class="modal-close" id="closeSuccessModal">✕</button>
             </div>
             <div class="modal-body">
                 <div class="success-animation">🎊</div>
-                <p class="success-message" data-i18n="modal.successMessage">Great job! You completed the character.</p>
-                <p class="xp-earned" data-i18n="modal.xpEarned">+10 XP earned!</p>
+                <p class="success-message" data-i18n="modal.correctMsg">Barakalla! Iyeroglifni to'g'ri yozdingiz.</p>
+                <p class="xp-earned" data-i18n="modal.xpEarned">+10 XP olindi!</p>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn save-btn" id="nextWordFromModal" data-i18n="modal.nextWord">Next Word</button>
+                <button class="modal-btn save-btn" id="nextWordFromModal" data-i18n="canvas.nextWord">Keyingi so'z</button>
             </div>
         </div>
     </div>
@@ -1320,7 +1319,7 @@
     <div class="modal" id="editProfileModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 data-i18n="modal.editProfile">Edit Profile</h3>
+                <h3 data-i18n="modal.editProfileTitle">Profilni tahrirlash</h3>
                 <button class="modal-close" id="closeModalBtn">✕</button>
             </div>
             <div class="modal-body">
@@ -1360,8 +1359,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn cancel-btn" id="cancelModalBtn" data-i18n="modal.cancel">Cancel</button>
-                <button class="modal-btn save-btn" id="saveProfileBtn" data-i18n="modal.save">Save Changes</button>
+                <button class="modal-btn cancel-btn" id="cancelModalBtn" data-i18n="modal.cancel">Bekor qilish</button>
+                <button class="modal-btn save-btn" id="saveProfileBtn" data-i18n="modal.save">Saqlash</button>
             </div>
         </div>
     </div>
@@ -1385,7 +1384,7 @@
                     <h4 class="settings-group-title" data-i18n="settings.group.language">🌐 Ilova tili</h4>
                     <div class="settings-card">
                         <div class="lang-grid" id="appLanguageGroup">
-                            <button type="button" class="lang-chip" data-lang="uz"><span class="lang-flag">🇺🇿</span><span>O‘zbekcha</span></button>
+                            <button type="button" class="lang-chip" data-lang="uz"><span class="lang-flag">🇺🇿</span><span>O'zbekcha</span></button>
                             <button type="button" class="lang-chip" data-lang="uz-cyrl"><span class="lang-flag">🇺🇿</span><span>Ўзбекча</span></button>
                             <button type="button" class="lang-chip" data-lang="ru"><span class="lang-flag">🇷🇺</span><span>Русский</span></button>
                             <button type="button" class="lang-chip" data-lang="en"><span class="lang-flag">🇬🇧</span><span>English</span></button>
@@ -1564,11 +1563,11 @@
     <nav class="bottom-nav">
         <button class="nav-item active" data-nav="home">
             <span class="nav-icon">&#x1F3E0;</span>
-            <span class="nav-label" data-i18n="nav.home">Home</span>
+            <span class="nav-label" data-i18n="nav.home">Bosh sahifa</span>
         </button>
         <button class="nav-item" data-nav="practice">
             <span class="nav-icon">&#x1F4DA;</span>
-            <span class="nav-label" data-i18n="nav.practice">Practice</span>
+            <span class="nav-label" data-i18n="nav.practice">Mashq</span>
         </button>
         <button class="nav-item nav-item-ai" data-nav="ai">
             <span class="nav-icon">&#x1F916;</span>
@@ -1576,19 +1575,19 @@
         </button>
         <button class="nav-item" data-nav="canvas">
             <span class="nav-icon">&#x270F;&#xFE0F;</span>
-            <span class="nav-label" data-i18n="nav.canvas">Canvas</span>
+            <span class="nav-label" data-i18n="nav.canvas">Yozish</span>
         </button>
         <button class="nav-item" data-nav="profile">
             <span class="nav-icon">&#x1F464;</span>
-            <span class="nav-label" data-i18n="nav.profile">Profile</span>
+            <span class="nav-label" data-i18n="nav.profile">Profil</span>
         </button>
     </nav>
 
     <div id="leaderboardModal" class="modal hidden">
         <div class="modal-content">
-            <h2 data-i18n="modal.leaderboard">🏆 Leaderboard</h2>
+            <h2 data-i18n="modal.leaderboardTitle">🏆 Peshqadamlar</h2>
             <div id="leaderboardList"></div>
-            <button id="closeLeaderboard" data-i18n="modal.close">Close</button>
+            <button id="closeLeaderboard" data-i18n="modal.close">Yopish</button>
         </div>
     </div>
 
@@ -1624,7 +1623,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=38"></script>
+    <script src="script.js?v=39"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1633,6 +1632,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=38"></script>
+    <script src="pwa.js?v=39"></script>
 </body>
 </html>
