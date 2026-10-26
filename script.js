@@ -2715,6 +2715,9 @@ function playWordAudio(wordOrText, customRate = null) {
         const audio = new Audio(audioUrl);
         currentWordAudio = audio;
         audio.playbackRate = rate;
+        audio.preservesPitch = true;
+        if ('webkitPreservesPitch' in audio) audio.webkitPreservesPitch = true;
+        if ('mozPreservesPitch' in audio) audio.mozPreservesPitch = true;
         const playPromise = audio.play();
         if (playPromise !== undefined) {
             playPromise.catch(() => {
@@ -4533,6 +4536,9 @@ function playNativeToneSound(soundName, fallbackHz = null, rate = 1.0) {
             const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3`);
             activeToneAudio = audio;
             audio.playbackRate = rate;
+            audio.preservesPitch = true;
+            if ('webkitPreservesPitch' in audio) audio.webkitPreservesPitch = true;
+            if ('mozPreservesPitch' in audio) audio.mozPreservesPitch = true;
             const promise = audio.play();
             if (promise !== undefined) {
                 promise.catch(() => {
@@ -4540,6 +4546,9 @@ function playNativeToneSound(soundName, fallbackHz = null, rate = 1.0) {
                     const yoyoAudio = new Audio(`https://cdn.yoyochinese.com/audio/pychart/${cleanKey}.mp3`);
                     activeToneAudio = yoyoAudio;
                     yoyoAudio.playbackRate = rate;
+                    yoyoAudio.preservesPitch = true;
+                    if ('webkitPreservesPitch' in yoyoAudio) yoyoAudio.webkitPreservesPitch = true;
+                    if ('mozPreservesPitch' in yoyoAudio) yoyoAudio.mozPreservesPitch = true;
                     const yPromise = yoyoAudio.play();
                     if (yPromise !== undefined) {
                         yPromise.catch(() => {
@@ -4547,6 +4556,9 @@ function playNativeToneSound(soundName, fallbackHz = null, rate = 1.0) {
                             const cdnAudio = new Audio(`https://cdn.jsdelivr.net/gh/davinfifield/mp3-chinese-pinyin-sound@master/mp3/${cleanKey}.mp3`);
                             activeToneAudio = cdnAudio;
                             cdnAudio.playbackRate = rate;
+                            cdnAudio.preservesPitch = true;
+                            if ('webkitPreservesPitch' in cdnAudio) cdnAudio.webkitPreservesPitch = true;
+                            if ('mozPreservesPitch' in cdnAudio) cdnAudio.mozPreservesPitch = true;
                             const cdnPromise = cdnAudio.play();
                             if (cdnPromise !== undefined) {
                                 cdnPromise.catch(() => {
@@ -4581,7 +4593,7 @@ function playToneDemo(toneNum, hanzi = null, cardEl = null, rate = 1.0) {
     if (cardEl) {
         const svg = cardEl.querySelector('.tc-wave-svg');
         if (svg) {
-            svg.style.setProperty('--dur', (rate < 1 ? '1100ms' : '750ms'));
+            svg.style.setProperty('--dur', (rate < 1 ? '1200ms' : '900ms'));
             svg.classList.remove('drawing');
             void svg.getBoundingClientRect();
             svg.classList.add('drawing');
@@ -5321,7 +5333,7 @@ function renderToneContours() {
         btn.onclick = (e) => {
             e.stopPropagation();
             const card = btn.closest('.tone-card');
-            playToneDemo(parseInt(btn.dataset.tone), btn.dataset.speak, card, 0.72);
+            playToneDemo(parseInt(btn.dataset.tone), btn.dataset.speak, card, 0.90);
         };
     });
 
@@ -5469,7 +5481,7 @@ function loadToneEarQuestion() {
     if (feedBox) feedBox.hidden = true;
     if (actionsBox) actionsBox.hidden = true;
 
-    // Real native speaker sound playback (1.0x normal or 0.72x slow motion)
+    // Real native speaker sound playback (1.0x normal or 0.85x slow motion)
     // NOTE: Audio does NOT autoplay automatically upon opening the view or switching tabs.
     // It only plays when user explicitly taps the play buttons!
     function playEarQuestionAudio(rate = 1.0) {
@@ -5478,7 +5490,7 @@ function loadToneEarQuestion() {
     }
 
     if (playBtn) playBtn.onclick = () => playEarQuestionAudio(1.0);
-    if (slowBtn) slowBtn.onclick = () => playEarQuestionAudio(0.72);
+    if (slowBtn) slowBtn.onclick = () => playEarQuestionAudio(0.85);
 
     const basePinyin = {
         'ba': ['bā', 'bá', 'bǎ', 'bà'],
@@ -5666,7 +5678,7 @@ function initToneMicPractice() {
 
     if (slowBtn) {
         slowBtn.onclick = () => {
-            playNativeToneSound(word.sound, word.speak, 0.65);
+            playNativeToneSound(word.sound, word.speak, 0.85);
         };
     }
 
