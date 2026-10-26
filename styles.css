@@ -8693,87 +8693,223 @@ body.has-pwa-banner {
     transform: scale(0.96);
 }
 
-/* 15.2 iOS Safari Quick Install Sheet */
+/* 15.2 iOS Safari Quick Install Sheet & Modal */
+.ios-install-sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 2199;
+}
+
 .ios-install-sheet {
     position: fixed;
     left: 12px;
     right: 12px;
-    bottom: calc(78px + env(safe-area-inset-bottom));
+    bottom: calc(16px + env(safe-area-inset-bottom));
     z-index: 2200;
     display: flex;
     justify-content: center;
+    pointer-events: none;
 }
 
 .ios-sheet-card {
+    pointer-events: auto;
     width: 100%;
     max-width: 440px;
-    background: var(--card-bg);
+    background: var(--card-bg, #ffffff);
     border: 2px solid var(--hsk-accent, #10B981);
-    border-radius: 20px;
-    padding: 0.9rem 1rem;
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+    border-radius: 24px;
+    padding: 1.1rem 1.15rem;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35);
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.75rem;
+    animation: slideUpSheet 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUpSheet {
+    from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .ios-sheet-head {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.75rem;
 }
 
 .ios-sheet-icon {
-    border-radius: 10px;
+    border-radius: 12px;
     flex-shrink: 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.ios-sheet-title-wrap {
+    flex: 1;
+    min-width: 0;
 }
 
 .ios-sheet-head strong {
     display: block;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 800;
     color: var(--text-color);
 }
 
 .ios-sheet-head small {
     display: block;
-    font-size: 0.74rem;
+    font-size: 0.76rem;
     color: var(--text-secondary);
+    margin-top: 2px;
 }
 
 .ios-sheet-head .pwa-dismiss-btn {
     margin-left: auto;
 }
 
-.ios-sheet-steps {
+/* In-App Browser Warning (Telegram / Instagram / etc.) */
+.ios-inapp-alert {
+    background: rgba(245, 158, 11, 0.14);
+    border: 1.5px solid #F59E0B;
+    border-radius: 14px;
+    padding: 0.75rem 0.85rem;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
 }
 
-.ios-step-row {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.5rem 0.65rem;
-    border-radius: 12px;
-    background: var(--bg-secondary);
+.ios-inapp-badge {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #D97706;
+}
+
+[data-theme="dark"] .ios-inapp-badge {
+    color: #FBBF24;
+}
+
+.ios-inapp-alert p {
+    margin: 0;
     font-size: 0.78rem;
+    line-height: 1.35;
     color: var(--text-color);
 }
 
-.ios-step-row span {
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
+.ios-inapp-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.75rem;
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .ios-inapp-steps {
+    background: rgba(0, 0, 0, 0.25);
+}
+
+/* Step Rows */
+.ios-sheet-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ios-step-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 14px;
+    background: var(--bg-secondary);
+    font-size: 0.82rem;
+    color: var(--text-color);
+}
+
+.ios-step-num {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
     border-radius: 50%;
     background: var(--hsk-accent, #10B981);
     color: #ffffff;
-    font-size: 0.72rem;
+    font-size: 0.76rem;
     font-weight: 900;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+.ios-step-content {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.35;
+}
+
+.ios-step-icon-badge {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 10px;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--hsk-accent, #10B981);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ios-step-icon-badge.text-badge {
+    font-weight: 900;
+    font-size: 1rem;
+}
+
+.ios-pointer-hint {
+    text-align: center;
+    padding: 0.2rem 0;
+}
+
+.ios-pointer-bounce {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--hsk-accent, #10B981);
+    animation: bounceDown 1.4s infinite;
+}
+
+@keyframes bounceDown {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(4px);
+    }
+}
+
+.ios-got-it-btn {
+    width: 100%;
+    border: none;
+    background: var(--hsk-accent, #10B981);
+    color: #ffffff;
+    padding: 0.7rem 1rem;
+    border-radius: 14px;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+}
+
+.ios-got-it-btn:active {
+    transform: scale(0.98);
 }
 /* ========================================================
    16. PRACTICE HUB, TONE LAB, SURVIVAL PHRASES & AI LAOSHI
