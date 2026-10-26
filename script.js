@@ -2051,7 +2051,7 @@ let isNavigatingBack = false;
 function updateBottomNavForView(viewId) {
     let activeNav = 'home';
     if (viewId === 'dashboard' || viewId === 'lessons') activeNav = 'home';
-    else if (viewId === 'practice' || viewId === 'practiceFlashcards' || viewId === 'toneLab' || viewId === 'survivalPhrases' || viewId === 'pinyinChart') activeNav = 'practice';
+    else if (viewId === 'practice' || viewId === 'practiceFlashcards' || viewId === 'toneLab' || viewId === 'survivalPhrases' || viewId === 'pinyinChart' || viewId === 'radicalsLab') activeNav = 'practice';
     else if (viewId === 'aiLaoshi') activeNav = 'ai';
     else if (viewId === 'canvas') activeNav = 'canvas';
     else if (viewId === 'profile') activeNav = 'profile';
@@ -4810,6 +4810,9 @@ function initPracticeHubListeners() {
     const hubAi = document.getElementById('hubOpenAiCoachBtn');
     if (hubAi) hubAi.addEventListener('click', () => showAiLaoshiView());
 
+    const hubRadicals = document.getElementById('hubOpenRadicalsBtn');
+    if (hubRadicals) hubRadicals.addEventListener('click', () => showRadicalsLabView('list'));
+
     const hubFlash = document.getElementById('hubOpenFlashcardsBtn');
     if (hubFlash) hubFlash.addEventListener('click', showPracticeFlashcardsView);
 
@@ -4836,6 +4839,9 @@ function initPracticeHubListeners() {
 
     const backFromSurv = document.getElementById('backFromSurvivalBtn');
     if (backFromSurv) backFromSurv.addEventListener('click', showPracticeView);
+
+    const backFromRadicals = document.getElementById('backFromRadicalsBtn');
+    if (backFromRadicals) backFromRadicals.addEventListener('click', showPracticeView);
 
     // In-lesson AI Analysis Button -> Opens bottom modal without breaking lesson flow!
     const askAiLessonBtn = document.getElementById('askAiFromLessonBtn');
@@ -6945,6 +6951,17 @@ var EC_I18N = {
         'practice.tile.survival.desc': "Darsda (教室), oshxonada (食堂), WeChat to'lov (微信), metro va kuryer (外卖) gaplari",
         'practice.tile.ai.title': 'AI Laoshi (Li Ustoz)', 'practice.tile.ai.badge': 'SuperChinese uslubida',
         'practice.tile.ai.desc': 'Istalgan savolni bering, ton tahlili yoki real dialog mashq qiling',
+        'practice.tile.radicals.title': 'Iyeroglif Kalitlari (Radikallar)',
+        'practice.tile.radicals.badge': '30 Kalit + Anatomiya + Test',
+        'practice.tile.radicals.desc': "Iyerogliflarning mantiqiy ildizlari (氵suv, 扌qo'l, 口og'iz, 亻odam), harf tuzilishi formulalari va viktorina",
+        'radicals.backBtn': '← Mashq', 'radicals.title': 'Iyeroglif Kalitlari (Radikallar)',
+        'radicals.kicker': "Har bir murakkab iyeroglif oddiy mantiqiy kalitlardan (部首) tashkil topgan — ularni tushunsangiz, so'zlarni 5 barobar tez eslab qolasiz!",
+        'radicals.tabList': '30 Kalit', 'radicals.tabBuilder': 'Harf formulasi', 'radicals.tabQuiz': 'Viktorina',
+        'radicals.searchPh': "Kalit, pinyin yoki ma'no bo'yicha qidiring (masalan: suv, odam,口)...",
+        'radicals.catAll': 'Barchasi (30)', 'radicals.catHuman': '👤 Inson', 'radicals.catNature': '🌿 Tabiat',
+        'radicals.catObjects': '🏠 Uy va buyum', 'radicals.catAction': '🏃 Harakat',
+        'radicals.builderNoteTitle': '会意字 va 形声字 — Iyerogliflar qanday yasaladi?',
+        'radicals.builderNoteDesc': "Ikki yoki uchta oddiy belgi qo'shilib yangi ma'no hosil qiladi. Kartochkani bosib so'z talaffuzini eshiting!",
         'practice.tile.cards.title': 'Interaktiv Kartochkalar Trenajyori',
         'practice.tile.cards.desc': "3D aylanuvchi kartochkalar, audio talaffuz va o'z-o'zini baholash (Bilaman / Qaytarish)",
         'practice.tile.mistakes.title': 'Xatolar Ustida Ishlash',
@@ -7049,6 +7066,17 @@ var EC_I18N = {
         'practice.tile.survival.desc': 'Дарсда (教室), ошхонада (食堂), WeChat тўлов (微信), метро ва курьер (外卖) гаплари',
         'practice.tile.ai.title': 'AI Laoshi (Ли Устоз)', 'practice.tile.ai.badge': 'SuperChinese услубида',
         'practice.tile.ai.desc': 'Исталган саволни беринг, тон таҳлили ёки реал диалог машқ қилинг',
+        'practice.tile.radicals.title': 'Иероглиф Калитлари (Радикаллар)',
+        'practice.tile.radicals.badge': '30 Калит + Анатомия + Тест',
+        'practice.tile.radicals.desc': 'Иероглифларнинг мантиқий илдизлари (氵сув, 扌қўл, 口оғиз, 亻одам), ҳарф тузилиши формулалари ва викторина',
+        'radicals.backBtn': '← Машқ', 'radicals.title': 'Иероглиф Калитлари (Радикаллар)',
+        'radicals.kicker': 'Ҳар бир мураккаб иероглиф оддий мантиқий калитлардан (部首) ташкил топган — уларни тушунсангиз, сўзларни 5 баробар тез эслаб қоласиз!',
+        'radicals.tabList': '30 Калит', 'radicals.tabBuilder': 'Ҳарф формуласи', 'radicals.tabQuiz': 'Викторина',
+        'radicals.searchPh': 'Калит, пиньин ёки маъно бўйича қидиринг (масалан: сув, одам,口)...',
+        'radicals.catAll': 'Барчаси (30)', 'radicals.catHuman': '👤 Инсон', 'radicals.catNature': '🌿 Табиат',
+        'radicals.catObjects': '🏠 Уй ва буюм', 'radicals.catAction': '🏃 Ҳаракат',
+        'radicals.builderNoteTitle': '会意字 ва 形声字 — Иероглифлар қандай ясалади?',
+        'radicals.builderNoteDesc': 'Икки ёки учта оддий белги қўшилиб янги маъно ҳосил қилади. Карточкани босиб сўз талаффузини эшитинг!',
         'practice.tile.cards.title': 'Интерактив Карточкалар Тренажёри',
         'practice.tile.cards.desc': '3D айланувчи карточкалар, аудио талаффуз ва ўз-ўзини баҳолаш (Биламан / Қайтариш)',
         'practice.tile.mistakes.title': 'Хатолар Устида Ишлаш',
@@ -7153,6 +7181,17 @@ var EC_I18N = {
         'practice.tile.survival.desc': 'Фразы для учёбы (教室), столовой (食堂), оплаты WeChat (微信), метро и доставки (外卖)',
         'practice.tile.ai.title': 'ИИ Лаоши (Учитель Ли)', 'practice.tile.ai.badge': 'В стиле SuperChinese',
         'practice.tile.ai.desc': 'Задавайте вопросы, разбирайте тоны и тренируйте живые диалоги',
+        'practice.tile.radicals.title': 'Ключи иероглифов (Радикалы)',
+        'practice.tile.radicals.badge': '30 ключей + Формулы + Тест',
+        'practice.tile.radicals.desc': 'Логические корни иероглифов (氵вода, 扌рука, 口рот, 亻человек), формулы построения и викторина',
+        'radicals.backBtn': '← Практика', 'radicals.title': 'Ключи иероглифов (Радикалы)',
+        'radicals.kicker': 'Каждый сложный иероглиф состоит из простых смысловых ключей (部首) — понимая их, вы запомните слова в 5 раз быстрее!',
+        'radicals.tabList': '30 ключей', 'radicals.tabBuilder': 'Анатомия знаков', 'radicals.tabQuiz': 'Викторина',
+        'radicals.searchPh': 'Поиск по ключу, пиньиню или значению...',
+        'radicals.catAll': 'Все (30)', 'radicals.catHuman': '👤 Человек', 'radicals.catNature': '🌿 Природа',
+        'radicals.catObjects': '🏠 Дом и предметы', 'radicals.catAction': '🏃 Действие',
+        'radicals.builderNoteTitle': '会意字 и 形声字 — Как строятся иероглифы?',
+        'radicals.builderNoteDesc': 'Два или три простых знака соединяются в новый смысл. Нажмите на карточку, чтобы прослушать произношение!',
         'practice.tile.cards.title': 'Тренажёр карточек (Flashcards)',
         'practice.tile.cards.desc': '3D-карточки с озвучкой и интервальным повторением (Знаю / Повторить)',
         'practice.tile.mistakes.title': 'Работа над ошибками',
@@ -7257,6 +7296,17 @@ var EC_I18N = {
         'practice.tile.survival.desc': 'Essential phrases for classroom (教室), canteen (食堂), WeChat Pay (微信), metro & delivery (外卖)',
         'practice.tile.ai.title': 'AI Laoshi (Teacher Li)', 'practice.tile.ai.badge': 'SuperChinese Style',
         'practice.tile.ai.desc': 'Ask any question, analyze tones, or practice real-world dialogues',
+        'practice.tile.radicals.title': 'Hanzi Radicals & Building Blocks',
+        'practice.tile.radicals.badge': '30 Radicals + Formulas + Quiz',
+        'practice.tile.radicals.desc': 'Logical roots of Chinese characters (氵water, 扌hand, 口mouth, 亻person), decomposition formulas & quiz',
+        'radicals.backBtn': '← Practice', 'radicals.title': 'Hanzi Radicals (部首)',
+        'radicals.kicker': 'Every Chinese character is built from logical building blocks (部首) — master them to remember words 5x faster!',
+        'radicals.tabList': '30 Radicals', 'radicals.tabBuilder': 'Char Formulas', 'radicals.tabQuiz': 'Quiz',
+        'radicals.searchPh': 'Search by radical, pinyin, or meaning...',
+        'radicals.catAll': 'All (30)', 'radicals.catHuman': '👤 Human', 'radicals.catNature': '🌿 Nature',
+        'radicals.catObjects': '🏠 Home & Objects', 'radicals.catAction': '🏃 Action',
+        'radicals.builderNoteTitle': '会意字 & 形声字 — How Characters Are Built',
+        'radicals.builderNoteDesc': 'Two or three simple components combine to create a new meaning. Tap any card to hear native pronunciation!',
         'practice.tile.cards.title': 'Interactive Flashcards Trainer',
         'practice.tile.cards.desc': '3D flip cards, native audio pronunciation, and self-grading (Know / Repeat)',
         'practice.tile.mistakes.title': 'Mistake Review',
@@ -7677,4 +7727,800 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bootstrapEasyChineseApp);
 } else {
     bootstrapEasyChineseApp();
+}
+
+
+// ==============================================================================
+// 21. HANZI RADICALS & CHARACTER BUILDER LAB (部首与构字)
+// ==============================================================================
+
+const RADICALS_DATA = [
+    // HUMAN (8)
+    {
+        rad: '亻', alt: '人', py: 'rén', cnName: '单人旁 (dānrénpáng)', cat: 'human',
+        uz: "Odam / Shaxs",
+        tip: "Chap tomonda kelsa «亻» ko'rinishini oladi va odam, kasb yoki inson harakati bilan bog'liq so'zlarni bildiradi.",
+        examples: [
+            { hz: '你', py: 'nǐ', uz: 'siz' },
+            { hz: '他', py: 'tā', uz: 'u (erkak)' },
+            { hz: '休', py: 'xiū', uz: 'dam olmoq' },
+            { hz: '住', py: 'zhù', uz: 'yashamoq' }
+        ]
+    },
+    {
+        rad: '女', alt: '', py: 'nǚ', cnName: '女字旁 (nǚzìpáng)', cat: 'human',
+        uz: "Ayol / Oila",
+        tip: "Ayol kishi, oila a'zolari va go'zallik ma'nosidagi iyerogliflarning asosiy kaliti.",
+        examples: [
+            { hz: '好', py: 'hǎo', uz: 'yaxshi' },
+            { hz: '妈', py: 'mā', uz: 'ona' },
+            { hz: '姐', py: 'jiě', uz: 'opa' },
+            { hz: '姓', py: 'xìng', uz: 'familiya' }
+        ]
+    },
+    {
+        rad: '口', alt: '', py: 'kǒu', cnName: '口字旁 (kǒuzìpáng)', cat: 'human',
+        uz: "Og'iz / Nutq",
+        tip: "Yemoq, ichmoq, gapirmoq, chaqirmoq va savol yuklamalarida har doim «口» (og'iz) qatnashadi.",
+        examples: [
+            { hz: '吃', py: 'chī', uz: 'yemoq' },
+            { hz: '喝', py: 'hē', uz: 'ichmoq' },
+            { hz: '叫', py: 'jiào', uz: 'chaqirmoq' },
+            { hz: '吗', py: 'ma', uz: 'savol yuklamasi' }
+        ]
+    },
+    {
+        rad: '扌', alt: '手', py: 'shǒu', cnName: '提手旁 (tíshǒupáng)', cat: 'human',
+        uz: "Qo'l / Harakat",
+        tip: "Qo'l bilan bajariladigan barcha ish-harakatlarda (urmoq, topmoq, ko'tarmoq, olmoq) uchraydi.",
+        examples: [
+            { hz: '打', py: 'dǎ', uz: 'urmoq / qo\'ng\'iroq' },
+            { hz: '找', py: 'zhǎo', uz: 'qidirmoq' },
+            { hz: '拿', py: 'ná', uz: 'olmoq / ushlamoq' },
+            { hz: '把', py: 'bǎ', uz: 'ushlamoq' }
+        ]
+    },
+    {
+        rad: '忄', alt: '心', py: 'xīn', cnName: '竖心旁 (shùxīnpáng)', cat: 'human',
+        uz: "Yurak / His-tuyg'u",
+        tip: "Pastda «心», chapda «忄» bo'lib keladi — o'ylash, his-tuyg'u va kayfiyatni ifodalaydi.",
+        examples: [
+            { hz: '想', py: 'xiǎng', uz: "o'ylamoq / xohlamoq" },
+            { hz: '忙', py: 'máng', uz: 'band' },
+            { hz: '快', py: 'kuài', uz: 'tez / xursand' },
+            { hz: '懂', py: 'dǒng', uz: 'tushunmoq' }
+        ]
+    },
+    {
+        rad: '目', alt: '', py: 'mù', cnName: '目字旁 (mùzìpáng)', cat: 'human',
+        uz: "Ko'z / Qarash",
+        tip: "Tik turgan ko'z shakli. Ko'rish, qarash, uxlash va ko'z bilan bog'liq so'zlarda keladi.",
+        examples: [
+            { hz: '看', py: 'kàn', uz: "ko'rmoq / o'qimoq" },
+            { hz: '睡', py: 'shuì', uz: 'uxlamoq' },
+            { hz: '眼', py: 'yǎn', uz: "ko'z" },
+            { hz: '睛', py: 'jīng', uz: "ko'z qorachig'i" }
+        ]
+    },
+    {
+        rad: '讠', alt: '言', py: 'yán', cnName: '言字旁 (yánzìpáng)', cat: 'human',
+        uz: "So'z / Til / Muloqot",
+        tip: "Gapirish, so'rash, o'qish, rahmat aytish va til bilan bog'liq barcha so'zlarning kaliti.",
+        examples: [
+            { hz: '说', py: 'shuō', uz: 'gapirmoq' },
+            { hz: '请', py: 'qǐng', uz: 'marhamat' },
+            { hz: '谢', py: 'xiè', uz: 'rahmat' },
+            { hz: '读', py: 'dú', uz: "o'qimoq" }
+        ]
+    },
+    {
+        rad: '⻊', alt: '足', py: 'zú', cnName: '足字旁 (zúzìpáng)', cat: 'human',
+        uz: "Oyoq / Yugurish",
+        tip: "Oyoq bilan bajariladigan harakatlar: yugurmoq, sakramoq, futbol tepmoq, yo'l.",
+        examples: [
+            { hz: '跑', py: 'pǎo', uz: 'yugurmoq' },
+            { hz: '跳', py: 'tiào', uz: 'sakramoq / raqs' },
+            { hz: '踢', py: 'tī', uz: 'tepmoq' },
+            { hz: '路', py: 'lù', uz: "yo'l" }
+        ]
+    },
+
+    // NATURE (9)
+    {
+        rad: '氵', alt: '水', py: 'shuǐ', cnName: '三点水 (sāndiǎnshuǐ)', cat: 'nature',
+        uz: "Suv (3 tomchi)",
+        tip: "3 ta suv tomchisi! Suyuqlik, daryo, dengiz, yuvish va ichimliklarga oid iyerogliflarda qatnashadi.",
+        examples: [
+            { hz: '水', py: 'shuǐ', uz: 'suv' },
+            { hz: '汉', py: 'Hàn', uz: 'Xitoy (Xan)' },
+            { hz: '洗', py: 'xǐ', uz: 'yuvmoq' },
+            { hz: '没', py: 'méi', uz: "yo'q" }
+        ]
+    },
+    {
+        rad: '灬', alt: '火', py: 'huǒ', cnName: '火字旁 / 四点底', cat: 'nature',
+        uz: "Olov / Issiqlik",
+        tip: "Yon tomonda «火», harf ostida esa 4 ta cho'g' «灬» ko'rinishida keladi (pishirish, issiq).",
+        examples: [
+            { hz: '热', py: 'rè', uz: 'issiq' },
+            { hz: '火', py: 'huǒ', uz: 'olov' },
+            { hz: '点', py: 'diǎn', uz: 'soat / yoqmoq' },
+            { hz: '灯', py: 'dēng', uz: 'chiroq' }
+        ]
+    },
+    {
+        rad: '木', alt: '', py: 'mù', cnName: '木字旁 (mùzìpáng)', cat: 'nature',
+        uz: "Daraxt / Yog'och",
+        tip: "Daraxtlar, mevalar va yog'ochdan yasalgan buyumlar (stol, stul, kitob javoni) kaliti.",
+        examples: [
+            { hz: '树', py: 'shù', uz: 'daraxt' },
+            { hz: '桌', py: 'zhuō', uz: 'stol' },
+            { hz: '椅', py: 'yǐ', uz: 'stul' },
+            { hz: '杯', py: 'bēi', uz: 'stakan / piyola' }
+        ]
+    },
+    {
+        rad: '日', alt: '', py: 'rì', cnName: '日字旁 (rìzìpáng)', cat: 'nature',
+        uz: "Quyosh / Kun / Vaqt",
+        tip: "Quyosh, yorug'lik, kun, ertalab va vaqt bilan bog'liq barcha so'zlarning asosi.",
+        examples: [
+            { hz: '明', py: 'míng', uz: 'ertaga / yorug\'' },
+            { hz: '早', py: 'zǎo', uz: 'ertalab' },
+            { hz: '时', py: 'shí', uz: 'vaqt' },
+            { hz: '星', py: 'xīng', uz: 'yulduz' }
+        ]
+    },
+    {
+        rad: '月', alt: '', py: 'yuè', cnName: '月字旁 (yuèzìpáng)', cat: 'nature',
+        uz: "Oy / Tana a'zolari",
+        tip: "Ikki vazifasi bor: osmondagi Oy (vaqt) hamda inson tana a'zolari (qorin, oyoq, do'st).",
+        examples: [
+            { hz: '月', py: 'yuè', uz: 'oy' },
+            { hz: '朋', py: 'péng', uz: "do'st" },
+            { hz: '期', py: 'qī', uz: 'muddat / hafta' },
+            { hz: '胖', py: 'pàng', uz: "to'la / semiz" }
+        ]
+    },
+    {
+        rad: '艹', alt: '艸', py: 'cǎo', cnName: '草字头 (cǎozìtóu)', cat: 'nature',
+        uz: "O't-o'lan / O'simlik",
+        tip: "Harfning eng tepasida «艹» shaklida keladi — choy, gul, olma, sabzavot va dorivor o'simliklar.",
+        examples: [
+            { hz: '茶', py: 'chá', uz: 'choy' },
+            { hz: '菜', py: 'cài', uz: 'sabzavot / taom' },
+            { hz: '花', py: 'huā', uz: 'gul' },
+            { hz: '苹', py: 'píng', uz: 'olma (苹果)' }
+        ]
+    },
+    {
+        rad: '雨', alt: '', py: 'yǔ', cnName: '雨字头 (yǔzìtóu)', cat: 'nature',
+        uz: "Yomg'ir / Ob-havo",
+        tip: "Bulutdan yog'ayotgan tomchilar! Qor, chaqmoq, bulut va tuman so'zlarining tepasida keladi.",
+        examples: [
+            { hz: '雨', py: 'yǔ', uz: "yomg'ir" },
+            { hz: '雪', py: 'xuě', uz: 'qor' },
+            { hz: '零', py: 'líng', uz: 'nol (0)' },
+            { hz: '云', py: 'yún', uz: 'bulut' }
+        ]
+    },
+    {
+        rad: '土', alt: '', py: 'tǔ', cnName: '提土旁 (títǔpáng)', cat: 'nature',
+        uz: "Yer / Tuproq / Joy",
+        tip: "Yer, joylashuv, shahar devori va bino maydonlarini bildiruvchi so'zlarda keladi.",
+        examples: [
+            { hz: '在', py: 'zài', uz: 'joylashmoq / ...da' },
+            { hz: '坐', py: 'zuò', uz: "o'tirmoq" },
+            { hz: '地', py: 'dì', uz: 'yer / joy' },
+            { hz: '城', py: 'chéng', uz: 'shahar' }
+        ]
+    },
+    {
+        rad: '山', alt: '', py: 'shān', cnName: '山字旁 (shānzìpáng)', cat: 'nature',
+        uz: "Tog' / Cho'qqi",
+        tip: "Uchta tog' cho'qqisining tasviri! Tog', qoya va orol ma'nosidagi iyerogliflarda qatnashadi.",
+        examples: [
+            { hz: '山', py: 'shān', uz: "tog'" },
+            { hz: '岁', py: 'suì', uz: 'yosh (yil)' },
+            { hz: '岸', py: 'àn', uz: 'qirg\'oq' }
+        ]
+    },
+
+    // OBJECTS & HOME (7)
+    {
+        rad: '宀', alt: '', py: 'mián', cnName: '宝盖头 (bǎogàitóu)', cat: 'objects',
+        uz: "Uy tomi / Bino",
+        tip: "Harf ustidagi tom shakli! Uy, oila, xona, mehmonxona va xavfsizlik so'zlarida keladi.",
+        examples: [
+            { hz: '家', py: 'jiā', uz: 'uy / oila' },
+            { hz: '字', py: 'zì', uz: 'harf / iyeroglif' },
+            { hz: '客', py: 'kè', uz: 'mehmon' },
+            { hz: '安', py: 'ān', uz: 'tinch / xavfsiz' }
+        ]
+    },
+    {
+        rad: '门', alt: '門', py: 'mén', cnName: '门字框 (ménzìkuàng)', cat: 'objects',
+        uz: "Eshik / Darvoza",
+        tip: "Ikki tavaqali eshik! Xona, so'rash, eshitish va bo'sh vaqt so'zlarini o'rab turadi.",
+        examples: [
+            { hz: '门', py: 'mén', uz: 'eshik' },
+            { hz: '问', py: 'wèn', uz: "so'ramoq" },
+            { hz: '间', py: 'jiān', uz: 'oraliq / xona' },
+            { hz: '闻', py: 'wén', uz: 'eshitmoq / yangilik' }
+        ]
+    },
+    {
+        rad: '饣', alt: '食', py: 'shí', cnName: '食字旁 (shízìpáng)', cat: 'objects',
+        uz: "Ovqat / Taom",
+        tip: "Chap tomonda «饣» shaklida keladi — guruch, manti, chuchvara, non va restoranni bildiradi.",
+        examples: [
+            { hz: '饭', py: 'fàn', uz: 'ovqat / guruch' },
+            { hz: '馆', py: 'guǎn', uz: 'restoran / bino' },
+            { hz: '饺', py: 'jiǎo', uz: 'chuchvara (饺子)' },
+            { hz: '饿', py: 'è', uz: 'qorni ochmoq' }
+        ]
+    },
+    {
+        rad: '衤', alt: '衣', py: 'yī', cnName: '衣字旁 (yīzìpáng)', cat: 'objects',
+        uz: "Kiyim / Mato",
+        tip: "Ehtiyot bo'ling: bunda nuqtadan keyin 2 ta chiziq bor — ko'ylak, shim, paypoq kabi kiyimlarni bildiradi.",
+        examples: [
+            { hz: '衣', py: 'yī', uz: 'kiyim' },
+            { hz: '裤', py: 'kù', uz: 'shim' },
+            { hz: '衬', py: 'chèn', uz: "ko'ylak (衬衫)" },
+            { hz: '被', py: 'bèi', uz: "ko'rpa" }
+        ]
+    },
+    {
+        rad: '钅', alt: '金', py: 'jīn', cnName: '金字旁 (jīnzìpáng)', cat: 'objects',
+        uz: "Oltin / Metall / Pul",
+        tip: "Metall buyumlar, pul, soat, kalit va temir bilan bog'liq barcha so'zlarning kaliti.",
+        examples: [
+            { hz: '钱', py: 'qián', uz: 'pul' },
+            { hz: '钟', py: 'zhōng', uz: 'soat / daqiqa' },
+            { hz: '错', py: 'cuò', uz: 'xato' },
+            { hz: '银', py: 'yín', uz: 'kumush / bank' }
+        ]
+    },
+    {
+        rad: '车', alt: '車', py: 'chē', cnName: '车字旁 (chēzìpáng)', cat: 'objects',
+        uz: "Mashina / G'ildirak",
+        tip: "Transport vositalari va g'ildirakli aravalarga oid so'zlarda keladi.",
+        examples: [
+            { hz: '车', py: 'chē', uz: 'mashina' },
+            { hz: '辆', py: 'liàng', uz: 'mashina hisoblagichi' },
+            { hz: '轻', py: 'qīng', uz: 'yengil' }
+        ]
+    },
+    {
+        rad: '贝', alt: '貝', py: 'bèi', cnName: '贝字旁 (bèizìpáng)', cat: 'objects',
+        uz: "Chig'anoq / Boylik / Savdo",
+        tip: "Qadimda dengiz chig'anog'i pul o'rnida ishlatilgan — xarid, narx, qimmat va do'kon so'zlarida keladi.",
+        examples: [
+            { hz: '贵', py: 'guì', uz: 'qimmat' },
+            { hz: '买', py: 'mǎi', uz: 'sotib olmoq' },
+            { hz: '卖', py: 'mài', uz: 'sotmoq' },
+            { hz: '员', py: 'yuán', uz: 'xodim' }
+        ]
+    },
+
+    // ACTION & MOVEMENT (6)
+    {
+        rad: '辶', alt: '辵', py: 'chuò', cnName: '走之底 (zǒuzhīdǐ)', cat: 'action',
+        uz: "Yo'l / Yurish / Harakat",
+        tip: "Harfning chap va pastki qismida qayiqchadek o'rab keladi — borish, kelish, uzoq-yaqin va yo'l ma'nosini beradi.",
+        examples: [
+            { hz: '这', py: 'zhè', uz: 'bu' },
+            { hz: '那', py: 'nà', uz: 'u (ana u)' },
+            { hz: '远', py: 'yuǎn', uz: 'uzoq' },
+            { hz: '近', py: 'jìn', uz: 'yaqin' }
+        ]
+    },
+    {
+        rad: '彳', alt: '', py: 'chì', cnName: '双人旁 (shuāngrénpáng)', cat: 'action',
+        uz: "Qadam / Ko'cha",
+        tip: "Ikki kishilik qadam — ko'cha, yurish, juda (很) va kutish ma'nolarida qatnashadi.",
+        examples: [
+            { hz: '很', py: 'hěn', uz: 'juda' },
+            { hz: '往', py: 'wǎng', uz: '...tomonga' },
+            { hz: '得', py: 'dé', uz: 'erishmoq' }
+        ]
+    },
+    {
+        rad: '刂', alt: '刀', py: 'dāo', cnName: '立刀旁 (lìdāopáng)', cat: 'action',
+        uz: "Pichoq / Kesish",
+        tip: "O'ng tomonda ikkita tik chiziq «刂» shaklida keladi — kesish, bo'lish, vaqt va yetib borish.",
+        examples: [
+            { hz: '到', py: 'dào', uz: 'yetib bormoq' },
+            { hz: '分', py: 'fēn', uz: "daqiqa / bo'lmoq" },
+            { hz: '别', py: 'bié', uz: 'boshqa / ...mang' },
+            { hz: '刻', py: 'kè', uz: 'chorak soat' }
+        ]
+    },
+    {
+        rad: '力', alt: '', py: 'lì', cnName: '力字旁 (lìzìpáng)', cat: 'action',
+        uz: "Kuch / Quvvat / Mehnat",
+        tip: "Mushak va omoch tasviri — kuch sarflash, harakat qilish va yordam berish so'zlarida keladi.",
+        examples: [
+            { hz: '男', py: 'nán', uz: 'erkak' },
+            { hz: '办', py: 'bàn', uz: 'bajarmoq' },
+            { hz: '动', py: 'dòng', uz: 'harakatlanmoq' },
+            { hz: '努', py: 'nǔ', uz: 'tirishmoq (努力)' }
+        ]
+    },
+    {
+        rad: '⺮', alt: '竹', py: 'zhú', cnName: '竹字头 (zhúzìtóu)', cat: 'action',
+        uz: "Bambuk / Yozuv",
+        tip: "Qadimda kitoblar bambuk taxtachalarga yozilgan — kulish, javob, savat va hisob so'zlarida keladi.",
+        examples: [
+            { hz: '笑', py: 'xiào', uz: 'kulmoq' },
+            { hz: '第', py: 'dì', uz: '-inchi (tartib)' },
+            { hz: '答', py: 'dá', uz: 'javob bermoq' },
+            { hz: '筷', py: 'kuài', uz: "tayoqcha (筷子)" }
+        ]
+    },
+    {
+        rad: '广', alt: '', py: 'guǎng', cnName: '广字旁 (guǎngzìpáng)', cat: 'objects',
+        uz: "Keng ayvon / Do'kon",
+        tip: "Katta tom ostidagi joy — do'kon, o'rindiq, kasalxona va yotoq so'zlarida keladi.",
+        examples: [
+            { hz: '店', py: 'diàn', uz: "do'kon / mehmonxona" },
+            { hz: '床', py: 'chuáng', uz: 'karavot' },
+            { hz: '座', py: 'zuò', uz: "o'rindiq" }
+        ]
+    }
+];
+
+const RADICAL_FORMULAS = [
+    {
+        parts: [{ hz: '亻', lbl: 'odam' }, { hz: '木', lbl: 'daraxt' }],
+        result: { hz: '休', py: 'xiū', uz: 'dam olmoq' },
+        story: "Odam (亻) daraxt (木) soyasiga suyanib dam olyapti."
+    },
+    {
+        parts: [{ hz: '女', lbl: 'ayol' }, { hz: '子', lbl: 'bola' }],
+        result: { hz: '好', py: 'hǎo', uz: 'yaxshi' },
+        story: "Ona (女) va farzand (子) birga bo'lsa — hammasi yaxshi!"
+    },
+    {
+        parts: [{ hz: '日', lbl: 'quyosh' }, { hz: '月', lbl: 'oy' }],
+        result: { hz: '明', py: 'míng', uz: "yorug' / ertaga (明天)" },
+        story: "Quyosh (日) va Oy (月) birlashib, yorug'lik hamda yangi kunni (明天) keltiradi."
+    },
+    {
+        parts: [{ hz: '手', lbl: "qo'l" }, { hz: '目', lbl: "ko'z" }],
+        result: { hz: '看', py: 'kàn', uz: "ko'rmoq / qaramoq" },
+        story: "Qo'lni (手) ko'z (目) ustiga soyabon qilib uzoqqa qaramoq."
+    },
+    {
+        parts: [{ hz: '门', lbl: 'eshik' }, { hz: '口', lbl: "og'iz" }],
+        result: { hz: '问', py: 'wèn', uz: "so'ramoq (请问)" },
+        story: "Eshikdan (门) kirib, og'iz (口) bilan yo'l yoki ma'lumot so'ramoq."
+    },
+    {
+        parts: [{ hz: '门', lbl: 'eshik' }, { hz: '耳', lbl: 'quloq' }],
+        result: { hz: '闻', py: 'wén', uz: 'eshitmoq / yangilik' },
+        story: "Eshik (门) ortidan quloq (耳) solib yangilik eshitmoq."
+    },
+    {
+        parts: [{ hz: '宀', lbl: 'uy tomi' }, { hz: '女', lbl: 'ayol' }],
+        result: { hz: '安', py: 'ān', uz: 'tinch / xavfsiz (安全)' },
+        story: "Uy tomi (宀) ostida oila bo'lsa — xonadon tinch va xotirjam."
+    },
+    {
+        parts: [{ hz: '宀', lbl: 'uy tomi' }, { hz: '子', lbl: 'bola' }],
+        result: { hz: '字', py: 'zì', uz: 'harf / iyeroglif (汉字)' },
+        story: "Uy (宀) ichida bola (子) tarbiyalanib savod va harf o'rganadi."
+    },
+    {
+        parts: [{ hz: '田', lbl: 'dala' }, { hz: '力', lbl: 'kuch' }],
+        result: { hz: '男', py: 'nán', uz: 'erkak' },
+        story: "Dalada (田) kuch (力) sarflab mehnat qiluvchi inson."
+    },
+    {
+        parts: [{ hz: '木', lbl: 'daraxt' }, { hz: '木', lbl: 'daraxt' }],
+        result: { hz: '林', py: 'lín', uz: "o'rmon" },
+        story: "Ikkita daraxt (木+木) yonma-yon o'ssa — o'rmonzor hosil bo'ladi."
+    },
+    {
+        parts: [{ hz: '人', lbl: 'odam' }, { hz: '人', lbl: 'odam' }, { hz: '土', lbl: 'yer' }],
+        result: { hz: '坐', py: 'zuò', uz: "o'tirmoq (请坐)" },
+        story: "Ikki kishi (人人) yerda (土) yonma-yon suhbatlashib o'tiribdi."
+    },
+    {
+        parts: [{ hz: '相', lbl: 'o\'zaro' }, { hz: '心', lbl: 'yurak' }],
+        result: { hz: '想', py: 'xiǎng', uz: "o'ylamoq / xohlamoq" },
+        story: "Qiyofani ko'z oldiga keltirib, yurakdan (心) o'ylamoq va sog'inmoq."
+    },
+    {
+        parts: [{ hz: '讠', lbl: "so'z" }, { hz: '青', lbl: 'toza/ko\'k' }],
+        result: { hz: '请', py: 'qǐng', uz: 'marhamat / iltimos' },
+        story: "Samimiy so'z (讠) bilan muloyim iltimos qilmoq."
+    },
+    {
+        parts: [{ hz: '氵', lbl: 'suv' }, { hz: '青', lbl: 'toza' }],
+        result: { hz: '清', py: 'qīng', uz: 'tiniq / toza (清楚)' },
+        story: "Suv (氵) qo'shilsa — musaffo va tiniq suv ma'nosi chiqadi."
+    },
+    {
+        parts: [{ hz: '日', lbl: 'quyosh' }, { hz: '青', lbl: 'ochiq' }],
+        result: { hz: '晴', py: 'qīng', uz: 'ochiq havo (晴天)' },
+        story: "Quyosh (日) chiqib turgan musaffo, bulutsiz kun!"
+    },
+    {
+        parts: [{ hz: '小', lbl: 'kichik' }, { hz: '大', lbl: 'katta' }],
+        result: { hz: '尖', py: 'jiān', uz: "o'tkir uchli" },
+        story: "Yuqorisi kichik (小), pastki qismi katta (大) bo'lgan narsa — uchi o'tkir!"
+    }
+];
+
+const RADICAL_QUIZ_ITEMS = [
+    {
+        char: '休', sub: 'xiū — dam olmoq',
+        q: "«休» (dam olmoq) iyeroglifi qaysi ikki kalitdan tashkil topgan?",
+        options: [
+            "亻 (odam) + 木 (daraxt)",
+            "女 (ayol) + 子 (bola)",
+            "日 (quyosh) + 月 (oy)",
+            "门 (eshik) + 口 (og'iz)"
+        ],
+        correct: 0,
+        exp: "✅ To'g'ri! 亻 (odam) + 木 (daraxt) = 休 (odam daraxtga suyanib dam olyapti)."
+    },
+    {
+        char: '氵', sub: 'sāndiǎnshuǐ (3 nuqtali kalit)',
+        q: "Chap tomonda «氵» kaliti qatnashgan so'zlar (水, 洗, 河, 没) asosan nima bilan bog'liq?",
+        options: [
+            "Suv va suyuqlik",
+            "Olov va issiqlik",
+            "Metall va pul",
+            "Kiyim va mato"
+        ],
+        correct: 0,
+        exp: "✅ Barakalla! «氵» — 3 tomchi suv bo'lib, suv va yuvishga oid so'zlarda keladi."
+    },
+    {
+        char: '好', sub: 'hǎo — yaxshi',
+        q: "«好» iyeroglifi qanday mantiqiy qismlardan yasalgan?",
+        options: [
+            "女 (ayol) + 子 (bola)",
+            "亻 (odam) + 言 (so'z)",
+            "口 (og'iz) + 水 (suv)",
+            "日 (quyosh) + 生 (hayot)"
+        ],
+        correct: 0,
+        exp: "✅ To'g'ri! 女 (ayol/ona) + 子 (bola) = 好 (yaxshi)."
+    },
+    {
+        char: '吃 · 喝 · 吗', sub: 'chī (yemoq) · hē (ichmoq) · ma',
+        q: "Ushbu uchala iyeroglifning chap tomonidagi «口» kaliti nimani anglatadi?",
+        options: [
+            "Og'iz va nutq",
+            "Qo'l harakati",
+            "Deraza va uy",
+            "Quyosh va kun"
+        ],
+        correct: 0,
+        exp: "✅ Ajoyib! «口» (kǒu) — og'iz bo'lib, yeyish, ichish va gapirish so'zlarida keladi."
+    },
+    {
+        char: '明', sub: 'míng — yorug\' / ertaga (明天)',
+        q: "«明» iyeroglifida qaysi ikki osmon jismi birlashgan?",
+        options: [
+            "日 (Quyosh) + 月 (Oy)",
+            "山 (Tog') + 水 (Suv)",
+            "火 (Olov) + 土 (Yer)",
+            "雨 (Yomg'ir) + 云 (Bulut)"
+        ],
+        correct: 0,
+        exp: "✅ To'g'ri! 日 (quyosh) va 月 (oy) birgalikda yorug'lik (明) beradi."
+    },
+    {
+        char: '看', sub: 'kàn — ko\'rmoq / qaramoq',
+        q: "«看» iyeroglifining ustki va pastki qismlari nimani tasvirlaydi?",
+        options: [
+            "手 (qo'l) + 目 (ko'z) — qo'lni ko'z ustiga qo'yib qarash",
+            "木 (daraxt) + 日 (quyosh)",
+            "人 (odam) + 门 (eshik)",
+            "艹 (o't) + 田 (dala)"
+        ],
+        correct: 0,
+        exp: "✅ Barakalla! Qo'lni (手) ko'z (目) ustiga soyabon qilib uzoqqa qaramoq — 看 (kàn)."
+    },
+    {
+        char: '讠', sub: '说 (shuō) · 请 (qǐng) · 谢 (xiè) · 读 (dú)',
+        q: "Ushbu so'zlardagi «讠» (言) kaliti qanday umumiy ma'noni bildiradi?",
+        options: [
+            "So'z, til va muloqot",
+            "Oyoq bilan yugurish",
+            "Ovqat va oshxona",
+            "Daraxt va o'rmon"
+        ],
+        correct: 0,
+        exp: "✅ To'g'ri! «讠» (yán) — so'z va nutq kaliti."
+    },
+    {
+        char: '问', sub: 'wèn — so\'ramoq (请问)',
+        q: "«问» iyeroglifi qanday hosil bo'lgan?",
+        options: [
+            "门 (eshik) ichida 口 (og'iz)",
+            "宀 (tom) ostida 女 (ayol)",
+            "囗 (devor) ichida 人 (odam)",
+            "雨 (yomg'ir) ostida 田 (dala)"
+        ],
+        correct: 0,
+        exp: "✅ To'g'ri! Eshikdan (门) kirib og'iz (口) bilan so'ramoq — 问 (wèn)."
+    },
+    {
+        char: '扌', sub: '打 (dǎ) · 找 (zhǎo) · 拿 (ná)',
+        q: "Chap tomondagi «扌» (手) kaliti qanday harakatlarni bildiradi?",
+        options: [
+            "Qo'l bilan bajariladigan harakatlar",
+            "Yurak va his-tuyg'u",
+            "Suvda suzish",
+            "Olovda pishirish"
+        ],
+        correct: 0,
+        exp: "✅ Barakalla! «扌» — qo'l kaliti bo'lib, ushlash, urish, qidirish so'zlarida keladi."
+    },
+    {
+        char: '饭 · 馆 · 饿', sub: 'fàn (ovqat) · guǎn (restoran) · è (och qolmoq)',
+        q: "Ushbu so'zlardagi «饣» (食) kaliti nimani anglatadi?",
+        options: [
+            "Ovqat va taom",
+            "Pul va oltin",
+            "Kiyim-kechak",
+            "Yo'l va transport"
+        ],
+        correct: 0,
+        exp: "✅ Ajoyib! «饣» (shí) — taom va ovqatlanish kaliti."
+    },
+    {
+        char: '钱 · 钟 · 银', sub: 'qián (pul) · zhōng (soat) · yín (kumush/bank)',
+        q: "Ushbu so'zlarning chap tomonidagi «钅» (金) kaliti nimani bildiradi?",
+        options: [
+            "Oltin, metall va pul",
+            "O'simlik va choy",
+            "Daraxt va yog'och",
+            "Qush va parvoz"
+        ],
+        correct: 0,
+        exp: "✅ To'g'ri! «钅» (jīn) — oltin va metall buyumlar kaliti."
+    },
+    {
+        char: '坐', sub: 'zuò — o\'tirmoq (请坐)',
+        q: "«坐» iyeroglifi qanday mantiqiy tasvirdan kelib chiqqan?",
+        options: [
+            "Ikki odam (人人) yerda (土) o'tiribdi",
+            "Quyosh (日) daraxt (木) ortidan chiqyapti",
+            "Uy tomi (宀) ostida bola (子)",
+            "Suv (氵) bo'yida tog' (山)"
+        ],
+        correct: 0,
+        exp: "✅ Barakalla! Ikki kishi (人人) yerda (土) o'tiribdi — 坐 (zuò)."
+    }
+];
+
+let currentRadicalCategory = 'all';
+let currentRadicalSearch = '';
+let radQuizIdx = 0;
+let radQuizScoreVal = 0;
+let radQuizStreakVal = 0;
+
+function showRadicalsLabView(initialTab = 'list') {
+    const viewEl = document.getElementById('radicalsLab');
+    if (!viewEl) return;
+    showView(viewEl);
+    initRadicalsLab(initialTab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function initRadicalsLab(initialTab = 'list') {
+    const tabs = document.querySelectorAll('#radicalsLabTabs .subview-tab');
+    const panels = {
+        list: document.getElementById('radicalsTabList'),
+        builder: document.getElementById('radicalsTabBuilder'),
+        quiz: document.getElementById('radicalsTabQuiz')
+    };
+
+    function switchRadTab(tabKey) {
+        tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.radTab === tabKey));
+        Object.keys(panels).forEach(k => {
+            if (panels[k]) panels[k].classList.toggle('active', k === tabKey);
+        });
+    }
+
+    tabs.forEach(btn => {
+        btn.onclick = () => switchRadTab(btn.dataset.radTab);
+    });
+
+    const searchInput = document.getElementById('radicalsSearchInput');
+    if (searchInput) {
+        searchInput.oninput = (e) => {
+            currentRadicalSearch = (e.target.value || '').trim().toLowerCase();
+            renderRadicalsDirectory();
+        };
+    }
+
+    const catBtns = document.querySelectorAll('#radicalsCategoryFilters .pinyin-filter-pill');
+    catBtns.forEach(btn => {
+        btn.onclick = () => {
+            currentRadicalCategory = btn.dataset.radCat || 'all';
+            catBtns.forEach(b => b.classList.toggle('active', b === btn));
+            renderRadicalsDirectory();
+        };
+    });
+
+    switchRadTab(initialTab);
+    renderRadicalsDirectory();
+    renderRadicalFormulas();
+    loadRadicalQuizQuestion();
+}
+
+function renderRadicalsDirectory() {
+    const grid = document.getElementById('radicalsCardsGrid');
+    if (!grid) return;
+
+    const filtered = RADICALS_DATA.filter(item => {
+        if (currentRadicalCategory !== 'all' && item.cat !== currentRadicalCategory) return false;
+        if (!currentRadicalSearch) return true;
+        const hay = `${item.rad} ${item.alt} ${item.py} ${item.cnName} ${item.uz} ${item.tip} ${item.examples.map(e => e.hz + ' ' + e.py + ' ' + e.uz).join(' ')}`.toLowerCase();
+        return hay.includes(currentRadicalSearch);
+    });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `<p class="no-results">Mos kalit topilmadi.</p>`;
+        return;
+    }
+
+    grid.innerHTML = filtered.map(item => `
+        <div class="radical-card">
+            <div class="radical-card-top">
+                <div class="radical-symbol-box" data-speak-rad="${item.alt || item.rad}" title="Talaffuzni eshitish">
+                    <span class="radical-symbol-main">${item.rad}</span>
+                    ${item.alt ? `<span class="radical-symbol-alt">(${item.alt})</span>` : ''}
+                </div>
+                <div class="radical-meta">
+                    <div class="radical-title-row">
+                        <span class="radical-meaning">${item.uz}</span>
+                        <span class="radical-pinyin-badge" data-speak-rad="${item.alt || item.rad}">🔊 ${item.py}</span>
+                    </div>
+                    <div class="radical-cn-name">${item.cnName}</div>
+                </div>
+            </div>
+            <p class="radical-tip">💡 ${item.tip}</p>
+            <div class="radical-examples-row">
+                ${item.examples.map(ex => `
+                    <button type="button" class="radical-example-chip" data-speak-hz="${ex.hz}">
+                        <span class="rec-hz">${ex.hz}</span>
+                        <span>${ex.py} — ${ex.uz}</span>
+                        <span>🔊</span>
+                    </button>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+
+    grid.querySelectorAll('[data-speak-rad]').forEach(el => {
+        el.onclick = () => playWordAudio(el.dataset.speakRad);
+    });
+    grid.querySelectorAll('[data-speak-hz]').forEach(btn => {
+        btn.onclick = () => playWordAudio(btn.dataset.speakHz);
+    });
+}
+
+function renderRadicalFormulas() {
+    const grid = document.getElementById('radicalsFormulasGrid');
+    if (!grid) return;
+
+    grid.innerHTML = RADICAL_FORMULAS.map(f => `
+        <div class="radical-formula-card" data-speak-formula="${f.result.hz}">
+            <div class="rf-head-row">
+                <span class="rf-word-title">${f.result.hz} (${f.result.py}) — ${f.result.uz}</span>
+                <span class="rf-audio-pill">🔊 Tinglash</span>
+            </div>
+            <div class="rf-equation">
+                ${f.parts.map((p, idx) => `
+                    ${idx > 0 ? '<span class="rf-op">+</span>' : ''}
+                    <div class="rf-part">
+                        <span class="rf-part-hz">${p.hz}</span>
+                        <span class="rf-part-lbl">${p.lbl}</span>
+                    </div>
+                `).join('')}
+                <span class="rf-op">=</span>
+                <div class="rf-part rf-result">
+                    <span class="rf-part-hz">${f.result.hz}</span>
+                    <span class="rf-part-lbl">${f.result.py}</span>
+                </div>
+            </div>
+            <p class="rf-story">🧠 ${f.story}</p>
+        </div>
+    `).join('');
+
+    grid.querySelectorAll('[data-speak-formula]').forEach(card => {
+        card.onclick = () => playWordAudio(card.dataset.speakFormula);
+    });
+}
+
+function loadRadicalQuizQuestion() {
+    const item = RADICAL_QUIZ_ITEMS[radQuizIdx % RADICAL_QUIZ_ITEMS.length];
+    const charEl = document.getElementById('radQuizChar');
+    const subEl = document.getElementById('radQuizSub');
+    const qEl = document.getElementById('radQuizQuestion');
+    const optsEl = document.getElementById('radQuizOptions');
+    const fbEl = document.getElementById('radQuizFeedback');
+    const actEl = document.getElementById('radQuizActions');
+    const progEl = document.getElementById('radQuizProgress');
+    const streakEl = document.getElementById('radQuizStreak');
+    const scoreEl = document.getElementById('radQuizScore');
+
+    if (!charEl || !optsEl) return;
+
+    charEl.textContent = item.char;
+    if (subEl) subEl.textContent = item.sub;
+    if (qEl) qEl.textContent = item.q;
+    if (progEl) progEl.textContent = `${(radQuizIdx % RADICAL_QUIZ_ITEMS.length) + 1} / ${RADICAL_QUIZ_ITEMS.length}`;
+    if (streakEl) streakEl.textContent = String(radQuizStreakVal);
+    if (scoreEl) scoreEl.textContent = String(radQuizScoreVal);
+    if (fbEl) fbEl.hidden = true;
+    if (actEl) actEl.hidden = true;
+
+    // Shuffle options while tracking the correct one
+    const indexedOptions = item.options.map((text, idx) => ({ text, isCorrect: idx === item.correct }));
+    for (let i = indexedOptions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indexedOptions[i], indexedOptions[j]] = [indexedOptions[j], indexedOptions[i]];
+    }
+
+    optsEl.innerHTML = indexedOptions.map((opt, i) => `
+        <button type="button" class="tone-ear-opt-btn" data-opt-idx="${i}">
+            <strong>${opt.text}</strong>
+        </button>
+    `).join('');
+
+    const optBtns = optsEl.querySelectorAll('.tone-ear-opt-btn');
+    optBtns.forEach((btn, i) => {
+        btn.onclick = () => {
+            optBtns.forEach(b => { b.disabled = true; });
+            const chosen = indexedOptions[i];
+            if (chosen.isCorrect) {
+                btn.classList.add('is-correct');
+                radQuizStreakVal++;
+                radQuizScoreVal += 10;
+                if (typeof addXP === 'function') addXP(10);
+                if (typeof playSuccessSound === 'function') playSuccessSound();
+                if (fbEl) {
+                    fbEl.hidden = false;
+                    fbEl.className = 'tone-ear-feedback is-correct';
+                    fbEl.textContent = `${item.exp} (+10 XP)`;
+                }
+            } else {
+                btn.classList.add('is-wrong');
+                radQuizStreakVal = 0;
+                optBtns.forEach((b, idx) => {
+                    if (indexedOptions[idx].isCorrect) b.classList.add('is-correct');
+                });
+                if (fbEl) {
+                    fbEl.hidden = false;
+                    fbEl.className = 'tone-ear-feedback is-wrong';
+                    fbEl.textContent = item.exp;
+                }
+            }
+            if (streakEl) streakEl.textContent = String(radQuizStreakVal);
+            if (scoreEl) scoreEl.textContent = String(radQuizScoreVal);
+            if (actEl) actEl.hidden = false;
+            playWordAudio(item.char.charAt(0));
+        };
+    });
+
+    const speakBtn = document.getElementById('radQuizSpeakBtn');
+    if (speakBtn) {
+        speakBtn.onclick = () => playWordAudio(item.char.charAt(0));
+    }
+    const nextBtn = document.getElementById('radQuizNextBtn');
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            radQuizIdx = (radQuizIdx + 1) % RADICAL_QUIZ_ITEMS.length;
+            loadRadicalQuizQuestion();
+        };
+    }
 }

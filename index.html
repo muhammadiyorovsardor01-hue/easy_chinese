@@ -22,7 +22,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=39">
+    <link rel="stylesheet" href="styles.css?v=40">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -889,8 +889,20 @@
 
             <!-- Group 3: So'z Boyligi & Xotira Mashqi -->
             <div class="practice-group-section">
-                <h3 class="practice-group-heading">🧠 <span data-i18n="practice.g3">So‘z Boyligi &amp; Xotira Mashqi</span> (词汇与记忆)</h3>
+                <h3 class="practice-group-heading">🧠 <span data-i18n="practice.g3">So'z Boyligi va Xotira Mashqi</span> (词汇与记忆)</h3>
                 <div class="practice-tiles-grid">
+                    <button type="button" class="hub-tile-card tile-radicals" id="hubOpenRadicalsBtn">
+                        <div class="hub-tile-icon radicals-icon">🧩</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong data-i18n="practice.tile.radicals.title">Iyeroglif Kalitlari (Radikallar)</strong>
+                                <span class="hub-pill-badge hub-pill-new" data-i18n="practice.tile.radicals.badge">30 Kalit + Anatomiya + Test</span>
+                            </div>
+                            <p data-i18n="practice.tile.radicals.desc">Iyerogliflarning mantiqiy ildizlari (氵suv, 扌qo'l, 口og'iz, 亻odam), harf tuzilishi formulalari va viktorina</p>
+                        </div>
+                        <span class="hub-tile-arrow">→</span>
+                    </button>
+
                     <button type="button" class="hub-tile-card tile-flashcards" id="hubOpenFlashcardsBtn">
                         <div class="hub-tile-icon card-icon">🗂️</div>
                         <div class="hub-tile-content">
@@ -1191,6 +1203,84 @@
             <!-- Tab 4: Phonetic & Spelling Rules -->
             <div class="pinyin-tab-panel" id="pinyinTabRules">
                 <div class="pinyin-rules-container" id="pinyinRulesList"></div>
+            </div>
+        </section>
+
+        <!-- Radicals & Character Builder Lab View (部首与构字) -->
+        <section id="radicalsLab" class="view">
+            <div class="subview-header-card radicals-lab-banner">
+                <div class="lessons-banner-top">
+                    <button type="button" class="back-btn" id="backFromRadicalsBtn" data-i18n="radicals.backBtn">&larr; Mashq</button>
+                    <span class="lessons-cn-badge">部首与构字 &middot; Hanzi Radicals</span>
+                </div>
+                <h2 class="section-title">🧩 <span data-i18n="radicals.title">Iyeroglif Kalitlari (Radikallar)</span></h2>
+                <p class="lessons-kicker" data-i18n="radicals.kicker">Har bir murakkab iyeroglif oddiy mantiqiy kalitlardan (部首) tashkil topgan — ularni tushunsangiz, so'zlarni 5 barobar tez eslab qolasiz!</p>
+                <div class="subview-tabs segmented-tabs-3" id="radicalsLabTabs">
+                    <button type="button" class="subview-tab active" data-rad-tab="list">
+                        <span class="p-tab-icon">🔑</span>
+                        <span class="p-tab-label" data-i18n="radicals.tabList">30 Kalit</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-rad-tab="builder">
+                        <span class="p-tab-icon">🔬</span>
+                        <span class="p-tab-label" data-i18n="radicals.tabBuilder">Harf formulasi</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-rad-tab="quiz">
+                        <span class="p-tab-icon">🎯</span>
+                        <span class="p-tab-label" data-i18n="radicals.tabQuiz">Viktorina</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 1: 30 Essential Radicals Directory -->
+            <div class="radicals-tab-panel active" id="radicalsTabList">
+                <div class="radicals-controls-card">
+                    <div class="pinyin-search-box">
+                        <span class="pinyin-search-icon">🔍</span>
+                        <input type="text" id="radicalsSearchInput" data-i18n-ph="radicals.searchPh" placeholder="Kalit, pinyin yoki ma'no bo'yicha qidiring (masalan: suv, odam, shan,口)..." autocomplete="off">
+                    </div>
+                    <div class="pinyin-filter-pills" id="radicalsCategoryFilters">
+                        <button type="button" class="pinyin-filter-pill active" data-rad-cat="all" data-i18n="radicals.catAll">Barchasi (30)</button>
+                        <button type="button" class="pinyin-filter-pill" data-rad-cat="human" data-i18n="radicals.catHuman">👤 Inson</button>
+                        <button type="button" class="pinyin-filter-pill" data-rad-cat="nature" data-i18n="radicals.catNature">🌿 Tabiat</button>
+                        <button type="button" class="pinyin-filter-pill" data-rad-cat="objects" data-i18n="radicals.catObjects">🏠 Uy va buyum</button>
+                        <button type="button" class="pinyin-filter-pill" data-rad-cat="action" data-i18n="radicals.catAction">🏃 Harakat</button>
+                    </div>
+                </div>
+                <div class="radicals-cards-grid" id="radicalsCardsGrid"></div>
+            </div>
+
+            <!-- Tab 2: Visual Character Decomposition Formulas (构字法) -->
+            <div class="radicals-tab-panel" id="radicalsTabBuilder">
+                <div class="pinyin-helper-note">
+                    <span class="pinyin-note-icon">💡</span>
+                    <div>
+                        <strong data-i18n="radicals.builderNoteTitle">会意字 va 形声字 — Iyerogliflar qanday yasaladi?</strong>
+                        <p data-i18n="radicals.builderNoteDesc">Ikki yoki uchta oddiy belgi qo'shilib yangi ma'no hosil qiladi. Kartochkani bosib so'z talaffuzini eshiting!</p>
+                    </div>
+                </div>
+                <div class="radicals-formulas-grid" id="radicalsFormulasGrid"></div>
+            </div>
+
+            <!-- Tab 3: Interactive Radical Quiz -->
+            <div class="radicals-tab-panel" id="radicalsTabQuiz">
+                <div class="tone-ear-card radicals-quiz-card">
+                    <div class="tone-ear-top">
+                        <span class="weekly-streak-pill">🔥 Streak: <strong id="radQuizStreak">0</strong></span>
+                        <span class="weekly-streak-pill">⭐ XP: <strong id="radQuizScore">0</strong></span>
+                        <span class="progress-tap-hint" id="radQuizProgress">1 / 12</span>
+                    </div>
+                    <div class="rad-quiz-prompt-box">
+                        <div class="rad-quiz-char" id="radQuizChar">休</div>
+                        <div class="rad-quiz-sub" id="radQuizSub">xiū — dam olmoq</div>
+                        <p class="rad-quiz-question" id="radQuizQuestion">Ushbu iyeroglif qaysi kalitlar birikmasidan hosil bo'lgan?</p>
+                    </div>
+                    <div class="tone-ear-options" id="radQuizOptions"></div>
+                    <div class="tone-ear-feedback" id="radQuizFeedback" hidden></div>
+                    <div class="tone-ear-actions" id="radQuizActions" hidden>
+                        <button type="button" class="secondary-btn" id="radQuizSpeakBtn">🔊 <span data-i18n="card.audio">Ovoz</span></button>
+                        <button type="button" class="stage-next-btn" id="radQuizNextBtn" data-i18n="quiz.nextQuestion">Keyingi savol &rarr;</button>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1623,7 +1713,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=39"></script>
+    <script src="script.js?v=40"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1632,6 +1722,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=39"></script>
+    <script src="pwa.js?v=40"></script>
 </body>
 </html>

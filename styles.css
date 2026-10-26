@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     /* Premium Chinese editorial palette — warm cream / red / jade / gold */
     --primary-color: #B91C2C;
     --primary-light: #D64550;
@@ -11767,4 +11767,321 @@ a.setting-action-btn { text-decoration: none; }
 
 .pinyin-rule-chip:hover {
     border-color: var(--primary-color);
+}
+
+
+/* ==========================================================================
+   Radicals & Character Builder Lab (部首与构字)
+   ========================================================================== */
+.radicals-icon {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.16), rgba(99, 102, 241, 0.2));
+    color: #8b5cf6;
+}
+
+.radicals-lab-banner {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(16, 185, 129, 0.06));
+}
+
+.segmented-tabs-3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+}
+
+.radicals-tab-panel {
+    display: none;
+    animation: fadeIn 0.2s ease;
+}
+
+.radicals-tab-panel.active {
+    display: block;
+}
+
+.radicals-controls-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-color);
+    border-radius: 18px;
+    padding: 0.9rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.radicals-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 0.9rem;
+}
+
+.radical-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-color);
+    border-radius: 18px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+    transition: border-color 0.18s ease, transform 0.15s ease;
+}
+
+.radical-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.radical-card-top {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.radical-symbol-box {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(14, 165, 233, 0.12));
+    border: 1.5px solid rgba(16, 185, 129, 0.28);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.radical-symbol-main {
+    font-size: 1.85rem;
+    font-weight: 900;
+    color: var(--text-color);
+    line-height: 1.05;
+}
+
+.radical-symbol-alt {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.radical-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.radical-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    margin-bottom: 0.2rem;
+}
+
+.radical-meaning {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-color);
+}
+
+.radical-pinyin-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    background: var(--bg-secondary);
+    color: var(--primary-color);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+}
+
+.radical-cn-name {
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    font-weight: 700;
+}
+
+.radical-tip {
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 0.55rem 0.75rem;
+    margin: 0;
+    border-left: 3px solid var(--primary-color);
+}
+
+.radical-examples-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.radical-example-chip {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.36rem 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-color);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.radical-example-chip:hover,
+.radical-example-chip:active {
+    border-color: var(--primary-color);
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.radical-example-chip .rec-hz {
+    font-size: 0.98rem;
+    font-weight: 900;
+    color: var(--primary-color);
+}
+
+/* Tab 2: Character Formulas Grid */
+.radicals-formulas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 0.9rem;
+}
+
+.radical-formula-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-color);
+    border-radius: 18px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    cursor: pointer;
+    transition: border-color 0.18s ease, transform 0.15s ease;
+}
+
+.radical-formula-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.rf-equation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    background: var(--bg-secondary);
+    border-radius: 14px;
+    padding: 0.75rem 0.5rem;
+    flex-wrap: wrap;
+}
+
+.rf-part {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.35rem 0.6rem;
+    min-width: 56px;
+}
+
+.rf-part-hz {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--text-color);
+}
+
+.rf-part-lbl {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.rf-op {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--text-secondary);
+}
+
+.rf-result {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(14, 165, 233, 0.15));
+    border-color: var(--primary-color);
+}
+
+.rf-result .rf-part-hz {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.rf-head-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.rf-word-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-color);
+}
+
+.rf-audio-pill {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--primary-color);
+}
+
+.rf-story {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin: 0;
+}
+
+/* Tab 3: Radicals Quiz */
+.rad-quiz-prompt-box {
+    text-align: center;
+    padding: 1rem 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    margin-bottom: 1rem;
+}
+
+.rad-quiz-char {
+    font-size: 3.4rem;
+    font-weight: 900;
+    color: var(--primary-color);
+    line-height: 1.1;
+}
+
+.rad-quiz-sub {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-color);
+    margin-top: 0.25rem;
+}
+
+.rad-quiz-question {
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    margin: 0.5rem 0 0;
+    font-weight: 700;
+}
+
+@media (max-width: 480px) {
+    .radicals-cards-grid,
+    .radicals-formulas-grid {
+        grid-template-columns: 1fr;
+    }
 }
