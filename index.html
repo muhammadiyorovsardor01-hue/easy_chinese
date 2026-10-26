@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=41">
+    <link rel="stylesheet" href="styles.css?v=42">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -566,11 +566,11 @@
                         <h3 class="username" id="profileUsername">Chinese Learner</h3>
                         <div class="profile-cn-row">
                             <span class="profile-seal" aria-hidden="true">学</span>
-                            <p class="profile-motto"><span class="motto-cn">每天进步一点点</span> · har kuni bir qadam</p>
+                            <p class="profile-motto"><span class="motto-cn">每天进步一点点</span> · <span data-i18n="profile.motto">har kuni bir qadam</span></p>
                         </div>
                         <div class="profile-meta">
                             <span class="level-badge">Level <span id="userLevel">1</span></span>
-                            <span class="daily-goal">🎯 Kunlik: <span id="dailyGoalDisplay">10</span> so‘z</span>
+                            <span class="daily-goal">🎯 <span data-i18n="profile.dailyPrefix">Kunlik:</span> <span id="dailyGoalDisplay">10</span> <span data-i18n="lesson.wordsUnit">so'z</span></span>
                         </div>
                         <p class="user-email" id="profileEmail" hidden></p>
                     </div>
@@ -600,11 +600,11 @@
                             <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
                             <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
                         </svg>
-                        <span>Google orqali</span>
+                        <span data-i18n="profile.googleSignIn">Google orqali</span>
                     </button>
                     <button class="signout-btn" id="googleSignOutBtn" type="button" hidden>
                         <span aria-hidden="true">🚪</span>
-                        <span>Chiqish</span>
+                        <span data-i18n="profile.signOut">Chiqish</span>
                     </button>
                     <p class="auth-message" id="authMessage" hidden></p>
                 </div>
@@ -672,7 +672,7 @@
                     <div class="hsk-progress-item hsk-prog-2" data-jump-hsk="2" data-jump-track="classic" role="button" tabindex="0">
                         <div class="hsk-progress-label">
                             <span class="hsk-progress-name">
-                                <span class="hsk-prog-title"><span class="hsk-prog-dot">2</span> HSK 2 · Elementary</span>
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">2</span> <span data-i18n="hsk.2_label">HSK 2 · Quyi daraja</span></span>
                                 <span class="hsk-progress-count" id="hsk2Count">0 / 90 so‘z</span>
                             </span>
                             <span class="hsk-progress-percent" id="hsk2Percent">0%</span>
@@ -684,7 +684,7 @@
                     <div class="hsk-progress-item hsk-prog-3" data-jump-hsk="3" data-jump-track="classic" role="button" tabindex="0">
                         <div class="hsk-progress-label">
                             <span class="hsk-progress-name">
-                                <span class="hsk-prog-title"><span class="hsk-prog-dot">3</span> HSK 3 · Intermediate</span>
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">3</span> <span data-i18n="hsk.3_label">HSK 3 · O'rta daraja</span></span>
                                 <span class="hsk-progress-count" id="hsk3Count">0 / 90 so‘z</span>
                             </span>
                             <span class="hsk-progress-percent" id="hsk3Percent">0%</span>
@@ -696,7 +696,7 @@
                     <div class="hsk-progress-item hsk-prog-4" data-jump-hsk="4" data-jump-track="classic" role="button" tabindex="0">
                         <div class="hsk-progress-label">
                             <span class="hsk-progress-name">
-                                <span class="hsk-prog-title"><span class="hsk-prog-dot">4</span> HSK 4 · Upper-Inter</span>
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">4</span> <span data-i18n="hsk.4_label">HSK 4 · Yuqori o'rta</span></span>
                                 <span class="hsk-progress-count" id="hsk4Count">0 / 90 so‘z</span>
                             </span>
                             <span class="hsk-progress-percent" id="hsk4Percent">0%</span>
@@ -708,7 +708,7 @@
                     <div class="hsk-progress-item hsk-prog-5" data-jump-hsk="5" data-jump-track="classic" role="button" tabindex="0">
                         <div class="hsk-progress-label">
                             <span class="hsk-progress-name">
-                                <span class="hsk-prog-title"><span class="hsk-prog-dot">5</span> HSK 5 · Advanced</span>
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">5</span> <span data-i18n="hsk.5_label">HSK 5 · Yuqori daraja</span></span>
                                 <span class="hsk-progress-count" id="hsk5Count">0 / 90 so‘z</span>
                             </span>
                             <span class="hsk-progress-percent" id="hsk5Percent">0%</span>
@@ -735,12 +735,12 @@
                 <div class="quests-list" id="dailyQuests">
                     <div class="quest-item" data-quest="traces">
                         <span class="quest-icon">✍️</span>
-                        <span class="quest-copy"><strong>3 ta iyeroglif yozish</strong><small><span class="quest-progress">0</span>/3 bajarildi</small></span>
+                        <span class="quest-copy"><strong data-i18n="quest.tracesTitle">3 ta iyeroglif yozish</strong><small><span class="quest-progress">0</span>/3 <span data-i18n="quest.doneSuffix">bajarildi</span></small></span>
                         <span class="quest-status">0%</span>
                     </div>
                     <div class="quest-item" data-quest="xp">
                         <span class="quest-icon">⭐</span>
-                        <span class="quest-copy"><strong>Bugun 50 XP to‘plash</strong><small><span class="quest-progress">0</span>/50 XP</small></span>
+                        <span class="quest-copy"><strong data-i18n="quest.xpTitle">Bugun 50 XP to'plash</strong><small><span class="quest-progress">0</span>/50 XP</small></span>
                         <span class="quest-status">0%</span>
                     </div>
                 </div>
@@ -755,50 +755,50 @@
                 <div class="achievements-grid" id="achievementsGrid">
                     <div class="achievement-badge locked" data-achievement="first-word">
                         <span class="badge-icon">🎯</span>
-                        <span class="badge-name">Ilk Qadam</span>
-                        <span class="badge-desc">1-so‘zni yodlash</span>
+                        <span class="badge-name" data-i18n="ach.firstWord.name">Ilk Qadam</span>
+                        <span class="badge-desc" data-i18n="ach.firstWord.desc">1-so'zni yodlash</span>
                         <span class="badge-prog" data-ach-prog="first-word">0 / 1</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="first-lesson">
                         <span class="badge-icon">🏅</span>
-                        <span class="badge-name">1-Dars G‘olibi</span>
-                        <span class="badge-desc">1 ta darsni to‘liq tugatish</span>
+                        <span class="badge-name" data-i18n="ach.firstLesson.name">1-Dars G'olibi</span>
+                        <span class="badge-desc" data-i18n="ach.firstLesson.desc">1 ta darsni to'liq tugatish</span>
                         <span class="badge-prog" data-ach-prog="first-lesson">0 / 1</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="streak-3">
                         <span class="badge-icon">🔥</span>
-                        <span class="badge-name">3 Kunlik Olov</span>
-                        <span class="badge-desc">3 kun ketma-ket kirish</span>
+                        <span class="badge-name" data-i18n="ach.streak3.name">3 Kunlik Olov</span>
+                        <span class="badge-desc" data-i18n="ach.streak3.desc">3 kun ketma-ket kirish</span>
                         <span class="badge-prog" data-ach-prog="streak-3">0 / 3</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="streak-7">
                         <span class="badge-icon">⚡</span>
-                        <span class="badge-name">Hafta Qahramoni</span>
-                        <span class="badge-desc">7 kunlik streak</span>
+                        <span class="badge-name" data-i18n="ach.streak7.name">Hafta Qahramoni</span>
+                        <span class="badge-desc" data-i18n="ach.streak7.desc">7 kunlik streak</span>
                         <span class="badge-prog" data-ach-prog="streak-7">0 / 7</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="words-50">
                         <span class="badge-icon">📚</span>
-                        <span class="badge-name">Kitobxon</span>
-                        <span class="badge-desc">50 ta so‘z yodlash</span>
+                        <span class="badge-name" data-i18n="ach.words50.name">Kitobxon</span>
+                        <span class="badge-desc" data-i18n="ach.words50.desc">50 ta so'z yodlash</span>
                         <span class="badge-prog" data-ach-prog="words-50">0 / 50</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="words-100">
                         <span class="badge-icon">🎓</span>
-                        <span class="badge-name">Olim (Scholar)</span>
-                        <span class="badge-desc">100 ta so‘z yodlash</span>
+                        <span class="badge-name" data-i18n="ach.words100.name">Olim (Scholar)</span>
+                        <span class="badge-desc" data-i18n="ach.words100.desc">100 ta so'z yodlash</span>
                         <span class="badge-prog" data-ach-prog="words-100">0 / 100</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="xp-100">
                         <span class="badge-icon">⭐</span>
-                        <span class="badge-name">100 XP Yulduzi</span>
-                        <span class="badge-desc">100 XP to‘plash</span>
+                        <span class="badge-name" data-i18n="ach.xp100.name">100 XP Yulduzi</span>
+                        <span class="badge-desc" data-i18n="ach.xp100.desc">100 XP to'plash</span>
                         <span class="badge-prog" data-ach-prog="xp-100">0 / 100</span>
                     </div>
                     <div class="achievement-badge locked" data-achievement="master-calligrapher">
                         <span class="badge-icon">🖌️</span>
-                        <span class="badge-name">Xattot Ustasi</span>
-                        <span class="badge-desc">3 ta Hanzi yozish</span>
+                        <span class="badge-name" data-i18n="ach.calligrapher.name">Xattot Ustasi</span>
+                        <span class="badge-desc" data-i18n="ach.calligrapher.desc">3 ta Hanzi yozish</span>
                         <span class="badge-prog" data-ach-prog="master-calligrapher">0 / 3</span>
                     </div>
                 </div>
@@ -949,12 +949,12 @@
         <section id="practiceFlashcards" class="view">
             <div class="subview-header-card pfc-banner">
                 <div class="lessons-banner-top">
-                    <button type="button" class="back-btn" id="backFromPfcBtn">&larr; Practice</button>
+                    <button type="button" class="back-btn" id="backFromPfcBtn" data-i18n="radicals.backBtn">&larr; Mashq</button>
                     <span class="weekly-streak-pill" id="pfcLevelPill">HSK 1</span>
                 </div>
                 <div class="pfc-status-row">
-                    <span class="pfc-counter" id="pfcCounter">1 / 15 so‘z</span>
-                    <button type="button" class="pfc-shuffle-btn" id="pfcShuffleBtn">🔀 Aralashtirish</button>
+                    <span class="pfc-counter" id="pfcCounter">1 / 15 so'z</span>
+                    <button type="button" class="pfc-shuffle-btn" id="pfcShuffleBtn" data-i18n="card.shuffle">🔀 Aralashtirish</button>
                 </div>
                 <div class="lesson-overall-progress" style="margin-top: 0.5rem;">
                     <div class="lesson-overall-fill" id="pfcProgressFill" style="width: 10%;"></div>
@@ -966,8 +966,8 @@
                     <div class="pfc-card-face pfc-card-front">
                         <span class="pfc-tone-chip" id="pfcFrontToneChip">3-ton + 3-ton</span>
                         <div class="pfc-hanzi" id="pfcFrontHanzi">你好</div>
-                        <button type="button" class="pfc-audio-hero-btn" id="pfcAudioBtn">🔊 <span>Tinglash</span></button>
-                        <p class="pfc-flip-hint">Tarjimani ko‘rish uchun kartani bosing 👆</p>
+                        <button type="button" class="pfc-audio-hero-btn" id="pfcAudioBtn">🔊 <span data-i18n="card.audio">Ovoz</span></button>
+                        <p class="pfc-flip-hint" data-i18n="pfc.flipHint">Tarjimani ko'rish uchun kartani bosing 👆</p>
                     </div>
                     <div class="pfc-card-face pfc-card-back">
                         <div class="pfc-pinyin" id="pfcBackPinyin">nǐ hǎo</div>
@@ -976,22 +976,22 @@
                             <span class="pfc-sample-cn">你好！我是李老师。</span>
                             <span class="pfc-sample-uz">Salom! Men Li ustozman.</span>
                         </div>
-                        <button type="button" class="pfc-flip-back-btn" id="pfcFlipBackBtn">🔄 Orqaga o‘girish</button>
+                        <button type="button" class="pfc-flip-back-btn" id="pfcFlipBackBtn" data-i18n="pfc.flipBack">🔄 Orqaga o'girish</button>
                     </div>
                 </div>
 
                 <div class="pfc-actions-row">
                     <button type="button" class="pfc-action-btn pfc-btn-again" id="pfcAgainBtn">
                         <span class="btn-icon">🔁</span>
-                        <span>Qaytarish</span>
+                        <span data-i18n="pfc.again">Qaytarish</span>
                     </button>
                     <button type="button" class="pfc-action-btn pfc-btn-flip" id="pfcFlipTriggerBtn">
                         <span class="btn-icon">👁️</span>
-                        <span>O‘girish</span>
+                        <span data-i18n="pfc.flip">O'girish</span>
                     </button>
                     <button type="button" class="pfc-action-btn pfc-btn-good" id="pfcGoodBtn">
                         <span class="btn-icon">✅</span>
-                        <span>Yodlandi (+5 XP)</span>
+                        <span data-i18n="pfc.good">Yodlandi (+5 XP)</span>
                     </button>
                 </div>
             </div>
@@ -1001,23 +1001,23 @@
         <section id="toneLab" class="view">
             <div class="subview-header-card tone-lab-banner">
                 <div class="lessons-banner-top">
-                    <button type="button" class="back-btn" id="backFromToneLabBtn">&larr; Practice</button>
+                    <button type="button" class="back-btn" id="backFromToneLabBtn" data-i18n="radicals.backBtn">&larr; Mashq</button>
                     <span class="lessons-cn-badge">&#x56DB;&#x58F0;&#x4E0E;&#x53D8;&#x8C03; &middot; Super Chinese Tones</span>
                 </div>
-                <h2 class="section-title">Tonlar Laboratoriyasi (4 Tones)</h2>
-                <p class="lessons-kicker">Super Chinese uslubida: jonli 4 ta ton talaffuzi, eshitib topish viktorinasi, taqqoslash juftliklari va Tone Sandhi</p>
+                <h2 class="section-title" data-i18n="practice.tile.tone.title">Tonlar Laboratoriyasi</h2>
+                <p class="lessons-kicker" data-i18n="tone.kicker">Super Chinese uslubida: jonli 4 ta ton talaffuzi, eshitib topish viktorinasi, taqqoslash juftliklari va Tone Sandhi</p>
                 <div class="subview-tabs segmented-tabs-5" id="toneLabTabs">
                     <button type="button" class="subview-tab active" data-tone-tab="chart">
                         <span class="p-tab-icon">&#x1F4CA;</span>
-                        <span class="p-tab-label">4 Ton</span>
+                        <span class="p-tab-label" data-i18n="tone.tabChart">4 Ton</span>
                     </button>
                     <button type="button" class="subview-tab" data-tone-tab="ear">
                         <span class="p-tab-icon">&#x1F3A7;</span>
-                        <span class="p-tab-label">Viktorina</span>
+                        <span class="p-tab-label" data-i18n="radicals.tabQuiz">Viktorina</span>
                     </button>
                     <button type="button" class="subview-tab" data-tone-tab="pairs">
                         <span class="p-tab-icon">&#x2696;&#xFE0F;</span>
-                        <span class="p-tab-label">Juftlik</span>
+                        <span class="p-tab-label" data-i18n="tone.tabPairs">Juftlik</span>
                     </button>
                     <button type="button" class="subview-tab" data-tone-tab="sandhi">
                         <span class="p-tab-icon">&#x1F517;</span>
@@ -1035,13 +1035,13 @@
                 <!-- Super Chinese sequential player bar -->
                 <div class="tone-sequence-player-card">
                     <div class="tsp-info">
-                        <span class="tsp-badge">&#x1F525; Super Chinese Usuli</span>
-                        <strong>1-2-3-4 Tonlarni ketma-ket tinglash</strong>
-                        <small>m&#x0101; (1) &rarr; m&#x00E1; (2) &rarr; m&#x01CE; (3) &rarr; m&#x00E0; (4) &mdash; ohanglar farqini bevosita his qiling</small>
+                        <span class="tsp-badge" data-i18n="tone.seqBadge">&#x1F525; Super Chinese Usuli</span>
+                        <strong data-i18n="tone.seqTitle">1-2-3-4 Tonlarni ketma-ket tinglash</strong>
+                        <small data-i18n="tone.seqDesc">m&#x0101; (1) &rarr; m&#x00E1; (2) &rarr; m&#x01CE; (3) &rarr; m&#x00E0; (4) &mdash; ohanglar farqini bevosita his qiling</small>
                     </div>
                     <button type="button" class="tsp-play-btn" id="playAllTonesSeqBtn">
                         <span class="tsp-play-icon">&#x25B6;&#xFE0F;</span>
-                        <span>Ketma-ket solishtirish</span>
+                        <span data-i18n="tone.seqPlay">Ketma-ket solishtirish</span>
                     </button>
                 </div>
                 <div class="tone-cards-grid" id="toneContoursGrid"></div>
@@ -1058,19 +1058,19 @@
                     <div class="tone-ear-sound-box">
                         <div class="tone-ear-btns-row">
                             <button type="button" class="quiz-audio-hero-btn" id="toneEarPlayBtn">
-                                &#x1F50A; <span>Ovozni tinglash</span>
+                                &#x1F50A; <span data-i18n="card.audio">Ovoz</span>
                             </button>
                             <button type="button" class="quiz-audio-hero-btn tone-ear-slow-btn" id="toneEarSlowBtn" title="Sekinroq tinglash">
-                                &#x1F422; <span>Sekin (0.75x)</span>
+                                &#x1F422; <span data-i18n="settings.slow">Sekin</span>
                             </button>
                         </div>
-                        <p class="tone-ear-hint" id="toneEarHint">Quloq soling: bu nechanchi ton va qaysi so&#x2018;z?</p>
+                        <p class="tone-ear-hint" id="toneEarHint" data-i18n="tone.earHint">Quloq soling: bu nechanchi ton va qaysi so'z?</p>
                     </div>
                     <div class="tone-ear-options" id="toneEarOptions"></div>
                     <div class="tone-ear-feedback" id="toneEarFeedback" hidden></div>
                     <div class="tone-ear-actions" id="toneEarActions" hidden>
-                        <button type="button" class="secondary-btn" id="toneEarCompareBtn">&#x25B6;&#xFE0F; Ikkalasini solishtirish</button>
-                        <button type="button" class="stage-next-btn" id="toneEarNextBtn">Keyingi savol &rarr;</button>
+                        <button type="button" class="secondary-btn" id="toneEarCompareBtn" data-i18n="tone.compareBoth">&#x25B6;&#xFE0F; Ikkalasini solishtirish</button>
+                        <button type="button" class="stage-next-btn" id="toneEarNextBtn" data-i18n="quiz.nextQuestion">Keyingi savol &rarr;</button>
                     </div>
                 </div>
             </div>
@@ -1080,8 +1080,8 @@
                 <div class="tone-minimal-header-card">
                     <div class="section-head-row">
                         <div>
-                            <h3 class="progress-title">Ton o&#x2018;zgarsa &mdash; ma&#x2018;no butkul o&#x2018;zgaradi!<span class="title-cn">&#x8FA8;&#x8C03;&#x5BF9;&#x6BD4;</span></h3>
-                            <p class="lessons-kicker">Xitoyda eng ko&#x2018;p adashtiriladigan hayotiy so&#x2018;zlar: &laquo;&#x4E70; (sotib olmoq) vs &#x5356; (sotmoq)&raquo;, &laquo;&#x56DB; (4) vs &#x5341; (10)&raquo;</p>
+                            <h3 class="progress-title"><span data-i18n="tone.pairsTitle">Ton o'zgarsa — ma'no butkul o'zgaradi!</span><span class="title-cn">&#x8FA8;&#x8C03;&#x5BF9;&#x6BD4;</span></h3>
+                            <p class="lessons-kicker" data-i18n="tone.pairsKicker">Xitoyda eng ko'p adashtiriladigan hayotiy so'zlar: «买 (sotib olmoq) vs 卖 (sotmoq)», «四 (4) vs 十 (10)»</p>
                         </div>
                     </div>
                 </div>
@@ -1104,10 +1104,10 @@
                     </div>
                     <canvas id="tonePitchCanvas" class="tone-pitch-canvas" width="320" height="90"></canvas>
                     <div class="tone-mic-actions">
-                        <button type="button" class="secondary-btn" id="toneMicListenBtn">&#x1F50A; Namuna</button>
-                        <button type="button" class="secondary-btn" id="toneMicSlowBtn">&#x1F422; Sekin (0.6x)</button>
-                        <button type="button" class="stage-next-btn" id="toneMicRecordBtn">&#x1F399;&#xFE0F; Aytib tekshirish</button>
-                        <button type="button" class="secondary-btn" id="toneMicNextWordBtn">Keyingisi &rarr;</button>
+                        <button type="button" class="secondary-btn" id="toneMicListenBtn">&#x1F50A; <span data-i18n="card.audio">Ovoz</span></button>
+                        <button type="button" class="secondary-btn" id="toneMicSlowBtn">&#x1F422; <span data-i18n="settings.slow">Sekin</span></button>
+                        <button type="button" class="stage-next-btn" id="toneMicRecordBtn">&#x1F399;&#xFE0F; <span data-i18n="card.speak">Talaffuz</span></button>
+                        <button type="button" class="secondary-btn" id="toneMicNextWordBtn" data-i18n="card.next">Keyingi</button>
                     </div>
                     <div class="speak-feedback-banner" id="toneMicFeedback" hidden></div>
                 </div>
@@ -1119,27 +1119,27 @@
         <section id="pinyinChart" class="view">
             <div class="subview-header-card pinyin-chart-banner">
                 <div class="lessons-banner-top">
-                    <button type="button" class="back-btn" id="backFromPinyinChartBtn">&larr; Practice</button>
+                    <button type="button" class="back-btn" id="backFromPinyinChartBtn" data-i18n="radicals.backBtn">&larr; Mashq</button>
                     <span class="lessons-cn-badge">汉语拼音 · Pinyin Chart</span>
                 </div>
-                <h2 class="section-title">🎹 Interaktiv Pinyin Jadvali</h2>
-                <p class="lessons-kicker">Xitoy tili fonetikasi: 23 ta undosh (声母), 24 ta unli (韵母) va to‘liq audio matritsa</p>
+                <h2 class="section-title">🎹 <span data-i18n="practice.tile.pinyin.title">Interaktiv Pinyin Jadvali</span></h2>
+                <p class="lessons-kicker" data-i18n="practice.tile.pinyin.desc">Xitoy tili fonetikasi: 23 ta undosh (声母), 24 ta unli (韵母) va to'liq audio matritsa</p>
                 <div class="subview-tabs pinyin-segmented-tabs" id="pinyinChartTabs">
                     <button type="button" class="subview-tab active" data-pinyin-tab="initials">
                         <span class="p-tab-icon">🔤</span>
-                        <span class="p-tab-label">Undoshlar <span class="p-tab-count">23</span></span>
+                        <span class="p-tab-label"><span data-i18n="pinyin.tabInitials">Undoshlar</span> <span class="p-tab-count">23</span></span>
                     </button>
                     <button type="button" class="subview-tab" data-pinyin-tab="finals">
                         <span class="p-tab-icon">🅰️</span>
-                        <span class="p-tab-label">Unlilar <span class="p-tab-count">24</span></span>
+                        <span class="p-tab-label"><span data-i18n="pinyin.tabFinals">Unlilar</span> <span class="p-tab-count">24</span></span>
                     </button>
                     <button type="button" class="subview-tab" data-pinyin-tab="matrix">
                         <span class="p-tab-icon">📊</span>
-                        <span class="p-tab-label">Matritsa</span>
+                        <span class="p-tab-label" data-i18n="pinyin.tabMatrix">Matritsa</span>
                     </button>
                     <button type="button" class="subview-tab" data-pinyin-tab="rules">
                         <span class="p-tab-icon">💡</span>
-                        <span class="p-tab-label">Qoidalar</span>
+                        <span class="p-tab-label" data-i18n="pinyin.tabRules">Qoidalar</span>
                     </button>
                 </div>
             </div>
@@ -1149,8 +1149,8 @@
                 <div class="pinyin-helper-note">
                     <span class="pinyin-note-icon">💡</span>
                     <div>
-                        <strong>声母 (Shēngmǔ) — Undosh tovushlar (23 ta):</strong>
-                        <p>Xitoy tilidagi bo‘g‘in boshlovchi undoshlar. Kartochkani bosib standart talaffuzini tinglang va o‘zbekcha talaffuz yo‘riqnomasini o‘rganing.</p>
+                        <strong data-i18n="pinyin.initialsTitle">声母 (Shēngmǔ) — Undosh tovushlar (23 ta):</strong>
+                        <p data-i18n="pinyin.initialsDesc">Xitoy tilidagi bo'g'in boshlovchi undoshlar. Kartochkani bosib standart talaffuzini tinglang va talaffuz yo'riqnomasini o'rganing.</p>
                     </div>
                 </div>
                 <div class="pinyin-groups-container" id="pinyinInitialsList"></div>
@@ -1161,8 +1161,8 @@
                 <div class="pinyin-helper-note">
                     <span class="pinyin-note-icon">🎵</span>
                     <div>
-                        <strong>韵母 (Yùnmǔ) — Unli tovushlar (24 ta):</strong>
-                        <p>6 oddiy, 9 murakkab va 9 burun unlisi. Har bir kartochkadagi 1-4 ton tugmachalarini bosib, ohanglar bilan tinglang.</p>
+                        <strong data-i18n="pinyin.finalsTitle">韵母 (Yùnmǔ) — Unli tovushlar (24 ta):</strong>
+                        <p data-i18n="pinyin.finalsDesc">6 oddiy, 9 murakkab va 9 burun unlisi. Har bir kartochkadagi 1-4 ton tugmachalarini bosib, ohanglar bilan tinglang.</p>
                     </div>
                 </div>
                 <div class="pinyin-groups-container" id="pinyinFinalsList"></div>
@@ -1173,11 +1173,11 @@
                 <div class="pinyin-matrix-controls">
                     <div class="pinyin-search-box">
                         <span class="pinyin-search-icon">🔍</span>
-                        <input type="text" id="pinyinSearchInput" placeholder="Bo‘g‘in qidiring (masalan: ma, ni, hao, zhong, xue)..." autocomplete="off" autocorrect="off" autocapitalize="none">
+                        <input type="text" id="pinyinSearchInput" data-i18n-ph="pinyin.searchPh" placeholder="Bo'g'in qidiring (masalan: ma, ni, hao, zhong, xue)..." autocomplete="off" autocorrect="off" autocapitalize="none">
                         <button type="button" id="pinyinSearchClearBtn" class="pinyin-clear-btn" aria-label="Tozalash" hidden>&times;</button>
                     </div>
                     <div class="pinyin-filter-pills" id="pinyinGroupFilters">
-                        <button type="button" class="pinyin-filter-pill active" data-filter="all">Barchasi</button>
+                        <button type="button" class="pinyin-filter-pill active" data-filter="all" data-i18n="pinyin.all">Barchasi</button>
                         <button type="button" class="pinyin-filter-pill" data-filter="bpmf">b p m f</button>
                         <button type="button" class="pinyin-filter-pill" data-filter="dtnl">d t n l</button>
                         <button type="button" class="pinyin-filter-pill" data-filter="gkh">g k h</button>
@@ -1192,7 +1192,7 @@
                 <div class="pinyin-dock-card" id="pinyinSyllableDock">
                     <div class="pinyin-dock-head">
                         <div>
-                            <span class="pinyin-dock-tag">Tanlangan bo‘g‘in</span>
+                            <span class="pinyin-dock-tag" data-i18n="pinyin.selectedSyllable">Tanlangan bo'g'in</span>
                             <div class="pinyin-dock-syllable" id="dockSyllableText">ma</div>
                         </div>
                         <button type="button" class="pinyin-dock-close" id="dockCloseBtn" aria-label="Yopish">&times;</button>
@@ -1290,27 +1290,27 @@
         <section id="survivalPhrases" class="view">
             <div class="subview-header-card survival-banner">
                 <div class="lessons-banner-top">
-                    <button type="button" class="back-btn" id="backFromSurvivalBtn">&larr; Practice</button>
+                    <button type="button" class="back-btn" id="backFromSurvivalBtn" data-i18n="radicals.backBtn">&larr; Mashq</button>
                     <span class="lessons-cn-badge">&#x5B9E;&#x7528;&#x53E3;&#x8BED; &middot; Real China Life</span>
                 </div>
-                <h2 class="section-title">Xitoyda Kunlik Muloqot</h2>
-                <p class="lessons-kicker">Auditoriyada, oshxonada, WeChat to&#x2018;lovida, kuryer bilan va ko&#x2018;chada har kuni kerak bo&#x2018;ladigan iboralar</p>
+                <h2 class="section-title" data-i18n="practice.tile.survival.title">Xitoyda Kunlik Muloqot</h2>
+                <p class="lessons-kicker" data-i18n="practice.tile.survival.desc">Auditoriyada, oshxonada, WeChat to'lovida, kuryer bilan va ko'chada har kuni kerak bo'ladigan iboralar</p>
                 <div class="subview-tabs segmented-tabs-4" id="survivalCategoryTabs">
                     <button type="button" class="subview-tab active" data-surv-cat="classroom">
                         <span class="p-tab-icon">&#x1F3EB;</span>
-                        <span class="p-tab-label">Darsda</span>
+                        <span class="p-tab-label" data-i18n="survival.tabClass">Darsda</span>
                     </button>
                     <button type="button" class="subview-tab" data-surv-cat="canteen">
                         <span class="p-tab-icon">&#x1F35C;</span>
-                        <span class="p-tab-label">Oshxona</span>
+                        <span class="p-tab-label" data-i18n="survival.tabCanteen">Oshxona</span>
                     </button>
                     <button type="button" class="subview-tab" data-surv-cat="delivery">
                         <span class="p-tab-icon">&#x1F4E6;</span>
-                        <span class="p-tab-label">Kuryer</span>
+                        <span class="p-tab-label" data-i18n="survival.tabDelivery">Kuryer</span>
                     </button>
                     <button type="button" class="subview-tab" data-surv-cat="transport">
                         <span class="p-tab-icon">&#x1F687;</span>
-                        <span class="p-tab-label">Metro</span>
+                        <span class="p-tab-label" data-i18n="survival.tabMetro">Metro</span>
                     </button>
                 </div>
             </div>
@@ -1327,17 +1327,17 @@
                             <span class="lessons-cn-badge">李老师 · Li Laoshi</span>
                             <span class="ai-online-badge"><span class="status-pulse-dot"></span> Onlayn</span>
                         </div>
-                        <h2 class="section-title">AI Laoshi (Ustoz)</h2>
-                        <p class="lessons-kicker">Grammatika, 1–4 tonlar siri va Xitoyda yashash bo‘yicha shaxsiy maslahatchi</p>
+                        <h2 class="section-title" data-i18n="practice.tile.ai.title">AI Laoshi (Li Ustoz)</h2>
+                        <p class="lessons-kicker" data-i18n="practice.tile.ai.desc">Grammatika, 1–4 tonlar siri va Xitoyda yashash bo'yicha shaxsiy maslahatchi</p>
                     </div>
                     <button type="button" class="ai-clear-btn" id="aiClearChatBtn" title="Suhbatni tozalash" aria-label="Suhbatni tozalash">🗑️</button>
                 </div>
                 <div class="subview-tabs" id="aiScenarioChips">
-                    <button type="button" class="subview-tab active" data-ai-mode="coach">🔍 Ton &amp; So‘z</button>
-                    <button type="button" class="subview-tab" data-ai-mode="classroom">🎓 Darsda</button>
-                    <button type="button" class="subview-tab" data-ai-mode="canteen">🍜 Oshxona</button>
-                    <button type="button" class="subview-tab" data-ai-mode="market">📱 To‘lov &amp; Kuryer</button>
-                    <button type="button" class="subview-tab" data-ai-mode="taxi">🚕 Taksi / Shahar</button>
+                    <button type="button" class="subview-tab active" data-ai-mode="coach" data-i18n="ai.tabCoach">🔍 Ton va So'z</button>
+                    <button type="button" class="subview-tab" data-ai-mode="classroom" data-i18n="survival.tabClass">🎓 Darsda</button>
+                    <button type="button" class="subview-tab" data-ai-mode="canteen" data-i18n="survival.tabCanteen">🍜 Oshxona</button>
+                    <button type="button" class="subview-tab" data-ai-mode="market" data-i18n="survival.tabDelivery">📱 Kuryer</button>
+                    <button type="button" class="subview-tab" data-ai-mode="taxi" data-i18n="survival.tabMetro">🚕 Metro / Taksi</button>
                 </div>
             </div>
 
@@ -1357,9 +1357,9 @@
 
                 <form class="ai-input-bar" id="aiChatForm">
                     <button type="button" class="ai-mic-btn" id="aiVoiceInputBtn" title="Ovoz bilan aytish" aria-label="Mikrofon">🎙️</button>
-                    <input type="text" class="ai-text-input" id="aiTextInput" placeholder="Istalgan o‘zbekcha gapni yozing (tarjima qiladi) yoki savol bering..." autocomplete="off" autocorrect="off" enterkeyhint="send" />
+                    <input type="text" class="ai-text-input" id="aiTextInput" data-i18n-ph="ai.inputPh" placeholder="Savol bering yoki tarjima qilish uchun gap yozing..." autocomplete="off" autocorrect="off" enterkeyhint="send" />
                     <button type="submit" class="ai-send-btn" id="aiSendBtn" aria-label="Yuborish">
-                        <span class="send-text">Yuborish</span>
+                        <span class="send-text" data-i18n="ai.send">Yuborish</span>
                         <span class="send-icon">➤</span>
                     </button>
                 </form>
@@ -1375,7 +1375,7 @@
                     <span class="ai-avatar-badge" style="width: 34px; height: 34px; min-width: 34px; font-size: 1.2rem;">👩‍🏫</span>
                     <div>
                         <strong id="lessonAiModalWordTitle" style="font-size: 0.95rem;">AI Laoshi Tahlili</strong>
-                        <small style="display: block; font-size: 0.7rem; color: #10B981; font-weight: 700;">Darsdan chiqmasdan o‘rganish</small>
+                        <small style="display: block; font-size: 0.7rem; color: #10B981; font-weight: 700;" data-i18n="ai.modalSub">Darsdan chiqmasdan o'rganish</small>
                     </div>
                 </div>
                 <button class="modal-close" id="closeLessonAiModalBtn">✕</button>
@@ -1384,8 +1384,8 @@
                 <!-- Dynamically populated with accurate word, pinyin, natural example, tone breakdown -->
             </div>
             <div class="modal-footer" style="display: flex; gap: 0.5rem; justify-content: space-between; align-items: center;">
-                <button class="modal-btn cancel-btn" id="dismissLessonAiModalBtn" type="button">✕ Darsga qaytish</button>
-                <button class="modal-btn save-btn" id="goToFullAiChatBtn" type="button" style="font-size: 0.78rem;">💬 AI Laoshi suhbati →</button>
+                <button class="modal-btn cancel-btn" id="dismissLessonAiModalBtn" type="button" data-i18n="ai.backToLesson">✕ Darsga qaytish</button>
+                <button class="modal-btn save-btn" id="goToFullAiChatBtn" type="button" style="font-size: 0.78rem;" data-i18n="ai.openFullChat">💬 AI Laoshi suhbati →</button>
             </div>
         </div>
     </div>
@@ -1442,7 +1442,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="dailyGoalInput">Daily Goal</label>
+                    <label for="dailyGoalInput" data-i18n="settings.dailyGoal">Kunlik maqsad</label>
                     <select id="dailyGoalInput" class="form-input">
                         <option value="5">5 words</option>
                         <option value="10" selected>10 words</option>
@@ -1479,6 +1479,7 @@
                         <div class="lang-grid" id="appLanguageGroup">
                             <button type="button" class="lang-chip" data-lang="uz"><span class="lang-flag">🇺🇿</span><span>O'zbekcha</span></button>
                             <button type="button" class="lang-chip" data-lang="uz-cyrl"><span class="lang-flag">🇺🇿</span><span>Ўзбекча</span></button>
+                            <button type="button" class="lang-chip" data-lang="ky"><span class="lang-flag">🇰🇬</span><span>Кыргызча</span></button>
                             <button type="button" class="lang-chip" data-lang="ru"><span class="lang-flag">🇷🇺</span><span>Русский</span></button>
                             <button type="button" class="lang-chip" data-lang="en"><span class="lang-flag">🇬🇧</span><span>English</span></button>
                         </div>
@@ -1765,7 +1766,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=41"></script>
+    <script src="script.js?v=42"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1774,6 +1775,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=41"></script>
+    <script src="pwa.js?v=42"></script>
 </body>
 </html>

@@ -1835,7 +1835,7 @@ function displayLearningContent(lessonNumber, track) {
                 <button type="button" class="sentence-audio-btn" data-speak="${sentence.chinese.replace(/"/g, '&quot;')}" aria-label="Gapni tinglash">🔊</button>
             </div>
             <div class="sentence-pinyin">${sentence.pinyin}</div>
-            <div class="sentence-uzbek">${sentence.uzbek}</div>
+            <div class="sentence-uzbek">${trUz(sentence.uzbek)}</div>
             ${sentence.english ? `<div class="sentence-english">${sentence.english}</div>` : ''}
         </div>
     `).join('');
@@ -1848,12 +1848,12 @@ function displayLearningContent(lessonNumber, track) {
     if (lessonObj.grammar) {
         grammarNoteContainer.innerHTML = `
             <div class="grammar-content">
-                <h4 class="grammar-point">${lessonObj.grammar.point}</h4>
+                <h4 class="grammar-point">${trUz(lessonObj.grammar.point)}</h4>
                 <div class="grammar-pattern">
-                    <strong>Qolip (Pattern):</strong> ${lessonObj.grammar.pattern}
+                    <strong>${trUz('Qolip (Pattern):')}</strong> ${lessonObj.grammar.pattern}
                 </div>
                 <div class="grammar-explanation">
-                    ${lessonObj.grammar.uzbek_explanation}
+                    ${trUz(lessonObj.grammar.uzbek_explanation)}
                 </div>
                 ${lessonObj.grammar.examples && lessonObj.grammar.examples.length > 0 ? `
                     <div class="grammar-examples">
@@ -1861,7 +1861,7 @@ function displayLearningContent(lessonNumber, track) {
                             <div class="grammar-example">
                                 <div class="grammar-example-chinese">${ex.chinese}</div>
                                 <div class="grammar-example-pinyin">${ex.pinyin}</div>
-                                <div class="grammar-example-uzbek">${ex.uzbek}</div>
+                                <div class="grammar-example-uzbek">${trUz(ex.uzbek)}</div>
                             </div>
                         `).join('')}
                     </div>
@@ -1889,7 +1889,7 @@ function renderSentenceBuilderGame(lessonObj) {
         { hanzi: '学习', pinyin: 'xuéxí' },
         { hanzi: wA.hanzi, pinyin: wA.pinyin }
     ];
-    const targetMeaning = `Men bugun "${wA.uzbek}" (${wA.hanzi}) so‘zini o‘rganaman.`;
+    const targetMeaning = trUz(`Men bugun "${wA.uzbek}" (${wA.hanzi}) so‘zini o‘rganaman.`);
     const fullSentence = tokens.map(t => t.hanzi).join('');
 
     // Shuffle indices
@@ -1907,11 +1907,11 @@ function renderSentenceBuilderGame(lessonObj) {
 
     function renderState() {
         box.innerHTML = `
-            <p class="builder-prompt">Quyidagi ma’noga mos xitoycha gapni bo‘laklarni bosib tuzing:</p>
+            <p class="builder-prompt">${trUz('Quyidagi ma’noga mos xitoycha gapni bo‘laklarni bosib tuzing:')}</p>
             <div class="builder-target-uzbek">“${targetMeaning}”</div>
             <div class="builder-answer-slot" id="builderAnswerSlot">
                 ${picked.length === 0
-                    ? '<span class="builder-slot-placeholder">So‘z bo‘laklarini ketma-ket bosing...</span>'
+                    ? `<span class="builder-slot-placeholder">${trUz('So‘z bo‘laklarini ketma-ket bosing...')}</span>`
                     : picked.map((p, pIdx) => `
                         <button type="button" class="builder-tile is-picked" data-picked-idx="${pIdx}">
                             <span class="bt-hanzi">${p.hanzi}</span>
@@ -2612,7 +2612,7 @@ function updateFlashcard() {
     const word = currentWords[flashcardIndex];
     flashcardHanzi.textContent = word.hanzi;
     flashcardPinyin.textContent = word.pinyin;
-    flashcardUzbek.textContent = word.uzbek;
+    flashcardUzbek.textContent = trUz(word.uzbek);
     currentCard.textContent = flashcardIndex + 1;
     totalCards.textContent = currentWords.length;
     const wordProgressEl = document.getElementById('wordProgress');
@@ -3275,7 +3275,7 @@ function updateQuiz() {
         }
         setTimeout(() => playWordAudio(word), 120);
     } else {
-        const question = quizType === 'meaning' ? word.hanzi : quizType === 'pinyin' ? word.uzbek : word.pinyin;
+        const question = quizType === 'meaning' ? word.hanzi : quizType === 'pinyin' ? trUz(word.uzbek) : word.pinyin;
         quizHanzi.textContent = question;
         quizPrompt.textContent = quizType === 'meaning'
             ? (typeof t === 'function' ? t('quiz.promptMeaning') : "Bu so'zning ma'nosi nima?")
@@ -3295,9 +3295,9 @@ function updateQuiz() {
         const optionBtn = document.createElement('button');
         optionBtn.className = 'quiz-option';
         if (quizType === 'audio') {
-            optionBtn.textContent = `${option.hanzi} (${option.pinyin}) — ${option.uzbek}`;
+            optionBtn.textContent = `${option.hanzi} (${option.pinyin}) — ${trUz(option.uzbek)}`;
         } else {
-            optionBtn.textContent = quizType === 'meaning' ? option.uzbek : quizType === 'pinyin' ? option.pinyin : option.hanzi;
+            optionBtn.textContent = quizType === 'meaning' ? trUz(option.uzbek) : quizType === 'pinyin' ? option.pinyin : option.hanzi;
         }
         optionBtn.dataset.wordId = option.id;
         optionBtn.addEventListener('click', () => checkAnswer(optionBtn, option.id === word.id));
@@ -3433,7 +3433,7 @@ function renderLessonVocabPreview() {
                 <span class="vocab-preview-num">${idx + 1}</span>
                 <div>
                     <div class="vocab-preview-hanzi">${w.hanzi} <span class="vocab-preview-pinyin">${w.pinyin}</span></div>
-                    <div class="vocab-preview-uzbek">${w.uzbek}</div>
+                    <div class="vocab-preview-uzbek">${trUz(w.uzbek)}</div>
                 </div>
             </div>
             <button type="button" class="vocab-preview-audio" data-speak="${w.hanzi}" aria-label="Tinglash ${w.hanzi}">🔊</button>
@@ -3646,10 +3646,10 @@ function loadCanvasCharacter() {
         canvasCharacterPosition.textContent = currentCanvasCharacters.length > 1
             ? `Bo‘g‘in ${canvasCharacterIndex + 1} / ${currentCanvasCharacters.length}`
             : `1 ta iyeroglif`;
-        canvasMeaning.textContent = word.uzbek;
+        canvasMeaning.textContent = trUz(word.uzbek);
         canvasPinyin.textContent = word.pinyin;
         renderCanvasCharChips(word);
-        const nextLabel = canvasCharacterIndex < currentCanvasCharacters.length - 1 ? 'Keyingi harf →' : 'Keyingi so‘z →';
+        const nextLabel = canvasCharacterIndex < currentCanvasCharacters.length - 1 ? trUz('Keyingi harf →') : (typeof t === 'function' ? t('canvas.nextWord') : 'Keyingi so‘z →');
         canvasContinueBtn.textContent = nextLabel;
         nextCanvasWord.textContent = nextLabel;
         nextWordFromModal.textContent = nextLabel.replace(' →', '');
@@ -4066,7 +4066,7 @@ function updateWeeklyStreakCalendar() {
     const summaryEl = document.getElementById('weeklyStreakSummary');
     if (!grid) return;
 
-    const dayNames = ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya'];
+    const dayNames = (typeof t === 'function' ? t('weekly.days') : 'Du,Se,Ch,Pa,Ju,Sh,Ya').split(',');
     const now = new Date();
     // Convert Sunday (0) -> 6, Monday (1) -> 0 .. Saturday (6) -> 5
     const todayMonIdx = (now.getDay() + 6) % 7;
@@ -4074,7 +4074,8 @@ function updateWeeklyStreakCalendar() {
     const activeInWeek = Math.min(todayMonIdx + 1, streakCount);
 
     if (summaryEl) {
-        summaryEl.textContent = `🔥 ${streakData.streak || 1} kun ketma-ket`;
+        const sfx = typeof t === 'function' ? t('weekly.streakSuffix') : 'kun ketma-ket';
+        summaryEl.textContent = `🔥 ${streakData.streak || 1} ${sfx}`;
     }
 
     grid.innerHTML = dayNames.map((name, idx) => {
@@ -4097,14 +4098,16 @@ function renderLearnedWordsDrawer() {
     if (!listEl) return;
 
     const learnedItems = vocabularyData.filter(w => learnedWords.includes(w.id));
+    const wUnit = typeof t === 'function' ? t('lesson.wordsUnit') : 'so‘z';
     if (badgeEl) {
-        badgeEl.textContent = `${learnedItems.length} ta so‘z`;
+        badgeEl.textContent = `${learnedItems.length} ${wUnit}`;
     }
 
     if (learnedItems.length === 0) {
+        const emptyTxt = typeof t === 'function' ? t('learned.empty') : 'Hozircha yodlangan so‘zlar yo‘q.';
         listEl.innerHTML = `
             <div class="learned-words-empty">
-                <p>Hozircha yodlangan so‘zlar yo‘q. Darslarni boshlang yoki kartochkalarda <strong>⭐ Mark Learned</strong> tugmasini bosing!</p>
+                <p>${emptyTxt}</p>
             </div>
         `;
         return;
@@ -4113,11 +4116,11 @@ function renderLearnedWordsDrawer() {
     // Show up to 24 most recently learned words as interactive chips with audio
     const recentItems = learnedItems.slice(-24).reverse();
     listEl.innerHTML = recentItems.map(w => `
-        <button type="button" class="learned-word-chip" data-speak="${w.hanzi}" title="Tinglash: ${w.hanzi} (${w.pinyin})">
+        <button type="button" class="learned-word-chip" data-speak="${w.hanzi}" title="${w.hanzi} (${w.pinyin})">
             <span class="lw-hanzi">${w.hanzi}</span>
             <span class="lw-meta">
                 <span class="lw-pinyin">${w.pinyin}</span>
-                <span class="lw-uzbek">${w.uzbek}</span>
+                <span class="lw-uzbek">${trUz(w.uzbek)}</span>
             </span>
             <span class="lw-audio" aria-hidden="true">🔊</span>
         </button>
@@ -4289,17 +4292,18 @@ function updateHSKProgress() {
     if (hsk4PercentEl) hsk4PercentEl.textContent = `${hsk4PercentVal}%`;
     if (hsk5PercentEl) hsk5PercentEl.textContent = `${hsk5PercentVal}%`;
 
-    if (hsk1Count) hsk1Count.textContent = `${hsk1Learned} / ${hsk1Words} so‘z`;
-    if (newHskCount) newHskCount.textContent = `${newHskLearned} / ${newHskWords} so‘z`;
+    const wUnit = typeof t === 'function' ? t('lesson.wordsUnit') : 'so‘z';
+    if (hsk1Count) hsk1Count.textContent = `${hsk1Learned} / ${hsk1Words} ${wUnit}`;
+    if (newHskCount) newHskCount.textContent = `${newHskLearned} / ${newHskWords} ${wUnit}`;
 
     const hsk2CountEl = document.getElementById('hsk2Count');
     const hsk3CountEl = document.getElementById('hsk3Count');
     const hsk4CountEl = document.getElementById('hsk4Count');
     const hsk5CountEl = document.getElementById('hsk5Count');
-    if (hsk2CountEl) hsk2CountEl.textContent = `${hsk2Learned} / ${hsk2Words} so‘z`;
-    if (hsk3CountEl) hsk3CountEl.textContent = `${hsk3Learned} / ${hsk3Words} so‘z`;
-    if (hsk4CountEl) hsk4CountEl.textContent = `${hsk4Learned} / ${hsk4Words} so‘z`;
-    if (hsk5CountEl) hsk5CountEl.textContent = `${hsk5Learned} / ${hsk5Words} so‘z`;
+    if (hsk2CountEl) hsk2CountEl.textContent = `${hsk2Learned} / ${hsk2Words} ${wUnit}`;
+    if (hsk3CountEl) hsk3CountEl.textContent = `${hsk3Learned} / ${hsk3Words} ${wUnit}`;
+    if (hsk4CountEl) hsk4CountEl.textContent = `${hsk4Learned} / ${hsk4Words} ${wUnit}`;
+    if (hsk5CountEl) hsk5CountEl.textContent = `${hsk5Learned} / ${hsk5Words} ${wUnit}`;
 
     if (hsk1Fill) hsk1Fill.style.width = `${hsk1PercentVal}%`;
     if (newHskFill) newHskFill.style.width = `${newHskPercentVal}%`;
@@ -4368,7 +4372,7 @@ function updateAchievements() {
 
         const progEl = badge.querySelector('.badge-prog');
         if (progEl) {
-            progEl.textContent = unlocked ? '✓ Ochildi' : `${Math.min(currentVal, targetVal)} / ${targetVal}`;
+            progEl.textContent = unlocked ? (typeof t === 'function' ? t('ach.unlocked') : '✓ Ochildi') : `${Math.min(currentVal, targetVal)} / ${targetVal}`;
         }
 
         if (unlocked) {
@@ -4686,19 +4690,20 @@ function renderCurrentPfcCard() {
     const uzbek = document.getElementById('pfcBackUzbek');
     const sampleBox = document.getElementById('pfcBackSample');
 
-    if (counter) counter.textContent = `${pfcIndex + 1} / ${pfcDeck.length} so‘z`;
+    const wUnit = typeof t === 'function' ? t('lesson.wordsUnit') : 'so‘z';
+    if (counter) counter.textContent = `${pfcIndex + 1} / ${pfcDeck.length} ${wUnit}`;
     if (fill) fill.style.width = `${((pfcIndex + 1) / pfcDeck.length) * 100}%`;
 
     if (hanzi) hanzi.textContent = word.hanzi;
-    if (toneChip) toneChip.textContent = `Lesson ${word.lesson} · HSK ${word.hsk}`;
+    if (toneChip) toneChip.textContent = `${typeof t === 'function' ? t('lesson.word') : 'Lesson'} ${word.lesson} · HSK ${word.hsk}`;
     if (pinyin) pinyin.textContent = word.pinyin;
-    if (uzbek) uzbek.textContent = word.uzbek;
+    if (uzbek) uzbek.textContent = trUz(word.uzbek);
 
     const natExample = getWordNaturalExample(word);
     if (sampleBox) {
         sampleBox.innerHTML = `
             <span class="pfc-sample-cn">${natExample.cn}</span>
-            <span class="pfc-sample-uz">${natExample.py} — ${natExample.uz}</span>
+            <span class="pfc-sample-uz">${natExample.py} — ${trUz(natExample.uz)}</span>
         `;
     }
 
@@ -4752,7 +4757,7 @@ function showLessonAiModal(word) {
 
     if (!modal || !bodyEl || !word) return;
 
-    if (titleEl) titleEl.textContent = `AI Tahlil: “${word.hanzi}”`;
+    if (titleEl) titleEl.textContent = `${trUz('AI Tahlil')}: “${word.hanzi}”`;
 
     const natEx = getWordNaturalExample(word);
 
@@ -4760,17 +4765,17 @@ function showLessonAiModal(word) {
         <div class="lesson-ai-word-hero">
             <div class="lai-hanzi">${word.hanzi}</div>
             <div class="lai-pinyin">${word.pinyin}</div>
-            <div class="lai-uzbek">${word.uzbek}</div>
-            <button type="button" class="ai-action-chip ai-audio-chip" id="laiModalSpeakBtn" style="margin-top: 0.35rem;">🔊 Ovozini Tinglash</button>
+            <div class="lai-uzbek">${trUz(word.uzbek)}</div>
+            <button type="button" class="ai-action-chip ai-audio-chip" id="laiModalSpeakBtn" style="margin-top: 0.35rem;">🔊 ${typeof t === 'function' ? t('card.listen') : 'Tinglash'}</button>
         </div>
         <div class="lesson-ai-example-box">
-            <span style="font-size: 0.72rem; font-weight: 800; color: #10B981; text-transform: uppercase;">Jonli Misol:</span>
+            <span style="font-size: 0.72rem; font-weight: 800; color: #10B981; text-transform: uppercase;">${trUz('Jonli Misol:')}</span>
             <div class="lai-eg-cn">${natEx.cn}</div>
             <div class="lai-eg-py">${natEx.py}</div>
-            <div class="lai-eg-uz">${natEx.uz}</div>
+            <div class="lai-eg-uz">${trUz(natEx.uz)}</div>
         </div>
         <div style="font-size: 0.78rem; line-height: 1.4; color: var(--text-color); background: var(--bg-secondary); padding: 0.65rem 0.8rem; border-radius: 12px; border: 1px solid var(--border-color);">
-            💡 <strong>Laoshi Maslahati:</strong> Bu so‘z HSK ${word.hsk} (Lesson ${word.lesson}) darsiga tegishli. Talaffuz paytida bo‘g‘in tonlariga alohida e’tibor bering.
+            💡 <strong>${trUz('Laoshi Maslahati:')}</strong> ${trUz(`Bu so‘z HSK ${word.hsk} (Lesson ${word.lesson}) darsiga tegishli. Talaffuz paytida bo‘g‘in tonlariga alohida e’tibor bering.`)}
         </div>
     `;
 
@@ -5232,41 +5237,43 @@ function renderToneContours() {
     const grid = document.getElementById('toneContoursGrid');
     if (!grid) return;
 
-    grid.innerHTML = TONE_CONTOURS.map(t => `
-        <div class="tone-card" data-tone="${t.num}">
+    const listenLbl = typeof t === 'function' ? t('card.listen') : 'Tinglash';
+    const slowLbl = typeof t === 'function' ? t('settings.slow') : 'Sekin';
+    grid.innerHTML = TONE_CONTOURS.map(tc => `
+        <div class="tone-card" data-tone="${tc.num}">
             <div class="tc-top-row">
-                <span class="tc-num-pill">${t.toneName}</span>
-                <span class="tc-pitch-badge">${t.mark}</span>
+                <span class="tc-num-pill">${trUz(tc.toneName)}</span>
+                <span class="tc-pitch-badge">${trUz(tc.mark)}</span>
             </div>
 
             <div class="tc-body-row">
                 <div class="tc-hero-box">
-                    <span class="tc-hero-hanzi">${t.heroHz}</span>
-                    <span class="tc-hero-pinyin">${t.heroPy}</span>
+                    <span class="tc-hero-hanzi">${tc.heroHz}</span>
+                    <span class="tc-hero-pinyin">${tc.heroPy}</span>
                     <div class="tc-hero-btns">
-                        <button type="button" class="tc-hero-play-btn" data-tone="${t.num}" data-sound="${t.heroSound}" data-speak="${t.heroHz}">
-                            🔊 Tinglash
+                        <button type="button" class="tc-hero-play-btn" data-tone="${tc.num}" data-sound="${tc.heroSound}" data-speak="${tc.heroHz}">
+                            🔊 ${listenLbl}
                         </button>
-                        <button type="button" class="tc-hero-slow-btn" data-tone="${t.num}" data-sound="${t.heroSound}" data-speak="${t.heroHz}">
-                            🐢 Sekin
+                        <button type="button" class="tc-hero-slow-btn" data-tone="${tc.num}" data-sound="${tc.heroSound}" data-speak="${tc.heroHz}">
+                            🐢 ${slowLbl}
                         </button>
                     </div>
                 </div>
                 <div class="tc-desc-box">
-                    <p class="tc-exp-text">${t.exp}</p>
-                    ${getToneSvgContour(t.num)}
+                    <p class="tc-exp-text">${trUz(tc.exp)}</p>
+                    ${getToneSvgContour(tc.num)}
                 </div>
             </div>
 
             <div class="tc-soundboard">
-                <span class="tc-sb-title">🗣️ Talaffuz mashqi (Bosib eshiting):</span>
+                <span class="tc-sb-title">🗣️ ${trUz('Talaffuz mashqi (Bosib eshiting):')}</span>
                 <div class="tc-sb-chips">
-                    ${t.syllables.map(s => `
+                    ${tc.syllables.map(s => `
                         <button type="button" class="tc-syllable-chip" data-sound="${s.sound || ''}" data-speak="${s.hz}">
                             <span>🔊</span>
                             <span class="chip-hanzi">${s.hz}</span>
                             <span>${s.py}</span>
-                            <span class="chip-uzbek">(${s.uz})</span>
+                            <span class="chip-uzbek">(${trUz(s.uz)})</span>
                         </button>
                     `).join('')}
                 </div>
@@ -5302,12 +5309,13 @@ function renderMinimalPairs() {
     const container = document.getElementById('minimalPairsList');
     if (!container) return;
 
+    const listenLbl = typeof t === 'function' ? t('card.listen') : 'Tinglash';
     container.innerHTML = MINIMAL_PAIRS.map(p => `
         <div class="minimal-pair-card">
             <div class="mp-head">
-                <span class="mp-note-badge">${p.note}</span>
+                <span class="mp-note-badge">${trUz(p.note)}</span>
                 <button type="button" class="mp-compare-btn" data-words='${JSON.stringify(p.words)}'>
-                    ▶️ Solishtirish
+                    ▶️ ${trUz('Solishtirish')}
                 </button>
             </div>
             <div class="mp-words-row">
@@ -5315,8 +5323,8 @@ function renderMinimalPairs() {
                     <div class="mp-word-item" data-sound="${w.sound || ''}" data-speak="${w.hz}">
                         <span class="mp-w-hanzi">${w.hz}</span>
                         <span class="mp-w-pinyin">${w.py}</span>
-                        <span class="mp-w-uzbek">${w.uz}</span>
-                        <span class="mp-w-speak-hint">🔊 Tinglash</span>
+                        <span class="mp-w-uzbek">${trUz(w.uz)}</span>
+                        <span class="mp-w-speak-hint">🔊 ${listenLbl}</span>
                     </div>
                 `).join('')}
             </div>
@@ -5362,17 +5370,17 @@ function renderSandhiRules() {
     container.innerHTML = SANDHI_RULES.map(r => `
         <div class="sandhi-card">
             <div class="sandhi-head">
-                <h4 class="sandhi-rule-title">${r.title}</h4>
+                <h4 class="sandhi-rule-title">${trUz(r.title)}</h4>
             </div>
             <div class="sandhi-formula">${r.formula}</div>
-            <p class="sandhi-explanation">${r.exp}</p>
+            <p class="sandhi-explanation">${trUz(r.exp)}</p>
             <div class="sandhi-examples">
                 ${r.chips.map(c => `
                     <button type="button" class="sandhi-chip" data-speak="${c.hz}">
                         <span>🔊</span>
                         <strong>${c.hz}</strong>
                         <span>(${c.py})</span>
-                        <small>· ${c.uz}</small>
+                        <small>· ${trUz(c.uz)}</small>
                     </button>
                 `).join('')}
             </div>
@@ -5614,10 +5622,10 @@ function initToneMicPractice() {
 
     if (!word || !hanzi) return;
 
-    if (badge) badge.textContent = word.badge;
+    if (badge) badge.textContent = trUz(word.badge);
     if (hanzi) hanzi.textContent = word.hanzi;
     if (pinyin) pinyin.innerHTML = word.pinyin;
-    if (uzbek) uzbek.textContent = word.uzbek;
+    if (uzbek) uzbek.textContent = trUz(word.uzbek);
     if (feedback) feedback.hidden = true;
 
     drawTonePitchGuideline(word.path);
@@ -6130,9 +6138,10 @@ function renderPinyinInitials() {
     const container = document.getElementById('pinyinInitialsList');
     if (!container) return;
 
+    const listenLbl = typeof t === 'function' ? t('card.listen') : 'Tinglash';
     container.innerHTML = PINYIN_INITIALS.map(group => `
         <div class="pinyin-group-block">
-            <div class="pinyin-group-title">🏷️ ${group.group}</div>
+            <div class="pinyin-group-title">🏷️ ${trUz(group.group)}</div>
             <div class="pinyin-cards-grid">
                 ${group.items.map(item => `
                     <div class="pinyin-card" data-letter="${item.letter}">
@@ -6140,16 +6149,16 @@ function renderPinyinInitials() {
                             <span class="pinyin-card-letter">${item.letter}</span>
                             <span class="pinyin-card-ipa">[ ${item.ipa} ]</span>
                         </div>
-                        <div class="pinyin-card-uzbek">${item.uz}</div>
+                        <div class="pinyin-card-uzbek">${trUz(item.uz)}</div>
                         <button type="button" class="pinyin-play-main-btn" data-sound="${item.sound}" data-fallback="${item.ipa}">
                             <span class="p-icon">🔊</span>
                             <span class="p-txt">${item.ipa}</span>
-                            <span class="p-sub">Tinglash</span>
+                            <span class="p-sub">${listenLbl}</span>
                         </button>
                         <button type="button" class="pinyin-sample-pill-btn" data-sound="${item.egSound}" data-fallback="${item.egHz}">
                             <span class="p-spk">🗣️</span>
                             <strong>${item.egHz} ${item.egPy}</strong>
-                            <span class="p-trn">(${item.egUz})</span>
+                            <span class="p-trn">(${trUz(item.egUz)})</span>
                         </button>
                     </div>
                 `).join('')}
@@ -6178,14 +6187,14 @@ function renderPinyinFinals() {
 
     container.innerHTML = PINYIN_FINALS.map(group => `
         <div class="pinyin-group-block">
-            <div class="pinyin-group-title">🎵 ${group.group}</div>
+            <div class="pinyin-group-title">🎵 ${trUz(group.group)}</div>
             <div class="pinyin-cards-grid">
                 ${group.items.map(item => `
                     <div class="pinyin-card" data-letter="${item.letter}">
                         <div class="pinyin-card-header">
                             <span class="pinyin-card-letter">${item.letter}</span>
                         </div>
-                        <div class="pinyin-card-uzbek">${item.uz}</div>
+                        <div class="pinyin-card-uzbek">${trUz(item.uz)}</div>
                         <div class="pinyin-tones-grid-4">
                             ${item.tones.map((t, idx) => `
                                 <button type="button" class="pinyin-tone-chip-4" data-sound="${item.sounds[idx]}" data-py="${t}">
@@ -6309,7 +6318,7 @@ function selectSyllableInDock(syllable) {
 
     const tones = [1, 2, 3, 4].map(tone => {
         const tonePy = applyPinyinTone(syllable, tone);
-        const meta = COMMON_SYLLABLE_HANZI[tonePy] || `${tone}-ton`;
+        const meta = trUz(COMMON_SYLLABLE_HANZI[tonePy] || `${tone}-ton`);
         return { tone, tonePy, soundKey: `${syllable}${tone}`, meta };
     });
 
@@ -6337,12 +6346,12 @@ function renderPinyinRules() {
     container.innerHTML = PINYIN_RULES.map(rule => `
         <div class="pinyin-rule-card">
             <div class="pinyin-rule-head">
-                <span class="pinyin-rule-tag">${rule.tag}</span>
-                <h3 class="pinyin-rule-title">${rule.title}</h3>
+                <span class="pinyin-rule-tag">${trUz(rule.tag)}</span>
+                <h3 class="pinyin-rule-title">${trUz(rule.title)}</h3>
             </div>
-            <p class="pinyin-rule-desc">${rule.desc}</p>
+            <p class="pinyin-rule-desc">${trUz(rule.desc)}</p>
             <div class="pinyin-rule-formula">
-                <span>⚡ Qoida formulasi:</span>
+                <span>⚡ ${trUz('Qoida formulasi:')}</span>
                 <code>${rule.formula}</code>
             </div>
             <div class="pinyin-rule-examples">
@@ -6351,7 +6360,7 @@ function renderPinyinRules() {
                         <span>🔊</span>
                         <strong>${eg.hz}</strong>
                         <span>[ ${eg.py} ]</span>
-                        <small style="opacity: 0.7;">${eg.uz}</small>
+                        <small style="opacity: 0.7;">${trUz(eg.uz)}</small>
                     </button>
                 `).join('')}
             </div>
@@ -6387,9 +6396,9 @@ function renderSurvivalList(catKey) {
             <div class="sp-copy">
                 <div class="sp-hanzi">${item.hanzi}</div>
                 <div class="sp-pinyin">${item.pinyin}</div>
-                <div class="sp-uzbek">${item.uzbek}</div>
+                <div class="sp-uzbek">${trUz(item.uzbek)}</div>
             </div>
-            <button type="button" class="sp-listen-btn" data-speak="${item.hanzi}" title="Ovoz chiqarib o‘qish">🔊</button>
+            <button type="button" class="sp-listen-btn" data-speak="${item.hanzi}" title="🔊">🔊</button>
         </div>
     `).join('');
 
@@ -6990,7 +6999,36 @@ var EC_I18N = {
         'settings.exportDone': 'Zaxira fayli yuklab olindi 📤',
         'settings.group.app': '📱 Ilova', 'settings.installTitle': 'Easy Chinese ilovasi', 'settings.installHint': "Telefonga 1 bosishda o'rnatish",
         'settings.install': "O'rnatish", 'settings.about': 'Ilova haqida', 'settings.saved': 'Saqlandi ✅',
-        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Bugungi xitoy tili mashqi vaqti keldi! 加油! 🔥'
+        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Bugungi xitoy tili mashqi vaqti keldi! 加油! 🔥',
+        'profile.motto': 'har kuni bir qadam', 'profile.dailyPrefix': 'Kunlik:', 'profile.googleSignIn': 'Google orqali', 'profile.signOut': 'Chiqish',
+        'quest.tracesTitle': '3 ta iyeroglif yozish', 'quest.doneSuffix': 'bajarildi', 'quest.xpTitle': "Bugun 50 XP to'plash",
+        'ach.firstWord.name': 'Ilk Qadam', 'ach.firstWord.desc': "1-so'zni yodlash",
+        'ach.firstLesson.name': "1-Dars G'olibi", 'ach.firstLesson.desc': "1 ta darsni to'liq tugatish",
+        'ach.streak3.name': '3 Kunlik Olov', 'ach.streak3.desc': '3 kun ketma-ket kirish',
+        'ach.streak7.name': 'Hafta Qahramoni', 'ach.streak7.desc': '7 kunlik streak',
+        'ach.words50.name': 'Kitobxon', 'ach.words50.desc': "50 ta so'z yodlash",
+        'ach.words100.name': 'Olim (Scholar)', 'ach.words100.desc': "100 ta so'z yodlash",
+        'ach.xp100.name': '100 XP Yulduzi', 'ach.xp100.desc': "100 XP to'plash",
+        'ach.calligrapher.name': 'Xattot Ustasi', 'ach.calligrapher.desc': '3 ta Hanzi yozish', 'ach.unlocked': '✓ Ochildi',
+        'pfc.flipHint': "Tarjimani ko'rish uchun kartani bosing 👆", 'pfc.flipBack': "🔄 Orqaga o'girish",
+        'pfc.again': 'Qaytarish', 'pfc.flip': "O'girish", 'pfc.good': 'Yodlandi (+5 XP)',
+        'tone.kicker': 'Super Chinese uslubida: jonli 4 ta ton talaffuzi, eshitib topish viktorinasi, taqqoslash juftliklari va Tone Sandhi',
+        'tone.tabChart': '4 Ton', 'tone.tabPairs': 'Juftlik', 'tone.seqBadge': '🔥 Super Chinese Usuli',
+        'tone.seqTitle': '1-2-3-4 Tonlarni ketma-ket tinglash', 'tone.seqDesc': 'mā (1) → má (2) → mǎ (3) → mà (4) — ohanglar farqini bevosita his qiling',
+        'tone.seqPlay': 'Ketma-ket solishtirish', 'tone.earHint': "Quloq soling: bu nechanchi ton va qaysi so'z?",
+        'tone.compareBoth': '▶️ Ikkalasini solishtirish', 'tone.pairsTitle': "Ton o'zgarsa — ma'no butkul o'zgaradi!",
+        'tone.pairsKicker': "Xitoyda eng ko'p adashtiriladigan hayotiy so'zlar: «买 (sotib olmoq) vs 卖 (sotmoq)», «四 (4) vs 十 (10)»",
+        'pinyin.tabInitials': 'Undoshlar', 'pinyin.tabFinals': 'Unlilar', 'pinyin.tabMatrix': 'Matritsa', 'pinyin.tabRules': 'Qoidalar',
+        'pinyin.initialsTitle': '声母 (Shēngmǔ) — Undosh tovushlar (23 ta):',
+        'pinyin.initialsDesc': "Xitoy tilidagi bo'g'in boshlovchi undoshlar. Kartochkani bosib standart talaffuzini tinglang.",
+        'pinyin.finalsTitle': '韵母 (Yùnmǔ) — Unli tovushlar (24 ta):',
+        'pinyin.finalsDesc': '6 oddiy, 9 murakkab va 9 burun unlisi. 1-4 ton tugmachalarini bosib ohanglar bilan tinglang.',
+        'pinyin.searchPh': "Bo'g'in qidiring (masalan: ma, ni, hao, zhong, xue)...", 'pinyin.all': 'Barchasi', 'pinyin.selectedSyllable': "Tanlangan bo'g'in",
+        'survival.tabClass': 'Darsda', 'survival.tabCanteen': 'Oshxona', 'survival.tabDelivery': 'Kuryer', 'survival.tabMetro': 'Metro',
+        'ai.tabCoach': "🔍 Ton va So'z", 'ai.inputPh': 'Savol bering yoki tarjima qilish uchun gap yozing...', 'ai.send': 'Yuborish',
+        'ai.modalSub': "Darsdan chiqmasdan o'rganish", 'ai.backToLesson': '✕ Darsga qaytish', 'ai.openFullChat': '💬 AI Laoshi suhbati →',
+        'weekly.days': 'Du,Se,Ch,Pa,Ju,Sh,Ya', 'weekly.streakSuffix': 'kun ketma-ket',
+        'learned.empty': "Hozircha yodlangan so'zlar yo'q. Darslarni boshlang yoki kartochkalarda «✓ Bilaman» tugmasini bosing!"
     },
     'uz-cyrl': {
         'nav.home': 'Бош саҳифа', 'nav.practice': 'Машқ', 'nav.canvas': 'Ёзиш', 'nav.profile': 'Профил',
@@ -7105,7 +7143,36 @@ var EC_I18N = {
         'settings.exportDone': 'Захира файли юклаб олинди 📤',
         'settings.group.app': '📱 Илова', 'settings.installTitle': 'Easy Chinese иловаси', 'settings.installHint': 'Телефонга 1 босишда ўрнатиш',
         'settings.install': 'Ўрнатиш', 'settings.about': 'Илова ҳақида', 'settings.saved': 'Сақланди ✅',
-        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Бугунги хитой тили машқи вақти келди! 加油! 🔥'
+        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Бугунги хитой тили машқи вақти келди! 加油! 🔥',
+        'profile.motto': 'ҳар куни бир қадам', 'profile.dailyPrefix': 'Кунлик:', 'profile.googleSignIn': 'Google орқали', 'profile.signOut': 'Чиқиш',
+        'quest.tracesTitle': '3 та иероглиф ёзиш', 'quest.doneSuffix': 'бажарилди', 'quest.xpTitle': 'Бугун 50 XP тўплаш',
+        'ach.firstWord.name': 'Илк Қадам', 'ach.firstWord.desc': '1-сўзни ёдлаш',
+        'ach.firstLesson.name': '1-Дарс Ғолиби', 'ach.firstLesson.desc': '1 та дарсни тўлиқ тугатиш',
+        'ach.streak3.name': '3 Кунлик Олов', 'ach.streak3.desc': '3 кун кетма-кет кириш',
+        'ach.streak7.name': 'Ҳафта Қаҳрамони', 'ach.streak7.desc': '7 кунлик стрик',
+        'ach.words50.name': 'Китобхон', 'ach.words50.desc': '50 та сўз ёдлаш',
+        'ach.words100.name': 'Олим (Scholar)', 'ach.words100.desc': '100 та сўз ёдлаш',
+        'ach.xp100.name': '100 XP Юлдузи', 'ach.xp100.desc': '100 XP тўплаш',
+        'ach.calligrapher.name': 'Хаттот Устаси', 'ach.calligrapher.desc': '3 та Hanzi ёзиш', 'ach.unlocked': '✓ Очилди',
+        'pfc.flipHint': 'Таржимани кўриш учун картани босинг 👆', 'pfc.flipBack': '🔄 Орқага ўгириш',
+        'pfc.again': 'Қайтариш', 'pfc.flip': 'Ўгириш', 'pfc.good': 'Ёдланди (+5 XP)',
+        'tone.kicker': 'Super Chinese услубида: жонли 4 та тон талаффузи, эшитиб топиш викторинаси, таққослаш жуфтликлари ва Tone Sandhi',
+        'tone.tabChart': '4 Тон', 'tone.tabPairs': 'Жуфтлик', 'tone.seqBadge': '🔥 Super Chinese Усули',
+        'tone.seqTitle': '1-2-3-4 Тонларни кетма-кет тинглаш', 'tone.seqDesc': 'mā (1) → má (2) → mǎ (3) → mà (4) — оҳанглар фарқини бевосита ҳис қилинг',
+        'tone.seqPlay': 'Кетма-кет солиштириш', 'tone.earHint': 'Қулоқ солинг: бу нечанчи тон ва қайси сўз?',
+        'tone.compareBoth': '▶️ Иккаласини солиштириш', 'tone.pairsTitle': 'Тон ўзгарса — маъно буткул ўзгаради!',
+        'tone.pairsKicker': 'Хитойда энг кўп адаштириладиган ҳаётий сўзлар: «买 (сотиб олмоқ) vs 卖 (сотмоқ)», «四 (4) vs 十 (10)»',
+        'pinyin.tabInitials': 'Ундошлар', 'pinyin.tabFinals': 'Унлилар', 'pinyin.tabMatrix': 'Матрица', 'pinyin.tabRules': 'Қоидалар',
+        'pinyin.initialsTitle': '声母 (Shēngmǔ) — Ундош товушлар (23 та):',
+        'pinyin.initialsDesc': 'Хитой тилидаги бўғин бошловчи ундошлар. Карточкани босиб стандарт талаффузини тингланг.',
+        'pinyin.finalsTitle': '韵母 (Yùnmǔ) — Унли товушлар (24 та):',
+        'pinyin.finalsDesc': '6 оддий, 9 мураккаб ва 9 бурун унлиси. 1-4 тон тугмачаларини босиб оҳанглар билан тингланг.',
+        'pinyin.searchPh': 'Бўғин қидиринг (масалан: ma, ni, hao, zhong, xue)...', 'pinyin.all': 'Барчаси', 'pinyin.selectedSyllable': 'Танланган бўғин',
+        'survival.tabClass': 'Дарсда', 'survival.tabCanteen': 'Ошхона', 'survival.tabDelivery': 'Курьер', 'survival.tabMetro': 'Метро',
+        'ai.tabCoach': '🔍 Тон ва Сўз', 'ai.inputPh': 'Савол беринг ёки таржима қилиш учун гап ёзинг...', 'ai.send': 'Юбориш',
+        'ai.modalSub': 'Дарсдан чиқмасдан ўрганиш', 'ai.backToLesson': '✕ Дарсга қайтиш', 'ai.openFullChat': '💬 AI Laoshi суҳбати →',
+        'weekly.days': 'Ду,Се,Чо,Па,Жу,Ша,Як', 'weekly.streakSuffix': 'кун кетма-кет',
+        'learned.empty': 'Ҳозирча ёдланган сўзлар йўқ. Дарсларни бошланг ёки карточкаларда «✓ Биламан» тугмасини босинг!'
     },
     ru: {
         'nav.home': 'Главная', 'nav.practice': 'Практика', 'nav.canvas': 'Письмо', 'nav.profile': 'Профиль',
@@ -7220,7 +7287,36 @@ var EC_I18N = {
         'settings.exportDone': 'Резервная копия скачана 📤',
         'settings.group.app': '📱 Приложение', 'settings.installTitle': 'Приложение Easy Chinese', 'settings.installHint': 'Установить на телефон в 1 нажатие',
         'settings.install': 'Установить', 'settings.about': 'О приложении', 'settings.saved': 'Сохранено ✅',
-        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Пора позаниматься китайским! 加油! 🔥'
+        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Пора позаниматься китайским! 加油! 🔥',
+        'profile.motto': 'шаг за шагом каждый день', 'profile.dailyPrefix': 'Цель:', 'profile.googleSignIn': 'Через Google', 'profile.signOut': 'Выйти',
+        'quest.tracesTitle': 'Написать 3 иероглифа', 'quest.doneSuffix': 'выполнено', 'quest.xpTitle': 'Набрать 50 XP сегодня',
+        'ach.firstWord.name': 'Первый шаг', 'ach.firstWord.desc': 'Выучить 1-е слово',
+        'ach.firstLesson.name': 'Первый урок', 'ach.firstLesson.desc': 'Полностью пройти 1 урок',
+        'ach.streak3.name': '3 дня подряд', 'ach.streak3.desc': 'Заниматься 3 дня подряд',
+        'ach.streak7.name': 'Герой недели', 'ach.streak7.desc': 'Серия 7 дней',
+        'ach.words50.name': 'Книголюб', 'ach.words50.desc': 'Выучить 50 слов',
+        'ach.words100.name': 'Учёный', 'ach.words100.desc': 'Выучить 100 слов',
+        'ach.xp100.name': 'Звезда 100 XP', 'ach.xp100.desc': 'Набрать 100 XP',
+        'ach.calligrapher.name': 'Мастер каллиграфии', 'ach.calligrapher.desc': 'Написать 3 иероглифа', 'ach.unlocked': '✓ Открыто',
+        'pfc.flipHint': 'Нажмите на карточку, чтобы увидеть перевод 👆', 'pfc.flipBack': '🔄 Перевернуть обратно',
+        'pfc.again': 'Повторить', 'pfc.flip': 'Перевернуть', 'pfc.good': 'Выучено (+5 XP)',
+        'tone.kicker': 'В стиле Super Chinese: живое произношение 4 тонов, аудио-викторина, минимальные пары и правила сандхи',
+        'tone.tabChart': '4 тона', 'tone.tabPairs': 'Пары', 'tone.seqBadge': '🔥 Метод Super Chinese',
+        'tone.seqTitle': 'Слушать 1-2-3-4 тоны подряд', 'tone.seqDesc': 'mā (1) → má (2) → mǎ (3) → mà (4) — почувствуйте разницу интонаций',
+        'tone.seqPlay': 'Сравнить подряд', 'tone.earHint': 'Послушайте: какой это тон и какое слово?',
+        'tone.compareBoth': '▶️ Сравнить оба', 'tone.pairsTitle': 'Меняется тон — полностью меняется смысл!',
+        'tone.pairsKicker': 'Самые частые пары слов: «买 (купить) vs 卖 (продать)», «四 (4) vs 十 (10)»',
+        'pinyin.tabInitials': 'Инициали', 'pinyin.tabFinals': 'Финали', 'pinyin.tabMatrix': 'Матрица', 'pinyin.tabRules': 'Правила',
+        'pinyin.initialsTitle': '声母 (Shēngmǔ) — Согласные (23):',
+        'pinyin.initialsDesc': 'Начальные согласные китайского слога. Нажмите на карточку, чтобы прослушать произношение.',
+        'pinyin.finalsTitle': '韵母 (Yùnmǔ) — Финали / гласные (24):',
+        'pinyin.finalsDesc': '6 простых, 9 сложных и 9 носовых финалей. Нажимайте на 1–4 тоны для прослушивания.',
+        'pinyin.searchPh': 'Поиск слога (например: ma, ni, hao, zhong, xue)...', 'pinyin.all': 'Все', 'pinyin.selectedSyllable': 'Выбранный слог',
+        'survival.tabClass': 'На уроке', 'survival.tabCanteen': 'Столовая', 'survival.tabDelivery': 'Курьер', 'survival.tabMetro': 'Метро',
+        'ai.tabCoach': '🔍 Тоны и слова', 'ai.inputPh': 'Задайте вопрос или напишите фразу для перевода...', 'ai.send': 'Отправить',
+        'ai.modalSub': 'Разбор слова без выхода из урока', 'ai.backToLesson': '✕ Вернуться к уроку', 'ai.openFullChat': '💬 Чат с ИИ Лаоши →',
+        'weekly.days': 'Пн,Вт,Ср,Чт,Пт,Сб,Вс', 'weekly.streakSuffix': 'дн. подряд',
+        'learned.empty': 'Пока нет выученных слов. Начните уроки или нажимайте «✓ Знаю» на карточках!'
     },
     en: {
         'nav.home': 'Home', 'nav.practice': 'Practice', 'nav.canvas': 'Writing', 'nav.profile': 'Profile',
@@ -7335,7 +7431,180 @@ var EC_I18N = {
         'settings.exportDone': 'Backup file downloaded 📤',
         'settings.group.app': '📱 App', 'settings.installTitle': 'Easy Chinese App', 'settings.installHint': 'Install on your phone in 1 tap',
         'settings.install': 'Install', 'settings.about': 'About', 'settings.saved': 'Saved ✅',
-        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Time for today\'s Chinese practice! 加油! 🔥'
+        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Time for today\'s Chinese practice! 加油! 🔥',
+        'profile.motto': 'one step every day', 'profile.dailyPrefix': 'Daily:', 'profile.googleSignIn': 'Continue with Google', 'profile.signOut': 'Sign out',
+        'quest.tracesTitle': 'Write 3 characters', 'quest.doneSuffix': 'done', 'quest.xpTitle': 'Earn 50 XP today',
+        'ach.firstWord.name': 'First Step', 'ach.firstWord.desc': 'Learn 1st word',
+        'ach.firstLesson.name': 'Lesson Winner', 'ach.firstLesson.desc': 'Complete 1 full lesson',
+        'ach.streak3.name': '3-Day Flame', 'ach.streak3.desc': '3-day study streak',
+        'ach.streak7.name': 'Week Hero', 'ach.streak7.desc': '7-day study streak',
+        'ach.words50.name': 'Bookworm', 'ach.words50.desc': 'Learn 50 words',
+        'ach.words100.name': 'Scholar', 'ach.words100.desc': 'Learn 100 words',
+        'ach.xp100.name': '100 XP Star', 'ach.xp100.desc': 'Earn 100 XP',
+        'ach.calligrapher.name': 'Master Calligrapher', 'ach.calligrapher.desc': 'Write 3 Hanzi', 'ach.unlocked': '✓ Unlocked',
+        'pfc.flipHint': 'Tap the card to reveal meaning 👆', 'pfc.flipBack': '🔄 Flip back',
+        'pfc.again': 'Repeat', 'pfc.flip': 'Flip', 'pfc.good': 'Learned (+5 XP)',
+        'tone.kicker': 'Super Chinese style: live 4-tone audio, ear-training quiz, minimal pairs & Tone Sandhi',
+        'tone.tabChart': '4 Tones', 'tone.tabPairs': 'Pairs', 'tone.seqBadge': '🔥 Super Chinese Method',
+        'tone.seqTitle': 'Listen to Tones 1-2-3-4 in sequence', 'tone.seqDesc': 'mā (1) → má (2) → mǎ (3) → mà (4) — feel the pitch difference directly',
+        'tone.seqPlay': 'Compare in sequence', 'tone.earHint': 'Listen carefully: which tone and word is this?',
+        'tone.compareBoth': '▶️ Compare both', 'tone.pairsTitle': 'Change the tone — change the entire meaning!',
+        'tone.pairsKicker': 'Most commonly confused words: «买 (buy) vs 卖 (sell)», «四 (4) vs 十 (10)»',
+        'pinyin.tabInitials': 'Initials', 'pinyin.tabFinals': 'Finals', 'pinyin.tabMatrix': 'Matrix', 'pinyin.tabRules': 'Rules',
+        'pinyin.initialsTitle': '声母 (Shēngmǔ) — Initial Consonants (23):',
+        'pinyin.initialsDesc': 'Syllable-initial consonants in Mandarin. Tap any card to hear native pronunciation.',
+        'pinyin.finalsTitle': '韵母 (Yùnmǔ) — Finals / Vowels (24):',
+        'pinyin.finalsDesc': '6 simple, 9 compound, and 9 nasal finals. Tap tones 1–4 on each card to listen.',
+        'pinyin.searchPh': 'Search syllable (e.g. ma, ni, hao, zhong, xue)...', 'pinyin.all': 'All', 'pinyin.selectedSyllable': 'Selected syllable',
+        'survival.tabClass': 'Classroom', 'survival.tabCanteen': 'Canteen', 'survival.tabDelivery': 'Delivery', 'survival.tabMetro': 'Metro',
+        'ai.tabCoach': '🔍 Tones & Words', 'ai.inputPh': 'Ask a question or type a sentence to translate...', 'ai.send': 'Send',
+        'ai.modalSub': 'Learn without leaving the lesson', 'ai.backToLesson': '✕ Back to lesson', 'ai.openFullChat': '💬 AI Laoshi Chat →',
+        'weekly.days': 'Mo,Tu,We,Th,Fr,Sa,Su', 'weekly.streakSuffix': 'day streak',
+        'learned.empty': 'No learned words yet. Start a lesson or tap «✓ Know it» on flashcards!'
+    },
+    ky: {
+        'nav.home': 'Башкы бет', 'nav.practice': 'Машыгуу', 'nav.canvas': 'Жазуу', 'nav.profile': 'Профиль',
+        'hero.kicker': '汉语 · Кытай тилин үйрөнүңүз',
+        'hero.title': 'Ар бир иероглиф — жаңы дүйнөгө ачылган кичинекей эшик.',
+        'hero.subtitle': 'HSK сөз байлыгын кадам сайын үйрөнүңүз — окуңуз, угуңуз, жазыңыз жана эс тутумда бекемдеңиз.',
+        'hero.quote': '« 千里之行，始于足下 » — миң чакырымдык жол биринчи кадамдан башталат.',
+        'profile.kicker': 'Жеке кабинет', 'profile.title': 'Менин профилим', 'profile.edit': 'Түзөтүү',
+        'profile.weekly': 'Апталык активдүүлүк', 'profile.progress': 'HSK 1–5 жыйынтыктар', 'profile.tapHint': 'Басып сабакка өтүңүз →',
+        'profile.learnedWords': 'Жатталган сөздөрүм', 'profile.quests': 'Күнүмдүк тапшырмалар', 'profile.achievements': 'Жетишкендиктер',
+        'profile.motto': 'күн сайын бир кадам', 'profile.dailyPrefix': 'Күнүмдүк:', 'profile.googleSignIn': 'Google аркылуу', 'profile.signOut': 'Чыгуу',
+        'stat.streak': 'Күнүмдүк стрик', 'stat.learned': 'Жатталды', 'stat.xp': 'Жалпы XP',
+        'home.selectLevel': 'HSK деңгээлин тандаңыз', 'home.selectLevelSub': 'Баштоо же улантуу үчүн деңгээлди тандаңыз',
+        'hsk.1_label': 'HSK 1 · Башталгыч', 'hsk.1_words': '150 сөз', 'hsk.1_sub': 'Classic HSK жана New HSK 3.0 · 15 сабак',
+        'hsk.2_label': 'HSK 2 · Негизги деңгээл', 'hsk.3_label': 'HSK 3 · Орто деңгээл', 'hsk.4_label': 'HSK 4 · Жогорку орто', 'hsk.5_label': 'HSK 5 · Жогорку деңгээл',
+        'hsk.lessons': 'New HSK 3.0 · 15 сабак', 'hsk.start': 'Баштоо →', 'hsk.continue': 'Улантуу →',
+        'dash.mistakesTitle': 'Каталар үстүндө иштөө', 'dash.mistakesSub': 'Ката кеткен сөздөрдү кайталоо',
+        'dash.mistakesCountSub': '{count} ката сөздү кайталоо',
+        'dash.bookmarksTitle': 'Сакталган сөздөр', 'dash.bookmarksSub': 'Тандалган сөздөр топтому',
+        'dash.bookmarksCountSub': '{count} сакталган сөздү машыгуу',
+        'dash.enterLesson': 'Кирүү →', 'dash.backToLevels': '← Деңгээлдер',
+        'dash.continueTitle': 'HSK {hsk} · {lesson}-сабактан улантуу',
+        'dash.continueSub': '{track} · {done} / {total} сабак аяктады',
+        'lesson.backToLessons': '← Сабактар', 'lesson.aiAskBtn': '🤖 AI Талдоо', 'lesson.continue': 'Улантуу',
+        'lesson.tabLearning': 'Үйрөнүү', 'lesson.tabFlashcard': 'Карточкалар', 'lesson.tabQuiz': 'Тест', 'lesson.tabWriting': 'Жазуу',
+        'lesson.trackClassic': 'Classic HSK 1 · 15 сабак', 'lesson.trackNew': 'New HSK 3.0 · 15 сабак',
+        'lesson.searchPlaceholder': 'Кыргызча, Пиньин же Ханзи боюнча издөө...',
+        'lesson.legendCompleted': '✓ 已完成 · Аяктаган', 'lesson.legendCurrent': '● 进行中 · Учурдагы сабак', 'lesson.legendLocked': '🔒 未解锁 · Жабык',
+        'lesson.word': 'Сабак', 'lesson.wordsUnit': 'сөз',
+        'lesson.kickerNew': 'New HSK 3.0 жаңы китеп сабактары', 'lesson.kickerClassic': 'Classic HSK 1 багыты',
+        'lesson.progressText': '{total} сабактын ичинен {done} сабак аяктады',
+        'learning.vocabTitle': 'Сабактын сөздөрү', 'learning.examplesTitle': 'Мисал сүйлөмдөр',
+        'learning.grammarTitle': 'Грамматикалык түшүндүрмө', 'learning.builderTitle': '🧩 Сүйлөм түзүү машыгуусу',
+        'learning.nextStageBtn': '2-этапка өтүү: Карточкалар →',
+        'complete.sub': 'Бардык этаптарды ийгиликтүү аяктадыңыз!',
+        'complete.rewardLbl': 'Сыйлык', 'complete.wordsLbl': 'Үйрөнүлгөн сөздөр', 'complete.scoreLbl': 'Жыйынтык',
+        'complete.backBtn': '← Сабактар картасына кайтуу',
+        'step.learn': 'Үйрөнүү', 'step.cards': 'Карточка', 'step.quiz': 'Тест', 'step.write': 'Жазуу', 'step.done': 'Аягы',
+        'flow.statusComplete': '🎉 5/5 · Сабак аяктады! Кийинки сабак ачылды.',
+        'flow.statusLearning': '1/5 · Сөздөр жана мисалдар менен таанышыңыз ({count} сөз)',
+        'flow.statusFlashcards': '2/5 · Карточка {current} / {total}',
+        'flow.statusQuiz': '3/5 · Тест: {current} / {total} суроо',
+        'flow.statusWriting': '4/5 · Жазуу: {done} / {total} сөз',
+        'card.tapHint': 'Айландыруу үчүн басыңыз', 'card.audio': 'Үн', 'card.speak': 'Айтылыш', 'card.draw': 'Чийүү',
+        'card.next': 'Кийинки', 'card.prev': '← Мурунку', 'card.shuffle': '🔀 Аралаштыруу',
+        'card.bookmark': '⭐ Сактоо', 'card.bookmarked': '⭐ Сакталган',
+        'card.learned': '✓ Билем', 'card.learnedDone': '✓ Жатталды',
+        'card.learnedLabel': 'Жатталган:', 'card.wordProgress': '{current} / {total} сөз',
+        'quiz.scoreLabel': 'Упай:', 'quiz.typeMeaning': 'Hanzi → Маани', 'quiz.typePinyin': 'Маани → Pinyin',
+        'quiz.typeHanzi': 'Pinyin → Hanzi', 'quiz.typeAudio': '🎧 Угуп табуу',
+        'quiz.promptMeaning': 'Бул сөздүн мааниси эмне?',
+        'quiz.promptPinyin': 'Туура Pinyin айтылышын тандаңыз:',
+        'quiz.promptHanzi': 'Туура Hanzi иероглифин тандаңыз:',
+        'quiz.promptAudio': 'Сөздү угуп, туура маанини тандаңыз:',
+        'quiz.replayAudio': 'Кайра угуу',
+        'quiz.nextQuestion': 'Кийинки суроо', 'quiz.questionLabel': 'Суроо:',
+        'canvas.backToLessons': '← Сабактарга кайтуу', 'canvas.hskLevel': 'HSK деңгээли', 'canvas.lesson': 'Сабак',
+        'canvas.version': 'Версия', 'canvas.writingMode': 'Жазуу режими',
+        'canvas.trace': 'Чийүү', 'canvas.write': 'Жазуу', 'canvas.test': 'Сыноо',
+        'canvas.category': 'Жазуу машыгуусу', 'canvas.wordLabel': 'Сөз:', 'canvas.traceHint': 'Сызыктар боюнча иероглифти жазыңыз.',
+        'canvas.check': 'Текшерүү', 'canvas.nextWord': 'Кийинки сөз →', 'canvas.points': 'Упай:',
+        'modal.correctTitle': 'Туура! 🎉', 'modal.correctMsg': 'Азаматсыз! Иероглифти туура жаздыңыз.',
+        'modal.xpEarned': '+10 XP алынды!', 'modal.editProfileTitle': 'Профилди түзөтүү',
+        'modal.cancel': 'Жокко чыгаруу', 'modal.save': 'Сактоо', 'modal.leaderboardTitle': '🏆 Алдыңкылар', 'modal.close': 'Жабуу',
+        'practice.title': 'Машыгуу борбору', 'practice.kicker': 'Тондор, жандуу баарлашуу, сөздөр жана викториналар аркылуу кытай тилиңизди өркүндөтүңүз',
+        'practice.g1': 'Фонетика жана тондор', 'practice.g2': 'Кытайдагы жандуу жашоо жана баарлашуу', 'practice.g3': 'Сөз байлыгы жана эс тутум',
+        'practice.tile.pinyin.title': 'Интерактивдүү Пиньин Таблицасы', 'practice.tile.pinyin.badge': '23 Үнсүз + 24 Үндүү + Үн',
+        'practice.tile.pinyin.desc': 'Бардык 声母 жана 韵母 тыбыштары, толук муундар матрицасы жана окуу эрежелери',
+        'practice.tile.tone.title': 'Тондор Лабораториясы', 'practice.tile.tone.badge': '4 Тон + Сандхи',
+        'practice.tile.tone.desc': '1–4 тондор графиги, окшош сөздөр (mā/má/mǎ/mà) жана угуп табуу викторинасы',
+        'practice.tile.pitch.title': 'Айтылыш жана Pitch Машыгуусу', 'practice.tile.pitch.badge': 'Үн менен текшерүү',
+        'practice.tile.pitch.desc': 'Микрофонго айтып, үн контуруңуз туура чыгып жатканын текшериңиз',
+        'practice.tile.survival.title': 'Кытайдагы Күнүмдүк Баарлашуу', 'practice.tile.survival.badge': 'Жандуу сөз айкаштары',
+        'practice.tile.survival.desc': 'Сабакта (教室), ашканада (食堂), WeChat төлөм (微信), метро жана курьер (外卖) сүйлөмдөрү',
+        'practice.tile.ai.title': 'AI Laoshi (Ли Мугалим)', 'practice.tile.ai.badge': 'SuperChinese стилинде',
+        'practice.tile.ai.desc': 'Каалаган суроону бериңиз, тон талдоо же чыныгы диалог машыгыңыз',
+        'practice.tile.radicals.title': 'Иероглиф Ачкычтары (Радикалдар)',
+        'practice.tile.radicals.badge': '30 Ачкыч + Анатомия + Тест',
+        'practice.tile.radicals.desc': 'Иероглифтердин логикалык уңгулары (氵суу, 扌кол, 口ооз, 亻адам), тамга түзүлүш формулалары жана викторина',
+        'radicals.backBtn': '← Машыгуу', 'radicals.title': 'Иероглиф Ачкычтары (Радикалдар)',
+        'radicals.kicker': 'Ар бир татаал иероглиф жөнөкөй маанилик ачкычтардан (部首) турат — аларды түшүнсөңүз, сөздөрдү 5 эсе бат эстеп каласыз!',
+        'radicals.tabList': '30 Ачкыч', 'radicals.tabBuilder': 'Тамга формуласы', 'radicals.tabQuiz': 'Викторина',
+        'radicals.searchPh': 'Ачкыч, пиньин же маани боюнча издеңиз (мисалы: суу, адам, 口)...',
+        'radicals.catAll': 'Баары (30)', 'radicals.catHuman': '👤 Адам', 'radicals.catNature': '🌿 Жаратылыш',
+        'radicals.catObjects': '🏠 Үй жана буюм', 'radicals.catAction': '🏃 Кыймыл-аракет',
+        'radicals.builderNoteTitle': '会意字 жана 形声字 — Иероглифтер кантип жасалат?',
+        'radicals.builderNoteDesc': 'Эки же үч жөнөкөй белги кошулуп жаңы маани жаратат. Карточканы басып сөздүн айтылышын угуңуз!',
+        'practice.tile.cards.title': 'Интерактивдүү Карточкалар Тренажёру',
+        'practice.tile.cards.desc': '3D айлануучу карточкалар, аудио айтылыш жана өзүн-өзү баалоо (Билем / Кайталоо)',
+        'practice.tile.mistakes.title': 'Каталар Үстүндө Иштөө',
+        'practice.tile.mistakes.desc': 'Сабак жана тесттерде ката кеткен сөздөрдү кайра бекемдөө',
+        'practice.tile.bookmarks.title': 'Сакталган Сөздөр',
+        'practice.tile.bookmarks.desc': 'Өзүңүз жылдызча койгон атайын сөздөр топтомун кайталоо',
+        'settings.title': 'Тиркеме ырастоолору', 'settings.short': 'Ырастоолор', 'settings.subtitle': 'Тиркемени өзүңүзгө ылайыктаңыз',
+        'settings.group.language': '🌐 Тиркеме тили', 'settings.languageNote': 'Менюлар, баскычтар жана сөздөр тандалган тилде көрсөтүлөт.',
+        'settings.group.appearance': '🎨 Көрүнүш', 'settings.theme': 'Түнкү режим',
+        'settings.themeLight': '☀️ Күндүзгү жарык тема', 'settings.themeDark': '🌙 Түнкү караңгы тема',
+        'settings.pinyin': 'Пиньинди көрсөтүү', 'settings.pinyinHint': 'Жашырылса, басканда ачылат — өзүңүздү сынаңыз',
+        'settings.show': 'Дайыма', 'settings.hide': 'Жашыруу', 'settings.hanziSize': 'Иероглиф өлчөмү',
+        'settings.group.sound': '🔊 Үн', 'settings.speechRate': 'Айтылыш ылдамдыгы', 'settings.speechRateHint': 'Кытайча үн ылдамдыгы',
+        'settings.slow': 'Жай', 'settings.normal': 'Нормалдуу', 'settings.fast': 'Тез',
+        'settings.sfx': 'Үн эффекттери', 'settings.sfxHint': 'Туура жооп жана жетишкендик үндөрү',
+        'settings.group.study': '🎯 Окуу', 'settings.dailyGoal': 'Күнүмдүк максат', 'settings.dailyGoalHint': 'Күн сайын канча сөз үйрөнөсүз',
+        'settings.reminder': 'Күнүмдүк эскертме', 'settings.reminderHint': 'Окуу убактысы келгенде эскертет',
+        'settings.reminderOn': '🔔 Күн сайын саат {time} болгондо эскертилет',
+        'settings.reminderDenied': 'Билдирмеге уруксат берилген жок. Браузер ырастоолорунан күйгүзүңүз.',
+        'settings.reminderUnsupported': 'Бул браузер билдирмелерди колдобойт.',
+        'settings.group.data': '💾 Маалыматтар', 'settings.export': 'Резервдик көчүрмө алуу', 'settings.import': 'Көчүрмөдөн калыбына келтирүү',
+        'settings.backupNote': 'Телефон алмаштырсаңыз да прогрессиңиз жоголбойт.',
+        'settings.reset': 'Прогрессти нөлгө түшүрүү',
+        'settings.resetConfirm': 'Чын эле бардык прогресс (сөздөр, XP, стрик) өчүрүлсүнбү? Муну артка кайтаруу мүмкүн эмес.',
+        'settings.resetDone': 'Прогресс тазаланды 🧹', 'settings.importDone': 'Прогресс калыбына келтирилди ✅', 'settings.importError': 'Файл туура эмес же бузулган ❌',
+        'settings.exportDone': 'Резервдик файл жүктөлүп алынды 📤',
+        'settings.group.app': '📱 Тиркеме', 'settings.installTitle': 'Easy Chinese тиркемеси', 'settings.installHint': 'Телефонго 1 басууда орнотуу',
+        'settings.install': 'Орнотуу', 'settings.about': 'Тиркеме жөнүндө', 'settings.saved': 'Сакталды ✅',
+        'reminder.title': 'Easy Chinese 🀄', 'reminder.body': 'Бүгүнкү кытай тили машыгуу убактысы келди! 加油! 🔥',
+        'quest.tracesTitle': '3 иероглиф жазуу', 'quest.doneSuffix': 'аткарылды', 'quest.xpTitle': 'Бүгүн 50 XP топтоо',
+        'ach.firstWord.name': 'Биринчи Кадам', 'ach.firstWord.desc': '1-сөздү жаттоо',
+        'ach.firstLesson.name': '1-Сабак Жеңүүчүсү', 'ach.firstLesson.desc': '1 сабакты толук бүтүрүү',
+        'ach.streak3.name': '3 Күндүк Жалын', 'ach.streak3.desc': '3 күн катары менен кирүү',
+        'ach.streak7.name': 'Апта Баатыры', 'ach.streak7.desc': '7 күндүк стрик',
+        'ach.words50.name': 'Китепкөй', 'ach.words50.desc': '50 сөз жаттоо',
+        'ach.words100.name': 'Окумуштуу (Scholar)', 'ach.words100.desc': '100 сөз жаттоо',
+        'ach.xp100.name': '100 XP Жылдызы', 'ach.xp100.desc': '100 XP топтоо',
+        'ach.calligrapher.name': 'Каллиграфия Чебери', 'ach.calligrapher.desc': '3 Hanzi жазуу', 'ach.unlocked': '✓ Ачылды',
+        'pfc.flipHint': 'Котормосун көрүү үчүн картаны басыңыз 👆', 'pfc.flipBack': '🔄 Артка оодаруу',
+        'pfc.again': 'Кайталоо', 'pfc.flip': 'Оодаруу', 'pfc.good': 'Жатталды (+5 XP)',
+        'tone.kicker': 'Super Chinese стилинде: жандуу 4 тон айтылышы, угуп табуу викторинасы, минималдык жуптар жана Tone Sandhi',
+        'tone.tabChart': '4 Тон', 'tone.tabPairs': 'Жуптар', 'tone.seqBadge': '🔥 Super Chinese Ыкмасы',
+        'tone.seqTitle': '1-2-3-4 Тондорду катары менен угуу', 'tone.seqDesc': 'mā (1) → má (2) → mǎ (3) → mà (4) — обондордун айырмасын дароо сезиңиз',
+        'tone.seqPlay': 'Катары менен салыштыруу', 'tone.earHint': 'Кулак салыңыз: бул канчанчы тон жана кайсы сөз?',
+        'tone.compareBoth': '▶️ Экөөнү салыштыруу', 'tone.pairsTitle': 'Тон өзгөрсө — маани толугу менен өзгөрөт!',
+        'tone.pairsKicker': 'Кытайда эң көп алмаштырылган сөздөр: «买 (сатып алуу) vs 卖 (сатуу)», «四 (4) vs 十 (10)»',
+        'pinyin.tabInitials': 'Үнсүздөр', 'pinyin.tabFinals': 'Үндүүлөр', 'pinyin.tabMatrix': 'Матрица', 'pinyin.tabRules': 'Эрежелер',
+        'pinyin.initialsTitle': '声母 (Shēngmǔ) — Үнсүз тыбыштар (23):',
+        'pinyin.initialsDesc': 'Кытай тилиндеги муун баштоочу үнсүздөр. Карточканы басып стандарттык айтылышын угуңуз.',
+        'pinyin.finalsTitle': '韵母 (Yùnmǔ) — Үндүү тыбыштар (24):',
+        'pinyin.finalsDesc': '6 жөнөкөй, 9 татаал жана 9 мурун үндүүсү. 1-4 тон баскычтарын басып обондор менен угуңуз.',
+        'pinyin.searchPh': 'Муун издеңиз (мисалы: ma, ni, hao, zhong, xue)...', 'pinyin.all': 'Баары', 'pinyin.selectedSyllable': 'Тандалган муун',
+        'survival.tabClass': 'Сабакта', 'survival.tabCanteen': 'Ашкана', 'survival.tabDelivery': 'Курьер', 'survival.tabMetro': 'Метро',
+        'ai.tabCoach': '🔍 Тон жана Сөз', 'ai.inputPh': 'Суроо бериңиз же которуу үчүн сүйлөм жазыңыз...', 'ai.send': 'Жөнөтүү',
+        'ai.modalSub': 'Сабактан чыкпастан үйрөнүү', 'ai.backToLesson': '✕ Сабакка кайтуу', 'ai.openFullChat': '💬 AI Laoshi маеги →',
+        'weekly.days': 'Дш,Шш,Шр,Бш,Жм,Иш,Жш', 'weekly.streakSuffix': 'күн катары менен',
+        'learned.empty': 'Азырынча жатталган сөздөр жок. Сабактарды баштаңыз же карточкаларда «✓ Билем» баскычын басыңыз!'
     }
 };
 
@@ -7353,6 +7622,172 @@ function t(key, vars) {
         Object.keys(vars).forEach(function (k) { str = str.replace('{' + k + '}', vars[k]); });
     }
     return str;
+}
+
+// ---- Dynamic Uzbek -> Kyrgyz & Uzbek Cyrillic translator for vocabulary & tips ----
+var EC_KY_PHRASES = {
+    'Assalomu alaykum ustoz!': 'Саламатсызбы, мугалим!',
+    'Ustoz, iltimos yana bir marta qaytara olasizmi?': 'Мугалим, сураныч дагы бир жолу кайталап коёсузбу?',
+    'Bu so‘z nima degani?': 'Бул сөз эмнени билдирет?',
+    'Kechirasiz, bu qanday o‘qiladi?': 'Кечиресиз, бул кантип окулат?',
+    'Men tushunmadim.': 'Мен түшүнгөн жокмун.',
+    'Iltimos, sal sekinroq gapiring.': 'Сураныч, бир аз жайыраак сүйлөңүз.',
+    'Bugungi uyga vazifa nima?': 'Бүгүнкү үй тапшырма эмне?',
+    'Achchiq solmang! (Xitoyda eng muhim ibora)': 'Ачуу кошпоңуз! (Кытайдагы эң маанилүү сөз)',
+    'Salgina achchiq bo‘lsa yetadi.': 'Бир аз эле ачуу болсо жетет.',
+    'Bu qancha turadi?': 'Бул канча турат?',
+    'Olib ketasizmi yoki shu yerda yeysizmi?': 'Алып кетесизби же ушул жерден жейсизби?',
+    'Olib ketaman (konteynerga solib bering).': 'Алып кетем (контейнерге салып бериңиз).',
+    'Kechirasiz, mol go‘shti bormi?': 'Кечиресиз, уй эти барбы?',
+    'Men cho‘chqa go‘shti yemayman (Halol).': 'Мен чочко этин жебейм (Адал).',
+    'WeChat orqali to‘lasam bo‘ladimi?': 'WeChat аркылуу төлөсөм болобу?',
+    'Men sizning QR kodingizni skanerlaymi yoki siz menikinimi?': 'Мен сиздин QR кодуңузду сканерлейинби же сиз меникинби?',
+    'Men siznikini skanerlayman.': 'Мен сиздикин сканерлейм.',
+    'Posilka yetib keldi, eshik oldiga qo‘yib keting.': 'Посылка келди, эшиктин алдына коюп кетиңиз.',
+    'Pochta qutisidan olish kodi nechchi?': 'Почта кутусунан алуу коду канча?',
+    'Sal arzonroq qilib bera olasizmi?': 'Бир аз арзаныраак кылып бере аласызбы?',
+    'Haydovchi aka, mana shu manzilga boring.': 'Айдоочу байке, ушул дарекке барыңыз.',
+    'Iltimos, taksi hisoblagichini (schetchik) yoqing.': 'Сураныч, такси эсептегичин күйгүзүңүз.',
+    'Oldinroqda chetga to‘xtating.': 'Алдыраактан четке токтотуңуз.',
+    'Metro bekati qayerda?': 'Метро бекети кайсы жерде?',
+    'Aeroportgacha taxminan qancha vaqt ketadi?': 'Аэропортко чейин болжол менен канча убакыт кетет?',
+    'Shu yerda tushaman, rahmat!': 'Ушул жерден түшөм, рахмат!',
+    'Qolip (Pattern):': 'Үлгү (Pattern):',
+    'Qoida formulasi:': 'Эреже формуласы:',
+    'Talaffuz mashqi (Bosib eshiting):': 'Айтылыш машыгуусу (Басып угуңуз):',
+    'Solishtirish': 'Салыштыруу',
+    'Jonli Misol:': 'Жандуу Мисал:',
+    'Laoshi Maslahati:': 'Лаоши Кеңеши:',
+    'AI Tahlil': 'AI Талдоо',
+    'Keyingi harf →': 'Кийинки тамга →'
+};
+
+var EC_KY_WORDS = {
+    'salom': 'салам', 'xayr': 'кош болуңуз', 'rahmat': 'рахмат', 'iltimos': 'сураныч', 'kechirasiz': 'кечиресиз',
+    'men': 'мен', 'sen': 'сен', 'siz': 'сиз', 'u': 'ал', 'biz': 'биз', 'ular': 'алар',
+    'ota': 'ата', 'dada': 'ата', 'ona': 'эне', 'aka': 'ага', 'uka': 'ини', 'opa': 'эже', 'singil': 'карындаш',
+    'bola': 'бала', 'farzand': 'перзент', 'o‘g‘il': 'уул', 'qiz': 'кыз', 'odam': 'адам', 'kishi': 'киши', 'inson': 'инсан',
+    'ayol': 'аял', 'erkak': 'эркек', 'do‘st': 'дос', 'ustoz': 'мугалим', 'o‘qituvchi': 'мугалим', 'o‘quvchi': 'окуучу', 'talaba': 'студент',
+    'shifokor': 'дарыгер', 'suv': 'суу', 'choy': 'чай', 'ovqat': 'тамак', 'taom': 'тамак', 'guruch': 'күрүч', 'non': 'нан',
+    'meva': 'жемиш', 'olma': 'алма', 'sut': 'сүт', 'go‘sht': 'эт', 'baliq': 'балык', 'tuxum': 'жумуртка', 'qahva': 'кофе',
+    'uy': 'үй', 'xona': 'бөлмө', 'eshik': 'эшик', 'deraza': 'терезе', 'maktab': 'мектеп', 'kasalxona': 'оорукана',
+    'do‘kon': 'дүкөн', 'restoran': 'ресторан', 'oshxona': 'ашкана', 'kutubxona': 'китепкана', 'shahar': 'шаар', 'mamlakat': 'өлкө', 'davlat': 'мамлекет',
+    'xitoy': 'Кытай', 'pekin': 'Пекин', 'yo‘l': 'жол', 'ko‘cha': 'көчө', 'bekat': 'бекет', 'aeroport': 'аэропорт',
+    'samolyot': 'учак', 'poyezd': 'поезд', 'taksi': 'такси', 'mashina': 'унаа', 'avtobus': 'автобус',
+    'kitob': 'китеп', 'daftar': 'дептер', 'qalam': 'калем', 'so‘z': 'сөз', 'harf': 'тамга', 'iyeroglif': 'иероглиф', 'til': 'тил', 'nutq': 'кеп',
+    'gap': 'сүйлөм', 'savol': 'суроо', 'javob': 'жооп', 'dars': 'сабак', 'imtihon': 'экзамен', 'test': 'тест',
+    'ish': 'жумуш', 'pul': 'акча', 'vaqt': 'убакыт', 'soat': 'саат', 'daqiqa': 'мүнөт', 'kun': 'күн', 'bugun': 'бүгүн',
+    'ertaga': 'эртең', 'kecha': 'кечээ', 'ertalab': 'эртең менен', 'tushlik': 'түшкү маал', 'kechqurun': 'кечинде',
+    'hafta': 'апта', 'oy': 'ай', 'yil': 'жыл', 'hozir': 'азыр', 'keyin': 'кийин', 'oldin': 'мурун', 'avval': 'алгач',
+    'quyosh': 'күн', 'osmon': 'асман', 'yomg‘ir': 'жамгыр', 'qor': 'кар', 'shamol': 'шамал', 'bulut': 'булут',
+    'olov': 'от', 'yer': 'жер', 'tuproq': 'топурак', 'tog‘': 'тоо', 'daryo': 'дарыя', 'o‘rmon': 'токой', 'daraxt': 'дарак', 'yog‘och': 'жыгач',
+    'o‘t': 'чөп', 'gul': 'гүл', 'o‘simlik': 'өсүмдүк', 'hayvon': 'жаныбар', 'it': 'ит', 'mushuk': 'мышык', 'ot': 'ат', 'qush': 'куш',
+    'qo‘l': 'кол', 'oyoq': 'бут', 'bosh': 'баш', 'ko‘z': 'көз', 'quloq': 'кулак', 'og‘iz': 'ооз', 'yurak': 'жүрөк', 'qalb': 'жүрөк',
+    'katta': 'чоң', 'kichik': 'кичине', 'ko‘p': 'көп', 'oz': 'аз', 'yaxshi': 'жакшы', 'yomon': 'жаман',
+    'yangi': 'жаңы', 'eski': 'эски', 'issiq': 'ысык', 'sovuq': 'суук', 'baland': 'бийик', 'past': 'жапыз',
+    'uzun': 'узун', 'qisqa': 'кыска', 'tez': 'тез', 'sekin': 'жай', 'oson': 'оңой', 'qiyin': 'кыйын',
+    'yaqin': 'жакын', 'uzoq': 'алыс', 'chiroyli': 'сулуу', 'toza': 'таза', 'tiniq': 'тунук', 'yorug‘': 'жарык', 'qorong‘i': 'караңгы',
+    'qizil': 'кызыл', 'oq': 'ак', 'qora': 'кара', 'ko‘k': 'көк', 'yashil': 'жашыл', 'sariq': 'сары',
+    'shirin': 'таттуу', 'achchiq': 'ачуу', 'sho‘r': 'туздуу', 'arzon': 'арзан', 'qimmat': 'кымбат',
+    'xursand': 'кубанычта', 'baxtli': 'бактылуу', 'charchagan': 'чарчаган', 'band': 'бош эмес', 'tinch': 'тынч', 'xavfsiz': 'коопсуз',
+    'bir': 'бир', 'ikki': 'эки', 'uch': 'үч', 'to‘rt': 'төрт', 'besh': 'беш', 'olti': 'алты', 'yetti': 'жети', 'sakkiz': 'сегиз', 'to‘qqiz': 'тогуз', 'o‘n': 'он', 'yuz': 'жүз', 'ming': 'миң',
+    'ha': 'ооба', 'yo‘q': 'жок', 'emas': 'эмес', 'bor': 'бар', 'juda': 'абдан', 'eng': 'эң', 'ham': 'да', 'va': 'жана', 'yoki': 'же', 'lekin': 'бирок', 'ammo': 'бирок',
+    'uchun': 'үчүн', 'bilan': 'менен', 'ichida': 'ичинде', 'ustida': 'үстүндө', 'ostida': 'астында', 'oldida': 'алдында', 'orqasida': 'артында',
+    'bu': 'бул', 'shu': 'ушул', 'u yer': 'тигил жер', 'qayer': 'кайсы жер', 'qayerda': 'кайда', 'kim': 'ким', 'nima': 'эмне', 'qanday': 'кандай', 'qancha': 'канча', 'nechta': 'канча', 'qachon': 'качан',
+    'bormoq': 'баруу', 'kelmoq': 'келүү', 'ketmoq': 'кетүү', 'qaytmoq': 'кайтуу', 'kirmoq': 'кирүү', 'chiqmoq': 'чыгуу',
+    'yemoq': 'жеш', 'ichmoq': 'ичүү', 'uxlamoq': 'уктоо', 'turmoq': 'туруу', 'o‘tirmoq': 'отуруу', 'yurmoq': 'басуу', 'yugurmoq': 'чуркоо', 'uchmoq': 'учуу', 'suzmoq': 'сүзүү',
+    'ko‘rmoq': 'көрүү', 'qaramoq': 'кароо', 'eshitmoq': 'угуу', 'tinglamoq': 'угуу', 'gapirmoq': 'сүйлөө', 'aytmoq': 'айтуу', 'so‘ramoq': 'суроо', 'javob bermoq': 'жооп берүү',
+    'o‘qimoq': 'окуу', 'o‘rganmoq': 'үйрөнүү', 'yozmoq': 'жазуу', 'bilmoq': 'билүү', 'tushunmoq': 'түшүнүү', 'o‘ylamoq': 'ойлоо', 'eslamoq': 'эстөө',
+    'xohlamoq': 'каалоо', 'yoqtirmoq': 'жактыруу', 'sevmoq': 'сүйүү', 'ishlamoq': 'иштөө', 'dam olmoq': 'эс алуу', 'o‘ynamoq': 'ойноо',
+    'sotib olmoq': 'сатып алуу', 'sotmoq': 'сатуу', 'bermoq': 'берүү', 'olmoq': 'алуу', 'ochmoq': 'ачуу', 'yopmoq': 'жабуу',
+    'kutmoq': 'күтүү', 'topmoq': 'табуу', 'qidirmoq': 'издөө', 'yordam bermoq': 'жардам берүү', 'tayyorlamoq': 'даярдоо', 'pishirmoq': 'бышыруу', 'yuvmoq': 'жуу', 'kiymoq': 'кийүү'
+};
+
+function uzLatToCyrl(str, isKyrgyz) {
+    if (!str) return '';
+    var s = String(str)
+        .replace(/o['‘’ʻ`]/gi, function (m) { return m[0] === 'O' ? (isKyrgyz ? 'Ө' : 'Ў') : (isKyrgyz ? 'ө' : 'ў'); })
+        .replace(/g['‘’ʻ`]/gi, function (m) { return m[0] === 'G' ? (isKyrgyz ? 'Г' : 'Ғ') : (isKyrgyz ? 'г' : 'ғ'); })
+        .replace(/sh/gi, function (m) { return m[0] === 'S' ? 'Ш' : 'ш'; })
+        .replace(/ch/gi, function (m) { return m[0] === 'C' ? 'Ч' : 'ч'; })
+        .replace(/yo/gi, function (m) { return m[0] === 'Y' ? 'Ё' : 'ё'; })
+        .replace(/yu/gi, function (m) { return m[0] === 'Y' ? 'Ю' : 'ю'; })
+        .replace(/ya/gi, function (m) { return m[0] === 'Y' ? 'Я' : 'я'; })
+        .replace(/ye/gi, function (m) { return m[0] === 'Y' ? 'Е' : 'е'; })
+        .replace(/['‘’ʻ`]/g, isKyrgyz ? '' : 'ъ');
+    var map = {
+        'A':'А','a':'а','B':'Б','b':'б','D':'Д','d':'д','E':'Э','e':'е','F':'Ф','f':'ф',
+        'G':'Г','g':'г','H':'Ҳ','h':'ҳ','I':'И','i':'и','J':'Ж','j':'ж','K':'К','k':'к',
+        'L':'Л','l':'л','M':'М','m':'м','N':'Н','n':'н','O':'О','o':'о','P':'П','p':'п',
+        'Q':'Қ','q':'қ','R':'Р','r':'р','S':'С','s':'с','T':'Т','t':'т','U':'У','u':'у',
+        'V':'В','v':'в','X':'Х','x':'х','Y':'Й','y':'й','Z':'З','z':'з'
+    };
+    if (isKyrgyz) {
+        map['H'] = 'Х'; map['h'] = 'х';
+        map['Q'] = 'К'; map['q'] = 'к';
+    }
+    return s.replace(/[A-Za-z]/g, function (ch) { return map[ch] || ch; });
+}
+
+function trUz(str) {
+    if (!str || typeof str !== 'string') return str || '';
+    var lang = getAppLanguage();
+    if (lang === 'uz') return str;
+    if (lang === 'ky' && EC_KY_PHRASES[str]) return EC_KY_PHRASES[str];
+
+    var isKy = (lang === 'ky');
+    if (lang !== 'uz-cyrl' && !isKy) return str;
+
+    // Protect HTML tags and Pinyin tokens with tone marks
+    var saved = [];
+    var work = str.replace(/<[^>]+>|[A-Za-z]*[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü][A-Za-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü]*|\b(?:HSK|Lesson|XP|QR|WeChat|Pinyin|Hanzi|AI|Laoshi)\b/g, function (m) {
+        saved.push(m);
+        return '\u0001' + (saved.length - 1) + '\u0002';
+    });
+
+    if (isKy) {
+        // Replace multi-word and single-word Uzbek vocabulary with Kyrgyz equivalents
+        var normWork = work.replace(/[‘’ʻ`]/g, '‘');
+        Object.keys(EC_KY_WORDS).sort(function (a, b) { return b.length - a.length; }).forEach(function (uzKey) {
+            var kyVal = EC_KY_WORDS[uzKey];
+            var esc = uzKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/‘/g, "['‘’ʻ`]");
+            var re = new RegExp('(^|[^A-Za-z‘’ʻ`])(' + esc + ')(?=$|[^A-Za-z‘’ʻ`])', 'gi');
+            normWork = normWork.replace(re, function (_, pre, matched) {
+                var isCap = matched[0] === matched[0].toUpperCase() && matched[0] !== matched[0].toLowerCase();
+                var out = isCap ? (kyVal.charAt(0).toUpperCase() + kyVal.slice(1)) : kyVal;
+                return pre + out;
+            });
+        });
+        // Morphological suffix conversion: Uzbek infinitives -moq -> Kyrgyz -уу/-үү, plural -lar -> -лар/-лер
+        normWork = normWork
+            .replace(/moq\b/gi, 'уу')
+            .replace(/(\d+)-ton/gi, '$1-тон')
+            .replace(/bo['‘’ʻ`]lib/gi, 'болуп')
+            .replace(/bo['‘’ʻ`]lsa/gi, 'болсо')
+            .replace(/bo['‘’ʻ`]ladi/gi, 'болот')
+            .replace(/bilan/gi, 'менен')
+            .replace(/uchun/gi, 'үчүн')
+            .replace(/qanday/gi, 'кандай')
+            .replace(/qaysi/gi, 'кайсы')
+            .replace(/nimani/gi, 'эмнени')
+            .replace(/anglatadi/gi, 'билдирет')
+            .replace(/bildiradi/gi, 'билдирет')
+            .replace(/to['‘’ʻ`]g['‘’ʻ`]ri/gi, 'туура')
+            .replace(/noto['‘’ʻ`]g['‘’ʻ`]ri/gi, 'туура эмес')
+            .replace(/barakalla/gi, 'азаматсыз')
+            .replace(/ajoyib/gi, 'сонун');
+        work = normWork;
+    }
+
+    // Transliterate remaining Latin words (skipping protected placeholders)
+    work = work.replace(/[^\u0001\u0002]+/g, function (seg) {
+        if (/^\d+$/.test(seg)) return seg;
+        return uzLatToCyrl(seg, isKy);
+    });
+
+    return work.replace(/\u0001(\d+)\u0002/g, function (_, idx) {
+        return saved[parseInt(idx, 10)] || '';
+    });
 }
 
 function applyAppLanguage() {
@@ -7375,13 +7810,31 @@ function applyAppLanguage() {
     if (typeof updateDashboardBentoUI === 'function') updateDashboardBentoUI();
     if (typeof updateLessonsHeader === 'function') updateLessonsHeader();
     if (typeof updatePracticeHubUI === 'function') updatePracticeHubUI();
-    if (typeof lessons !== 'undefined' && lessons && lessons.classList.contains('active') && typeof generateLessonsGrid === 'function') {
-        generateLessonsGrid();
+    if (typeof updateHSKProgress === 'function') updateHSKProgress();
+    if (typeof updateWeeklyStreakCalendar === 'function') updateWeeklyStreakCalendar();
+    if (typeof renderLearnedWordsDrawer === 'function') renderLearnedWordsDrawer();
+    if (typeof updateAchievements === 'function') updateAchievements();
+    if (typeof generateLessonsGrid === 'function') generateLessonsGrid();
+    if (typeof updateFlashcard === 'function') updateFlashcard();
+    if (typeof updateQuiz === 'function') updateQuiz();
+    if (typeof renderLessonVocabPreview === 'function') renderLessonVocabPreview();
+    if (typeof updateLessonFlowUI === 'function') updateLessonFlowUI();
+    if (typeof loadCanvasCharacter === 'function' && typeof canvasView !== 'undefined' && canvasView && canvasView.classList.contains('active')) loadCanvasCharacter();
+    if (typeof renderToneContours === 'function') renderToneContours();
+    if (typeof renderMinimalPairs === 'function') renderMinimalPairs();
+    if (typeof renderSandhiRules === 'function') renderSandhiRules();
+    if (typeof renderPinyinInitials === 'function') renderPinyinInitials();
+    if (typeof renderPinyinFinals === 'function') renderPinyinFinals();
+    if (typeof renderPinyinRules === 'function') renderPinyinRules();
+    if (typeof renderSurvivalList === 'function') {
+        var activeSurvTab = document.querySelector('#survivalCategoryTabs .subview-tab.active');
+        renderSurvivalList(activeSurvTab ? activeSurvTab.dataset.survCat : 'classroom');
     }
-    if (typeof lesson !== 'undefined' && lesson && lesson.classList.contains('active')) {
-        if (typeof updateFlashcard === 'function') updateFlashcard();
-        if (typeof updateQuiz === 'function') updateQuiz();
-        if (typeof updateLessonFlowUI === 'function') updateLessonFlowUI();
+    if (typeof renderRadicalsDirectory === 'function') renderRadicalsDirectory();
+    if (typeof renderRadicalFormulas === 'function') renderRadicalFormulas();
+    if (typeof loadRadicalQuizQuestion === 'function') loadRadicalQuizQuestion();
+    if (typeof pfcDeck !== 'undefined' && pfcDeck && pfcDeck.length > 0 && typeof renderCurrentPfcCard === 'function') {
+        renderCurrentPfcCard();
     }
 }
 
@@ -8375,24 +8828,24 @@ function renderRadicalsDirectory() {
     grid.innerHTML = filtered.map(item => `
         <div class="radical-card">
             <div class="radical-card-top">
-                <div class="radical-symbol-box" data-speak-rad="${item.alt || item.rad}" title="Talaffuzni eshitish">
+                <div class="radical-symbol-box" data-speak-rad="${item.alt || item.rad}" title="🔊">
                     <span class="radical-symbol-main">${item.rad}</span>
                     ${item.alt ? `<span class="radical-symbol-alt">(${item.alt})</span>` : ''}
                 </div>
                 <div class="radical-meta">
                     <div class="radical-title-row">
-                        <span class="radical-meaning">${item.uz}</span>
+                        <span class="radical-meaning">${trUz(item.uz)}</span>
                         <span class="radical-pinyin-badge" data-speak-rad="${item.alt || item.rad}">🔊 ${item.py}</span>
                     </div>
                     <div class="radical-cn-name">${item.cnName}</div>
                 </div>
             </div>
-            <p class="radical-tip">💡 ${item.tip}</p>
+            <p class="radical-tip">💡 ${trUz(item.tip)}</p>
             <div class="radical-examples-row">
                 ${item.examples.map(ex => `
                     <button type="button" class="radical-example-chip" data-speak-hz="${ex.hz}">
                         <span class="rec-hz">${ex.hz}</span>
-                        <span>${ex.py} — ${ex.uz}</span>
+                        <span>${ex.py} — ${trUz(ex.uz)}</span>
                         <span>🔊</span>
                     </button>
                 `).join('')}
@@ -8412,18 +8865,19 @@ function renderRadicalFormulas() {
     const grid = document.getElementById('radicalsFormulasGrid');
     if (!grid) return;
 
+    const listenLbl = typeof t === 'function' ? t('card.listen') : 'Tinglash';
     grid.innerHTML = RADICAL_FORMULAS.map(f => `
         <div class="radical-formula-card" data-speak-formula="${f.result.hz}">
             <div class="rf-head-row">
-                <span class="rf-word-title">${f.result.hz} (${f.result.py}) — ${f.result.uz}</span>
-                <span class="rf-audio-pill">🔊 Tinglash</span>
+                <span class="rf-word-title">${f.result.hz} (${f.result.py}) — ${trUz(f.result.uz)}</span>
+                <span class="rf-audio-pill">🔊 ${listenLbl}</span>
             </div>
             <div class="rf-equation">
                 ${f.parts.map((p, idx) => `
                     ${idx > 0 ? '<span class="rf-op">+</span>' : ''}
                     <div class="rf-part">
                         <span class="rf-part-hz">${p.hz}</span>
-                        <span class="rf-part-lbl">${p.lbl}</span>
+                        <span class="rf-part-lbl">${trUz(p.lbl)}</span>
                     </div>
                 `).join('')}
                 <span class="rf-op">=</span>
@@ -8432,7 +8886,7 @@ function renderRadicalFormulas() {
                     <span class="rf-part-lbl">${f.result.py}</span>
                 </div>
             </div>
-            <p class="rf-story">🧠 ${f.story}</p>
+            <p class="rf-story">🧠 ${trUz(f.story)}</p>
         </div>
     `).join('');
 
@@ -8456,8 +8910,8 @@ function loadRadicalQuizQuestion() {
     if (!charEl || !optsEl) return;
 
     charEl.textContent = item.char;
-    if (subEl) subEl.textContent = item.sub;
-    if (qEl) qEl.textContent = item.q;
+    if (subEl) subEl.textContent = trUz(item.sub);
+    if (qEl) qEl.textContent = trUz(item.q);
     if (progEl) progEl.textContent = `${(radQuizIdx % RADICAL_QUIZ_ITEMS.length) + 1} / ${RADICAL_QUIZ_ITEMS.length}`;
     if (streakEl) streakEl.textContent = String(radQuizStreakVal);
     if (scoreEl) scoreEl.textContent = String(radQuizScoreVal);
@@ -8465,7 +8919,7 @@ function loadRadicalQuizQuestion() {
     if (actEl) actEl.hidden = true;
 
     // Shuffle options while tracking the correct one
-    const indexedOptions = item.options.map((text, idx) => ({ text, isCorrect: idx === item.correct }));
+    const indexedOptions = item.options.map((text, idx) => ({ text: trUz(text), isCorrect: idx === item.correct }));
     for (let i = indexedOptions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [indexedOptions[i], indexedOptions[j]] = [indexedOptions[j], indexedOptions[i]];
@@ -8491,7 +8945,7 @@ function loadRadicalQuizQuestion() {
                 if (fbEl) {
                     fbEl.hidden = false;
                     fbEl.className = 'tone-ear-feedback is-correct';
-                    fbEl.textContent = `${item.exp} (+10 XP)`;
+                    fbEl.textContent = `${trUz(item.exp)} (+10 XP)`;
                 }
             } else {
                 btn.classList.add('is-wrong');
@@ -8502,7 +8956,7 @@ function loadRadicalQuizQuestion() {
                 if (fbEl) {
                     fbEl.hidden = false;
                     fbEl.className = 'tone-ear-feedback is-wrong';
-                    fbEl.textContent = item.exp;
+                    fbEl.textContent = trUz(item.exp);
                 }
             }
             if (streakEl) streakEl.textContent = String(radQuizStreakVal);
