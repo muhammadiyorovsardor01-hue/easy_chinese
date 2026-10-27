@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=45">
+    <link rel="stylesheet" href="styles.css?v=46">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -876,17 +876,7 @@
                         <span class="hub-tile-arrow">→</span>
                     </button>
 
-                    <button type="button" class="hub-tile-card tile-ai" id="hubOpenAiCoachBtn">
-                        <div class="hub-tile-icon ai-icon">👩‍🏫</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong data-i18n="practice.tile.ai.title">AI Laoshi (Li Ustoz)</strong>
-                                <span class="hub-pill-badge" data-i18n="practice.tile.ai.badge">SuperChinese uslubida</span>
-                            </div>
-                            <p data-i18n="practice.tile.ai.desc">Istalgan savolni bering, ton tahlili yoki real dialog mashq qiling</p>
-                        </div>
-                        <span class="hub-tile-arrow">→</span>
-                    </button>
+
                 </div>
             </div>
 
@@ -997,16 +987,16 @@
             </div>
         </section>
 
-        <!-- Tone Mastery Lab View (å£°è°ƒå®žéªŒå®¤) -->
+        <!-- Tone Mastery Lab View -->
         <section id="toneLab" class="view">
-            <div class="subview-header-card tone-lab-banner">
+            <div class="subview-header-card tone-lab-banner" id="toneLabHeaderBanner">
                 <div class="lessons-banner-top">
                     <button type="button" class="back-btn" id="backFromToneLabBtn" data-i18n="radicals.backBtn">&larr; Mashq</button>
-                    <span class="lessons-cn-badge">&#x56DB;&#x58F0;&#x4E0E;&#x53D8;&#x8C03; &middot; Super Chinese Tones</span>
+                    <span class="lessons-cn-badge">&#x56DB;&#x58F0;&#x4E0E;&#x53D8;&#x8C03; &middot; Microsoft Azure Neural Audio</span>
                 </div>
                 <h2 class="section-title" data-i18n="practice.tile.tone.title">Tonlar Laboratoriyasi</h2>
                 <p class="lessons-kicker" data-i18n="tone.kicker">Super Chinese uslubida: jonli 4 ta ton talaffuzi, eshitib topish viktorinasi, taqqoslash juftliklari va Tone Sandhi</p>
-                <div class="subview-tabs segmented-tabs-5" id="toneLabTabs">
+                <div class="subview-tabs" id="toneLabTabs">
                     <button type="button" class="subview-tab active" data-tone-tab="chart">
                         <span class="p-tab-icon">&#x1F4CA;</span>
                         <span class="p-tab-label" data-i18n="tone.tabChart">4 Ton</span>
@@ -1023,9 +1013,28 @@
                         <span class="p-tab-icon">&#x1F517;</span>
                         <span class="p-tab-label">Sandhi</span>
                     </button>
-                    <button type="button" class="subview-tab" data-tone-tab="mic">
-                        <span class="p-tab-icon">&#x1F399;&#xFE0F;</span>
-                        <span class="p-tab-label">Pitch</span>
+                </div>
+            </div>
+
+            <div class="subview-header-card tone-lab-banner" id="pitchLabHeaderBanner" hidden>
+                <div class="lessons-banner-top">
+                    <button type="button" class="back-btn" id="backFromPitchLabBtn" data-i18n="radicals.backBtn">&larr; Mashq</button>
+                    <span class="lessons-cn-badge">&#x8BED;&#x97F3;&#x8BED;&#x8C03; &middot; AI Pitch &amp; Pronunciation</span>
+                </div>
+                <h2 class="section-title">&#x1F399;&#xFE0F; <span data-i18n="practice.tile.pitch.title">Talaffuz va Pitch Mashqi</span></h2>
+                <p class="lessons-kicker" data-i18n="practice.tile.pitch.desc">Mikrofonga aytib, ovoz konturingiz to'g'ri tushayotganini tekshiring</p>
+                <div class="subview-tabs" id="pitchCategoryTabs">
+                    <button type="button" class="subview-tab active" data-pitch-cat="tones">
+                        <span class="p-tab-icon">&#x1F3B5;</span>
+                        <span class="p-tab-label" data-i18n="pitch.catTones">Ton Juftliklari</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-pitch-cat="hsk">
+                        <span class="p-tab-icon">&#x1F4DA;</span>
+                        <span class="p-tab-label" data-i18n="pitch.catHsk">HSK So'zlari</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-pitch-cat="phrases">
+                        <span class="p-tab-icon">&#x1F3EE;</span>
+                        <span class="p-tab-label" data-i18n="pitch.catPhrases">Jonli Iboralar</span>
                     </button>
                 </div>
             </div>
@@ -1093,9 +1102,10 @@
                 <div class="sandhi-rules-list" id="sandhiRulesList"></div>
             </div>
 
-            <!-- Tab 5: Microphone Tone & Pitch Practice -->
+            <!-- Dedicated Microphone Tone & Pitch Practice -->
             <div class="tone-tab-panel" id="toneTabMic">
                 <div class="tone-mic-card">
+                    <div class="tone-mic-word-strip" id="toneMicWordStrip"></div>
                     <div class="tone-mic-target" id="toneMicTargetBox">
                         <span class="tm-badge" id="toneMicBadge">3-ton + 3-ton &rarr; 2-ton + 3-ton</span>
                         <div class="tm-hanzi" id="toneMicHanzi">&#x4F60;&#x597D;</div>
@@ -1766,7 +1776,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=45"></script>
+    <script src="script.js?v=46"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1775,6 +1785,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=45"></script>
+    <script src="pwa.js?v=46"></script>
 </body>
 </html>

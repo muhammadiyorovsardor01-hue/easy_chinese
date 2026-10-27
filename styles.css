@@ -12221,3 +12221,54 @@ a.setting-action-btn { text-decoration: none; }
         grid-template-columns: 1fr;
     }
 }
+
+/* Dedicated Pitch & Pronunciation Trainer Word Selector Strip */
+.tone-mic-word-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.tm-word-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.36rem 0.72rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-color);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.tm-word-chip:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.tm-word-chip.active {
+    background: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+    box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25);
+}
+
+.tm-word-chip.passed {
+    border-color: #10B981;
+}
+
+.tm-word-chip .tm-chip-check {
+    font-size: 0.75rem;
+    color: #10B981;
+}
+
+.tm-word-chip.active .tm-chip-check {
+    color: #ffffff;
+}

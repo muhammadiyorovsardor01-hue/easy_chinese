@@ -2686,7 +2686,31 @@ const WORD_STUDIO_MAP = {
     '\u98DE': 'fei1',
     '\u4EEC': 'men2',
     '\u7684': 'de5',
-    '\u4E86': 'le5'
+    '\u4E86': 'le5',
+    '爸爸': 'baba',
+    '睡觉': 'shuijiao4',
+    '水饺': 'shuijiao3',
+    '练习': 'lianxi4',
+    '联系': 'lianxi2',
+    '手表': 'shoubiao',
+    '可以': 'keyi',
+    '不对': 'budui',
+    '不要': 'buyao',
+    '不吃': 'buchi',
+    '不好': 'buhao',
+    '一二三': 'yiersan',
+    '一个': 'yige',
+    '一天': 'yitian',
+    '一年': 'yinian',
+    '一起': 'yiqi',
+    '老师': 'laoshi',
+    '朋友': 'pengyou',
+    '喜欢': 'xihuan',
+    '高兴': 'gaoxing',
+    '明天': 'mingtian',
+    '面条': 'miantiao',
+    '电脑': 'diannao',
+    '手机': 'shouji'
 };
 
 function playWordAudio(wordOrText, customRate = null) {
@@ -2937,69 +2961,92 @@ function startSpeechPronunciationCheck() {
 
     rec.onresult = (event) => {
         const transcripts = [];
+        const confidences = [];
         for (let i = 0; i < event.results[0].length; i++) {
             transcripts.push(event.results[0][i].transcript.trim());
+            confidences.push(event.results[0][i].confidence || 0.85);
         }
         const heard = transcripts[0] || '';
+        const topConf = confidences[0] || 0.85;
         
-        // Intelligent Multi-factor Chinese Speech Matching
+        // Strict Multi-factor Chinese Speech & Tone Matching
         const cleanTarget = (word.hanzi || '').replace(/[，。！？\s.,!?]/g, '');
         const cleanPinyin = (word.pinyin || '').toLowerCase().replace(/[^a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/g, '');
         const pinyinNoTone = (word.pinyin || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
 
-        let isMatch = false;
+        let matchType = 'none'; // 'exact' | 'alt' | 'tone_mismatch' | 'partial' | 'none'
         let matchScore = 0;
 
-        for (const t of transcripts) {
-            const cleanT = t.replace(/[，。！？\s.,!?]/g, '');
-            // 1. Direct or substring Hanzi match
-            if (cleanT === cleanTarget || cleanT.includes(cleanTarget) || cleanTarget.includes(cleanT)) {
-                isMatch = true;
-                matchScore = 96;
+        for (let idx = 0; idx < transcripts.length; idx++) {
+            const cleanT = transcripts[idx].replace(/[，。！？\s.,!?]/g, '');
+            if (!cleanT || !cleanTarget) continue;
+
+            // 1. Exact Hanzi match (both syllable and tone matched)
+            if (cleanT === cleanTarget || (cleanT.length <= cleanTarget.length + 2 && cleanT.includes(cleanTarget))) {
+                matchType = (idx === 0) ? 'exact' : 'alt';
+                matchScore = (idx === 0) ? Math.min(99, Math.max(88, Math.round(topConf * 100))) : Math.max(80, 88 - idx * 3);
                 break;
             }
-            // 2. Homophone match via PINYIN_SPEECH_MAP or vocabularyData
+
+            // 2. Check Pinyin with tone vs without tone
             const tPinyin = getPinyinForText(cleanT);
-            if (tPinyin && (tPinyin === cleanPinyin || tPinyin.replace(/[^a-z]/g, '') === pinyinNoTone)) {
-                isMatch = true;
-                matchScore = 94;
-                break;
+            if (tPinyin) {
+                const tPyTone = tPinyin.toLowerCase().replace(/[^a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/g, '');
+                const tPyBase = tPinyin.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+                if (cleanPinyin && tPyTone === cleanPinyin) {
+                    matchType = (idx === 0) ? 'exact' : 'alt';
+                    matchScore = (idx === 0) ? 92 : 84;
+                    break;
+                } else if (pinyinNoTone && tPyBase === pinyinNoTone) {
+                    if (matchType === 'none') {
+                        matchType = 'tone_mismatch';
+                        matchScore = 64;
+                    }
+                }
             }
-            // 3. Pinyin transcript match (if browser returned romanized text)
+
+            // 3. Romanized transcript check ONLY if transcript actually contains Latin letters
             const cleanTRoman = cleanT.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-            if (cleanTRoman === pinyinNoTone || cleanTRoman.includes(pinyinNoTone) || pinyinNoTone.includes(cleanTRoman)) {
-                isMatch = true;
-                matchScore = 90;
+            if (cleanTRoman.length >= 2 && pinyinNoTone && cleanTRoman === pinyinNoTone) {
+                matchType = 'exact';
+                matchScore = 88;
                 break;
             }
         }
 
-        // 4. Character overlap fallback
-        if (!isMatch && cleanTarget.length > 0) {
+        // 4. Multi-character partial overlap check
+        const cleanHeard = heard.replace(/[，。！？\s.,!?]/g, '');
+        if (matchType === 'none' && cleanTarget.length >= 2 && cleanHeard.length > 0) {
             let matchedChars = 0;
-            const cleanHeard = heard.replace(/[，。！？\s.,!?]/g, '');
             for (const ch of cleanTarget) {
                 if (cleanHeard.includes(ch)) matchedChars++;
             }
-            const ratio = matchedChars / cleanTarget.length;
-            if (ratio >= 0.5) {
-                isMatch = true;
-                matchScore = Math.floor(75 + ratio * 20);
+            if (matchedChars > 0) {
+                const ratio = matchedChars / cleanTarget.length;
+                matchType = 'partial';
+                matchScore = Math.round(45 + ratio * 25);
             }
         }
 
-        if (isMatch) {
+        if (matchType === 'exact' || matchType === 'alt') {
             if (banner) {
                 banner.className = 'speak-feedback-banner is-correct';
-                banner.innerHTML = `🎉 <strong>Ajoyib talaffuz (${matchScore}%)!</strong><br>Eshitildi: “${escapeHtml(heard)}” (+15 XP)`;
+                banner.innerHTML = `🎉 <strong>${trUz('Ajoyib talaffuz')} (${matchScore}%)!</strong><br>${trUz('Eshitildi')}: “${escapeHtml(heard)}” (+15 XP)`;
             }
             addXP(15);
             playSuccessSound();
             if (typeof triggerHapticSuccess === 'function') triggerHapticSuccess();
-        } else {
+        } else if (matchType === 'tone_mismatch') {
             if (banner) {
                 banner.className = 'speak-feedback-banner is-retry';
-                banner.innerHTML = `🔄 <strong>Eshitildi: “${escapeHtml(heard || '...')}”</strong> (Kerakli so‘z: “${word.hanzi}” ${word.pinyin})<br>Namunani eshitib, qaytadan urinib ko‘ring.`;
+                banner.innerHTML = `⚠️ <strong>${trUz('Bo‘g‘in to‘g‘ri, lekin ton farq qildi')} (${matchScore}%).</strong><br>${trUz('Eshitildi')}: “${escapeHtml(heard)}” — ${trUz('Kerakli ton')}: “${word.hanzi}” (${word.pinyin})`;
+            }
+            speakChineseText(word.hanzi);
+        } else {
+            const lowScore = matchType === 'partial' ? matchScore : (cleanHeard ? 18 : 0);
+            if (banner) {
+                banner.className = 'speak-feedback-banner is-retry';
+                banner.innerHTML = `🔄 <strong>${trUz('Boshqa so‘z eshitildi')} (${lowScore}%): “${escapeHtml(heard || '...')}”</strong><br>${trUz('Kerakli so‘z')}: “${word.hanzi}” (${word.pinyin}). ${trUz('Namunani eshitib, qaytadan urinib ko‘ring.')}`;
             }
             speakChineseText(word.hanzi);
         }
@@ -4882,6 +4929,9 @@ function initPracticeHubListeners() {
     const backFromTone = document.getElementById('backFromToneLabBtn');
     if (backFromTone) backFromTone.addEventListener('click', showPracticeView);
 
+    const backFromPitch = document.getElementById('backFromPitchLabBtn');
+    if (backFromPitch) backFromPitch.addEventListener('click', showPracticeView);
+
     const backFromSurv = document.getElementById('backFromSurvivalBtn');
     if (backFromSurv) backFromSurv.addEventListener('click', showPracticeView);
 
@@ -5085,8 +5135,8 @@ const TONE_CONTOURS = [
             { hz: '吗', py: 'ma', sound: 'ma5', uz: 'so‘roq' },
             { hz: '的', py: 'de', sound: 'de5', uz: 'qaratqich' },
             { hz: '了', py: 'le', sound: 'le5', uz: 'o‘tgan zamon' },
-            { hz: '爸爸', py: 'bàba', sound: null, uz: 'dada' },
-            { hz: '妈妈', py: 'māma', sound: null, uz: 'ona' }
+            { hz: '爸爸', py: 'bàba', sound: 'baba', uz: 'dada' },
+            { hz: '妈妈', py: 'māma', sound: 'mama', uz: 'ona' }
         ]
     }
 ];
@@ -5118,15 +5168,15 @@ const MINIMAL_PAIRS = [
     {
         note: '🍜 Oshxonada adashtirib qo‘ymang! (4+4 vs 3+3)',
         words: [
-            { hz: '睡觉', py: 'shuìjiào', sound: null, uz: 'uxlamoq (4+4)' },
-            { hz: '水饺', py: 'shuǐjiǎo', sound: null, uz: 'chuchvara (3+3→2+3)' }
+            { hz: '睡觉', py: 'shuìjiào', sound: 'shuijiao4', uz: 'uxlamoq (4+4)' },
+            { hz: '水饺', py: 'shuǐjiǎo', sound: 'shuijiao3', uz: 'chuchvara (3+3→2+3)' }
         ]
     },
     {
         note: '📚 HSK darslaridagi nozik farq',
         words: [
-            { hz: '练习', py: 'liànxí', sound: null, uz: 'mashq qilmoq' },
-            { hz: '联系', py: 'liánxì', sound: null, uz: 'bog‘lanmoq' }
+            { hz: '练习', py: 'liànxí', sound: 'lianxi4', uz: 'mashq qilmoq' },
+            { hz: '联系', py: 'liánxì', sound: 'lianxi2', uz: 'bog‘lanmoq' }
         ]
     }
 ];
@@ -5137,10 +5187,10 @@ const SANDHI_RULES = [
         formula: 'ǎ + ǎ → á + ǎ',
         exp: 'Xitoy tilida ikkita tushib-chiquvchi 3-tonni ketma-ket aytish noqulay. Shu sababli birinchi so‘z avtomatik ravishda 2-tonga (ko‘tariluvchi) aylanadi.',
         chips: [
-            { hz: '你好', py: 'nǐ hǎo → ní hǎo', uz: 'Salom' },
-            { hz: '很好', py: 'hěn hǎo → hén hǎo', uz: 'Juda yaxshi' },
-            { hz: '手表', py: 'shǒubiǎo → shóubiǎo', uz: 'Qo‘l soati' },
-            { hz: '可以', py: 'kěyǐ → kéyǐ', uz: 'Mumkin' }
+            { hz: '你好', py: 'nǐ hǎo → ní hǎo', sound: 'nihao', uz: 'Salom' },
+            { hz: '很好', py: 'hěn hǎo → hén hǎo', sound: 'henhao', uz: 'Juda yaxshi' },
+            { hz: '手表', py: 'shǒubiǎo → shóubiǎo', sound: 'shoubiao', uz: 'Qo‘l soati' },
+            { hz: '可以', py: 'kěyǐ → kéyǐ', sound: 'keyi', uz: 'Mumkin' }
         ]
     },
     {
@@ -5148,11 +5198,11 @@ const SANDHI_RULES = [
         formula: '不 (bù) + 4-ton → bú + 4-ton',
         exp: '“不” so‘zi aslida 4-ton (bù). Ammo undan keyingi so‘z ham 4-ton bo‘lsa, “不” 2-tonga (bú) aylanadi. Boshqa barcha tonlar (1, 2, 3) oldida o‘zgarmaydi.',
         chips: [
-            { hz: '不是', py: 'bù shì → bú shì', uz: 'Emas' },
-            { hz: '不对', py: 'bù duì → bú duì', uz: 'Noto‘g‘ri' },
-            { hz: '不要', py: 'bù yào → bú yào', uz: 'Kerakmas' },
-            { hz: '不吃', py: 'bù chī', uz: 'Yemaslik (o‘zgarmaydi)' },
-            { hz: '不好', py: 'bù hǎo', uz: 'Yaxshimas (o‘zgarmaydi)' }
+            { hz: '不是', py: 'bù shì → bú shì', sound: 'bushi', uz: 'Emas' },
+            { hz: '不对', py: 'bù duì → bú duì', sound: 'budui', uz: 'Noto‘g‘ri' },
+            { hz: '不要', py: 'bù yào → bú yào', sound: 'buyao', uz: 'Kerakmas' },
+            { hz: '不吃', py: 'bù chī', sound: 'buchi', uz: 'Yemaslik (o‘zgarmaydi)' },
+            { hz: '不好', py: 'bù hǎo', sound: 'buhao', uz: 'Yaxshimas (o‘zgarmaydi)' }
         ]
     },
     {
@@ -5160,11 +5210,11 @@ const SANDHI_RULES = [
         formula: 'yī (sanoq) | yí (4-ton oldida) | yì (1,2,3 oldida)',
         exp: '“一” sanashda 1-ton (yī). Ammo 4-tondagi so‘zlar oldidan 2-tonga (yí), 1, 2, 3-tondagi so‘zlar oldidan esa 4-tonga (yì) o‘zgaradi.',
         chips: [
-            { hz: '一二三', py: 'yī, èr, sān', uz: '1, 2, 3 (sanoqda)' },
-            { hz: '一个', py: 'yí gè', uz: 'Bitta (4-ton oldida → yí)' },
-            { hz: '一天', py: 'yì tiān', uz: 'Bir kun (1-ton oldida → yì)' },
-            { hz: '一年', py: 'yì nián', uz: 'Bir yil (2-ton oldida → yì)' },
-            { hz: '一起', py: 'yì qǐ', uz: 'Birgalikda (3-ton oldida → yì)' }
+            { hz: '一二三', py: 'yī, èr, sān', sound: 'yiersan', uz: '1, 2, 3 (sanoqda)' },
+            { hz: '一个', py: 'yí gè', sound: 'yige', uz: 'Bitta (4-ton oldida → yí)' },
+            { hz: '一天', py: 'yì tiān', sound: 'yitian', uz: 'Bir kun (1-ton oldida → yì)' },
+            { hz: '一年', py: 'yì nián', sound: 'yinian', uz: 'Bir yil (2-ton oldida → yì)' },
+            { hz: '一起', py: 'yì qǐ', sound: 'yiqi', uz: 'Birgalikda (3-ton oldida → yì)' }
         ]
     }
 ];
@@ -5196,6 +5246,12 @@ let toneQuizStreak = 0;
 let toneQuizUserChoice = null;
 
 function initToneLab(initialTab = 'chart') {
+    const isPitchMode = (initialTab === 'mic');
+    const toneHeader = document.getElementById('toneLabHeaderBanner');
+    const pitchHeader = document.getElementById('pitchLabHeaderBanner');
+    if (toneHeader) toneHeader.hidden = isPitchMode;
+    if (pitchHeader) pitchHeader.hidden = !isPitchMode;
+
     const tabs = document.querySelectorAll('#toneLabTabs .subview-tab');
     const panels = {
         chart: document.getElementById('toneTabChart'),
@@ -5215,6 +5271,16 @@ function initToneLab(initialTab = 'chart') {
 
     tabs.forEach(tab => {
         tab.onclick = () => switchToneTab(tab.dataset.toneTab);
+    });
+
+    const pitchCatTabs = document.querySelectorAll('#pitchCategoryTabs .subview-tab');
+    pitchCatTabs.forEach(pt => {
+        pt.onclick = () => {
+            pitchCatTabs.forEach(t => t.classList.toggle('active', t === pt));
+            micPracticeCategory = pt.dataset.pitchCat || 'tones';
+            micPracticeIndex = 0;
+            initToneMicPractice();
+        };
     });
 
     switchToneTab(initialTab);
@@ -5416,7 +5482,7 @@ function renderSandhiRules() {
             <p class="sandhi-explanation">${trUz(r.exp)}</p>
             <div class="sandhi-examples">
                 ${r.chips.map(c => `
-                    <button type="button" class="sandhi-chip" data-speak="${c.hz}">
+                    <button type="button" class="sandhi-chip" data-sound="${c.sound || ''}" data-speak="${c.hz}">
                         <span>🔊</span>
                         <strong>${c.hz}</strong>
                         <span>(${c.py})</span>
@@ -5428,7 +5494,7 @@ function renderSandhiRules() {
     `).join('');
 
     container.querySelectorAll('.sandhi-chip').forEach(btn => {
-        btn.onclick = () => speakChineseText(btn.dataset.speak, 0.85);
+        btn.onclick = () => playNativeToneSound(btn.dataset.sound, btn.dataset.speak, 1.0);
     });
 }
 
@@ -5646,10 +5712,60 @@ const MIC_PRACTICE_WORDS = [
     { hanzi: '北京', pinyin: 'Běijīng', uzbek: 'Pekin (3-ton + 1-ton)', badge: '3-ton + 1-ton', toneNum: 3, speak: '北京', sound: 'beijing', path: [45, 20, 80] }
 ];
 
+const MIC_PHRASE_WORDS = [
+    { hanzi: '老师', pinyin: 'lǎoshī', uzbek: 'O‘qituvchi / Ustoz (3-ton + 1-ton)', badge: '3-ton + 1-ton', toneNum: 3, speak: '老师', sound: 'laoshi', path: [45, 20, 80, 80] },
+    { hanzi: '朋友', pinyin: 'péngyou', uzbek: 'Do‘st (2-ton + neytral)', badge: '2-ton + Neytral', toneNum: 2, speak: '朋友', sound: 'pengyou', path: [42, 82, 48] },
+    { hanzi: '喜欢', pinyin: 'xǐhuan', uzbek: 'Yoqtirmoq (3-ton + neytral)', badge: '3-ton + Neytral', toneNum: 3, speak: '喜欢', sound: 'xihuan', path: [45, 20, 48] },
+    { hanzi: '高兴', pinyin: 'gāoxìng', uzbek: 'Xursand (1-ton + 4-ton)', badge: '1-ton + 4-ton', toneNum: 1, speak: '高兴', sound: 'gaoxing', path: [82, 82, 85, 25] },
+    { hanzi: '明天', pinyin: 'míngtiān', uzbek: 'Ertaga (2-ton + 1-ton)', badge: '2-ton + 1-ton', toneNum: 2, speak: '明天', sound: 'mingtian', path: [42, 82, 82, 82] },
+    { hanzi: '面条', pinyin: 'miàntiáo', uzbek: 'Lag‘mon (4-ton + 2-ton)', badge: '4-ton + 2-ton', toneNum: 4, speak: '面条', sound: 'miantiao', path: [85, 25, 42, 82] },
+    { hanzi: '电脑', pinyin: 'diànnǎo', uzbek: 'Kompyuter (4-ton + 3-ton)', badge: '4-ton + 3-ton', toneNum: 4, speak: '电脑', sound: 'diannao', path: [85, 25, 45, 18, 68] },
+    { hanzi: '手机', pinyin: 'shǒujī', uzbek: 'Mobil telefon (3-ton + 1-ton)', badge: '3-ton + 1-ton', toneNum: 3, speak: '手机', sound: 'shouji', path: [45, 20, 82, 82] }
+];
+
+let micPracticeCategory = 'tones';
 let micPracticeIndex = 0;
+const micPassedWords = new Set();
+
+function buildPitchPathFromPinyin(py) {
+    if (!py) return [80, 80];
+    const syllables = py.trim().split(/\s+/);
+    const pts = [];
+    for (const s of syllables) {
+        const t = detectSyllableTone(s);
+        if (t === 1) pts.push(82, 82);
+        else if (t === 2) pts.push(42, 82);
+        else if (t === 3) pts.push(45, 18, 68);
+        else if (t === 4) pts.push(85, 24);
+        else pts.push(48);
+    }
+    return pts.length >= 2 ? pts : [80, 80];
+}
+
+function getActiveMicPracticeDeck() {
+    if (micPracticeCategory === 'phrases') return MIC_PHRASE_WORDS;
+    if (micPracticeCategory === 'hsk') {
+        const pool = vocabularyData.filter(w => w.hsk === currentHSK).slice(0, 12);
+        if (pool.length > 0) {
+            return pool.map(w => ({
+                hanzi: w.hanzi,
+                pinyin: w.pinyin,
+                uzbek: getWordMeaning(w),
+                badge: `HSK ${w.hsk} · Dars ${w.lesson || 1}`,
+                toneNum: detectSyllableTone(w.pinyin),
+                speak: w.hanzi,
+                sound: WORD_STUDIO_MAP[w.hanzi] || null,
+                path: buildPitchPathFromPinyin(w.pinyin)
+            }));
+        }
+    }
+    return MIC_PRACTICE_WORDS;
+}
 
 function initToneMicPractice() {
-    const word = MIC_PRACTICE_WORDS[micPracticeIndex % MIC_PRACTICE_WORDS.length];
+    const deck = getActiveMicPracticeDeck();
+    const word = deck[micPracticeIndex % deck.length];
+    const strip = document.getElementById('toneMicWordStrip');
     const badge = document.getElementById('toneMicBadge');
     const hanzi = document.getElementById('toneMicHanzi');
     const pinyin = document.getElementById('toneMicPinyin');
@@ -5661,6 +5777,22 @@ function initToneMicPractice() {
     const feedback = document.getElementById('toneMicFeedback');
 
     if (!word || !hanzi) return;
+
+    if (strip) {
+        const activeIdx = micPracticeIndex % deck.length;
+        strip.innerHTML = deck.map((item, idx) => {
+            const isAct = idx === activeIdx ? 'active' : '';
+            const isPass = micPassedWords.has(item.hanzi) ? 'passed' : '';
+            const chk = micPassedWords.has(item.hanzi) ? '<span class="tm-chip-check">✓</span>' : '';
+            return `<button type="button" class="tm-word-chip ${isAct} ${isPass}" data-idx="${idx}">${chk}<span>${item.hanzi}</span></button>`;
+        }).join('');
+        strip.querySelectorAll('.tm-word-chip').forEach(chip => {
+            chip.onclick = () => {
+                micPracticeIndex = parseInt(chip.dataset.idx, 10) || 0;
+                initToneMicPractice();
+            };
+        });
+    }
 
     if (badge) badge.textContent = trUz(word.badge);
     if (hanzi) hanzi.textContent = word.hanzi;
@@ -5688,7 +5820,7 @@ function initToneMicPractice() {
                 try { activeSpeechRecognition.stop(); } catch (e) {}
                 activeSpeechRecognition = null;
             }
-            micPracticeIndex++;
+            micPracticeIndex = (micPracticeIndex + 1) % deck.length;
             initToneMicPractice();
         };
     }
@@ -5700,18 +5832,17 @@ function initToneMicPractice() {
                 if (feedback) {
                     feedback.hidden = false;
                     feedback.className = 'speak-feedback-banner feedback-retry';
-                    feedback.innerHTML = `ℹ️ <strong>Ovoz tanish mavjud emas.</strong><br>Brauzeringizda nutqni avtomatik aniqlash qo‘llab-quvvatlanmaydi. Namunani eshitib o‘zingiz takrorlang!`;
+                    feedback.innerHTML = `ℹ️ <strong>${trUz('Ovoz tanish mavjud emas.')}</strong><br>${trUz('Brauzeringizda nutqni avtomatik aniqlash qo‘llab-quvvatlanmaydi. Namunani eshitib o‘zingiz takrorlang!')}`;
                 }
-                speakChineseText(word.speak, 0.85);
+                playNativeToneSound(word.sound, word.speak, 0.9);
                 return;
             }
 
-            // If already recording, stop early
             if (activeSpeechRecognition) {
                 try { activeSpeechRecognition.stop(); } catch (e) {}
                 activeSpeechRecognition = null;
                 recordBtn.classList.remove('is-recording');
-                recordBtn.innerHTML = '<span>🎙️ Aytib tekshirish</span>';
+                recordBtn.innerHTML = `<span>🎙️ ${trUz('Talaffuz')}</span>`;
                 recordBtn.disabled = false;
                 return;
             }
@@ -5724,80 +5855,119 @@ function initToneMicPractice() {
                 rec.maxAlternatives = 5;
 
                 recordBtn.classList.add('is-recording');
-                recordBtn.innerHTML = '<span>🎙️ Tinglanmoqda... (Gapiring)</span>';
+                recordBtn.innerHTML = `<span>🎙️ ${trUz('Tinglanmoqda...')}</span>`;
                 recordBtn.disabled = false;
 
                 if (feedback) {
                     feedback.hidden = false;
                     feedback.className = 'speak-feedback-banner is-listening';
-                    feedback.innerHTML = `🎙️ Mikrofonga <strong>“${word.hanzi}”</strong> deb ayting...`;
+                    feedback.innerHTML = `🎙️ ${trUz('Mikrofonga')} <strong>“${word.hanzi}”</strong> (${word.pinyin}) ${trUz('deb ayting...')}`;
                 }
 
                 rec.onresult = (event) => {
                     const transcripts = [];
+                    const confidences = [];
                     for (let i = 0; i < event.results[0].length; i++) {
                         transcripts.push(event.results[0][i].transcript.trim());
+                        confidences.push(event.results[0][i].confidence || 0.85);
                     }
                     const heard = transcripts[0] || '';
-                    const cleanTarget = (word.speak || word.hanzi || '').replace(/[,?!?\s.,!?]/g, '');
-                    const cleanHeard = heard.replace(/[,?!?\s.,!?]/g, '');
-                    const targetSound = (word.sound || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                    const pinyinNoTone = (word.pinyin || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+                    const topConf = confidences[0] || 0.85;
 
-                    let isDirectMatch = false;
-                    for (const t of transcripts) {
-                        const cleanT = t.replace(/[,?!?\s.,!?]/g, '');
-                        if (cleanTarget && (cleanT === cleanTarget || cleanT.includes(cleanTarget) || cleanTarget.includes(cleanT))) {
-                            isDirectMatch = true;
+                    const cleanTarget = (word.speak || word.hanzi || '').replace(/[，。！？\s.,!?]/g, '');
+                    const cleanHeard = heard.replace(/[，。！？\s.,!?]/g, '');
+                    const targetSound = (word.sound || '').toLowerCase().replace(/[^a-z]/g, '');
+                    const basePyPart = (word.pinyin || '').split('→')[0].trim();
+                    const pinyinNoTone = basePyPart.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '');
+
+                    let matchTier = 'none'; // 'exact' | 'alt' | 'tone_mismatch' | 'partial' | 'none'
+                    let score = 0;
+
+                    for (let idx = 0; idx < transcripts.length; idx++) {
+                        const cleanT = transcripts[idx].replace(/[，。！？\s.,!?]/g, '');
+                        if (!cleanT || !cleanTarget) continue;
+
+                        // 1. Exact Hanzi match (ASR recognized exact characters & tones)
+                        if (cleanT === cleanTarget || (cleanT.length <= cleanTarget.length + 2 && cleanT.includes(cleanTarget))) {
+                            matchTier = (idx === 0) ? 'exact' : 'alt';
+                            score = (idx === 0) ? Math.min(99, Math.max(88, Math.round(topConf * 100))) : Math.max(78, 86 - idx * 3);
                             break;
                         }
-                        const cleanTRoman = cleanT.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-                        if (targetSound && (cleanTRoman === targetSound || cleanTRoman.includes(targetSound) || targetSound.includes(cleanTRoman))) {
-                            isDirectMatch = true;
-                            break;
-                        }
-                        if (pinyinNoTone && cleanTRoman && (cleanTRoman === pinyinNoTone || cleanTRoman.includes(pinyinNoTone) || pinyinNoTone.includes(cleanTRoman))) {
-                            isDirectMatch = true;
-                            break;
-                        }
+
+                        // 2. Check Pinyin of heard Chinese characters
                         const tPinyin = getPinyinForText(cleanT);
                         if (tPinyin) {
-                            const tPyClean = tPinyin.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-                            if (tPyClean === targetSound || tPyClean === pinyinNoTone) {
-                                isDirectMatch = true;
-                                break;
+                            const tPyNoTone = tPinyin.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '');
+                            if (tPyNoTone && (tPyNoTone === targetSound || tPyNoTone === pinyinNoTone)) {
+                                // Same syllable but different Hanzi/tone!
+                                if (matchTier === 'none') {
+                                    matchTier = 'tone_mismatch';
+                                    score = 62;
+                                }
                             }
+                        }
+
+                        // 3. Romanized check ONLY if transcript actually contains Latin letters
+                        const cleanTRoman = cleanT.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '');
+                        if (cleanTRoman.length >= 2 && (cleanTRoman === targetSound || cleanTRoman === pinyinNoTone)) {
+                            matchTier = 'exact';
+                            score = 88;
+                            break;
                         }
                     }
 
-                    // Character overlap calculation
+                    // 4. Partial character overlap (e.g., 1 of 2 characters right)
                     let matchCount = 0;
                     for (const ch of cleanTarget) {
                         if (cleanHeard.includes(ch)) matchCount++;
                     }
                     const charRatio = cleanTarget.length > 0 ? matchCount / cleanTarget.length : 0;
-                    const isSuccess = isDirectMatch || charRatio >= 0.65;
+                    if (matchTier === 'none' && matchCount > 0) {
+                        if (charRatio >= 1.0) {
+                            matchTier = 'exact';
+                            score = 90;
+                        } else {
+                            matchTier = 'partial';
+                            score = Math.round(48 + charRatio * 24);
+                        }
+                    }
 
-                    if (isSuccess) {
-                        const score = isDirectMatch ? Math.floor(94 + Math.random() * 6) : Math.floor(82 + Math.random() * 10);
-                        const userCurve = word.path.map(v => v + (Math.random() * 4 - 2));
+                    if (matchTier === 'exact' || matchTier === 'alt') {
+                        micPassedWords.add(word.hanzi);
+                        const jitter = matchTier === 'exact' ? 2 : 5;
+                        const userCurve = word.path.map((v, i) => Math.max(10, Math.min(95, v + ((i % 2 === 0 ? 1 : -1) * jitter))));
                         drawTonePitchGuideline(word.path, userCurve);
+
+                        if (strip) {
+                            const activeChip = strip.querySelector(`.tm-word-chip[data-idx="${micPracticeIndex % deck.length}"]`);
+                            if (activeChip && !activeChip.classList.contains('passed')) {
+                                activeChip.classList.add('passed');
+                                activeChip.innerHTML = `<span class="tm-chip-check">✓</span><span>${word.hanzi}</span>`;
+                            }
+                        }
 
                         if (feedback) {
                             feedback.className = 'speak-feedback-banner feedback-correct';
-                            feedback.innerHTML = `🎉 <strong>Ajoyib talaffuz (${score}%)!</strong><br>Eshitildi: “<strong>${escapeHtml(heard)}</strong>” — Ton konturingiz namunaga to‘liq mos tushdi! (+15 XP)`;
+                            feedback.innerHTML = `🎉 <strong>${trUz('Ajoyib talaffuz')} (${score}%)!</strong><br>${trUz('Eshitildi')}: “<strong>${escapeHtml(heard)}</strong>” — ${trUz('Ton konturingiz namunaga to‘liq mos tushdi!')} (+15 XP)`;
                         }
                         if (typeof triggerHapticSuccess === 'function') triggerHapticSuccess();
                         addXP(15);
                         playSuccessSound();
+                    } else if (matchTier === 'tone_mismatch') {
+                        const userCurve = word.path.map((v, i) => Math.max(15, Math.min(90, 95 - v + (i * 5))));
+                        drawTonePitchGuideline(word.path, userCurve);
+                        if (feedback) {
+                            feedback.className = 'speak-feedback-banner feedback-retry';
+                            feedback.innerHTML = `⚠️ <strong>${trUz('Bo‘g‘in to‘g‘ri, lekin ton farq qildi')} (${score}%).</strong><br>${trUz('Eshitildi')}: “<strong>${escapeHtml(heard)}</strong>” — ${trUz('Kerakli so‘z')}: “<strong>${word.hanzi}</strong>” (${word.pinyin}).<br>${trUz('“🔊 Ovoz” tugmasini bosib, ton balandligiga e’tibor berib qayta ayting.')}`;
+                        }
                     } else {
-                        const score = Math.max(25, Math.floor(charRatio * 70));
-                        const userCurve = word.path.map((v, i) => Math.max(10, Math.min(95, v + (i % 2 === 0 ? 18 : -18))));
+                        const lowScore = matchTier === 'partial' ? score : (cleanHeard ? 15 : 0);
+                        const userCurve = word.path.map((_, i) => (i % 2 === 0 ? 35 : 42));
                         drawTonePitchGuideline(word.path, userCurve);
 
                         if (feedback) {
                             feedback.className = 'speak-feedback-banner feedback-retry';
-                            feedback.innerHTML = `🔄 <strong>Biroz noaniq eshitildi (${score}%).</strong><br>Eshitildi: “${escapeHtml(heard || '...') || 'boshqa so‘z'}” (Kerakli so‘z: “${word.hanzi}”)<br>“🔊 Namuna” tugmasini eshitib, ohangni to‘g‘ri saqlab qaytadan ayting.`;
+                            feedback.innerHTML = `❌ <strong>${trUz('Boshqa so‘z eshitildi')} (${lowScore}%).</strong><br>${trUz('Eshitildi')}: “${escapeHtml(heard || '...')}” (${trUz('Kerakli so‘z')}: “<strong>${word.hanzi}</strong>” — ${word.pinyin})<br>${trUz('“🔊 Ovoz” tugmasini eshitib, ohangni to‘g‘ri saqlab qaytadan ayting.')}`;
                         }
                     }
                 };
@@ -5807,20 +5977,20 @@ function initToneMicPractice() {
                     if (feedback) {
                         feedback.className = 'speak-feedback-banner feedback-retry';
                         if (err === 'no-speech') {
-                            feedback.innerHTML = `⚠️ <strong>Ovoz eshitilmadi.</strong> Mikrofonga yaqinroq va balandroq ovozda “${word.hanzi}” deb ayting.`;
+                            feedback.innerHTML = `⚠️ <strong>${trUz('Ovoz eshitilmadi.')}</strong> ${trUz('Mikrofonga yaqinroq va balandroq ovozda')} “${word.hanzi}” ${trUz('deb ayting.')}`;
                         } else if (err === 'not-allowed') {
-                            feedback.innerHTML = `🚫 <strong>Mikrofon ruxsati berilmagan.</strong> Brauzer sozlamalaridan mikrofon ruxsatini yoqing.`;
+                            feedback.innerHTML = `🚫 <strong>${trUz('Mikrofon ruxsati berilmagan.')}</strong> ${trUz('Brauzer sozlamalaridan mikrofon ruxsatini yoqing.')}`;
                         } else if (err === 'network') {
-                            feedback.innerHTML = `🌐 <strong>Internet aloqasi sust.</strong> Ovozni tekshirish uchun internet aloqasi kerak.`;
+                            feedback.innerHTML = `🌐 <strong>${trUz('Internet aloqasi sust.')}</strong> ${trUz('Ovozni tekshirish uchun internet aloqasi kerak.')}`;
                         } else {
-                            feedback.innerHTML = `⚠️ <strong>Ovoz aniqlanmadi.</strong> Iltimos qaytadan urinib ko‘ring.`;
+                            feedback.innerHTML = `⚠️ <strong>${trUz('Ovoz aniqlanmadi.')}</strong> ${trUz('Iltimos qaytadan urinib ko‘ring.')}`;
                         }
                     }
                 };
 
                 rec.onend = () => {
                     recordBtn.classList.remove('is-recording');
-                    recordBtn.innerHTML = '<span>🎙️ Aytib tekshirish</span>';
+                    recordBtn.innerHTML = `<span>🎙️ ${trUz('Talaffuz')}</span>`;
                     recordBtn.disabled = false;
                     activeSpeechRecognition = null;
                 };
@@ -5828,7 +5998,7 @@ function initToneMicPractice() {
                 rec.start();
             } catch (err) {
                 recordBtn.classList.remove('is-recording');
-                recordBtn.innerHTML = '<span>🎙️ Aytib tekshirish</span>';
+                recordBtn.innerHTML = `<span>🎙️ ${trUz('Talaffuz')}</span>`;
                 recordBtn.disabled = false;
                 activeSpeechRecognition = null;
             }
@@ -7066,6 +7236,7 @@ var EC_I18N = {
         'tone.compareBoth': '▶️ Ikkalasini solishtirish', 'tone.pairsTitle': "Ton o'zgarsa — ma'no butkul o'zgaradi!",
         'tone.pairsKicker': "Xitoyda eng ko'p adashtiriladigan hayotiy so'zlar: «买 (sotib olmoq) vs 卖 (sotmoq)», «四 (4) vs 十 (10)»",
         'pinyin.tabInitials': 'Undoshlar', 'pinyin.tabFinals': 'Unlilar', 'pinyin.tabMatrix': 'Matritsa', 'pinyin.tabRules': 'Qoidalar',
+        'pitch.catTones': 'Ton Juftliklari', 'pitch.catHsk': "HSK So'zlari", 'pitch.catPhrases': 'Jonli Iboralar',
         'pinyin.initialsTitle': '声母 (Shēngmǔ) — Undosh tovushlar (23 ta):',
         'pinyin.initialsDesc': "Xitoy tilidagi bo'g'in boshlovchi undoshlar. Kartochkani bosib standart talaffuzini tinglang.",
         'pinyin.finalsTitle': '韵母 (Yùnmǔ) — Unli tovushlar (24 ta):',
@@ -7354,6 +7525,7 @@ var EC_I18N = {
         'tone.compareBoth': '▶️ Сравнить оба', 'tone.pairsTitle': 'Меняется тон — полностью меняется смысл!',
         'tone.pairsKicker': 'Самые частые пары слов: «买 (купить) vs 卖 (продать)», «四 (4) vs 十 (10)»',
         'pinyin.tabInitials': 'Инициали', 'pinyin.tabFinals': 'Финали', 'pinyin.tabMatrix': 'Матрица', 'pinyin.tabRules': 'Правила',
+        'pitch.catTones': 'Пары тонов', 'pitch.catHsk': 'Слова HSK', 'pitch.catPhrases': 'Живые фразы',
         'pinyin.initialsTitle': '声母 (Shēngmǔ) — Согласные (23):',
         'pinyin.initialsDesc': 'Начальные согласные китайского слога. Нажмите на карточку, чтобы прослушать произношение.',
         'pinyin.finalsTitle': '韵母 (Yùnmǔ) — Финали / гласные (24):',
@@ -7498,6 +7670,7 @@ var EC_I18N = {
         'tone.compareBoth': '▶️ Compare both', 'tone.pairsTitle': 'Change the tone — change the entire meaning!',
         'tone.pairsKicker': 'Most commonly confused words: «买 (buy) vs 卖 (sell)», «四 (4) vs 十 (10)»',
         'pinyin.tabInitials': 'Initials', 'pinyin.tabFinals': 'Finals', 'pinyin.tabMatrix': 'Matrix', 'pinyin.tabRules': 'Rules',
+        'pitch.catTones': 'Tone Pairs', 'pitch.catHsk': 'HSK Words', 'pitch.catPhrases': 'Live Phrases',
         'pinyin.initialsTitle': '声母 (Shēngmǔ) — Initial Consonants (23):',
         'pinyin.initialsDesc': 'Syllable-initial consonants in Mandarin. Tap any card to hear native pronunciation.',
         'pinyin.finalsTitle': '韵母 (Yùnmǔ) — Finals / Vowels (24):',
@@ -7642,6 +7815,7 @@ var EC_I18N = {
         'tone.compareBoth': '▶️ Экөөнү салыштыруу', 'tone.pairsTitle': 'Тон өзгөрсө — маани толугу менен өзгөрөт!',
         'tone.pairsKicker': 'Кытайда эң көп алмаштырылган сөздөр: «买 (сатып алуу) vs 卖 (сатуу)», «四 (4) vs 十 (10)»',
         'pinyin.tabInitials': 'Үнсүздөр', 'pinyin.tabFinals': 'Үндүүлөр', 'pinyin.tabMatrix': 'Матрица', 'pinyin.tabRules': 'Эрежелер',
+        'pitch.catTones': 'Тон жуптары', 'pitch.catHsk': 'HSK сөздөрү', 'pitch.catPhrases': 'Жандуу сөздөр',
         'pinyin.initialsTitle': '声母 (Shēngmǔ) — Үнсүз тыбыштар (23):',
         'pinyin.initialsDesc': 'Кытай тилиндеги муун баштоочу үнсүздөр. Карточканы басып стандарттык айтылышын угуңуз.',
         'pinyin.finalsTitle': '韵母 (Yùnmǔ) — Үндүү тыбыштар (24):',
