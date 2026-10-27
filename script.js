@@ -4580,7 +4580,7 @@ function playNativeToneSound(soundName, fallbackHz = null, rate = 1.0) {
         }
         if (soundName) {
             const cleanKey = String(soundName).trim().toLowerCase().replace(/ü/g, 'v');
-            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3`);
+            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=46`);
             activeToneAudio = audio;
             audio.playbackRate = rate;
             audio.preservesPitch = true;
