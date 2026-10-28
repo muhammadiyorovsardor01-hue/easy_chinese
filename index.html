@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=47">
+    <link rel="stylesheet" href="styles.css?v=48">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -37,12 +37,10 @@
                 <span class="header-hsk-pill" id="headerHskBadge">HSK 1</span>
             </div>
             <div class="header-stats">
-                <span class="header-stat-pill streak-pill" aria-label="Day Streak">🔥 <span id="headerStreak">0</span></span>
-                <span class="header-stat-pill xp-pill" aria-label="Total XP">⭐ <span id="headerXP">0</span></span>
-                <button class="leaderboard-btn" id="leaderboard-btn" type="button" aria-label="Open leaderboard">🏆</button>
-                <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
-                    <span class="sun-icon" aria-hidden="true">☀️</span>
-                    <span class="moon-icon" aria-hidden="true">🌙</span>
+                <span class="header-stat-pill streak-pill" aria-label="Day Streak">&#x1F525; <span id="headerStreak">0</span></span>
+                <span class="header-stat-pill xp-pill" aria-label="Total XP">&#x2B50; <span id="headerXP">0</span></span>
+                <button class="header-profile-btn" id="headerProfileBtn" type="button" aria-label="Mening profilim" title="Mening profilim">
+                    <span id="headerProfileAvatar">&#x1F464;</span>
                 </button>
             </div>
         </div>
@@ -268,8 +266,8 @@
                     </div>
                 </div>
                 
-                <!-- Main Action Buttons (Audio, Speak, Draw, Next) -->
-                <div class="action-buttons">
+                <!-- Main Action Buttons (3 Primary Actions: Audio, Speak, Next) -->
+                <div class="action-buttons action-buttons-streamlined">
                     <button class="action-btn audio-action-btn" id="audioBtn" aria-label="Play pronunciation">
                         <span class="btn-icon">&#x1F50A;</span>
                         <span class="btn-label" data-i18n="card.audio">Ovoz</span>
@@ -278,24 +276,29 @@
                         <span class="btn-icon">&#x1F399;&#xFE0F;</span>
                         <span class="btn-label" id="speakPracticeLabel" data-i18n="card.speak">Talaffuz</span>
                     </button>
-                    <button class="action-btn draw-action-btn" id="strokeBtn" aria-label="Show stroke order">
-                        <span class="btn-icon">&#x270F;&#xFE0F;</span>
-                        <span class="btn-label" data-i18n="card.draw">Chizish</span>
-                    </button>
                     <button class="action-btn next-action-btn" id="nextCard" aria-label="Next card">
                         <span class="btn-icon">&#x27A1;&#xFE0F;</span>
                         <span class="btn-label" id="nextCardLabel" data-i18n="card.next">Keyingi</span>
                     </button>
                 </div>
                 <div id="speakFeedbackBanner" class="speak-feedback-banner" hidden aria-live="polite"></div>
-                
-                <!-- Secondary Controls -->
-                <div class="secondary-controls">
-                    <button class="secondary-btn" id="prevCard" data-i18n="card.prev">&larr; Oldingi</button>
-                    <button class="secondary-btn" id="shuffleCards" data-i18n="card.shuffle">&#x1F500; Aralashtirish</button>
-                    <button class="secondary-btn" id="bookmarkWordBtn" type="button" data-i18n="card.bookmark">&#x2B50; Saqlash</button>
-                    <button class="secondary-btn" id="markLearned" data-i18n="card.learned">&#x2713; Bilaman</button>
-                </div>
+
+                <!-- Collapsible Secondary Tools Drawer -->
+                <details class="flashcard-more-drawer" id="flashcardMoreDrawer">
+                    <summary class="flashcard-more-summary">
+                        <span class="more-summary-title">&#x2728; Qo'shimcha amallar</span>
+                        <span class="more-summary-hint">Chizish &middot; Saqlash &middot; Bilaman &middot; Oldingi</span>
+                    </summary>
+                    <div class="secondary-controls">
+                        <button class="secondary-btn" id="prevCard" data-i18n="card.prev">&larr; Oldingi</button>
+                        <button class="secondary-btn draw-action-btn" id="strokeBtn" type="button" aria-label="Show stroke order">
+                            <span>&#x270F;&#xFE0F;</span> <span data-i18n="card.draw">Chizish</span>
+                        </button>
+                        <button class="secondary-btn" id="bookmarkWordBtn" type="button" data-i18n="card.bookmark">&#x2B50; Saqlash</button>
+                        <button class="secondary-btn" id="markLearned" data-i18n="card.learned">&#x2713; Bilaman</button>
+                        <button class="secondary-btn" id="shuffleCards" data-i18n="card.shuffle">&#x1F500; Aralashtirish</button>
+                    </div>
+                </details>
                 
                 <div class="card-counter">
                     <span id="currentCard">1</span> / <span id="totalCards">5</span>
@@ -546,13 +549,20 @@
         <section id="profile" class="view">
             <div class="profile-page-head">
                 <div>
-                    <span class="view-kicker">个人中心 · <span data-i18n="profile.kicker">Shaxsiy kabinet</span></span>
+                    <span class="view-kicker">&#x4E2A;&#x4EBA;&#x4E2D;&#x5FC3; &middot; <span data-i18n="profile.kicker">Shaxsiy kabinet</span></span>
                     <h2 class="section-title" data-i18n="profile.title">Mening profilim</h2>
                 </div>
-                <button type="button" class="settings-gear-btn" id="openSettingsBtn" aria-label="Sozlamalar" data-i18n-aria="settings.title">
-                    <span class="gear-icon" aria-hidden="true">⚙️</span>
-                    <span class="gear-label" data-i18n="settings.short">Sozlamalar</span>
-                </button>
+                <div class="profile-head-actions">
+                    <button class="leaderboard-btn" id="leaderboard-btn" type="button" aria-label="Open leaderboard" title="Peshqadamlar">&#x1F3C6;</button>
+                    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Tungi / Kunduzgi rejim">
+                        <span class="sun-icon" aria-hidden="true">&#x2600;&#xFE0F;</span>
+                        <span class="moon-icon" aria-hidden="true">&#x1F319;</span>
+                    </button>
+                    <button type="button" class="settings-gear-btn" id="openSettingsBtn" aria-label="Sozlamalar" data-i18n-aria="settings.title">
+                        <span class="gear-icon" aria-hidden="true">&#x2699;&#xFE0F;</span>
+                        <span class="gear-label" data-i18n="settings.short">Sozlamalar</span>
+                    </button>
+                </div>
             </div>
             
             <!-- 1. Bento ID Card + Live Level XP Bar -->
@@ -818,36 +828,40 @@
                 <p class="lessons-kicker" data-i18n="practice.kicker">Tonlar, jonli muloqot, so‘zlar va viktorinalar orqali xitoy tilingizni charxlang</p>
             </div>
 
-            <!-- Group 1: Fonetika & Tonlar -->
-            <div class="practice-group-section">
-                <h3 class="practice-group-heading">🎵 <span data-i18n="practice.g1">Fonetika &amp; Pinyin Asoslari</span> (语音与拼音)</h3>
+            <!-- 1-XONA: Ovoz va Talaffuz (Fonetika ustaxonasi) -->
+            <div class="practice-group-section practice-room-card room-phonetics">
+                <div class="practice-room-head">
+                    <span class="practice-room-badge">1-XONA &middot; &#x8BED;&#x97F3;&#x5DE5;&#x574A;</span>
+                    <h3 class="practice-group-heading">&#x1F399;&#xFE0F; <span data-i18n="practice.g1">Ovoz va Talaffuz (Fonetika)</span></h3>
+                    <p class="practice-room-sub">Xitoycha tovushlar, 4 ta ton va mikrofonda talaffuzni tekshirish</p>
+                </div>
                 <div class="practice-tiles-grid">
                     <button type="button" class="hub-tile-card tile-pinyin" id="hubOpenPinyinChartBtn">
-                        <div class="hub-tile-icon pinyin-icon">🎹</div>
+                        <div class="hub-tile-icon pinyin-icon">&#x1F3B9;</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
                                 <strong data-i18n="practice.tile.pinyin.title">Interaktiv Pinyin Jadvali</strong>
                                 <span class="hub-pill-badge hub-pill-new" data-i18n="practice.tile.pinyin.badge">23 Undosh + 24 Unli + Ovoz</span>
                             </div>
-                            <p data-i18n="practice.tile.pinyin.desc">Barcha 声母 va 韵母 tovushlari, to'liq kombinatsiyalar matritsasi va muhim o'qish qoidalari</p>
+                            <p data-i18n="practice.tile.pinyin.desc">Barcha &#x58F0;&#x6BCD; va &#x97F5;&#x6BCD; tovushlari, to'liq kombinatsiyalar matritsasi va muhim o'qish qoidalari</p>
                         </div>
-                        <span class="hub-tile-arrow">→</span>
+                        <span class="hub-tile-arrow">&rarr;</span>
                     </button>
 
                     <button type="button" class="hub-tile-card tile-tone" id="hubOpenToneBtn">
-                        <div class="hub-tile-icon tone-icon">🎵</div>
+                        <div class="hub-tile-icon tone-icon">&#x1F3B5;</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
                                 <strong data-i18n="practice.tile.tone.title">Tonlar Laboratoriyasi</strong>
                                 <span class="hub-pill-badge" data-i18n="practice.tile.tone.badge">4 Ton + Sandhi</span>
                             </div>
-                            <p data-i18n="practice.tile.tone.desc">1-4 tonlar grafigi, o'xshash so'zlar (mā/má/mǎ/mà) va eshitib topish viktorinasi</p>
+                            <p data-i18n="practice.tile.tone.desc">1-4 tonlar grafigi, o'xshash so'zlar (m&#x101;/m&#xE1;/m&#x1CE;/m&#xE0;) va eshitib topish viktorinasi</p>
                         </div>
-                        <span class="hub-tile-arrow">→</span>
+                        <span class="hub-tile-arrow">&rarr;</span>
                     </button>
 
                     <button type="button" class="hub-tile-card tile-mic" id="hubOpenPitchBtn">
-                        <div class="hub-tile-icon mic-icon">🎙️</div>
+                        <div class="hub-tile-icon mic-icon">&#x1F399;&#xFE0F;</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
                                 <strong data-i18n="practice.tile.pitch.title">Talaffuz va Pitch Mashqi</strong>
@@ -855,49 +869,67 @@
                             </div>
                             <p data-i18n="practice.tile.pitch.desc">Mikrofonga aytib, ovoz konturingiz to'g'ri tushayotganini tekshiring</p>
                         </div>
-                        <span class="hub-tile-arrow">→</span>
+                        <span class="hub-tile-arrow">&rarr;</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Group 2: Real Xitoy Hayoti -->
-            <div class="practice-group-section">
-                <h3 class="practice-group-heading">🏮 <span data-i18n="practice.g2">Xitoyda Jonli Hayot &amp; Muloqot</span> (情景口语)</h3>
-                <div class="practice-tiles-grid">
-                    <button type="button" class="hub-tile-card tile-survival" id="hubOpenSurvivalBtn">
-                        <div class="hub-tile-icon surv-icon">🏮</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong data-i18n="practice.tile.survival.title">Xitoyda Kunlik Muloqot</strong>
-                                <span class="hub-pill-badge" data-i18n="practice.tile.survival.badge">Jonli iboralar</span>
-                            </div>
-                            <p data-i18n="practice.tile.survival.desc">Darsda (教室), oshxonada (食堂), WeChat to'lov (微信), metro va kuryer (外卖) gaplari</p>
-                        </div>
-                        <span class="hub-tile-arrow">→</span>
-                    </button>
-
-
+            <!-- 2-XONA: Iyerogliflar ustaxonasi -->
+            <div class="practice-group-section practice-room-card room-hanzi">
+                <div class="practice-room-head">
+                    <span class="practice-room-badge">2-XONA &middot; &#x6C49;&#x5B57;&#x5DE5;&#x574A;</span>
+                    <h3 class="practice-group-heading">&#x270D;&#xFE0F; <span>Iyerogliflar Ustaxonasi</span></h3>
+                    <p class="practice-room-sub">Iyeroglif kalitlari (radikallar), tuzilish mantiqi va chizish mashqi</p>
                 </div>
-            </div>
-
-            <!-- Group 3: So'z Boyligi & Xotira Mashqi -->
-            <div class="practice-group-section">
-                <h3 class="practice-group-heading">🧠 <span data-i18n="practice.g3">So'z Boyligi va Xotira Mashqi</span> (词汇与记忆)</h3>
                 <div class="practice-tiles-grid">
                     <button type="button" class="hub-tile-card tile-radicals" id="hubOpenRadicalsBtn">
-                        <div class="hub-tile-icon radicals-icon">🧩</div>
+                        <div class="hub-tile-icon radicals-icon">&#x1F9E9;</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
                                 <strong data-i18n="practice.tile.radicals.title">Iyeroglif Kalitlari (Radikallar)</strong>
                                 <span class="hub-pill-badge hub-pill-new" data-i18n="practice.tile.radicals.badge">30 Kalit + Anatomiya + Test</span>
                             </div>
-                            <p data-i18n="practice.tile.radicals.desc">Iyerogliflarning mantiqiy ildizlari (氵suv, 扌qo'l, 口og'iz, 亻odam), harf tuzilishi formulalari va viktorina</p>
+                            <p data-i18n="practice.tile.radicals.desc">Iyerogliflarning mantiqiy ildizlari (&#x6C35;suv, &#x624C;qo'l, &#x53E3;og'iz, &#x4EBB;odam), harf tuzilishi formulalari va viktorina</p>
                         </div>
-                        <span class="hub-tile-arrow">→</span>
+                        <span class="hub-tile-arrow">&rarr;</span>
+                    </button>
+
+                    <button type="button" class="hub-tile-card tile-canvas" id="hubOpenCanvasBtn">
+                        <div class="hub-tile-icon canvas-icon">&#x1F58C;&#xFE0F;</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong>Iyeroglif Chizish (Xattotlik)</strong>
+                                <span class="hub-pill-badge">Hanzi Yozuv Doskasi</span>
+                            </div>
+                            <p>Chiziqlar ketma-ketligi (Stroke Order) bo'yicha iyerogliflarni qo'lda chizib mashq qiling</p>
+                        </div>
+                        <span class="hub-tile-arrow">&rarr;</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3-XONA: Mashq va Qaytarish -->
+            <div class="practice-group-section practice-room-card room-review">
+                <div class="practice-room-head">
+                    <span class="practice-room-badge">3-XONA &middot; &#x5B9E;&#x6218;&#x4E0E;&#x590D;&#x4E60;</span>
+                    <h3 class="practice-group-heading">&#x1F4DA; <span data-i18n="practice.g3">Mashq va Qaytarish</span></h3>
+                    <p class="practice-room-sub">Kunlik jonli iboralar, 3D kartochkalar va xatolar ustida ishlash</p>
+                </div>
+                <div class="practice-tiles-grid">
+                    <button type="button" class="hub-tile-card tile-survival" id="hubOpenSurvivalBtn">
+                        <div class="hub-tile-icon surv-icon">&#x1F3EE;</div>
+                        <div class="hub-tile-content">
+                            <div class="hub-tile-header">
+                                <strong data-i18n="practice.tile.survival.title">Xitoyda Kunlik Muloqot</strong>
+                                <span class="hub-pill-badge" data-i18n="practice.tile.survival.badge">Jonli iboralar</span>
+                            </div>
+                            <p data-i18n="practice.tile.survival.desc">Darsda (&#x6559;&#x5BA4;), oshxonada (&#x98DF;&#x5802;), WeChat to'lov (&#x5FAE;&#x4FE1;), metro va kuryer (&#x5916;&#x5356;) gaplari</p>
+                        </div>
+                        <span class="hub-tile-arrow">&rarr;</span>
                     </button>
 
                     <button type="button" class="hub-tile-card tile-flashcards" id="hubOpenFlashcardsBtn">
-                        <div class="hub-tile-icon card-icon">🗂️</div>
+                        <div class="hub-tile-icon card-icon">&#x1F5C2;&#xFE0F;</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
                                 <strong data-i18n="practice.tile.cards.title">Interaktiv Kartochkalar Trenajyori</strong>
@@ -905,11 +937,11 @@
                             </div>
                             <p data-i18n="practice.tile.cards.desc">3D aylanuvchi kartochkalar, audio talaffuz va o'z-o'zini baholash (Bilaman / Qaytarish)</p>
                         </div>
-                        <span class="hub-tile-arrow">→</span>
+                        <span class="hub-tile-arrow">&rarr;</span>
                     </button>
 
                     <button type="button" class="hub-tile-card tile-mistakes" id="hubOpenMistakesBtn">
-                        <div class="hub-tile-icon review-icon">🧠</div>
+                        <div class="hub-tile-icon review-icon">&#x1F9E0;</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
                                 <strong data-i18n="practice.tile.mistakes.title">Xatolar Ustida Ishlash</strong>
@@ -917,11 +949,11 @@
                             </div>
                             <p data-i18n="practice.tile.mistakes.desc">Dars va testlarda xato bo'lgan so'zlarni qayta mustahkamlash</p>
                         </div>
-                        <span class="hub-tile-arrow">→</span>
+                        <span class="hub-tile-arrow">&rarr;</span>
                     </button>
 
                     <button type="button" class="hub-tile-card tile-bookmarks" id="hubOpenBookmarksBtn">
-                        <div class="hub-tile-icon fav-icon">⭐</div>
+                        <div class="hub-tile-icon fav-icon">&#x2B50;</div>
                         <div class="hub-tile-content">
                             <div class="hub-tile-header">
                                 <strong data-i18n="practice.tile.bookmarks.title">Saqlangan So'zlar</strong>
@@ -929,7 +961,7 @@
                             </div>
                             <p data-i18n="practice.tile.bookmarks.desc">O'zingiz yulduzcha qo'ygan maxsus so'zlar to'plamini takrorlash</p>
                         </div>
-                        <span class="hub-tile-arrow">→</span>
+                        <span class="hub-tile-arrow">&rarr;</span>
                     </button>
                 </div>
             </div>
@@ -1780,7 +1812,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=47"></script>
+    <script src="script.js?v=48"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1789,6 +1821,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=47"></script>
+    <script src="pwa.js?v=48"></script>
 </body>
 </html>

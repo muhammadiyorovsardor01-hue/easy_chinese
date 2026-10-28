@@ -12272,3 +12272,202 @@ a.setting-action-btn { text-decoration: none; }
 .tm-word-chip.active .tm-chip-check {
     color: #ffffff;
 }
+
+
+/* ==========================================================================
+   UI/UX SIMPLIFICATION: Clean Header, 3 Practice Rooms, Streamlined Flashcard
+   ========================================================================== */
+
+/* 1. Simplified Header Profile Quick Button & Profile Header Action Bar */
+.header-profile-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.header-profile-btn:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+}
+
+.profile-head-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.profile-head-actions .leaderboard-btn,
+.profile-head-actions .theme-toggle {
+    height: 40px;
+    min-width: 40px;
+    padding: 0 0.65rem;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+/* 2. Practice Hub: 3 Distinct Visual Rooms (1-Xona, 2-Xona, 3-Xona) */
+.practice-room-card {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 22px;
+    padding: 1.15rem 1.1rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.practice-room-card.room-phonetics {
+    border-top: 4px solid #EF4444;
+}
+
+.practice-room-card.room-hanzi {
+    border-top: 4px solid #8B5CF6;
+}
+
+.practice-room-card.room-review {
+    border-top: 4px solid #10B981;
+}
+
+.practice-room-head {
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.7rem;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.practice-room-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.22rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.35rem;
+    background: var(--bg-secondary);
+    color: var(--primary-color);
+    border: 1px solid var(--border-color);
+}
+
+.room-phonetics .practice-room-badge {
+    color: #DC2626;
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.25);
+}
+
+.room-hanzi .practice-room-badge {
+    color: #7C3AED;
+    background: rgba(139, 92, 246, 0.1);
+    border-color: rgba(139, 92, 246, 0.25);
+}
+
+.room-review .practice-room-badge {
+    color: #059669;
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.25);
+}
+
+.practice-room-head .practice-group-heading {
+    margin: 0 0 0.2rem 0;
+    font-size: 1.15rem;
+}
+
+.practice-room-sub {
+    margin: 0;
+    font-size: 0.83rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.hub-tile-icon.canvas-icon {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.16), rgba(236, 72, 153, 0.16));
+    color: #7C3AED;
+}
+
+/* 3. Streamlined Lesson Flashcard Controls */
+#lesson .action-buttons.action-buttons-streamlined,
+.action-buttons.action-buttons-streamlined {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.65rem;
+    max-width: 540px;
+    margin: 0.9rem auto 0.65rem;
+}
+
+.flashcard-more-drawer {
+    max-width: 540px;
+    margin: 0.45rem auto 0.85rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: 16px;
+    background: var(--card-bg);
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.flashcard-more-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.65rem 1rem;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    font-size: 0.86rem;
+    font-weight: 800;
+    color: var(--text-color);
+    background: var(--bg-secondary);
+}
+
+.flashcard-more-summary::-webkit-details-marker {
+    display: none;
+}
+
+.more-summary-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.more-summary-hint {
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.flashcard-more-drawer[open] .flashcard-more-summary {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.flashcard-more-drawer .secondary-controls {
+    padding: 0.75rem;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    background: var(--card-bg);
+}
+
+@media (max-width: 480px) {
+    .more-summary-hint {
+        display: none;
+    }
+}

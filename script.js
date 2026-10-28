@@ -4851,7 +4851,7 @@ function playNativeToneSound(soundName, fallbackHz = null, rate = 1.0) {
         }
         if (soundName) {
             const cleanKey = String(soundName).trim().toLowerCase().replace(/ü/g, 'v');
-            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=47`);
+            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=48`);
             activeToneAudio = audio;
             audio.playbackRate = rate;
             audio.preservesPitch = true;
@@ -5183,6 +5183,26 @@ function initPracticeHubListeners() {
     const hubAi = document.getElementById('hubOpenAiCoachBtn');
     if (hubAi) hubAi.addEventListener('click', () => showAiLaoshiView());
 
+    const hubCanvas = document.getElementById('hubOpenCanvasBtn');
+    if (hubCanvas) {
+        hubCanvas.addEventListener('click', () => {
+            showCanvasView(false);
+            if (typeof navItems !== 'undefined' && navItems) {
+                navItems.forEach(n => n.classList.toggle('active', n.dataset.nav === 'canvas'));
+            }
+        });
+    }
+
+    const headerProfileBtn = document.getElementById('headerProfileBtn');
+    if (headerProfileBtn) {
+        headerProfileBtn.addEventListener('click', () => {
+            if (typeof hideAllModals === 'function') hideAllModals();
+            showProfileView();
+            if (typeof navItems !== 'undefined' && navItems) {
+                navItems.forEach(n => n.classList.toggle('active', n.dataset.nav === 'profile'));
+            }
+        });
+    }
     const hubRadicals = document.getElementById('hubOpenRadicalsBtn');
     if (hubRadicals) hubRadicals.addEventListener('click', () => showRadicalsLabView('list'));
 
@@ -7733,7 +7753,7 @@ var EC_I18N = {
         'modal.xpEarned': '+10 XP olindi!', 'modal.editProfileTitle': 'Profilni tahrirlash',
         'modal.cancel': 'Bekor qilish', 'modal.save': 'Saqlash', 'modal.leaderboardTitle': '🏆 Peshqadamlar', 'modal.close': 'Yopish',
         'practice.title': 'Amaliyot markazi', 'practice.kicker': "Tonlar, jonli muloqot, so'zlar va viktorinalar orqali xitoy tilingizni charxlang",
-        'practice.g1': 'Fonetika va tonlar', 'practice.g2': 'Xitoyda jonli hayot va muloqot', 'practice.g3': "So'z boyligi va xotira mashqi",
+        'practice.g1': 'Ovoz va Talaffuz (Fonetika)', 'practice.g2': 'Iyerogliflar Ustaxonasi', 'practice.g3': 'Mashq va Qaytarish',
         'practice.tile.pinyin.title': 'Interaktiv Pinyin Jadvali', 'practice.tile.pinyin.badge': '23 Undosh + 24 Unli + Ovoz',
         'practice.tile.pinyin.desc': "Barcha 声母 va 韵母 tovushlari, to'liq kombinatsiyalar matritsasi va muhim o'qish qoidalari",
         'practice.tile.tone.title': 'Tonlar Laboratoriyasi', 'practice.tile.tone.badge': '4 Ton + Sandhi',
