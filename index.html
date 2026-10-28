@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=46">
+    <link rel="stylesheet" href="styles.css?v=47">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -1024,7 +1024,11 @@
                 <h2 class="section-title">&#x1F399;&#xFE0F; <span data-i18n="practice.tile.pitch.title">Talaffuz va Pitch Mashqi</span></h2>
                 <p class="lessons-kicker" data-i18n="practice.tile.pitch.desc">Mikrofonga aytib, ovoz konturingiz to'g'ri tushayotganini tekshiring</p>
                 <div class="subview-tabs" id="pitchCategoryTabs">
-                    <button type="button" class="subview-tab active" data-pitch-cat="tones">
+                    <button type="button" class="subview-tab active" data-pitch-cat="single">
+                        <span class="p-tab-icon">🎯</span>
+                        <span class="p-tab-label" data-i18n="pitch.catSingle">4 Asosiy Ton</span>
+                    </button>
+                    <button type="button" class="subview-tab" data-pitch-cat="tones">
                         <span class="p-tab-icon">&#x1F3B5;</span>
                         <span class="p-tab-label" data-i18n="pitch.catTones">Ton Juftliklari</span>
                     </button>
@@ -1776,7 +1780,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=46"></script>
+    <script src="script.js?v=47"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1785,6 +1789,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=46"></script>
+    <script src="pwa.js?v=47"></script>
 </body>
 </html>
