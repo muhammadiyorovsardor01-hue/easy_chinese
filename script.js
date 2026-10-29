@@ -1490,7 +1490,7 @@ function setupEventListeners() {
             canvasHanziWriter.animateCharacter();
         }
     });
-    canvasClearBtn.addEventListener('click', toggleEraser);
+    if (canvasClearBtn) canvasClearBtn.addEventListener('click', toggleEraser);
     canvasCheckBtn.addEventListener('click', checkCanvasDrawing);
     canvasContinueBtn.addEventListener('click', () => {
         canvasContinueBtn.style.display = 'none';
@@ -1532,7 +1532,7 @@ function setupEventListeners() {
     });
 
     // Canvas Hint button
-    canvasHintBtn.addEventListener('click', () => {
+    if (canvasHintBtn) canvasHintBtn.addEventListener('click', () => {
         if (canvasHanziWriter) {
             canvasHanziWriter.animateCharacter();
         }
@@ -5050,7 +5050,7 @@ function playNativeToneSound(soundName, fallbackHz = null, rate = 1.0) {
         }
         if (soundName) {
             const cleanKey = String(soundName).trim().toLowerCase().replace(/ü/g, 'v');
-            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=49`);
+            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=50`);
             activeToneAudio = audio;
             audio.playbackRate = rate;
             audio.preservesPitch = true;
@@ -7967,7 +7967,7 @@ var EC_I18N = {
         'quiz.nextQuestion': 'Keyingi savol', 'quiz.questionLabel': 'Savol:',
         'canvas.backToLessons': '← Darslarga qaytish', 'canvas.hskLevel': 'HSK darajasi', 'canvas.lesson': 'Dars',
         'canvas.version': 'Versiya', 'canvas.writingMode': 'Yozish rejimi',
-        'canvas.trace': 'Chizish', 'canvas.write': 'Yozish', 'canvas.test': 'Sinov',
+        'canvas.trace': 'Qadamma-qadam', 'canvas.write': 'Xotiradan', 'canvas.test': 'Imtihon',
         'canvas.category': 'Chizish mashqi', 'canvas.wordLabel': "So'z:", 'canvas.traceHint': "Chiziqlar bo'ylab iyeroglifni yozing.",
         'canvas.check': 'Tekshirish', 'canvas.nextWord': "Keyingi so'z →", 'canvas.points': 'Ball:',
         'modal.correctTitle': "To'g'ri! 🎉", 'modal.correctMsg': "Barakalla! Iyeroglifni to'g'ri yozdingiz.",

@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=49">
+    <link rel="stylesheet" href="styles.css?v=50">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -459,9 +459,9 @@
                     <div class="sidebar-section">
                         <h3 class="sidebar-title" data-i18n="canvas.writingMode">Yozish rejimi</h3>
                         <div class="mode-selector">
-                            <button class="mode-option active" data-mode="trace" data-i18n="canvas.trace">Chizish</button>
-                            <button class="mode-option" data-mode="write" data-i18n="canvas.write">Yozish</button>
-                            <button class="mode-option" data-mode="test" data-i18n="canvas.test">Sinov</button>
+                            <button class="mode-option active" data-mode="trace" data-i18n="canvas.trace">Qadamma-qadam</button>
+                            <button class="mode-option" data-mode="write" data-i18n="canvas.write">Xotiradan</button>
+                            <button class="mode-option" data-mode="test" data-i18n="canvas.test">Imtihon</button>
                         </div>
                     </div>
                 </div>
@@ -482,9 +482,9 @@
                         </select>
                         <select class="canvas-mobile-select" id="canvasMobileLessonSelector" aria-label="Lesson"></select>
                         <div class="canvas-mobile-modes" role="group" aria-label="Writing mode">
-                            <button class="mobile-mode-option active" data-mode="trace" type="button" data-i18n="canvas.trace">Chizish</button>
-                            <button class="mobile-mode-option" data-mode="write" type="button" data-i18n="canvas.write">Yozish</button>
-                            <button class="mobile-mode-option" data-mode="test" type="button" data-i18n="canvas.test">Sinov</button>
+                            <button class="mobile-mode-option active" data-mode="trace" type="button" data-i18n="canvas.trace">Qadamma-qadam</button>
+                            <button class="mobile-mode-option" data-mode="write" type="button" data-i18n="canvas.write">Xotiradan</button>
+                            <button class="mobile-mode-option" data-mode="test" type="button" data-i18n="canvas.test">Imtihon</button>
                         </div>
                     </div>
                     
@@ -523,29 +523,15 @@
                         </div>
                     </div>
                     
-                    <!-- Icon-only Control Buttons -->
+                    <!-- Control Buttons: Ko'rsat (animatsiya) + Tekshirish -->
                     <div class="canvas-controls" aria-label="Canvas controls">
-                        <button class="canvas-control-btn" id="canvasPlayBtn" type="button" aria-label="Play stroke animation">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                            </svg>
-                        </button>
-                        <button class="canvas-control-btn" id="canvasClearBtn" type="button" aria-label="Clear canvas">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                <polyline points="15 3 21 3 21 9"></polyline>
-                                <line x1="10" y1="14" x2="21" y2="3"></line>
-                            </svg>
+                        <button class="canvas-control-btn canvas-show-btn" id="canvasPlayBtn" type="button" aria-label="Chiziqlar tartibini ko'rsatish">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                            <span class="canvas-btn-label">Ko'rsat</span>
                         </button>
                         <button class="canvas-check-btn" id="canvasCheckBtn" type="button" data-i18n="canvas.check">Tekshirish</button>
-                        <button class="canvas-control-btn" id="canvasHintBtn" type="button" aria-label="Show hint">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </button>
                     </div>
-                    
+
                     <!-- Continue Button -->
                     <button class="canvas-continue-btn" id="canvasContinueBtn" type="button" style="display: none;" data-i18n="canvas.nextWord">Keyingi so'z →</button>
                     
@@ -1828,7 +1814,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=49"></script>
+    <script src="script.js?v=50"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1837,6 +1823,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=49"></script>
+    <script src="pwa.js?v=50"></script>
 </body>
 </html>
