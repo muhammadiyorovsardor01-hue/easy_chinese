@@ -1,4 +1,4 @@
-// PWA install banner, iOS install guide and Service Worker auto-update.
+﻿// PWA install banner, iOS install guide and Service Worker auto-update.
 // Moved out of index.html so the Content Security Policy can forbid inline scripts.
 if ('serviceWorker' in navigator) {
   (function() {
@@ -133,7 +133,7 @@ if ('serviceWorker' in navigator) {
       window.location.reload();
     });
 
-    navigator.serviceWorker.register('./sw.js?v=51', { updateViaCache: 'none' }).then((reg) => {
+    navigator.serviceWorker.register('./sw.js?v=52', { updateViaCache: 'none' }).then((reg) => {
       if (reg.waiting) {
         reg.waiting.postMessage({ type: 'SKIP_WAITING' });
       }

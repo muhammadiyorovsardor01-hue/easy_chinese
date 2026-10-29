@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     /* Premium Chinese editorial palette — warm cream / red / jade / gold */
     --primary-color: #B91C2C;
     --primary-light: #D64550;
@@ -13304,4 +13304,232 @@ a.setting-action-btn { text-decoration: none; }
     height: 100%;
     border-radius: 999px;
     background: #f59e0b;
+}
+
+
+/* 3-Tab Bottom Navigation & Practice AI Hero Card (v52) */
+.bottom-nav-3tabs {
+    display: flex !important;
+    justify-content: space-around !important;
+    padding: 0.55rem 1.25rem !important;
+    padding-bottom: calc(0.55rem + env(safe-area-inset-bottom)) !important;
+}
+
+.bottom-nav-3tabs .nav-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.25rem !important;
+    flex: 1 1 0 !important;
+    max-width: 116px !important;
+    min-width: 84px !important;
+    padding: 0.45rem 0.6rem !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    border-radius: 18px !important;
+}
+
+.bottom-nav-3tabs .nav-item .nav-icon {
+    font-size: 1.35rem !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+.bottom-nav-3tabs .nav-item .nav-label {
+    font-size: 0.74rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+.bottom-nav-3tabs .nav-item.active {
+    transform: translateY(-2px) !important;
+}
+
+/* AI Laoshi Hero Card in Practice Hub */
+.pq-hero-ai {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    margin: 0.6rem 0 1rem;
+    padding: 0.85rem 1rem;
+    background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #10b981 100%);
+    border: none;
+    border-radius: 22px;
+    color: #fff;
+    cursor: pointer;
+    text-align: left;
+    box-shadow: 0 8px 24px rgba(6, 78, 59, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.pq-hero-ai:active {
+    transform: scale(0.98);
+}
+
+.pq-hero-ai::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 90px;
+    height: 90px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.pq-hero-ai-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 17px;
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    display: grid;
+    place-items: center;
+    font-size: 1.85rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.pq-hero-ai-info {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.pq-hero-ai-tag {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #a7f3d0;
+}
+
+.pq-hero-ai-title {
+    font-size: 1.02rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.pq-hero-ai-sub {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pq-hero-ai-cta {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Modernized Profile Header & Interactive Elements (v52) */
+.profile-circle-btn {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 14px !important;
+    border: 1.5px solid var(--border-color) !important;
+    border-bottom: 2.5px solid var(--border-color) !important;
+    background: var(--card-bg) !important;
+    color: var(--text-color) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.15rem !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+    transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.profile-circle-btn:hover {
+    border-color: var(--primary-color) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.profile-circle-btn:active {
+    transform: scale(0.94) !important;
+}
+
+.profile-avatar {
+    position: relative !important;
+    cursor: pointer !important;
+    transition: transform 0.15s ease !important;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05) !important;
+}
+
+.avatar-edit-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 24px;
+    height: 24px;
+    background: var(--primary-color, #10b981);
+    color: #fff;
+    border: 2px solid var(--card-bg, #ffffff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
+    pointer-events: none;
+}
+
+/* Fix glued Chinese character subtitles in section titles */
+.title-cn::before {
+    content: " \00B7 ";
+    opacity: 0.65;
+    font-weight: normal;
+    margin-left: 0.15rem;
+}
+
+/* Learned Words Drawer Empty State */
+.learned-words-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--text-secondary);
+}
+
+.learned-words-empty-icon {
+    font-size: 2.8rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.85;
+}
+
+.learned-words-empty-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 0.25rem;
+}
+
+.learned-words-empty p {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    max-width: 260px;
+    margin: 0 auto;
 }

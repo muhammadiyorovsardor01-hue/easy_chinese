@@ -1,4 +1,4 @@
-<!-- Last updated: August 31, 2026 - Added HSK filters, search bar, and streak tracker -->
+﻿<!-- Last updated: August 31, 2026 - Added HSK filters, search bar, and streak tracker -->
 <!DOCTYPE html>
 <html lang="uz" translate="no">
 <head>
@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=51">
+    <link rel="stylesheet" href="styles.css?v=52">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -210,10 +210,7 @@
                 </div>
 
                 <!-- HSK 1 lesson versions (JS toggles .active only â€” keep both track buttons) -->
-                <div class="hsk-filters" aria-label="HSK 1 lesson version">
-                    <button class="hsk-filter-btn active" data-track="classic" type="button" data-i18n="lesson.trackClassic">Classic HSK 1</button>
-                    <button class="hsk-filter-btn" data-track="new" type="button" data-i18n="lesson.trackNew">New HSK 3.0</button>
-                </div>
+                <div class="hsk-filters" aria-label="HSK 1 lesson version" hidden style="display: none !important;"></div>
             </div>
 
             <!-- Collapsible Search Bar (toggled by #toggleLessonSearchBtn) -->
@@ -555,14 +552,13 @@
                     <h2 class="section-title" data-i18n="profile.title">Mening profilim</h2>
                 </div>
                 <div class="profile-head-actions">
-                    <button class="leaderboard-btn" id="leaderboard-btn" type="button" aria-label="Open leaderboard" title="Peshqadamlar">&#x1F3C6;</button>
-                    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Tungi / Kunduzgi rejim">
+                    <button class="profile-circle-btn" id="leaderboard-btn" type="button" aria-label="Peshqadamlar jadvali" title="Peshqadamlar">&#x1F3C6;</button>
+                    <button class="profile-circle-btn theme-toggle" id="themeToggle" type="button" aria-label="Tungi rejim" title="Tungi / Kunduzgi rejim">
                         <span class="sun-icon" aria-hidden="true">&#x2600;&#xFE0F;</span>
                         <span class="moon-icon" aria-hidden="true">&#x1F319;</span>
                     </button>
-                    <button type="button" class="settings-gear-btn" id="openSettingsBtn" aria-label="Sozlamalar" data-i18n-aria="settings.title">
+                    <button class="profile-circle-btn settings-gear-btn" id="openSettingsBtn" type="button" aria-label="Sozlamalar" title="Sozlamalar">
                         <span class="gear-icon" aria-hidden="true">&#x2699;&#xFE0F;</span>
-                        <span class="gear-label" data-i18n="settings.short">Sozlamalar</span>
                     </button>
                 </div>
             </div>
@@ -570,9 +566,10 @@
             <!-- 1. Bento ID Card + Live Level XP Bar -->
             <div class="profile-card">
                 <div class="profile-top-row">
-                    <div class="profile-avatar">
+                    <div class="profile-avatar" id="profileAvatarBtn" role="button" tabindex="0" title="Avatarni o'zgartirish">
                         <span class="avatar-emoji" id="profileAvatar">👤</span>
                         <img class="avatar-photo" id="profilePhoto" alt="Profile photo" hidden>
+                        <span class="avatar-edit-badge" aria-hidden="true">&#x270F;&#xFE0F;</span>
                     </div>
                     <div class="profile-info">
                         <h3 class="username" id="profileUsername">Chinese Learner</h3>
@@ -657,28 +654,16 @@
                     <span class="progress-tap-hint" data-i18n="profile.tapHint">Bosib darsga o‘ting →</span>
                 </div>
                 <div class="hsk-progress-bars">
-                    <div class="hsk-progress-item hsk-prog-1" data-jump-hsk="1" data-jump-track="classic" role="button" tabindex="0">
+                    <div class="hsk-progress-item hsk-prog-1" data-jump-hsk="1" data-jump-track="new" role="button" tabindex="0">
                         <div class="hsk-progress-label">
                             <span class="hsk-progress-name">
-                                <span class="hsk-prog-title"><span class="hsk-prog-dot">1</span> Classic HSK 1</span>
-                                <span class="hsk-progress-count" id="hsk1Count">0 / 150 so‘z</span>
+                                <span class="hsk-prog-title"><span class="hsk-prog-dot">1</span> <span data-i18n="hsk.1_label">HSK 1 &middot; Boshlang'ich</span></span>
+                                <span class="hsk-progress-count" id="hsk1Count">0 / 150 so'z</span>
                             </span>
                             <span class="hsk-progress-percent" id="hsk1Percent">0%</span>
                         </div>
                         <div class="hsk-progress-bar">
                             <div class="hsk-progress-fill" id="hsk1Fill" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <div class="hsk-progress-item hsk-prog-new" data-jump-hsk="1" data-jump-track="new" role="button" tabindex="0">
-                        <div class="hsk-progress-label">
-                            <span class="hsk-progress-name">
-                                <span class="hsk-prog-title"><span class="hsk-prog-dot">3.0</span> New HSK 3.0 (L1)</span>
-                                <span class="hsk-progress-count" id="newHskCount">0 / 150 so‘z</span>
-                            </span>
-                            <span class="hsk-progress-percent" id="newHskPercent">0%</span>
-                        </div>
-                        <div class="hsk-progress-bar">
-                            <div class="hsk-progress-fill" id="newHskFill" style="width: 0%"></div>
                         </div>
                     </div>
                     <div class="hsk-progress-item hsk-prog-2" data-jump-hsk="2" data-jump-track="classic" role="button" tabindex="0">
@@ -825,6 +810,17 @@
                 <h2 class="section-title" data-i18n="practice.title">Amaliyot Markazi</h2>
                 <span class="weekly-streak-pill" id="practiceHskPill">HSK 1</span>
             </div>
+
+            <!-- AI Laoshi Featured Coach Card -->
+            <button type="button" class="pq-hero-ai" id="hubOpenAiCoachBtn" aria-label="AI Laoshi bilan suhbatlashish">
+                <div class="pq-hero-ai-avatar">&#x1F916;</div>
+                <div class="pq-hero-ai-info">
+                    <span class="pq-hero-ai-tag">Aqlli Murabbiy &middot; &#x667A;&#x80FD;&#x5BFC;&#x5E08;</span>
+                    <strong class="pq-hero-ai-title">AI Laoshi Suhbat Xonasi</strong>
+                    <small class="pq-hero-ai-sub">Jonli muloqot, savol-javob va talaffuz tahlili</small>
+                </div>
+                <span class="pq-hero-ai-cta">Kirish &rarr;</span>
+            </button>
 
             <h3 class="pq-group-title">Ovoz va talaffuz</h3>
             <div class="pq-grid">
@@ -1610,23 +1606,15 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar (5 Tabs with Center AI Laoshi) -->
-    <nav class="bottom-nav">
+    <!-- Bottom Navigation Bar: Streamlined 3 Main Tabs (Darslar, Mashq, Profil) -->
+    <nav class="bottom-nav bottom-nav-3tabs">
         <button class="nav-item active" data-nav="home">
             <span class="nav-icon">&#x1F3E0;</span>
-            <span class="nav-label" data-i18n="nav.home">Bosh sahifa</span>
+            <span class="nav-label" data-i18n="nav.home">Darslar</span>
         </button>
         <button class="nav-item" data-nav="practice">
-            <span class="nav-icon">&#x1F4DA;</span>
+            <span class="nav-icon">&#x1F9E9;</span>
             <span class="nav-label" data-i18n="nav.practice">Mashq</span>
-        </button>
-        <button class="nav-item nav-item-ai" data-nav="ai">
-            <span class="nav-icon">&#x1F916;</span>
-            <span class="nav-label">AI Laoshi</span>
-        </button>
-        <button class="nav-item" data-nav="canvas">
-            <span class="nav-icon">&#x270F;&#xFE0F;</span>
-            <span class="nav-label" data-i18n="nav.canvas">Yozish</span>
         </button>
         <button class="nav-item" data-nav="profile">
             <span class="nav-icon">&#x1F464;</span>
@@ -1735,7 +1723,7 @@
         </aside>
     </div>
 
-    <script src="script.js?v=51"></script>
+    <script src="script.js?v=52"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1744,6 +1732,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=51"></script>
+    <script src="pwa.js?v=52"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-// Global state
+﻿// Global state
 let vocabularyData = [
   // Lesson 1 - 你好 (Hello)
   { id: 1, hsk: 1, track: 'classic', lesson: 1, hanzi: "你", pinyin: "nǐ", uzbek: "Siz" },
@@ -1057,7 +1057,7 @@ const lessonTracks = {
     classic: { dataTrack: 'classic', minLesson: 1, maxLesson: 15 },
     new: { dataTrack: 'new', minLesson: 1, maxLesson: 15 }
 };
-let currentLessonTrack = 'classic';
+let currentLessonTrack = 'new';
 let searchQuery = '';
 let lessonContentData = null; // Stores loaded Classic HSK lesson content
 let newHskLessonContentData = null; // Stores loaded New HSK 3.0 lesson content
@@ -2060,11 +2060,13 @@ let isNavigatingBack = false;
 
 function updateBottomNavForView(viewId) {
     let activeNav = 'home';
-    if (viewId === 'dashboard' || viewId === 'lessons') activeNav = 'home';
-    else if (viewId === 'practice' || viewId === 'practiceFlashcards' || viewId === 'toneLab' || viewId === 'survivalPhrases' || viewId === 'pinyinChart' || viewId === 'radicalsLab') activeNav = 'practice';
-    else if (viewId === 'aiLaoshi') activeNav = 'ai';
-    else if (viewId === 'canvas') activeNav = 'canvas';
-    else if (viewId === 'profile') activeNav = 'profile';
+    if (viewId === 'dashboard' || viewId === 'lessons' || viewId === 'lesson') {
+        activeNav = 'home';
+    } else if (viewId === 'practice' || viewId === 'practiceFlashcards' || viewId === 'toneLab' || viewId === 'survivalPhrases' || viewId === 'pinyinChart' || viewId === 'radicalsLab' || viewId === 'canvas' || viewId === 'aiLaoshi') {
+        activeNav = 'practice';
+    } else if (viewId === 'profile') {
+        activeNav = 'profile';
+    }
 
     document.querySelectorAll('.nav-item').forEach(nav => {
         nav.classList.toggle('active', nav.dataset.nav === activeNav);
@@ -2189,7 +2191,7 @@ function showLessonsView() {
     };
     lessonsTitle.textContent = hskNames[currentHSK] || `HSK ${currentHSK}`;
     // Reset filter and search when entering lessons view
-    currentLessonTrack = currentHSK === 1 ? 'classic' : 'new';
+    currentLessonTrack = 'new';
     searchQuery = '';
     searchInput.value = '';
     searchClear.classList.remove('visible');
@@ -4567,6 +4569,13 @@ function playSuccessSound() {
 }
 
 // Profile View Functions
+    const profileAvatarBtn = document.getElementById('profileAvatarBtn');
+    if (profileAvatarBtn) {
+        profileAvatarBtn.addEventListener('click', () => {
+            const openSettingsBtn = document.getElementById('openSettingsBtn');
+            if (openSettingsBtn) openSettingsBtn.click();
+        });
+    }
 function showProfileView() {
     showView(profileView);
     updateProfileStats();
@@ -4798,56 +4807,49 @@ function saveProfile() {
 }
 
 function updateHSKProgress() {
-    // Calculate progress for all HSK 1-5 levels + New HSK 3.0
-    const hsk1Words = vocabularyData.filter(w => w.hsk === 1 && w.track === 'classic').length;
-    const newHskWords = vocabularyData.filter(w => w.hsk === 1 && w.track === 'new').length;
-    const hsk2Words = vocabularyData.filter(w => w.hsk === 2).length;
-    const hsk3Words = vocabularyData.filter(w => w.hsk === 3).length;
-    const hsk4Words = vocabularyData.filter(w => w.hsk === 4).length;
-    const hsk5Words = vocabularyData.filter(w => w.hsk === 5).length;
+    // Standardized HSK 1-5 levels (v52)
+    const hsk1Words = vocabularyData.filter(w => w.hsk === 1 && (w.track === 'new' || !w.track)).length || 150;
+    const hsk2Words = vocabularyData.filter(w => w.hsk === 2).length || 150;
+    const hsk3Words = vocabularyData.filter(w => w.hsk === 3).length || 300;
+    const hsk4Words = vocabularyData.filter(w => w.hsk === 4).length || 600;
+    const hsk5Words = vocabularyData.filter(w => w.hsk === 5).length || 1300;
 
-    const hsk1Learned = vocabularyData.filter(w => w.hsk === 1 && w.track === 'classic' && learnedWords.includes(w.id)).length;
-    const newHskLearned = vocabularyData.filter(w => w.hsk === 1 && w.track === 'new' && learnedWords.includes(w.id)).length;
+    const hsk1Learned = vocabularyData.filter(w => w.hsk === 1 && (w.track === 'new' || !w.track) && learnedWords.includes(w.id)).length;
     const hsk2Learned = vocabularyData.filter(w => w.hsk === 2 && learnedWords.includes(w.id)).length;
     const hsk3Learned = vocabularyData.filter(w => w.hsk === 3 && learnedWords.includes(w.id)).length;
     const hsk4Learned = vocabularyData.filter(w => w.hsk === 4 && learnedWords.includes(w.id)).length;
     const hsk5Learned = vocabularyData.filter(w => w.hsk === 5 && learnedWords.includes(w.id)).length;
 
     const hsk1PercentVal = hsk1Words > 0 ? Math.round((hsk1Learned / hsk1Words) * 100) : 0;
-    const newHskPercentVal = newHskWords > 0 ? Math.round((newHskLearned / newHskWords) * 100) : 0;
     const hsk2PercentVal = hsk2Words > 0 ? Math.round((hsk2Learned / hsk2Words) * 100) : 0;
     const hsk3PercentVal = hsk3Words > 0 ? Math.round((hsk3Learned / hsk3Words) * 100) : 0;
     const hsk4PercentVal = hsk4Words > 0 ? Math.round((hsk4Learned / hsk4Words) * 100) : 0;
     const hsk5PercentVal = hsk5Words > 0 ? Math.round((hsk5Learned / hsk5Words) * 100) : 0;
 
+    const wUnit = typeof t === 'function' ? t('lesson.wordsUnit') : "so'z";
     if (hsk1Percent) hsk1Percent.textContent = `${hsk1PercentVal}%`;
-    if (newHskPercent) newHskPercent.textContent = `${newHskPercentVal}%`;
-    if (hsk2Percent) hsk2Percent.textContent = `${hsk2PercentVal}%`;
-    if (hsk3Percent) hsk3Percent.textContent = `${hsk3PercentVal}%`;
-
-    const hsk4PercentEl = document.getElementById('hsk4Percent');
-    const hsk5PercentEl = document.getElementById('hsk5Percent');
-    if (hsk4PercentEl) hsk4PercentEl.textContent = `${hsk4PercentVal}%`;
-    if (hsk5PercentEl) hsk5PercentEl.textContent = `${hsk5PercentVal}%`;
-
-    const wUnit = typeof t === 'function' ? t('lesson.wordsUnit') : 'so‘z';
     if (hsk1Count) hsk1Count.textContent = `${hsk1Learned} / ${hsk1Words} ${wUnit}`;
-    if (newHskCount) newHskCount.textContent = `${newHskLearned} / ${newHskWords} ${wUnit}`;
+    if (hsk1Fill) hsk1Fill.style.width = `${hsk1PercentVal}%`;
 
     const hsk2CountEl = document.getElementById('hsk2Count');
     const hsk3CountEl = document.getElementById('hsk3Count');
     const hsk4CountEl = document.getElementById('hsk4Count');
     const hsk5CountEl = document.getElementById('hsk5Count');
+
+    if (hsk2Percent) hsk2Percent.textContent = `${hsk2PercentVal}%`;
+    if (hsk3Percent) hsk3Percent.textContent = `${hsk3PercentVal}%`;
+    const hsk4PercentEl = document.getElementById('hsk4Percent');
+    const hsk5PercentEl = document.getElementById('hsk5Percent');
+    if (hsk4PercentEl) hsk4PercentEl.textContent = `${hsk4PercentVal}%`;
+    if (hsk5PercentEl) hsk5PercentEl.textContent = `${hsk5PercentVal}%`;
+
     if (hsk2CountEl) hsk2CountEl.textContent = `${hsk2Learned} / ${hsk2Words} ${wUnit}`;
     if (hsk3CountEl) hsk3CountEl.textContent = `${hsk3Learned} / ${hsk3Words} ${wUnit}`;
     if (hsk4CountEl) hsk4CountEl.textContent = `${hsk4Learned} / ${hsk4Words} ${wUnit}`;
     if (hsk5CountEl) hsk5CountEl.textContent = `${hsk5Learned} / ${hsk5Words} ${wUnit}`;
 
-    if (hsk1Fill) hsk1Fill.style.width = `${hsk1PercentVal}%`;
-    if (newHskFill) newHskFill.style.width = `${newHskPercentVal}%`;
     if (hsk2Fill) hsk2Fill.style.width = `${hsk2PercentVal}%`;
     if (hsk3Fill) hsk3Fill.style.width = `${hsk3PercentVal}%`;
-
     const hsk4FillEl = document.getElementById('hsk4Fill');
     const hsk5FillEl = document.getElementById('hsk5Fill');
     if (hsk4FillEl) hsk4FillEl.style.width = `${hsk4PercentVal}%`;
@@ -5059,7 +5061,7 @@ function playNativeToneSound(soundName, fallbackHz = null, rate = 1.0) {
         }
         if (soundName) {
             const cleanKey = String(soundName).trim().toLowerCase().replace(/ü/g, 'v');
-            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=51`);
+            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=52`);
             activeToneAudio = audio;
             audio.playbackRate = rate;
             audio.preservesPitch = true;
