@@ -1221,6 +1221,10 @@ const nextWordFromModal = document.getElementById('nextWordFromModal');
 function initMainApp() {
     initializeTheme();
     if (typeof applyAppLanguage === 'function') applyAppLanguage();
+    try {
+        const savedHsk = parseInt(localStorage.getItem('ecCurrentHSK'), 10);
+        if (savedHsk >= 1 && savedHsk <= 5) currentHSK = savedHsk;
+    } catch (e) {}
     applyHskLevelTheme(currentHSK);
     setupEventListeners();
     updateStreak();
@@ -1229,6 +1233,8 @@ function initMainApp() {
     loadProfileData();
     updateDailyQuests();
     updateDashboardBentoUI();
+    showHome();
+    initLevelSheet();
     
     // Load voices for speech synthesis
     if ('speechSynthesis' in window) {
@@ -1285,6 +1291,8 @@ function applyHskLevelTheme(level) {
         5: '五级 · New HSK 3.0 · 15 lessons'
     };
     if (headerBadge) headerBadge.textContent = `HSK ${lvl}`;
+    const levelChip = document.getElementById('backToDashboard');
+    if (levelChip) levelChip.innerHTML = `HSK ${lvl} <span aria-hidden="true">&#9662;</span>`;
     if (dashPill) dashPill.textContent = `HSK ${lvl}`;
     if (cnBadge) cnBadge.textContent = cnMeta[lvl] || `HSK ${lvl}`;
 }
@@ -1392,7 +1400,7 @@ function setupEventListeners() {
     });
 
     // Back buttons
-    backToDashboard.addEventListener('click', showDashboard);
+    backToDashboard.addEventListener('click', openLevelSheet);
     backToLessons.addEventListener('click', showLessonsView);
     backToLessonsFromCanvas.addEventListener('click', () => {
         if (canvasReturnToLesson) {
@@ -2077,7 +2085,7 @@ function showView(viewToShow, recordHistory = true) {
     if (recordHistory && !isNavigatingBack) {
         const viewId = viewToShow.id;
         try {
-            if (viewId === 'dashboard') {
+            if (viewId === 'dashboard' || window.__ecHome) {
                 history.replaceState({ viewId: 'dashboard' }, '');
             } else if (!history.state || history.state.viewId !== viewId) {
                 history.pushState({ viewId: viewId }, '');
@@ -2140,6 +2148,9 @@ window.addEventListener('popstate', (event) => {
         if (targetViewId === 'dashboard') {
             applyHskLevelTheme(currentHSK);
             updateDashboardBentoUI();
+            showLessonsView();
+            isNavigatingBack = false;
+            return;
         } else if (targetViewId === 'practice') {
             updatePracticeHubUI();
         } else if (targetViewId === 'lessons') {
@@ -2158,9 +2169,7 @@ try {
 } catch (e) {}
 
 function showDashboard() {
-    applyHskLevelTheme(currentHSK);
-    updateDashboardBentoUI();
-    showView(dashboard);
+    showHome();
 }
 
 function matchesHskAndTrack(word, hskLevel, dataTrack) {
@@ -5050,7 +5059,7 @@ function playNativeToneSound(soundName, fallbackHz = null, rate = 1.0) {
         }
         if (soundName) {
             const cleanKey = String(soundName).trim().toLowerCase().replace(/ü/g, 'v');
-            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=50`);
+            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=51`);
             activeToneAudio = audio;
             audio.playbackRate = rate;
             audio.preservesPitch = true;
@@ -5136,22 +5145,19 @@ function updatePracticeHubUI() {
     if (hskPill) hskPill.textContent = `HSK ${currentHSK}`;
     const wUnit = typeof t === 'function' ? t('lesson.wordsUnit') : "so'z";
 
-    const flashcardsBadge = document.getElementById('hubFlashcardsBadge');
-    if (flashcardsBadge) {
-        const count = vocabularyData.filter(w => w.hsk === currentHSK).length;
-        flashcardsBadge.textContent = `HSK ${currentHSK} (${count} ${wUnit})`;
-    }
-
+    // Compact corner counters on the icon tiles (hidden when empty)
     const mistakesBadge = document.getElementById('hubMistakesBadge');
     if (mistakesBadge) {
         const count = typeof getSmartMistakesWords === 'function' ? getSmartMistakesWords().length : 0;
-        mistakesBadge.textContent = `${count} ${wUnit}`;
+        mistakesBadge.textContent = String(count);
+        mistakesBadge.hidden = count === 0;
     }
 
     const bookmarksBadge = document.getElementById('hubBookmarksBadge');
     if (bookmarksBadge) {
         const count = typeof getSmartBookmarkedWords === 'function' ? getSmartBookmarkedWords().length : 0;
-        bookmarksBadge.textContent = `${count} ${wUnit}`;
+        bookmarksBadge.textContent = String(count);
+        bookmarksBadge.hidden = count === 0;
     }
 }
 
@@ -11201,4 +11207,127 @@ function loadRadicalQuizQuestion() {
             loadRadicalQuizQuestion();
         };
     }
+}
+
+
+// ==============================================================================
+// HOME = LESSON PATH + LEVEL DRAWER (HSK chip, like Duolingo / HelloChinese)
+// ==============================================================================
+function showHome() {
+    applyHskLevelTheme(currentHSK);
+    updateDashboardBentoUI();
+    window.__ecHome = true;
+    try { showLessonsView(); } finally { window.__ecHome = false; }
+}
+
+function getLevelProgress(level) {
+    const words = vocabularyData.filter(w => w.hsk === level && (level !== 1 || w.track === 'classic'));
+    if (!words.length) return { learned: 0, total: 0, pct: 0 };
+    const learned = words.filter(w => learnedWords.includes(w.id)).length;
+    return { learned, total: words.length, pct: Math.round((learned / words.length) * 100) };
+}
+
+function renderLevelSheet() {
+    const list = document.getElementById('levelSheetList');
+    if (!list) return;
+    list.textContent = '';
+
+    // Pinyin shortcut row
+    const pyRow = document.createElement('button');
+    pyRow.type = 'button';
+    pyRow.className = 'ec-level-row ec-level-row-pinyin';
+    const pyBadge = document.createElement('span');
+    pyBadge.className = 'ec-level-badge ec-lvl-pinyin';
+    pyBadge.textContent = 'a';
+    const pyInfo = document.createElement('div');
+    pyInfo.className = 'ec-level-info';
+    const pyName = document.createElement('strong');
+    pyName.textContent = 'Pinyin asoslari';
+    const pySub = document.createElement('small');
+    pySub.textContent = '\u62FC\u97F3 \u00B7 talaffuz poydevori';
+    pyInfo.appendChild(pyName);
+    pyInfo.appendChild(pySub);
+    pyRow.appendChild(pyBadge);
+    pyRow.appendChild(pyInfo);
+    pyRow.addEventListener('click', () => {
+        closeLevelSheet();
+        if (typeof showPinyinChartView === 'function') showPinyinChartView();
+    });
+    list.appendChild(pyRow);
+
+    const names = {
+        1: "HSK 1 Â· Boshlang'ich",
+        2: 'HSK 2 Â· Quyi daraja',
+        3: "HSK 3 Â· O'rta daraja",
+        4: "HSK 4 Â· Yuqori o'rta",
+        5: 'HSK 5 Â· Yuqori daraja'
+    };
+    for (let lvl = 1; lvl <= 5; lvl++) {
+        const prog = getLevelProgress(lvl);
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'ec-level-row' + (lvl === currentHSK ? ' active' : '');
+        row.dataset.hsk = String(lvl);
+
+        const badge = document.createElement('span');
+        badge.className = 'ec-level-badge ec-lvl-' + lvl;
+        badge.textContent = 'HSK ' + lvl;
+
+        const info = document.createElement('div');
+        info.className = 'ec-level-info';
+        const name = document.createElement('strong');
+        name.textContent = (typeof t === 'function' && t('hsk.' + lvl + '_label') !== 'hsk.' + lvl + '_label')
+            ? t('hsk.' + lvl + '_label') : names[lvl];
+        const bar = document.createElement('div');
+        bar.className = 'ec-level-bar';
+        const fill = document.createElement('div');
+        fill.className = 'ec-level-bar-fill';
+        fill.style.width = prog.pct + '%';
+        bar.appendChild(fill);
+        const sub = document.createElement('small');
+        sub.textContent = prog.learned + ' / ' + prog.total + " so'z";
+        info.appendChild(name);
+        info.appendChild(bar);
+        info.appendChild(sub);
+
+        row.appendChild(badge);
+        row.appendChild(info);
+        row.addEventListener('click', () => chooseLevel(lvl));
+        list.appendChild(row);
+    }
+}
+
+function openLevelSheet() {
+    const sheet = document.getElementById('levelSheet');
+    if (!sheet) return;
+    renderLevelSheet();
+    sheet.hidden = false;
+    requestAnimationFrame(() => sheet.classList.add('open'));
+}
+
+function closeLevelSheet() {
+    const sheet = document.getElementById('levelSheet');
+    if (!sheet || sheet.hidden) return;
+    sheet.classList.remove('open');
+    try { localStorage.setItem('ecLevelChosen', '1'); } catch (e) {}
+    setTimeout(() => { sheet.hidden = true; }, 220);
+}
+
+function chooseLevel(lvl) {
+    currentHSK = lvl;
+    try {
+        localStorage.setItem('ecCurrentHSK', String(lvl));
+        localStorage.setItem('ecLevelChosen', '1');
+    } catch (e) {}
+    closeLevelSheet();
+    showHome();
+}
+
+function initLevelSheet() {
+    document.querySelectorAll('[data-close-level]').forEach(el => el.addEventListener('click', closeLevelSheet));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLevelSheet(); });
+    // First launch: let the learner pick a level once, then it hides behind the chip.
+    let chosen = false;
+    try { chosen = localStorage.getItem('ecLevelChosen') === '1'; } catch (e) {}
+    if (!chosen) setTimeout(openLevelSheet, 450);
 }

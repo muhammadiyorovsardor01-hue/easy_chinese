@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=50">
+    <link rel="stylesheet" href="styles.css?v=51">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -48,7 +48,7 @@
 
     <main class="main-content">
         <!-- Dashboard View -->
-        <section id="dashboard" class="view active">
+        <section id="dashboard" class="view">
             <div class="hero" aria-hidden="false">
                 <div class="hero-art" aria-hidden="true">
                     <span class="hero-sun"></span>
@@ -168,7 +168,7 @@
         </section>
 
         <!-- Lessons View -->
-        <section id="lessons" class="view">
+        <section id="lessons" class="view active">
             <!-- Landscape atmosphere behind the winding path (decorative only) -->
             <div class="lessons-scenery" aria-hidden="true">
                 <span class="ls-sun"></span>
@@ -187,7 +187,7 @@
             <div class="lessons-level-banner ec-oriental-banner">
                 <div class="ec-banner-clouds" aria-hidden="true"></div>
                 <div class="ec-banner-top-row">
-                    <button class="back-btn" id="backToDashboard" data-i18n="dash.backToLevels">&larr; Darajalar</button>
+                    <button class="back-btn ec-level-chip" id="backToDashboard" type="button" aria-haspopup="dialog" aria-label="Darajani tanlash">HSK 1 <span aria-hidden="true">&#9662;</span></button>
                     <div class="ec-banner-top-right">
                         <span class="lessons-cn-badge" id="lessonsCnBadge">&#x4E00;&#x7EA7; &middot; 150 so'z</span>
                         <button type="button" class="ec-search-pill-btn" id="toggleLessonSearchBtn" aria-label="Qidirish" title="So'z yoki dars qidirish">
@@ -821,151 +821,60 @@
 
         <!-- Dedicated Practice Hub View (练习中心 · Amaliyot Markazi) -->
         <section id="practice" class="view">
-            <div class="subview-header-card practice-center-banner">
-                <div class="lessons-banner-top">
-                    <span class="lessons-cn-badge">练习中心 · Super Practice</span>
-                    <span class="weekly-streak-pill" id="practiceHskPill">HSK 1</span>
-                </div>
-                <h2 class="section-title">📚 <span data-i18n="practice.title">Amaliyot Markazi</span></h2>
-                <p class="lessons-kicker" data-i18n="practice.kicker">Tonlar, jonli muloqot, so‘zlar va viktorinalar orqali xitoy tilingizni charxlang</p>
+            <div class="pq-header">
+                <h2 class="section-title" data-i18n="practice.title">Amaliyot Markazi</h2>
+                <span class="weekly-streak-pill" id="practiceHskPill">HSK 1</span>
             </div>
 
-            <!-- 1-XONA: Ovoz va Talaffuz (Fonetika ustaxonasi) -->
-            <div class="practice-group-section practice-room-card room-phonetics">
-                <div class="practice-room-head">
-                    <span class="practice-room-badge">1-XONA &middot; &#x8BED;&#x97F3;&#x5DE5;&#x574A;</span>
-                    <h3 class="practice-group-heading">&#x1F399;&#xFE0F; <span data-i18n="practice.g1">Ovoz va Talaffuz (Fonetika)</span></h3>
-                    <p class="practice-room-sub">Xitoycha tovushlar, 4 ta ton va mikrofonda talaffuzni tekshirish</p>
-                </div>
-                <div class="practice-tiles-grid">
-                    <button type="button" class="hub-tile-card tile-pinyin" id="hubOpenPinyinChartBtn">
-                        <div class="hub-tile-icon pinyin-icon">&#x1F3B9;</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong data-i18n="practice.tile.pinyin.title">Interaktiv Pinyin Jadvali</strong>
-                                <span class="hub-pill-badge hub-pill-new" data-i18n="practice.tile.pinyin.badge">23 Undosh + 24 Unli + Ovoz</span>
-                            </div>
-                            <p data-i18n="practice.tile.pinyin.desc">Barcha &#x58F0;&#x6BCD; va &#x97F5;&#x6BCD; tovushlari, to'liq kombinatsiyalar matritsasi va muhim o'qish qoidalari</p>
-                        </div>
-                        <span class="hub-tile-arrow">&rarr;</span>
-                    </button>
-
-                    <button type="button" class="hub-tile-card tile-tone" id="hubOpenToneBtn">
-                        <div class="hub-tile-icon tone-icon">&#x1F3B5;</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong data-i18n="practice.tile.tone.title">Tonlar Laboratoriyasi</strong>
-                                <span class="hub-pill-badge" data-i18n="practice.tile.tone.badge">4 Ton + Sandhi</span>
-                            </div>
-                            <p data-i18n="practice.tile.tone.desc">1-4 tonlar grafigi, o'xshash so'zlar (m&#x101;/m&#xE1;/m&#x1CE;/m&#xE0;) va eshitib topish viktorinasi</p>
-                        </div>
-                        <span class="hub-tile-arrow">&rarr;</span>
-                    </button>
-
-                    <button type="button" class="hub-tile-card tile-mic" id="hubOpenPitchBtn">
-                        <div class="hub-tile-icon mic-icon">&#x1F399;&#xFE0F;</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong data-i18n="practice.tile.pitch.title">Talaffuz va Pitch Mashqi</strong>
-                                <span class="hub-pill-badge" data-i18n="practice.tile.pitch.badge">Ovozli tekshirish</span>
-                            </div>
-                            <p data-i18n="practice.tile.pitch.desc">Mikrofonga aytib, ovoz konturingiz to'g'ri tushayotganini tekshiring</p>
-                        </div>
-                        <span class="hub-tile-arrow">&rarr;</span>
-                    </button>
-                </div>
+            <h3 class="pq-group-title">Ovoz va talaffuz</h3>
+            <div class="pq-grid">
+                <button type="button" class="pq-tile" id="hubOpenPinyinChartBtn">
+                    <span class="pq-icon pq-orange" aria-hidden="true">a</span>
+                    <span class="pq-label">Pinyin asoslari</span>
+                </button>
+                <button type="button" class="pq-tile" id="hubOpenToneBtn">
+                    <span class="pq-icon pq-purple" aria-hidden="true">&#x58F0;</span>
+                    <span class="pq-label">Tonlar</span>
+                </button>
+                <button type="button" class="pq-tile" id="hubOpenPitchBtn">
+                    <span class="pq-icon pq-pink" aria-hidden="true">&#x8BF4;</span>
+                    <span class="pq-label">Talaffuz</span>
+                </button>
             </div>
 
-            <!-- 2-XONA: Iyerogliflar ustaxonasi -->
-            <div class="practice-group-section practice-room-card room-hanzi">
-                <div class="practice-room-head">
-                    <span class="practice-room-badge">2-XONA &middot; &#x6C49;&#x5B57;&#x5DE5;&#x574A;</span>
-                    <h3 class="practice-group-heading">&#x270D;&#xFE0F; <span>Iyerogliflar Ustaxonasi</span></h3>
-                    <p class="practice-room-sub">Iyeroglif kalitlari (radikallar), tuzilish mantiqi va chizish mashqi</p>
-                </div>
-                <div class="practice-tiles-grid">
-                    <button type="button" class="hub-tile-card tile-radicals" id="hubOpenRadicalsBtn">
-                        <div class="hub-tile-icon radicals-icon">&#x1F9E9;</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong data-i18n="practice.tile.radicals.title">Iyeroglif Kalitlari (Radikallar)</strong>
-                                <span class="hub-pill-badge hub-pill-new" data-i18n="practice.tile.radicals.badge">30 Kalit + Anatomiya + Test</span>
-                            </div>
-                            <p data-i18n="practice.tile.radicals.desc">Iyerogliflarning mantiqiy ildizlari (&#x6C35;suv, &#x624C;qo'l, &#x53E3;og'iz, &#x4EBB;odam), harf tuzilishi formulalari va viktorina</p>
-                        </div>
-                        <span class="hub-tile-arrow">&rarr;</span>
-                    </button>
-
-                    <button type="button" class="hub-tile-card tile-canvas" id="hubOpenCanvasBtn">
-                        <div class="hub-tile-icon canvas-icon">&#x1F58C;&#xFE0F;</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong>Iyeroglif Chizish (Xattotlik)</strong>
-                                <span class="hub-pill-badge">Hanzi Yozuv Doskasi</span>
-                            </div>
-                            <p>Chiziqlar ketma-ketligi (Stroke Order) bo'yicha iyerogliflarni qo'lda chizib mashq qiling</p>
-                        </div>
-                        <span class="hub-tile-arrow">&rarr;</span>
-                    </button>
-                </div>
+            <h3 class="pq-group-title">Iyeroglif</h3>
+            <div class="pq-grid">
+                <button type="button" class="pq-tile" id="hubOpenRadicalsBtn">
+                    <span class="pq-icon pq-teal" aria-hidden="true">&#x90E8;</span>
+                    <span class="pq-label">Hanzi asoslari</span>
+                </button>
+                <button type="button" class="pq-tile" id="hubOpenCanvasBtn">
+                    <span class="pq-icon pq-blue" aria-hidden="true">&#x5199;</span>
+                    <span class="pq-label">Chizish</span>
+                </button>
             </div>
 
-            <!-- 3-XONA: Mashq va Qaytarish -->
-            <div class="practice-group-section practice-room-card room-review">
-                <div class="practice-room-head">
-                    <span class="practice-room-badge">3-XONA &middot; &#x5B9E;&#x6218;&#x4E0E;&#x590D;&#x4E60;</span>
-                    <h3 class="practice-group-heading">&#x1F4DA; <span data-i18n="practice.g3">Mashq va Qaytarish</span></h3>
-                    <p class="practice-room-sub">Kunlik jonli iboralar, 3D kartochkalar va xatolar ustida ishlash</p>
-                </div>
-                <div class="practice-tiles-grid">
-                    <button type="button" class="hub-tile-card tile-survival" id="hubOpenSurvivalBtn">
-                        <div class="hub-tile-icon surv-icon">&#x1F3EE;</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong data-i18n="practice.tile.survival.title">Xitoyda Kunlik Muloqot</strong>
-                                <span class="hub-pill-badge" data-i18n="practice.tile.survival.badge">Jonli iboralar</span>
-                            </div>
-                            <p data-i18n="practice.tile.survival.desc">Darsda (&#x6559;&#x5BA4;), oshxonada (&#x98DF;&#x5802;), WeChat to'lov (&#x5FAE;&#x4FE1;), metro va kuryer (&#x5916;&#x5356;) gaplari</p>
-                        </div>
-                        <span class="hub-tile-arrow">&rarr;</span>
-                    </button>
-
-                    <button type="button" class="hub-tile-card tile-flashcards" id="hubOpenFlashcardsBtn">
-                        <div class="hub-tile-icon card-icon">&#x1F5C2;&#xFE0F;</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong data-i18n="practice.tile.cards.title">Interaktiv Kartochkalar Trenajyori</strong>
-                                <span class="hub-pill-badge" id="hubFlashcardsBadge">Spaced Repetition</span>
-                            </div>
-                            <p data-i18n="practice.tile.cards.desc">3D aylanuvchi kartochkalar, audio talaffuz va o'z-o'zini baholash (Bilaman / Qaytarish)</p>
-                        </div>
-                        <span class="hub-tile-arrow">&rarr;</span>
-                    </button>
-
-                    <button type="button" class="hub-tile-card tile-mistakes" id="hubOpenMistakesBtn">
-                        <div class="hub-tile-icon review-icon">&#x1F9E0;</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong data-i18n="practice.tile.mistakes.title">Xatolar Ustida Ishlash</strong>
-                                <span class="hub-pill-badge" id="hubMistakesBadge">0 ta so'z</span>
-                            </div>
-                            <p data-i18n="practice.tile.mistakes.desc">Dars va testlarda xato bo'lgan so'zlarni qayta mustahkamlash</p>
-                        </div>
-                        <span class="hub-tile-arrow">&rarr;</span>
-                    </button>
-
-                    <button type="button" class="hub-tile-card tile-bookmarks" id="hubOpenBookmarksBtn">
-                        <div class="hub-tile-icon fav-icon">&#x2B50;</div>
-                        <div class="hub-tile-content">
-                            <div class="hub-tile-header">
-                                <strong data-i18n="practice.tile.bookmarks.title">Saqlangan So'zlar</strong>
-                                <span class="hub-pill-badge" id="hubBookmarksBadge">0 ta so'z</span>
-                            </div>
-                            <p data-i18n="practice.tile.bookmarks.desc">O'zingiz yulduzcha qo'ygan maxsus so'zlar to'plamini takrorlash</p>
-                        </div>
-                        <span class="hub-tile-arrow">&rarr;</span>
-                    </button>
-                </div>
+            <h3 class="pq-group-title">Takrorlash</h3>
+            <div class="pq-grid">
+                <button type="button" class="pq-tile" id="hubOpenSurvivalBtn">
+                    <span class="pq-icon pq-amber" aria-hidden="true">&#x8BDD;</span>
+                    <span class="pq-label">Kundalik gaplar</span>
+                </button>
+                <button type="button" class="pq-tile" id="hubOpenFlashcardsBtn">
+                    <span class="pq-icon pq-green" aria-hidden="true">&#x5361;</span>
+                    <span class="pq-label">Kartochkalar</span>
+                    <span class="pq-count" id="hubFlashcardsBadge" hidden></span>
+                </button>
+                <button type="button" class="pq-tile" id="hubOpenMistakesBtn">
+                    <span class="pq-icon pq-red" aria-hidden="true">&#x9519;</span>
+                    <span class="pq-label">Xatolar</span>
+                    <span class="pq-count" id="hubMistakesBadge" hidden>0</span>
+                </button>
+                <button type="button" class="pq-tile" id="hubOpenBookmarksBtn">
+                    <span class="pq-icon pq-gold" aria-hidden="true">&#x2605;</span>
+                    <span class="pq-label">Saqlangan</span>
+                    <span class="pq-count" id="hubBookmarksBadge" hidden>0</span>
+                </button>
             </div>
         </section>
 
@@ -1814,7 +1723,19 @@
         </div>
     </div>
 
-    <script src="script.js?v=50"></script>
+    <!-- Level drawer: opened by the HSK chip in the lessons header -->
+    <div class="ec-level-sheet" id="levelSheet" hidden>
+        <div class="ec-level-backdrop" data-close-level></div>
+        <aside class="ec-level-panel" role="dialog" aria-modal="true" aria-label="Darajani tanlash">
+            <div class="ec-level-head">
+                <strong>Darajani tanlang</strong>
+                <button type="button" class="ec-level-close" data-close-level aria-label="Yopish">&#x2715;</button>
+            </div>
+            <div class="ec-level-list" id="levelSheetList"></div>
+        </aside>
+    </div>
+
+    <script src="script.js?v=51"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1823,6 +1744,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=50"></script>
+    <script src="pwa.js?v=51"></script>
 </body>
 </html>
