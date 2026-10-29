@@ -2260,17 +2260,29 @@ function startSmartCustomDeck(type) {
 function updateLessonsHeader() {
     const kicker = document.getElementById('lessonsKicker');
     const progress = document.getElementById('lessonsProgress');
+    const fillEl = document.getElementById('lessonsBannerFill');
+    const sealEl = document.getElementById('lessonsSealStamp');
     const selectedTrack = lessonTracks[currentLessonTrack] || lessonTracks.classic;
-    const trackLabel = (currentHSK >= 2 || currentLessonTrack === 'new')
-        ? (typeof t === 'function' ? t('lesson.kickerNew') : 'New HSK 3.0 darslari')
-        : (typeof t === 'function' ? t('lesson.kickerClassic') : "Classic HSK 1 yo'nalishi");
     const trackLessons = vocabularyData.filter(word =>
         matchesHskAndTrack(word, currentHSK, selectedTrack.dataTrack)
     );
     const lessonNums = [...new Set(trackLessons.map(word => word.lesson))].sort((a, b) => a - b);
     const completed = lessonNums.filter(num => isLessonComplete(num, selectedTrack.dataTrack)).length;
-    if (kicker) kicker.textContent = `HSK ${currentHSK} · ${trackLabel}`;
-    if (progress) progress.textContent = typeof t === 'function' ? t('lesson.progressText', { done: completed, total: lessonNums.length }) : `${completed} / ${lessonNums.length}`;
+    const total = lessonNums.length || 15;
+    const pct = Math.max(5, Math.round((completed / total) * 100));
+
+    const sealChars = { 1: '\u521D', 2: '\u8FDB', 3: '\u4E2D', 4: '\u9AD8', 5: '\u7CBE' };
+    const stageTitles = {
+        1: "1-BOSQICH \u00B7 \u521D\u5B66\u4E4B\u8DEF (Ilk qadamlar)",
+        2: "2-BOSQICH \u00B7 \u65E5\u5E38\u4EA4\u6D41 (Kunlik muloqot)",
+        3: "3-BOSQICH \u00B7 \u8FDB\u9636\u8868\u8FBE (Erkin suhbat)",
+        4: "4-BOSQICH \u00B7 \u6DF1\u5EA6\u6C49\u8BED (Ravon nutq)",
+        5: "5-BOSQICH \u00B7 \u6C49\u8BED\u5927\u5E08 (Yuqori mahorat)"
+    };
+    if (sealEl) sealEl.textContent = sealChars[currentHSK] || '\u6C49';
+    if (kicker) kicker.textContent = stageTitles[currentHSK] || `HSK ${currentHSK}`;
+    if (progress) progress.textContent = `${completed} / ${total} dars`;
+    if (fillEl) fillEl.style.width = `${pct}%`;
 }
 
 function loadLessonFlowProgress() {
@@ -2539,45 +2551,112 @@ function isLessonComplete(lessonNum, dataTrack) {
     return ids.length > 0 && ids.every(id => learnedWords.includes(id));
 }
 
-// Generate lessons grid
+// Generate lessons grid (Pure Vector SVG Illustrations, Tight S-Curve & Zero Dead Space)
 function generateLessonsGrid() {
     lessonsGrid.innerHTML = '';
-    
+
     const selectedTrack = lessonTracks[currentLessonTrack] || lessonTracks.classic;
 
-    // Get words for the selected HSK version and curriculum track.
     let filteredWords = vocabularyData.filter(word =>
         matchesHskAndTrack(word, currentHSK, selectedTrack.dataTrack)
     );
-    
-    // Apply search filter
+
     if (searchQuery) {
-        filteredWords = filteredWords.filter(word => 
+        filteredWords = filteredWords.filter(word =>
             word.hanzi.toLowerCase().includes(searchQuery) ||
             word.pinyin.toLowerCase().includes(searchQuery) ||
             word.uzbek.toLowerCase().includes(searchQuery)
         );
     }
-    
-    // Get unique lessons from filtered words (each track numbers its own lessons 1-15)
-    const lessons = [...new Set(filteredWords.map(word => word.lesson))].sort((a, b) => a - b);
-    
-    // If no lessons found, show message
-    if (lessons.length === 0) {
-        lessonsGrid.innerHTML = '<p class="no-results">No lessons found matching your criteria.</p>';
+
+    const lessonsList = [...new Set(filteredWords.map(word => word.lesson))].sort((a, b) => a - b);
+
+    if (lessonsList.length === 0) {
+        lessonsGrid.innerHTML = '<p class="no-results">Hech qanday dars topilmadi.</p>';
         return;
     }
-    
-    lessons.forEach(lessonNum => {
+
+    // Crisp monochrome vector icons for inside the 3D circular buttons (NO Windows OS emojis!)
+    const NODE_SVGS = {
+        star: `<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9L12 2.5z"/></svg>`,
+        check: `<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+        lock: `<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M17 9h-1V7a4 4 0 0 0-8 0v2H7a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-6 7.73V18a1 1 0 0 1-2 0v-1.27a2 2 0 1 1 2 0zM10 9V7a2 2 0 0 1 4 0v2h-4z"/></svg>`,
+        audio: `<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M12 3a9 9 0 0 0-9 9v6a3 3 0 0 0 3 3h2v-8H5v-1a7 7 0 0 1 14 0v1h-3v8h2a3 3 0 0 0 3-3v-6a9 9 0 0 0-9-9z"/></svg>`,
+        trophy: `<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M18 4V3H6v1H3v4c0 2.21 1.79 4 4 4h.28A6.01 6.01 0 0 0 11 15.9V18H8v2h8v-2h-3v-2.1A6.01 6.01 0 0 0 16.72 12H17c2.21 0 4-1.79 4-4V4h-3zM5 8V6h1v4c-1.1 0-2-.9-2-2zm14 0c0 1.1-.9 2-2 2V6h1v2z"/></svg>`
+    };
+
+    // Real 3D Clay/Pixar-style rendered transparent PNG assets with breathing/swaying movement
+    const MASCOT_3D = {
+        panda: `<div class="mascot-3d-stage">
+            <img src="assets/mascot-panda-3d.png" alt="3D Panda" class="mascot-3d-img" width="108" height="108" loading="eager">
+            <span class="mascot-3d-shadow"></span>
+        </div>`,
+        dragon: `<div class="mascot-3d-stage">
+            <img src="assets/mascot-dragon-3d.png" alt="3D Jade Dragon" class="mascot-3d-img mascot-3d-dragon" width="110" height="110" loading="lazy">
+            <span class="mascot-3d-shadow"></span>
+        </div>`,
+        cat: `<div class="mascot-3d-stage">
+            <img src="assets/mascot-cat-3d.png" alt="3D Lucky Cat" class="mascot-3d-img mascot-3d-cat" width="108" height="108" loading="lazy">
+            <span class="mascot-3d-shadow"></span>
+        </div>`,
+        tiger: `<div class="mascot-3d-stage">
+            <img src="assets/mascot-tiger-3d.png" alt="3D Baby Tiger" class="mascot-3d-img mascot-3d-tiger" width="108" height="108" loading="lazy">
+            <span class="mascot-3d-shadow"></span>
+        </div>`
+    };
+
+    const CHEST_3D_LOCKED = `<div class="chest-3d-stage chest-3d-locked">
+        <img src="assets/chest-3d.png" alt="Bonus Chest" class="chest-3d-img" width="84" height="84" loading="lazy">
+        <span class="chest-3d-shadow"></span>
+    </div>`;
+
+    const CHEST_3D_OPEN = `<div class="chest-3d-stage chest-3d-ready">
+        <img src="assets/chest-3d.png" alt="Ready Bonus Chest" class="chest-3d-img" width="88" height="88" loading="lazy">
+        <span class="chest-3d-shadow"></span>
+    </div>`;
+
+    const firstOpen = lessonsList.find(n => !isLessonComplete(n, selectedTrack.dataTrack)) || lessonsList[0];
+
+    const waveOffsets = [
+        0, -44, -68, -38, 0,
+        44, 68, 38, 0, -44,
+        -68, -38, 0, 44, 68
+    ];
+
+    const sideMascots = {
+        3: { html: MASCOT_3D.panda, cn: '\u52A0\u6CB9\uFF01', pinyin: 'Ji\u0101y\u00F3u!', uz: "Bo'sh kelmang!", side: 'right' },
+        7: { html: MASCOT_3D.dragon, cn: '\u592A\u68D2\u4E86\uFF01', pinyin: 'T\u00E0i b\u00E0ng le!', uz: 'Barakalla!', side: 'left' },
+        11: { html: MASCOT_3D.cat, cn: '\u5409\u7965\u5982\u610F\uFF01', pinyin: 'J\u00EDxi\u00E1ng r\u00FAy\u00EC!', uz: "Omad sizga yor!", side: 'right' },
+        15: { html: MASCOT_3D.tiger, cn: '\u864E\u864E\u751F\u5A01\uFF01', pinyin: 'H\u01D4 h\u01D4 sh\u0113ng w\u0113i!', uz: "G'alabaga olg'a!", side: 'left' }
+    };
+    const unitMeta = {
+        2: { badge: "2-BO'LIM \u00B7 \u7B2C\u4E8C\u5355\u5143", title: "Kundalik hayot, Oila va Vaqt" },
+        3: { badge: "3-BO'LIM \u00B7 \u7B2C\u4E09\u5355\u5143", title: "Sayohat, Xarid va Muloqot" }
+    };
+
+    let claimedChests = {};
+    try {
+        claimedChests = JSON.parse(localStorage.getItem('easyChineseClaimedChests') || '{}') || {};
+    } catch (e) { claimedChests = {}; }
+
+    lessonsList.forEach((lessonNum, idx) => {
         const lessonWords = vocabularyData.filter(word =>
             matchesHskAndTrack(word, currentHSK, selectedTrack.dataTrack) && word.lesson === lessonNum
         );
         const wordCount = lessonWords.length;
-        const lessonBtn = document.createElement('button');
         const done = isLessonComplete(lessonNum, selectedTrack.dataTrack);
-        const firstOpen = lessons.find(n => !isLessonComplete(n, selectedTrack.dataTrack));
         const isCurrent = lessonNum === firstOpen;
+
+        const rowWrap = document.createElement('div');
+        rowWrap.className = 'duo-path-row';
+        const offsetPx = searchQuery ? 0 : (waveOffsets[idx % waveOffsets.length] || 0);
+        rowWrap.style.setProperty('--duo-offset', `${offsetPx}px`);
+
+        const lessonBtn = document.createElement('button');
+        lessonBtn.type = 'button';
         lessonBtn.className = 'lesson-btn' + (done ? ' node-completed' : (isCurrent ? ' node-current' : ' node-locked'));
+        lessonBtn.dataset.lessonNum = String(lessonNum);
+
         if (done) {
             lessonBtn.setAttribute('aria-label', `Lesson ${lessonNum} completed, ${wordCount} words`);
         } else if (isCurrent) {
@@ -2585,19 +2664,139 @@ function generateLessonsGrid() {
         } else {
             lessonBtn.setAttribute('aria-label', `Lesson ${lessonNum} locked, ${wordCount} words`);
         }
+
+        // 3D Tactile Circle Disk + Vector Icon (NO Windows OS Emojis!)
+        const disk = document.createElement('span');
+        disk.className = 'duo-node-disk';
+
+        if (isCurrent) {
+            const normTrack = currentHSK === 1 ? selectedTrack.dataTrack : 'classic';
+            const progressRec = typeof getLessonFlowRecord === 'function' ? getLessonFlowRecord(normTrack, currentHSK, lessonNum) : null;
+            const completedCount = progressRec && Array.isArray(progressRec.completedSteps) ? progressRec.completedSteps.length : 0;
+            const pct = completedCount > 0 ? Math.min(100, Math.round((completedCount / 4) * 100)) : 0;
+            const circumference = 257.6;
+            const strokeOffset = circumference - (Math.max(15, pct) / 100) * circumference;
+
+            const ringSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            ringSvg.setAttribute('class', 'duo-progress-ring');
+            ringSvg.setAttribute('viewBox', '0 0 94 94');
+            ringSvg.setAttribute('aria-hidden', 'true');
+            ringSvg.innerHTML = `<circle class="ring-bg" cx="47" cy="47" r="41"></circle><circle class="ring-fill" cx="47" cy="47" r="41" stroke-dasharray="${circumference}" stroke-dashoffset="${strokeOffset}"></circle>`;
+            disk.appendChild(ringSvg);
+
+            const startBubble = document.createElement('span');
+            startBubble.className = 'duo-start-bubble';
+            startBubble.textContent = completedCount > 0 ? `DAVOM ETISH \u00B7 ${pct}%` : 'BOSHLASH';
+            lessonBtn.appendChild(startBubble);
+        }
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'duo-node-icon';
+
+        if (done) {
+            iconSpan.innerHTML = (lessonNum % 2 === 0) ? '<span class="duo-hanzi-glyph">\u5B57</span>' : NODE_SVGS.check;
+        } else if (isCurrent) {
+            iconSpan.innerHTML = (lessonNum % 2 === 0) ? '<span class="duo-hanzi-glyph">\u5B57</span>' : NODE_SVGS.star;
+        } else if (lessonNum === firstOpen + 1) {
+            iconSpan.innerHTML = '<span class="duo-hanzi-glyph">\u5B57</span>';
+        } else if (lessonNum === firstOpen + 2) {
+            iconSpan.innerHTML = NODE_SVGS.audio;
+        } else if (lessonNum % 5 === 0) {
+            iconSpan.innerHTML = NODE_SVGS.trophy;
+        } else {
+            iconSpan.innerHTML = NODE_SVGS.lock;
+        }
+        disk.appendChild(iconSpan);
+        lessonBtn.appendChild(disk);
+
+        // Keep label elements in DOM for screen readers / search mode
         const lessonLabel = document.createElement('span');
         lessonLabel.className = 'lesson-btn-title';
-        const lessonWord = typeof t === 'function' ? t('lesson.word') : 'Dars';
-        const wordsUnit = typeof t === 'function' ? t('lesson.wordsUnit') : "so'z";
-        lessonLabel.textContent = `${lessonWord} ${lessonNum}`;
+        const sampleHanzi = lessonWords.slice(0, 2).map(w => w.hanzi).join(' \u00B7 ');
+        lessonLabel.textContent = `${lessonNum}-dars` + (sampleHanzi ? ` \u00B7 ${sampleHanzi}` : '');
         const wordCountLabel = document.createElement('span');
         wordCountLabel.className = 'lesson-word-count';
-        const sampleHanzi = lessonWords.slice(0, 2).map(w => w.hanzi).join(' · ');
-        wordCountLabel.textContent = sampleHanzi ? `${wordCount} ${wordsUnit} · ${sampleHanzi}` : `${wordCount} ${wordsUnit}`;
+        wordCountLabel.textContent = `${wordCount} so'z`;
+
         lessonBtn.appendChild(lessonLabel);
         lessonBtn.appendChild(wordCountLabel);
         lessonBtn.addEventListener('click', () => showLessonView(lessonNum));
-        lessonsGrid.appendChild(lessonBtn);
+        rowWrap.appendChild(lessonBtn);
+
+        // Vector Companion Illustration right at the Curve Apex (Lesson 3, 7, 11, 15)
+        if (!searchQuery && sideMascots[lessonNum]) {
+            const mInfo = sideMascots[lessonNum];
+            const mascotEl = document.createElement('button');
+            mascotEl.type = 'button';
+            mascotEl.className = `duo-side-mascot mascot-${mInfo.side}` + (done || isCurrent || lessonNum <= firstOpen + 2 ? ' mascot-awake' : '');
+            mascotEl.setAttribute('aria-label', `${mInfo.cn} (${mInfo.uz})`);
+            mascotEl.innerHTML = `
+                <span class="duo-mascot-svg-wrap">${mInfo.html}</span>
+                <span class="duo-mascot-stars">\u2605 \u2605 \u2605</span>
+            `;
+            mascotEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                mascotEl.classList.remove('mascot-pop');
+                void mascotEl.offsetWidth;
+                mascotEl.classList.add('mascot-pop');
+                if (typeof speakChineseText === 'function') {
+                    speakChineseText(mInfo.cn);
+                }
+                showToast(`${mInfo.cn} (${mInfo.pinyin}) \u2014 ${mInfo.uz}`);
+            });
+            rowWrap.appendChild(mascotEl);
+        }
+
+        lessonsGrid.appendChild(rowWrap);
+
+        // Every 4th lesson (before the 5th trophy node, just like Duolingo!): Vector 3D Chest right on the path!
+        if (!searchQuery && lessonNum % 5 === 4) {
+            const unitIdx = Math.floor(lessonNum / 5) + 1;
+            const chestKey = `${selectedTrack.dataTrack}:${currentHSK}:${unitIdx}`;
+            const unitLessons = [lessonNum - 3, lessonNum - 2, lessonNum - 1, lessonNum];
+            const unitAllDone = unitLessons.every(n => isLessonComplete(n, selectedTrack.dataTrack));
+            const isClaimed = Boolean(claimedChests[chestKey]);
+
+            const chestRow = document.createElement('div');
+            chestRow.className = 'duo-chest-row';
+            const chestBtn = document.createElement('button');
+            chestBtn.type = 'button';
+            chestBtn.className = 'duo-chest-btn' + (isClaimed || unitAllDone ? ' chest-ready' : ' chest-locked');
+            chestBtn.setAttribute('aria-label', 'Bonus XP Chest');
+            chestBtn.innerHTML = (isClaimed || unitAllDone) ? CHEST_3D_OPEN : CHEST_3D_LOCKED;
+            chestBtn.addEventListener('click', () => {
+                if (isClaimed) {
+                    showToast("\u2728 Bu bonus sandiqchasini allaqachon ochgansiz!");
+                    return;
+                }
+                if (unitAllDone) {
+                    claimedChests[chestKey] = true;
+                    try { localStorage.setItem('easyChineseClaimedChests', JSON.stringify(claimedChests)); } catch (e) {}
+                    if (typeof addXP === 'function') addXP(25);
+                    showToast("\uD83C\uDF89 Barakalla! Sandiqdan +25 XP bonus oldingiz!");
+                    generateLessonsGrid();
+                } else {
+                    showToast(`\uD83C\uDFAF Sandiqni ochish uchun oldingi darslarni tugating (+25 XP)!`);
+                }
+            });
+            chestRow.appendChild(chestBtn);
+            lessonsGrid.appendChild(chestRow);
+        }
+
+        // After every 5th lesson: Clean Section Header Line
+        if (!searchQuery && lessonNum % 5 === 0 && lessonNum < lessonsList.length) {
+            const unitIdx = Math.floor(lessonNum / 5);
+            const nextUnit = unitMeta[unitIdx + 1];
+            if (nextUnit) {
+                const divider = document.createElement('div');
+                divider.className = 'duo-unit-divider';
+                divider.innerHTML = `
+                    <span class="duo-divider-line"></span>
+                    <span class="duo-divider-text">${nextUnit.title}</span>
+                    <span class="duo-divider-line"></span>
+                `;
+                lessonsGrid.appendChild(divider);
+            }
+        }
     });
     updateLessonsHeader();
 }
@@ -4851,7 +5050,7 @@ function playNativeToneSound(soundName, fallbackHz = null, rate = 1.0) {
         }
         if (soundName) {
             const cleanKey = String(soundName).trim().toLowerCase().replace(/ü/g, 'v');
-            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=48`);
+            const audio = new Audio(`./assets/audio/tones/${cleanKey}.mp3?v=49`);
             activeToneAudio = audio;
             audio.playbackRate = rate;
             audio.preservesPitch = true;
@@ -5183,6 +5382,28 @@ function initPracticeHubListeners() {
     const hubAi = document.getElementById('hubOpenAiCoachBtn');
     if (hubAi) hubAi.addEventListener('click', () => showAiLaoshiView());
 
+    const toggleLessonSearchBtn = document.getElementById('toggleLessonSearchBtn');
+    const lessonsSearchDrawer = document.getElementById('lessonsSearchDrawer');
+    if (toggleLessonSearchBtn && lessonsSearchDrawer) {
+        toggleLessonSearchBtn.addEventListener('click', () => {
+            const willOpen = lessonsSearchDrawer.hidden;
+            lessonsSearchDrawer.hidden = !willOpen;
+            toggleLessonSearchBtn.classList.toggle('active', willOpen);
+            if (willOpen && searchInput) {
+                setTimeout(() => searchInput.focus(), 60);
+            }
+        });
+    }
+
+    const jumpToCurrentBtn = document.getElementById('jumpToCurrentLessonBtn');
+    if (jumpToCurrentBtn) {
+        jumpToCurrentBtn.addEventListener('click', () => {
+            const curNode = document.querySelector('#lessonsGrid .lesson-btn.node-current') || document.querySelector('#lessonsGrid .lesson-btn');
+            if (curNode) {
+                curNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    }
     const hubCanvas = document.getElementById('hubOpenCanvasBtn');
     if (hubCanvas) {
         hubCanvas.addEventListener('click', () => {

@@ -1,10 +1,10 @@
-const CACHE_NAME = 'easychinese-v47';
+const CACHE_NAME = 'easychinese-v49';
 const CORE_ASSETS = [
   './',
   './index.html',
-  './styles.css?v=48',
-  './script.js?v=48',
-  './pwa.js?v=48',
+  './styles.css?v=49',
+  './script.js?v=49',
+  './pwa.js?v=49',
   './words.json',
   './manifest.json',
   './assets/app-icon-1.svg',
@@ -14,6 +14,11 @@ const CORE_ASSETS = [
   './assets/bg-landscape.svg',
   './assets/bg-landscape-lite.svg',
   './assets/blossom-accent.svg',
+  './assets/chest-3d.png',
+  './assets/mascot-panda-3d.png',
+  './assets/mascot-dragon-3d.png',
+  './assets/mascot-cat-3d.png',
+  './assets/mascot-tiger-3d.png',
   'https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js'
 ];
 

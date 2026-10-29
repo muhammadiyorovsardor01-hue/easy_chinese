@@ -12471,3 +12471,601 @@ a.setting-action-btn { text-decoration: none; }
         display: none;
     }
 }
+
+/* ==========================================================================
+   DUOLINGO-STYLE WINDING PATH (#lessons) - PURE VECTOR EDITION
+   ========================================================================== */
+
+/* 1. Authentic Easy Chinese Oriental Silk & Jade Header Card */
+#lessons .lessons-level-banner.ec-oriental-banner {
+    position: relative;
+    padding: 0.8rem 0.95rem 0.75rem;
+    margin-bottom: 0.5rem;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+    border-bottom: 4px solid #047857;
+    box-shadow: 0 8px 20px -6px rgba(5, 150, 105, 0.32);
+    overflow: hidden;
+    color: #FFFFFF;
+}
+
+.ec-banner-clouds {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 90% 15%, rgba(255, 255, 255, 0.16) 0%, transparent 45%);
+    pointer-events: none;
+}
+
+.ec-banner-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.45rem;
+    position: relative;
+    z-index: 1;
+}
+
+.ec-banner-top-right {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.ec-oriental-banner .back-btn {
+    padding: 0.24rem 0.68rem !important;
+    font-size: 0.74rem !important;
+    font-weight: 800 !important;
+    background: rgba(255, 255, 255, 0.18) !important;
+    border: 1px solid rgba(255, 255, 255, 0.32) !important;
+}
+
+.ec-search-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    padding: 0.24rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    background: rgba(255, 255, 255, 0.18);
+    color: #FFFFFF;
+    font-size: 0.73rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.ec-search-pill-btn:hover,
+.ec-search-pill-btn.active {
+    background: #FFFFFF;
+    color: #065F46;
+}
+
+.ec-banner-hero-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    position: relative;
+    z-index: 1;
+}
+
+.ec-banner-seal {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: linear-gradient(145deg, #EF4444 0%, #B91C1C 100%);
+    border: 1.5px solid #FCA5A5;
+    box-shadow: 0 3px 0 #7F1D1D;
+    color: #FFFFFF;
+    font-size: 1.25rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ec-banner-titles {
+    flex: 1;
+    min-width: 0;
+}
+
+.ec-oriental-banner .lessons-kicker {
+    margin: 0 0 0.05rem 0 !important;
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.ec-oriental-banner .section-title {
+    font-size: 1.15rem !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    font-weight: 900 !important;
+    color: #FFFFFF !important;
+}
+
+.ec-oriental-banner .lessons-progress {
+    padding: 0.22rem 0.58rem !important;
+    font-size: 0.72rem !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+}
+
+.ec-banner-progress-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.22);
+    margin: 0.5rem 0 0.45rem;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.ec-banner-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #FDE047 0%, #F59E0B 100%);
+    transition: width 0.35s ease;
+}
+
+.ec-oriental-banner .hsk-filters {
+    margin: 0 !important;
+    padding: 0.16rem !important;
+    border-radius: 11px !important;
+    background: rgba(0, 0, 0, 0.18) !important;
+    position: relative;
+    z-index: 1;
+}
+
+.ec-oriental-banner .hsk-filter-btn {
+    padding: 0.28rem 0.4rem !important;
+    font-size: 0.72rem !important;
+    border-radius: 8px !important;
+}
+
+#lessons .map-legend {
+    display: none !important;
+}
+
+.duo-search-drawer {
+    margin-bottom: 0.65rem !important;
+}
+
+/* 2. Tight, Rhythmic Winding S-Curve Path (No Dead Space!) */
+#lessons .lessons-grid.duo-winding-path {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+    padding: 2.75rem 0.5rem 3.5rem !important;
+    max-width: 390px !important;
+    margin: 0 auto !important;
+    position: relative;
+}
+
+#lessons .lessons-grid.duo-winding-path::before {
+    display: none !important;
+}
+
+.duo-path-row {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 78px;
+}
+
+/* 3. 3D Tactile Circular Node Button (Pure Vector Icons Inside) */
+#lessons .duo-winding-path .lesson-btn {
+    position: relative;
+    transform: translateX(var(--duo-offset, 0px)) !important;
+    margin: 0 !important;
+    align-self: center !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    cursor: pointer;
+    z-index: 2;
+}
+
+#lessons .duo-winding-path .lesson-btn::before,
+#lessons .duo-winding-path .lesson-btn::after {
+    display: none !important;
+    content: none !important;
+}
+
+.duo-node-disk {
+    width: 72px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    /* Locked 3D matte disk (clean silver-gray like Duolingo Image 1) */
+    background: #E5E7EB;
+    box-shadow: 0 7px 0 #CBD5E1;
+    color: #9CA3AF;
+}
+
+.duo-node-disk::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 15px;
+    width: 22px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.42);
+    transform: rotate(-14deg);
+    pointer-events: none;
+}
+
+.duo-node-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    z-index: 1;
+}
+
+.duo-hanzi-glyph {
+    font-size: 1.75rem;
+    font-weight: 900;
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    line-height: 1;
+}
+
+/* Completed 3D Node */
+#lessons .duo-winding-path .lesson-btn.node-completed .duo-node-disk {
+    background: #10B981;
+    box-shadow: 0 7px 0 #059669;
+    color: #FFFFFF;
+}
+
+/* Current Active 3D Node with Subtle Outer Ring */
+#lessons .duo-winding-path .lesson-btn.node-current .duo-node-disk {
+    width: 76px;
+    height: 68px;
+    background: #10B981;
+    box-shadow: 0 8px 0 #059669, 0 0 0 7px rgba(16, 185, 129, 0.2);
+    color: #FFFFFF;
+}
+
+#lessons .duo-winding-path .lesson-btn:active .duo-node-disk {
+    transform: translateY(5px);
+    box-shadow: 0 2px 0 #94A3B8 !important;
+}
+
+#lessons .duo-winding-path .lesson-btn.node-current:active .duo-node-disk,
+#lessons .duo-winding-path .lesson-btn.node-completed:active .duo-node-disk {
+    transform: translateY(5px);
+    box-shadow: 0 2px 0 #059669 !important;
+}
+
+/* Clean Floating "BOSHLASH" Speech Bubble above Current Node */
+.duo-start-bubble {
+    position: absolute;
+    top: -36px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FFFFFF;
+    color: #059669;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    padding: 0.3rem 0.75rem;
+    border-radius: 12px;
+    border: 2px solid #E2E8F0;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+    white-space: nowrap;
+    z-index: 5;
+    animation: duoBubbleBounce 1.6s ease-in-out infinite;
+}
+
+.duo-start-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 9px;
+    height: 9px;
+    background: #FFFFFF;
+    border-right: 2px solid #E2E8F0;
+    border-bottom: 2px solid #E2E8F0;
+}
+
+@keyframes duoBubbleBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* Hide verbose text labels under circles on the map so circles sit tight like Duolingo */
+#lessons .duo-winding-path .lesson-btn .lesson-btn-title,
+#lessons .duo-winding-path .lesson-btn .lesson-word-count {
+    display: none !important;
+}
+
+/* 4. Custom Full-Body Vector SVG Companions in the Curve Apex */
+.duo-side-mascot {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 1;
+    transition: transform 0.2s ease;
+}
+
+.duo-side-mascot.mascot-right {
+    right: 12px;
+}
+
+.duo-side-mascot.mascot-left {
+    left: 12px;
+}
+
+.duo-side-mascot:hover {
+    transform: translateY(-53%) scale(1.05);
+}
+
+.duo-side-mascot.mascot-pop {
+    animation: mascotJump 0.45s ease;
+}
+
+@keyframes mascotJump {
+    0%, 100% { transform: translateY(-50%) scale(1); }
+    45% { transform: translateY(-62%) scale(1.12); }
+}
+
+.duo-mascot-svg-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+
+.duo-mascot-stars {
+    font-size: 0.95rem;
+    color: #CBD5E1;
+    letter-spacing: 4px;
+    font-weight: 900;
+    margin-top: -2px;
+}
+
+.duo-side-mascot.mascot-awake .duo-mascot-stars {
+    color: #FBBF24;
+}
+
+/* 5. Pure Vector 3D Treasure Chest directly on the Path (No clunky box!) */
+.duo-chest-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 74px;
+    margin: 0.1rem 0;
+}
+
+.duo-chest-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+}
+
+.duo-chest-btn:hover {
+    transform: scale(1.06);
+}
+
+.duo-chest-btn:active {
+    transform: translateY(3px);
+}
+
+/* Clean Section Divider Line between Units */
+.duo-unit-divider {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin: 0.85rem 0 0.45rem;
+    padding: 0 0.5rem;
+}
+
+.duo-divider-line {
+    flex: 1;
+    height: 2px;
+    background: var(--border-color);
+    border-radius: 999px;
+}
+
+.duo-divider-text {
+    font-size: 0.78rem;
+    font-weight: 900;
+    color: var(--text-secondary);
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+/* 6. Floating Jump-to-Current Button */
+.duo-jump-current-btn {
+    position: fixed;
+    right: 1rem;
+    bottom: 5.4rem;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-bottom-width: 4px;
+    color: #059669;
+    font-size: 1.25rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 40;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+
+/* 7. 3D Pixar/Clay Companions & Chest with Living Breathing/Swaying Movement */
+.mascot-3d-stage {
+    position: relative;
+    width: 112px;
+    height: 114px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.mascot-3d-img {
+    width: 106px;
+    height: 106px;
+    object-fit: contain;
+    z-index: 2;
+    filter: drop-shadow(0 8px 14px rgba(15, 23, 42, 0.16));
+    transform-origin: 50% 85%;
+    animation: mascotLiveMove 3.2s ease-in-out infinite;
+    will-change: transform;
+}
+
+.mascot-3d-dragon {
+    animation-delay: -1.4s;
+}
+
+.mascot-3d-shadow {
+    width: 68px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.22) 0%, rgba(15, 23, 42, 0.04) 70%, transparent 100%);
+    margin-top: -10px;
+    z-index: 1;
+    animation: mascotShadowPulse 3.2s ease-in-out infinite;
+}
+
+@keyframes mascotLiveMove {
+    0%, 100% {
+        transform: translateY(0px) rotate(-2deg) scale(1, 1);
+    }
+    25% {
+        transform: translateY(-6px) rotate(1.5deg) scale(1.02, 0.99);
+    }
+    50% {
+        transform: translateY(-2px) rotate(2.5deg) scale(0.99, 1.02);
+    }
+    75% {
+        transform: translateY(-7px) rotate(-1deg) scale(1.02, 0.99);
+    }
+}
+
+@keyframes mascotShadowPulse {
+    0%, 100% {
+        transform: scaleX(1) scaleY(1);
+        opacity: 0.85;
+    }
+    25%, 75% {
+        transform: scaleX(0.84) scaleY(0.8);
+        opacity: 0.55;
+    }
+    50% {
+        transform: scaleX(0.95) scaleY(0.92);
+        opacity: 0.75;
+    }
+}
+
+.chest-3d-stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.chest-3d-img {
+    width: 84px;
+    height: 84px;
+    object-fit: contain;
+    z-index: 2;
+    filter: drop-shadow(0 6px 12px rgba(15, 23, 42, 0.16));
+    animation: chestGentleBob 2.8s ease-in-out infinite;
+}
+
+.chest-3d-locked .chest-3d-img {
+    filter: saturate(0.78) brightness(0.98) drop-shadow(0 6px 10px rgba(15, 23, 42, 0.14));
+}
+
+.chest-3d-ready .chest-3d-img {
+    filter: saturate(1.15) drop-shadow(0 0 14px rgba(245, 158, 11, 0.45));
+}
+
+.chest-3d-shadow {
+    width: 62px;
+    height: 12px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.2) 0%, transparent 75%);
+    margin-top: -10px;
+    z-index: 1;
+}
+
+@keyframes chestGentleBob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-4px) rotate(1.5deg); }
+}
+
+/* Progress Ring around active current node */
+.duo-progress-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    width: 96px;
+    height: 96px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.duo-progress-ring .ring-bg {
+    fill: none;
+    stroke: rgba(16, 185, 129, 0.22);
+    stroke-width: 5;
+}
+
+.duo-progress-ring .ring-fill {
+    fill: none;
+    stroke: #F59E0B;
+    stroke-width: 5;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s ease;
+    filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.55));
+}
+
+.mascot-3d-cat {
+    animation-delay: -0.9s;
+}
+
+.mascot-3d-tiger {
+    animation-delay: -2.2s;
+}

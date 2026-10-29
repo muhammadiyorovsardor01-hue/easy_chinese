@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=48">
+    <link rel="stylesheet" href="styles.css?v=49">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -184,39 +184,55 @@
                 <span class="ls-hill ls-hill-b2"></span>
             </div>
 
-            <div class="lessons-level-banner">
-                <div class="lessons-banner-top">
-                    <button class="back-btn" id="backToDashboard" data-i18n="dash.backToLevels">← Darajalar</button>
-                    <span class="lessons-cn-badge" id="lessonsCnBadge">一级 · 150 words</span>
-                </div>
-                <div class="lessons-banner-main">
-                    <div>
-                        <h2 class="section-title" id="lessonsTitle">HSK 1 Lessons</h2>
-                        <p class="lessons-kicker" id="lessonsKicker">HSK 1 · Classic path — follow the winding route below</p>
+            <div class="lessons-level-banner ec-oriental-banner">
+                <div class="ec-banner-clouds" aria-hidden="true"></div>
+                <div class="ec-banner-top-row">
+                    <button class="back-btn" id="backToDashboard" data-i18n="dash.backToLevels">&larr; Darajalar</button>
+                    <div class="ec-banner-top-right">
+                        <span class="lessons-cn-badge" id="lessonsCnBadge">&#x4E00;&#x7EA7; &middot; 150 so'z</span>
+                        <button type="button" class="ec-search-pill-btn" id="toggleLessonSearchBtn" aria-label="Qidirish" title="So'z yoki dars qidirish">
+                            <span>&#x1F50D;</span> <span>Qidiruv</span>
+                        </button>
                     </div>
-                    <p class="lessons-progress" id="lessonsProgress" aria-live="polite">0 of 15 lessons complete</p>
                 </div>
+
+                <div class="ec-banner-hero-row">
+                    <div class="ec-banner-seal" id="lessonsSealStamp" aria-hidden="true">&#x521D;</div>
+                    <div class="ec-banner-titles">
+                        <p class="lessons-kicker" id="lessonsKicker">1-BOSQICH &middot; &#x521D;&#x5B66;&#x4E4B;&#x8DEF;</p>
+                        <h2 class="section-title" id="lessonsTitle">HSK 1 &middot; Boshlang'ich</h2>
+                    </div>
+                    <p class="lessons-progress" id="lessonsProgress" aria-live="polite">0 / 15</p>
+                </div>
+
+                <div class="ec-banner-progress-track" aria-hidden="true">
+                    <div class="ec-banner-progress-fill" id="lessonsBannerFill" style="width: 6%"></div>
+                </div>
+
                 <!-- HSK 1 lesson versions (JS toggles .active only â€” keep both track buttons) -->
                 <div class="hsk-filters" aria-label="HSK 1 lesson version">
-                    <button class="hsk-filter-btn active" data-track="classic" type="button" data-i18n="lesson.trackClassic">Classic HSK 1 · 15 ta dars</button>
-                    <button class="hsk-filter-btn" data-track="new" type="button" data-i18n="lesson.trackNew">New HSK 3.0 · 15 ta dars</button>
+                    <button class="hsk-filter-btn active" data-track="classic" type="button" data-i18n="lesson.trackClassic">Classic HSK 1</button>
+                    <button class="hsk-filter-btn" data-track="new" type="button" data-i18n="lesson.trackNew">New HSK 3.0</button>
                 </div>
             </div>
 
-            <!-- Search Bar -->
-            <div class="search-container">
+            <!-- Collapsible Search Bar (toggled by #toggleLessonSearchBtn) -->
+            <div class="search-container duo-search-drawer" id="lessonsSearchDrawer" hidden>
                 <input type="text" class="search-input" id="searchInput" data-i18n-ph="lesson.searchPlaceholder" placeholder="O'zbekcha, Pinyin yoki Hanzi bo'yicha qidirish...">
-                <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
+                <button class="search-clear" id="searchClear" aria-label="Clear search">&#x2715;</button>
             </div>
 
-            <!-- Node-state legend: completed / current / locked -->
-            <div class="map-legend">
-                <span class="map-legend-item lg-completed" data-i18n="lesson.legendCompleted">✓ 已完成 · Tugallangan</span>
-                <span class="map-legend-item lg-current" data-i18n="lesson.legendCurrent">● 进行中 · Joriy dars</span>
-                <span class="map-legend-item lg-locked" data-i18n="lesson.legendLocked">🔒 未解锁 · Yopiq</span>
+            <!-- Node-state legend kept hidden in DOM for compatibility -->
+            <div class="map-legend" hidden>
+                <span class="map-legend-item lg-completed" data-i18n="lesson.legendCompleted">&#x2713; &#x5DF2;&#x5B8C;&#x6210; &middot; Tugallangan</span>
+                <span class="map-legend-item lg-current" data-i18n="lesson.legendCurrent">&#x25CF; &#x8FDB;&#x884C;&#x4E2D; &middot; Joriy dars</span>
+                <span class="map-legend-item lg-locked" data-i18n="lesson.legendLocked">&#x1F512; &#x672A;&#x89E3;&#x9501; &middot; Yopiq</span>
             </div>
 
-            <div class="lessons-grid" id="lessonsGrid"></div>
+            <div class="lessons-grid duo-winding-path" id="lessonsGrid"></div>
+
+            <!-- Duolingo-style floating jump-to-current button -->
+            <button type="button" class="duo-jump-current-btn" id="jumpToCurrentLessonBtn" aria-label="Joriy darsga o'tish" title="Joriy darsga o'tish">&#x2193;</button>
         </section>
 
         <!-- Lesson View -->
@@ -1812,7 +1828,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=48"></script>
+    <script src="script.js?v=49"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1821,6 +1837,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=48"></script>
+    <script src="pwa.js?v=49"></script>
 </body>
 </html>
