@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'easychinese-v52';
+const CACHE_NAME = 'easychinese-v53';
 const CORE_ASSETS = [
   './',
   './index.html',

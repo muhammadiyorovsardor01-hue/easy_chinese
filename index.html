@@ -1,4 +1,4 @@
-﻿<!-- Last updated: August 31, 2026 - Added HSK filters, search bar, and streak tracker -->
+<!-- Last updated: August 31, 2026 - Added HSK filters, search bar, and streak tracker -->
 <!DOCTYPE html>
 <html lang="uz" translate="no">
 <head>
@@ -25,7 +25,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
     <link rel="preload" as="image" href="assets/chinese-landscape.jpg" fetchpriority="high">
-    <link rel="stylesheet" href="styles.css?v=52">
+    <link rel="stylesheet" href="styles.css?v=53">
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
 </head>
@@ -233,7 +233,45 @@
         </section>
 
         <!-- Lesson View -->
-        <section id="lesson" class="view">
+                <section id="lesson" class="view">
+            <!-- Unified Interactive Lesson Flow (v53 Easy Chinese) -->
+            <div id="unifiedLessonView" class="unified-lesson-view">
+                <!-- Top Jade Progress Bar & Navigation -->
+                <header class="ul-top-bar">
+                    <button type="button" class="ul-exit-btn" id="ulExitBtn" aria-label="Darsdan chiqish" title="Darsdan chiqish">&times;</button>
+                    <div class="ul-progress-wrap" aria-label="Dars jarayoni">
+                        <div class="ul-progress-bar">
+                            <div class="ul-progress-fill" id="ulProgressFill" style="width: 15%;"></div>
+                        </div>
+                    </div>
+                    <div class="ul-gem-badge">
+                        <span class="ul-gem-icon">&#x1F48E;</span>
+                        <span class="ul-gem-count" id="ulGemCount">0</span>
+                    </div>
+                </header>
+
+                <!-- Dynamic Card Arena -->
+                <main class="ul-arena" id="ulArena"></main>
+
+                <!-- Slide-up Silk Feedback Sheet -->
+                <div class="oriental-feedback-sheet" id="ulFeedbackSheet" aria-hidden="true">
+                    <div class="feedback-sheet-inner">
+                        <div class="feedback-status-row">
+                            <div class="feedback-stamp-icon" id="ulFeedbackStamp">&#x2728;</div>
+                            <div class="feedback-text-wrap">
+                                <strong class="feedback-title" id="ulFeedbackTitle">Ajoyib! (&#x975E;&#x5E38;&#x597D;)</strong>
+                                <p class="feedback-sub" id="ulFeedbackSub">+10 XP &middot; To'g'ri topildi</p>
+                            </div>
+                        </div>
+                        <button type="button" class="feedback-continue-btn" id="ulFeedbackContinueBtn">
+                            <span>Davom etish</span> &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legacy sub-views preserved dormantly -->
+            <div class="legacy-lesson-dormant" style="display: none !important;">
             <div class="lesson-top-bar">
                 <button class="back-btn" id="backToLessons" data-i18n="lesson.backToLessons">&larr; Darslar</button>
                 <h2 class="section-title" id="lessonTitle">1-dars</h2>
@@ -321,34 +359,71 @@
             </div>
 
             <!-- Stage 3: Quiz Mode -->
-            <div id="quizMode" class="mode-content">
-                <div class="quiz-header">
-                    <div class="score-tracker">
-                        <span data-i18n="quiz.scoreLabel">Ball:</span> <span id="quizScore">0</span>
+                        <!-- Stage 3: Quiz Mode (Easy Chinese Oriental Flow) -->
+            <div id="quizMode" class="mode-content oriental-quiz-mode">
+                <!-- Sleek Top Jade Track & Score -->
+                <div class="oriental-quiz-head">
+                    <button type="button" class="oriental-quiz-back-btn" id="quizExitBtn" aria-label="Chiqish" title="Darslarga qaytish">&times;</button>
+                    <div class="oriental-quiz-progress-wrap" aria-label="Dars jarayoni">
+                        <div class="oriental-quiz-progress-bar">
+                            <div class="oriental-quiz-progress-fill" id="orientalQuizProgressFill" style="width: 15%;"></div>
+                        </div>
                     </div>
-                    <div class="quiz-type-selector" role="group" aria-label="Quiz type">
-                        <button class="quiz-type-btn active" data-quiz-type="meaning" type="button" data-i18n="quiz.typeMeaning">Hanzi &rarr; Ma'no</button>
-                        <button class="quiz-type-btn" data-quiz-type="pinyin" type="button" data-i18n="quiz.typePinyin">Ma'no &rarr; Pinyin</button>
-                        <button class="quiz-type-btn" data-quiz-type="hanzi" type="button" data-i18n="quiz.typeHanzi">Pinyin &rarr; Hanzi</button>
-                        <button class="quiz-type-btn" data-quiz-type="audio" type="button" data-i18n="quiz.typeAudio">&#x1F3A7; Eshitib topish</button>
+                    <div class="oriental-quiz-score-badge">
+                        <span class="score-gem-icon">&#x1F48E;</span>
+                        <span class="score-val" id="quizScore">0</span>
                     </div>
                 </div>
-                <div class="quiz-container">
-                    <div class="quiz-question">
-                        <div class="quiz-hanzi" id="quizHanzi">你好</div>
+
+                <!-- Subtle Quiz Types Selector -->
+                <div class="quiz-type-selector oriental-type-selector" role="group" aria-label="Quiz type">
+                    <button class="quiz-type-btn active" data-quiz-type="meaning" type="button" data-i18n="quiz.typeMeaning">Hanzi &rarr; Ma'no</button>
+                    <button class="quiz-type-btn" data-quiz-type="pinyin" type="button" data-i18n="quiz.typePinyin">Ma'no &rarr; Pinyin</button>
+                    <button class="quiz-type-btn" data-quiz-type="hanzi" type="button" data-i18n="quiz.typeHanzi">Pinyin &rarr; Hanzi</button>
+                    <button class="quiz-type-btn" data-quiz-type="audio" type="button" data-i18n="quiz.typeAudio">&#x1F3A7; Eshitish</button>
+                </div>
+
+                <!-- Central Examination Card -->
+                <div class="quiz-container oriental-quiz-card">
+                    <div class="quiz-question oriental-question-box">
+                        <div class="oriental-hanzi-row">
+                            <div class="quiz-hanzi" id="quizHanzi">&#x4F60;&#x597D;</div>
+                            <button type="button" class="oriental-speech-btn" id="quizPromptAudioBtn" aria-label="Talaffuzni tinglash" title="Talaffuzni tinglash">&#x1F50A;</button>
+                        </div>
                         <p class="quiz-prompt" id="quizPrompt" data-i18n="quiz.promptMeaning">Bu so'zning ma'nosi nima?</p>
                     </div>
-                    <div class="quiz-options" id="quizOptions"></div>
+                    <div class="quiz-options oriental-options-grid" id="quizOptions"></div>
                 </div>
-                <div class="quiz-controls">
-                    <button class="control-btn" id="nextQuizQuestion" data-i18n="quiz.nextQuestion">Keyingi savol</button>
+
+                <!-- Bottom Sticky Action Dock -->
+                <div class="oriental-quiz-bottom-dock">
+                    <button type="button" class="oriental-check-btn" id="quizCheckBtn" disabled>
+                        <span>Tekshirish</span>
+                        <span class="check-btn-arrow">&rarr;</span>
+                    </button>
                 </div>
-                <div class="quiz-counter">
+
+                <div class="quiz-counter" style="display: none;">
                     <span data-i18n="quiz.questionLabel">Savol:</span> <span id="currentQuestion">1</span> / <span id="totalQuestions">5</span>
                 </div>
-            </div>
 
-            <!-- Stage 1: Learning Content Mode -->
+                <!-- Oriental Silk Feedback Sheet (Slides up on check) -->
+                <div class="oriental-feedback-sheet" id="orientalFeedbackSheet" aria-hidden="true">
+                    <div class="feedback-sheet-inner">
+                        <div class="feedback-status-row">
+                            <div class="feedback-stamp-icon" id="feedbackStampIcon">&#x2728;</div>
+                            <div class="feedback-text-wrap">
+                                <strong class="feedback-title" id="feedbackTitle">Barakalla!</strong>
+                                <p class="feedback-sub" id="feedbackSub">To'g'ri javob</p>
+                            </div>
+                        </div>
+                        <button type="button" class="feedback-continue-btn" id="feedbackContinueBtn">
+                            <span>Davom etish</span> &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+<!-- Stage 1: Learning Content Mode -->
             <div id="learningMode" class="mode-content">
                 <div class="learning-content-container">
                     <div class="learning-section" id="vocabOverviewSection">
@@ -416,6 +491,8 @@
                     </div>
                 </div>
             </div>
+        
+            </div><!-- /legacy-lesson-dormant -->
         </section>
 
         <!-- Canvas View -->
@@ -1723,7 +1800,7 @@
         </aside>
     </div>
 
-    <script src="script.js?v=52"></script>
+    <script src="script.js?v=53"></script>
     <!-- Firebase Web SDK (compat build via CDN, deferred so it never blocks the app;
          if it fails to load, the app keeps working in guest mode) -->
     <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1732,6 +1809,6 @@
     <script defer src="firebase-auth.js"></script>
     <!-- Phase 2A progress sync: guarded additive layer over localStorage -->
     <script defer src="cloud-sync.js"></script>
-    <script src="pwa.js?v=52"></script>
+    <script src="pwa.js?v=53"></script>
 </body>
 </html>

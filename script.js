@@ -1,4 +1,4 @@
-﻿// Global state
+// Global state
 let vocabularyData = [
   // Lesson 1 - 你好 (Hello)
   { id: 1, hsk: 1, track: 'classic', lesson: 1, hanzi: "你", pinyin: "nǐ", uzbek: "Siz" },
@@ -2208,6 +2208,8 @@ function showLessonsView() {
 }
 
 function showLessonView(lessonNumber) {
+    if (typeof initOrientalQuizListeners === 'function') initOrientalQuizListeners();
+
     isCustomReviewDeck = false;
     currentLesson = lessonNumber;
     const selectedTrack = lessonTracks[currentLessonTrack] || lessonTracks.classic;
@@ -3786,6 +3788,9 @@ function shuffleFlashcards() {
 }
 
 // Quiz functions
+let selectedQuizOption = null;
+let selectedQuizWordId = null;
+
 function updateQuiz() {
     if (currentWords.length === 0) return;
     if (quizAutoAdvanceTimer) {
@@ -3794,12 +3799,25 @@ function updateQuiz() {
     }
     
     quizAnswered = false;
-    nextQuizQuestion.disabled = true;
+    selectedQuizOption = null;
+    selectedQuizWordId = null;
     
+    // Close feedback sheet if open
+    const sheet = document.getElementById('orientalFeedbackSheet');
+    if (sheet) {
+        sheet.classList.remove('open', 'is-correct', 'is-incorrect');
+        sheet.setAttribute('aria-hidden', 'true');
+    }
+
+    const checkBtn = document.getElementById('quizCheckBtn');
+    if (checkBtn) {
+        checkBtn.disabled = true;
+    }
+
     const word = currentWords[quizIndex];
     if (quizType === 'audio') {
         const replayLbl = typeof t === 'function' ? t('quiz.replayAudio') : 'Qayta eshitish';
-        quizHanzi.innerHTML = `<button type="button" class="quiz-audio-hero-btn" id="quizAudioReplayBtn">🔊<span>${replayLbl}</span></button>`;
+        quizHanzi.innerHTML = `<button type="button" class="quiz-audio-hero-btn" id="quizAudioReplayBtn">ðŸ”Š<span>${replayLbl}</span></button>`;
         quizPrompt.textContent = typeof t === 'function' ? t('quiz.promptAudio') : "So'zni eshiting va to'g'ri ma'noni tanlang:";
         const replayBtn = document.getElementById('quizAudioReplayBtn');
         if (replayBtn) {
@@ -3819,28 +3837,95 @@ function updateQuiz() {
     currentQuestion.textContent = quizIndex + 1;
     totalQuestions.textContent = currentWords.length;
     
-    // Generate options
+    // Update oriental jade progress bar
+    const progressFill = document.getElementById('orientalQuizProgressFill');
+    if (progressFill) {
+        const pct = Math.max(12, Math.round(((quizIndex + 1) / currentWords.length) * 100));
+        progressFill.style.width = `${pct}%`;
+    }
+
+    // Question pronunciation button
+    const audioBtn = document.getElementById('quizPromptAudioBtn');
+    if (audioBtn) {
+        audioBtn.onclick = () => {
+            if (typeof speakChineseText === 'function') {
+                speakChineseText(word.hanzi);
+            }
+        };
+    }
+
+    // Generate options with A, B, C, D letter badges
     const options = generateQuizOptions(word);
+    const badges = ['A', 'B', 'C', 'D'];
     
     quizOptions.innerHTML = '';
-    options.forEach((option) => {
+    options.forEach((option, idx) => {
         const optionBtn = document.createElement('button');
+        optionBtn.type = 'button';
         optionBtn.className = 'quiz-option';
+        
+        let labelText = '';
         if (quizType === 'audio') {
-            optionBtn.textContent = `${option.hanzi} (${option.pinyin}) — ${trUz(option.uzbek)}`;
+            labelText = `${option.hanzi} (${option.pinyin}) - ${trUz(option.uzbek)}`;
         } else {
-            optionBtn.textContent = quizType === 'meaning' ? trUz(option.uzbek) : quizType === 'pinyin' ? option.pinyin : option.hanzi;
+            labelText = quizType === 'meaning' ? trUz(option.uzbek) : quizType === 'pinyin' ? option.pinyin : option.hanzi;
         }
+
+        optionBtn.innerHTML = `
+            <span class="opt-badge">${badges[idx] || (idx + 1)}</span>
+            <span class="opt-text">${labelText}</span>
+        `;
         optionBtn.dataset.wordId = option.id;
-        optionBtn.addEventListener('click', () => checkAnswer(optionBtn, option.id === word.id));
+        
+        optionBtn.addEventListener('click', () => {
+            if (quizAnswered) return;
+            // Deselect previous
+            quizOptions.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('selected'));
+            optionBtn.classList.add('selected');
+            selectedQuizOption = optionBtn;
+            selectedQuizWordId = option.id;
+            if (checkBtn) checkBtn.disabled = false;
+        });
+
         quizOptions.appendChild(optionBtn);
     });
 }
 
+function initOrientalQuizListeners() {
+    const checkBtn = document.getElementById('quizCheckBtn');
+    if (checkBtn && !checkBtn.dataset.listenerBound) {
+        checkBtn.dataset.listenerBound = 'true';
+        checkBtn.addEventListener('click', () => {
+            if (quizAnswered || !selectedQuizOption) return;
+            const word = currentWords[quizIndex];
+            checkAnswer(selectedQuizOption, selectedQuizWordId === word.id);
+        });
+    }
+
+    const continueBtn = document.getElementById('feedbackContinueBtn');
+    if (continueBtn && !continueBtn.dataset.listenerBound) {
+        continueBtn.dataset.listenerBound = 'true';
+        continueBtn.addEventListener('click', () => {
+            const sheet = document.getElementById('orientalFeedbackSheet');
+            if (sheet) {
+                sheet.classList.remove('open');
+                sheet.setAttribute('aria-hidden', 'true');
+            }
+            setTimeout(() => nextQuiz(), 200);
+        });
+    }
+
+    const exitBtn = document.getElementById('quizExitBtn');
+    if (exitBtn && !exitBtn.dataset.listenerBound) {
+        exitBtn.dataset.listenerBound = 'true';
+        exitBtn.addEventListener('click', () => {
+            showLessonsView();
+        });
+    }
+}
+
 function generateQuizOptions(correctWord) {
     const options = [correctWord];
-    
-    // Prefer words from the same HSK level first
     let otherWords = vocabularyData.filter(w => w.id !== correctWord.id && w.hsk === correctWord.hsk && w.track === correctWord.track);
     if (otherWords.length < 3) {
         otherWords = vocabularyData.filter(w => w.id !== correctWord.id);
@@ -3852,7 +3937,6 @@ function generateQuizOptions(correctWord) {
         options.push(randomWord);
     }
     
-    // Shuffle options
     for (let i = options.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [options[i], options[j]] = [options[j], options[i]];
@@ -3866,30 +3950,56 @@ function checkAnswer(selectedBtn, isCorrect) {
     
     quizAnswered = true;
     const correctWord = currentWords[quizIndex];
+    const sheet = document.getElementById('orientalFeedbackSheet');
+    const stampEl = document.getElementById('feedbackStampIcon');
+    const titleEl = document.getElementById('feedbackTitle');
+    const subEl = document.getElementById('feedbackSub');
+    const checkBtn = document.getElementById('quizCheckBtn');
     
+    if (checkBtn) checkBtn.disabled = true;
+
     if (isCorrect) {
+        selectedBtn.classList.remove('selected');
         selectedBtn.classList.add('correct');
         quizScore++;
         quizScoreElement.textContent = quizScore;
+        if (typeof playSuccessSound === 'function') playSuccessSound();
         if (correctWord) clearMistakeWordIfMastered(correctWord.id);
+
+        if (sheet && titleEl && subEl) {
+            sheet.classList.remove('is-incorrect');
+            sheet.classList.add('is-correct', 'open');
+            sheet.setAttribute('aria-hidden', 'false');
+            if (stampEl) stampEl.textContent = 'âœ¨';
+            titleEl.textContent = "Ajoyib! (éžå¸¸å¥½)";
+            subEl.textContent = `+10 XP Â· "${correctWord.hanzi}" (${correctWord.pinyin}) to'g'ri topildi`;
+        }
+
+        // Speak word audio on correct answer
+        if (typeof speakChineseText === 'function') {
+            speakChineseText(correctWord.hanzi);
+        }
     } else {
+        selectedBtn.classList.remove('selected');
         selectedBtn.classList.add('incorrect');
         if (correctWord) recordMistakeWord(correctWord.id);
+
         const options = quizOptions.querySelectorAll('.quiz-option');
         options.forEach(option => {
             if (option.dataset.wordId === String(correctWord.id)) {
                 option.classList.add('correct');
             }
         });
-    }
-    
-    nextQuizQuestion.disabled = false;
 
-    if (quizAutoAdvanceTimer) clearTimeout(quizAutoAdvanceTimer);
-    quizAutoAdvanceTimer = setTimeout(() => {
-        quizAutoAdvanceTimer = null;
-        nextQuiz();
-    }, 850);
+        if (sheet && titleEl && subEl) {
+            sheet.classList.remove('is-correct');
+            sheet.classList.add('is-incorrect', 'open');
+            sheet.setAttribute('aria-hidden', 'false');
+            if (stampEl) stampEl.textContent = 'ðŸ®';
+            titleEl.textContent = "To'g'ri javob:";
+            subEl.textContent = `${correctWord.hanzi} (${correctWord.pinyin}) â€” ${trUz(correctWord.uzbek)}`;
+        }
+    }
 }
 
 function nextQuiz() {
@@ -3908,13 +4018,13 @@ function nextQuiz() {
             completeLessonFlowStep('learning');
             completeLessonFlowStep('flashcards');
             completeLessonFlowStep('quiz');
-            showToast(`Quiz topshirildi (${finalScore}/${currentWords.length})! 4-bosqich: Writing ✍️`);
+            showToast(`Quiz muvaffaqiyatli topshirildi (${finalScore}/${currentWords.length})! 4-bosqich: Yozish âœï¸`);
             prepareLessonWritingCanvas();
             switchMode('writing');
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         } else {
-            showToast(`Natija: ${finalScore}/${currentWords.length}. O‘tish uchun kamida ${passingScore} ta toping!`);
+            showToast(`Natija: ${finalScore}/${currentWords.length}. O'tish uchun kamida ${passingScore} ta to'g'ri javob kerak!`);
         }
     }
     
@@ -3986,6 +4096,10 @@ function renderLessonVocabPreview() {
 
 // Mode switching
 function switchMode(mode) {
+    if (lesson) {
+        if (mode === 'quiz') lesson.classList.add('quiz-active-view');
+        else lesson.classList.remove('quiz-active-view');
+    }
     if (quizAutoAdvanceTimer) {
         clearTimeout(quizAutoAdvanceTimer);
         quizAutoAdvanceTimer = null;
@@ -11333,3 +11447,379 @@ function initLevelSheet() {
     try { chosen = localStorage.getItem('ecLevelChosen') === '1'; } catch (e) {}
     if (!chosen) setTimeout(openLevelSheet, 450);
 }
+
+/* ==========================================================================
+   Unified Interactive Lesson Journey Engine (Easy Chinese v53)
+   ========================================================================== */
+let ulLessonSteps = [];
+let ulCurrentStepIdx = 0;
+let ulEarnedGems = 0;
+let ulSelectedOption = null;
+let ulSelectedWordId = null;
+let ulWritingWriter = null;
+
+function startUnifiedLesson(lessonNumber) {
+    currentLesson = lessonNumber;
+    showView(lesson);
+
+    const normTrack = currentHSK === 1 ? (currentLessonTrack || 'new') : 'new';
+    const words = vocabularyData.filter(w => matchesHskAndTrack(w, currentHSK, normTrack) && w.lesson === lessonNumber);
+    const activeWords = (words && words.length > 0) ? words : vocabularyData.filter(w => w.hsk === currentHSK).slice(0, 5);
+
+    // Build interactive sequence:
+    // Core words: [Intro -> Recall Quiz] for each word, plus stroke writing for first 2 words, then Victory!
+    ulLessonSteps = [];
+    activeWords.slice(0, 5).forEach((w, index) => {
+        ulLessonSteps.push({ type: 'intro', word: w });
+        ulLessonSteps.push({ type: 'quiz', word: w });
+        if (index === 0 || index === 2) {
+            ulLessonSteps.push({ type: 'write', word: w });
+        }
+    });
+    ulLessonSteps.push({ type: 'victory', lessonNum: lessonNumber, wordCount: activeWords.length });
+
+    ulCurrentStepIdx = 0;
+    ulEarnedGems = 0;
+    
+    // Bind top exit and sheet continue listeners
+    const exitBtn = document.getElementById('ulExitBtn');
+    if (exitBtn) {
+        exitBtn.onclick = () => {
+            showLessonsView();
+        };
+    }
+
+    const continueBtn = document.getElementById('ulFeedbackContinueBtn');
+    if (continueBtn) {
+        continueBtn.onclick = () => {
+            const sheet = document.getElementById('ulFeedbackSheet');
+            if (sheet) {
+                sheet.classList.remove('open', 'is-correct', 'is-incorrect');
+                sheet.setAttribute('aria-hidden', 'true');
+            }
+            advanceUnifiedStep();
+        };
+    }
+
+    renderUnifiedStep(ulCurrentStepIdx);
+}
+
+function renderUnifiedStep(stepIdx) {
+    if (stepIdx >= ulLessonSteps.length) return;
+
+    const step = ulLessonSteps[stepIdx];
+    const arena = document.getElementById('ulArena');
+    const fillEl = document.getElementById('ulProgressFill');
+    const gemEl = document.getElementById('ulGemCount');
+
+    if (!arena) return;
+
+    // Update Progress Fill
+    if (fillEl) {
+        const pct = Math.max(12, Math.round(((stepIdx + 1) / ulLessonSteps.length) * 100));
+        fillEl.style.width = pct + '%';
+    }
+    if (gemEl) gemEl.textContent = ulEarnedGems;
+
+    // Close feedback sheet if open
+    const sheet = document.getElementById('ulFeedbackSheet');
+    if (sheet) {
+        sheet.classList.remove('open', 'is-correct', 'is-incorrect');
+        sheet.setAttribute('aria-hidden', 'true');
+    }
+
+    if (step.type === 'intro') {
+        renderUlIntroCard(step.word);
+    } else if (step.type === 'quiz') {
+        renderUlQuizCard(step.word);
+    } else if (step.type === 'write') {
+        renderUlWriteCard(step.word);
+    } else if (step.type === 'victory') {
+        renderUlVictoryCard(step.lessonNum, step.wordCount);
+    }
+}
+
+function advanceUnifiedStep() {
+    ulCurrentStepIdx++;
+    if (ulCurrentStepIdx < ulLessonSteps.length) {
+        renderUnifiedStep(ulCurrentStepIdx);
+    }
+}
+
+// 1. Intro Card
+function renderUlIntroCard(word) {
+    const arena = document.getElementById('ulArena');
+    arena.innerHTML = `
+        <div class="ul-card ul-intro-card">
+            <div class="ul-card-tag">Yangi so'z \u00B7 \u65B0\u8BCD</div>
+            <div class="ul-hanzi-hero-wrap">
+                <div class="ul-hanzi-char" id="ulIntroHanzi">${word.hanzi}</div>
+                <button type="button" class="ul-audio-circle-btn" id="ulIntroAudioBtn" aria-label="Talaffuzni tinglash">&#x1F50A;</button>
+            </div>
+            <div class="ul-pinyin-badge">${word.pinyin}</div>
+            <h3 class="ul-meaning-title">${trUz(word.uzbek)}</h3>
+            <div class="ul-tone-pill">Talaffuz asosi \u00B7 Ton bilan o'qing</div>
+            
+            <div class="ul-bottom-dock">
+                <button type="button" class="ul-primary-btn" id="ulIntroNextBtn">
+                    <span>Tushundim, davom etish</span> &rarr;
+                </button>
+            </div>
+        </div>
+    `;
+
+    const audioBtn = document.getElementById('ulIntroAudioBtn');
+    if (audioBtn) {
+        audioBtn.onclick = () => {
+            if (typeof speakChineseText === 'function') speakChineseText(word.hanzi);
+        };
+    }
+
+    // Play pronunciation automatically
+    setTimeout(() => {
+        if (typeof speakChineseText === 'function') speakChineseText(word.hanzi);
+    }, 150);
+
+    const nextBtn = document.getElementById('ulIntroNextBtn');
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            advanceUnifiedStep();
+        };
+    }
+}
+
+// 2. Recall Quiz Card
+function renderUlQuizCard(word) {
+    const arena = document.getElementById('ulArena');
+    const options = generateQuizOptions(word);
+    const badges = ['A', 'B', 'C', 'D'];
+
+    ulSelectedOption = null;
+    ulSelectedWordId = null;
+
+    let optionsHtml = options.map((opt, i) => `
+        <button type="button" class="ul-option-btn" data-word-id="${opt.id}">
+            <span class="opt-badge">${badges[i]}</span>
+            <span class="opt-text">${trUz(opt.uzbek)}</span>
+        </button>
+    `).join('');
+
+    arena.innerHTML = `
+        <div class="ul-card ul-quiz-card">
+            <div class="ul-card-tag">Mustahkamlash \u00B7 \u7EC3\u4E60</div>
+            <div class="ul-question-row">
+                <div class="ul-quiz-hanzi">${word.hanzi}</div>
+                <button type="button" class="ul-audio-circle-btn" id="ulQuizAudioBtn" aria-label="Talaffuzni tinglash">&#x1F50A;</button>
+            </div>
+            <p class="ul-quiz-prompt">Bu so'zning to'g'ri ma'nosi qaysi?</p>
+
+            <div class="ul-options-list" id="ulOptionsList">
+                ${optionsHtml}
+            </div>
+
+            <div class="ul-bottom-dock">
+                <button type="button" class="ul-primary-btn" id="ulCheckBtn" disabled>
+                    <span>Tekshirish</span> &rarr;
+                </button>
+            </div>
+        </div>
+    `;
+
+    const audioBtn = document.getElementById('ulQuizAudioBtn');
+    if (audioBtn) {
+        audioBtn.onclick = () => {
+            if (typeof speakChineseText === 'function') speakChineseText(word.hanzi);
+        };
+    }
+
+    const checkBtn = document.getElementById('ulCheckBtn');
+    const optBtns = arena.querySelectorAll('.ul-option-btn');
+    optBtns.forEach(btn => {
+        btn.onclick = () => {
+            optBtns.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            ulSelectedOption = btn;
+            ulSelectedWordId = parseInt(btn.dataset.wordId);
+            if (checkBtn) checkBtn.disabled = false;
+        };
+    });
+
+    if (checkBtn) {
+        checkBtn.onclick = () => {
+            if (!ulSelectedOption) return;
+            checkBtn.disabled = true;
+            const isCorrect = (ulSelectedWordId === word.id);
+            const sheet = document.getElementById('ulFeedbackSheet');
+            const stamp = document.getElementById('ulFeedbackStamp');
+            const title = document.getElementById('ulFeedbackTitle');
+            const sub = document.getElementById('ulFeedbackSub');
+
+            if (isCorrect) {
+                ulSelectedOption.classList.remove('selected');
+                ulSelectedOption.classList.add('correct');
+                ulEarnedGems += 10;
+                const gemEl = document.getElementById('ulGemCount');
+                if (gemEl) gemEl.textContent = ulEarnedGems;
+
+                if (typeof playSuccessSound === 'function') playSuccessSound();
+                if (typeof speakChineseText === 'function') speakChineseText(word.hanzi);
+
+                if (sheet) {
+                    sheet.classList.remove('is-incorrect');
+                    sheet.classList.add('is-correct', 'open');
+                    sheet.setAttribute('aria-hidden', 'false');
+                    if (stamp) stamp.innerHTML = '&#x2728;';
+                    if (title) title.textContent = "Ajoyib! (\u975E\u5E38\u597D)";
+                    if (sub) sub.textContent = `+10 XP \u00B7 "${word.hanzi}" (${word.pinyin}) to'g'ri topildi!`;
+                }
+            } else {
+                ulSelectedOption.classList.remove('selected');
+                ulSelectedOption.classList.add('incorrect');
+                optBtns.forEach(b => {
+                    if (parseInt(b.dataset.wordId) === word.id) b.classList.add('correct');
+                });
+
+                if (sheet) {
+                    sheet.classList.remove('is-correct');
+                    sheet.classList.add('is-incorrect', 'open');
+                    sheet.setAttribute('aria-hidden', 'false');
+                    if (stamp) stamp.innerHTML = '&#x1F3EE;';
+                    if (title) title.textContent = "To'g'ri javob:";
+                    if (sub) sub.textContent = `${word.hanzi} (${word.pinyin}) \u2014 ${trUz(word.uzbek)}`;
+                }
+            }
+        };
+    }
+}
+
+// 3. Writing Card
+function renderUlWriteCard(word) {
+    const arena = document.getElementById('ulArena');
+    arena.innerHTML = `
+        <div class="ul-card ul-write-card">
+            <div class="ul-card-tag">Iyeroglif chizish \u00B7 \u4E66\u5199</div>
+            <div class="ul-write-header">
+                <div class="ul-write-target">${word.hanzi}</div>
+                <div class="ul-write-meta">
+                    <strong>${word.hanzi} (${word.pinyin})</strong>
+                    <small>${trUz(word.uzbek)}</small>
+                </div>
+            </div>
+            
+            <div class="ul-write-canvas-wrap">
+                <div id="ulHanziWriterTarget" style="width: 220px; height: 220px;"></div>
+            </div>
+
+            <div class="ul-write-actions">
+                <button type="button" class="ul-action-btn" id="ulAnimateBtn">&#x25B6; Namuna ko'rish</button>
+                <button type="button" class="ul-action-btn" id="ulRestartBtn">&#x21BA; Qayta chizish</button>
+            </div>
+
+            <div class="ul-bottom-dock">
+                <button type="button" class="ul-primary-btn" id="ulWriteNextBtn">
+                    <span>Chizib bo'ldim, davom etish</span> &rarr;
+                </button>
+            </div>
+        </div>
+    `;
+
+    const targetChar = Array.from(word.hanzi)[0];
+    if (typeof HanziWriter !== 'undefined') {
+        try {
+            ulWritingWriter = HanziWriter.create('ulHanziWriterTarget', targetChar, {
+                width: 220,
+                height: 220,
+                padding: 10,
+                strokeAnimationSpeed: 1,
+                strokeWidth: 16,
+                strokeColor: '#059669',
+                outlineColor: 'rgba(5, 150, 105, 0.2)',
+                showOutline: true
+            });
+            ulWritingWriter.quiz();
+        } catch(e) {}
+    }
+
+    const animBtn = document.getElementById('ulAnimateBtn');
+    if (animBtn) {
+        animBtn.onclick = () => {
+            if (ulWritingWriter) ulWritingWriter.animateCharacter();
+        };
+    }
+    const rstBtn = document.getElementById('ulRestartBtn');
+    if (rstBtn) {
+        rstBtn.onclick = () => {
+            if (ulWritingWriter) {
+                ulWritingWriter.cancelQuiz();
+                ulWritingWriter.quiz();
+            }
+        };
+    }
+
+    const nextBtn = document.getElementById('ulWriteNextBtn');
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            ulEarnedGems += 10;
+            advanceUnifiedStep();
+        };
+    }
+}
+
+// 4. Victory Card
+function renderUlVictoryCard(lessonNum, wordCount) {
+    const arena = document.getElementById('ulArena');
+    const streakNum = (typeof streakData !== 'undefined' && streakData.streak) ? streakData.streak : 1;
+    arena.innerHTML = `
+        <div class="ul-card ul-victory-card">
+            <div class="ul-victory-mascot-wrap">
+                <img src="assets/mascot-panda-3d.png" alt="Panda" class="ul-victory-mascot">
+            </div>
+            <div class="ul-stars-row">&#x2B50; &#x2B50; &#x2B50;</div>
+            <h2 class="ul-victory-title">${lessonNum}-dars Yakunlandi!</h2>
+            <p class="ul-victory-sub">Siz barcha yangi so'zlarni a'lo darajada o'rgandingiz!</p>
+            
+            <div class="ul-victory-stats-row">
+                <div class="ul-vstat-box">
+                    <span class="ul-vstat-val">+${ulEarnedGems + 30} XP</span>
+                    <span class="ul-vstat-lbl">Mukofot</span>
+                </div>
+                <div class="ul-vstat-box">
+                    <span class="ul-vstat-val">100%</span>
+                    <span class="ul-vstat-lbl">Natija</span>
+                </div>
+                <div class="ul-vstat-box">
+                    <span class="ul-vstat-val">&#x1F525; ${streakNum} kun</span>
+                    <span class="ul-vstat-lbl">Streak</span>
+                </div>
+            </div>
+
+            <div class="ul-bottom-dock">
+                <button type="button" class="ul-primary-btn" id="ulVictoryFinishBtn">
+                    <span>Xaritaga qaytish</span> &rarr;
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Award XP and complete step
+    if (typeof completeLessonFlowStep === 'function') {
+        completeLessonFlowStep('learning');
+        completeLessonFlowStep('flashcards');
+        completeLessonFlowStep('quiz');
+        completeLessonFlowStep('writing');
+    }
+    if (typeof playSuccessSound === 'function') playSuccessSound();
+
+    const finishBtn = document.getElementById('ulVictoryFinishBtn');
+    if (finishBtn) {
+        finishBtn.onclick = () => {
+            showLessonsView();
+        };
+    }
+}
+
+// Intercept showLessonView to run Unified Lesson Journey
+const _oldShowLessonView = (typeof showLessonView === 'function') ? showLessonView : null;
+showLessonView = function(lessonNumber) {
+    startUnifiedLesson(lessonNumber);
+};
