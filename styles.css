@@ -14490,3 +14490,279 @@ body:has(#unifiedLessonView) .bottom-nav,
 .ul-primary-btn:not(:disabled):active {
     transform: scale(0.98);
 }
+
+/* 4. Sentence Builder Card (Gap tuzish) */
+.ul-sentence-prompt {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-color);
+    margin: 0 0 1rem;
+    line-height: 1.35;
+}
+
+.ul-sentence-target-box {
+    width: 100%;
+    min-height: 72px;
+    padding: 0.75rem 0.85rem;
+    border-radius: 20px;
+    border: 2px dashed rgba(16, 185, 129, 0.45);
+    background: rgba(16, 185, 129, 0.04);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.ul-sentence-target-box.has-tokens {
+    border-style: solid;
+    border-color: #059669;
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.ul-sentence-empty-hint {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    pointer-events: none;
+    user-select: none;
+}
+
+.ul-sentence-pool {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    min-height: 80px;
+}
+
+.ul-token-chip {
+    padding: 0.65rem 1.1rem;
+    border-radius: 16px;
+    border: 1.5px solid var(--border-color);
+    border-bottom: 3px solid var(--border-color);
+    background: var(--card-bg, #ffffff);
+    color: var(--text-color, #1e293b);
+    font-size: 1.2rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.ul-token-chip:hover {
+    transform: translateY(-2px);
+    border-color: #059669;
+}
+
+.ul-token-chip:active {
+    transform: translateY(1px);
+    border-bottom-width: 1.5px;
+}
+
+.ul-token-chip.in-target {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    border-color: #047857;
+    border-bottom-color: #064e3b;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+    animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ul-token-chip.is-used {
+    opacity: 0.25;
+    pointer-events: none;
+    transform: scale(0.92);
+}
+
+/* 5. Speaking Practice Card (Gapirish va talaffuz) */
+.ul-speaking-hanzi {
+    font-size: 2.3rem;
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--text-color);
+    margin-bottom: 0.35rem;
+}
+
+.ul-speaking-pinyin {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #059669;
+    margin-bottom: 0.25rem;
+}
+
+.ul-speaking-uzbek {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.ul-listen-sample-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1.5px solid rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.08);
+    color: #059669;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 1.25rem;
+    transition: transform 0.15s ease;
+}
+
+.ul-listen-sample-btn:active {
+    transform: scale(0.95);
+}
+
+.ul-mic-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.ul-mic-btn {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: #fff;
+    font-size: 2.2rem;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(5, 150, 105, 0.35);
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ul-mic-btn:hover {
+    transform: scale(1.05);
+}
+
+.ul-mic-btn:active {
+    transform: scale(0.95);
+}
+
+.ul-mic-btn.is-recording {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0.2), 0 8px 24px rgba(220, 38, 38, 0.4);
+    animation: micPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes micPulse {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4), 0 8px 24px rgba(220, 38, 38, 0.4); }
+    70% { box-shadow: 0 0 0 16px rgba(239, 68, 68, 0), 0 8px 24px rgba(220, 38, 38, 0.4); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0), 0 8px 24px rgba(220, 38, 38, 0.4); }
+}
+
+.ul-mic-status {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.ul-speaking-eval-box {
+    width: 100%;
+    border-radius: 20px;
+    padding: 1rem;
+    background: rgba(16, 185, 129, 0.06);
+    border: 1.5px solid rgba(16, 185, 129, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.25rem;
+    animation: fadeIn 0.25s ease;
+}
+
+.ul-speaking-score-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.ul-score-badge {
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 900;
+    background: #059669;
+    color: #fff;
+}
+
+.ul-score-stars {
+    font-size: 1.2rem;
+    color: #f59e0b;
+}
+
+.ul-char-breakdown {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+}
+
+.ul-char-chip {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.ul-char-chip.match {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1.5px solid #059669;
+    color: #047857;
+}
+
+.ul-char-chip.miss {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1.5px solid #dc2626;
+    color: #b91c1c;
+}
+
+.ul-eval-feedback {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.ul-secondary-btn {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.75rem 1.25rem;
+    border-radius: 18px;
+    border: 1.5px solid var(--border-color);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.ul-secondary-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--text-color);
+}

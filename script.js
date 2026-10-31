@@ -2567,7 +2567,14 @@ function recordCanvasWritingCompletion(forceWholeWord = false) {
 function isLessonComplete(lessonNum, dataTrack) {
     const normTrack = currentHSK === 1 ? dataTrack : 'classic';
     const progress = getLessonFlowRecord(normTrack, currentHSK, lessonNum);
-    if (progress) return Boolean(progress.completed);
+    if (progress) {
+        if (progress.completed) return true;
+        if (Array.isArray(progress.completedSteps) && progress.completedSteps.length >= 4) {
+            progress.completed = true;
+            return true;
+        }
+        return false;
+    }
     const ids = vocabularyData
         .filter(word => matchesHskAndTrack(word, currentHSK, normTrack) && word.lesson === lessonNum)
         .map(word => word.id);
@@ -2709,7 +2716,13 @@ function generateLessonsGrid() {
 
             const startBubble = document.createElement('span');
             startBubble.className = 'duo-start-bubble';
-            startBubble.textContent = completedCount > 0 ? `DAVOM ETISH \u00B7 ${pct}%` : 'BOSHLASH';
+            if (done) {
+                startBubble.textContent = "TAKRORLASH";
+            } else if (completedCount > 0 && pct < 100) {
+                startBubble.textContent = `DAVOM ETISH \u00B7 ${pct}%`;
+            } else {
+                startBubble.textContent = `${lessonNum}-DARS \u00B7 BOSHLASH`;
+            }
             lessonBtn.appendChild(startBubble);
         }
         const iconSpan = document.createElement('span');
@@ -11490,16 +11503,31 @@ function startUnifiedLesson(lessonNumber) {
     const words = vocabularyData.filter(w => matchesHskAndTrack(w, currentHSK, normTrack) && w.lesson === lessonNumber);
     const activeWords = (words && words.length > 0) ? words : vocabularyData.filter(w => w.hsk === currentHSK).slice(0, 5);
 
-    // Build interactive sequence:
-    // Core words: [Intro -> Recall Quiz] for each word, plus stroke writing for first 2 words, then Victory!
+    // Build rich, engaging sequence:
+    // 1. Core words: [Intro -> Recall Quiz] for each word, plus stroke writing for first 2 words
     ulLessonSteps = [];
-    activeWords.slice(0, 5).forEach((w, index) => {
+    activeWords.slice(0, 4).forEach((w, index) => {
         ulLessonSteps.push({ type: 'intro', word: w });
         ulLessonSteps.push({ type: 'quiz', word: w });
         if (index === 0 || index === 2) {
             ulLessonSteps.push({ type: 'write', word: w });
         }
     });
+
+    // 2. Sentence Builder (Gap tuzish) based on current & previous vocabulary
+    const lessonSentences = getLessonDialogueSentences(lessonNumber, currentHSK, normTrack);
+    if (lessonSentences && lessonSentences.length > 0) {
+        ulLessonSteps.push({ type: 'sentence', sentence: lessonSentences[0], lessonNum: lessonNumber });
+    }
+
+    // 3. Speaking Practice (Gapirish mashqi) with fair voice evaluation
+    if (lessonSentences && lessonSentences.length > 1) {
+        ulLessonSteps.push({ type: 'speaking', sentence: lessonSentences[1], lessonNum: lessonNumber });
+    } else if (lessonSentences && lessonSentences.length > 0) {
+        ulLessonSteps.push({ type: 'speaking', sentence: lessonSentences[0], lessonNum: lessonNumber });
+    }
+
+    // 4. Victory Card
     ulLessonSteps.push({ type: 'victory', lessonNum: lessonNumber, wordCount: activeWords.length });
 
     ulCurrentStepIdx = 0;
@@ -11570,6 +11598,10 @@ function renderUnifiedStep(stepIdx) {
         renderUlQuizCard(step.word);
     } else if (step.type === 'write') {
         renderUlWriteCard(step.word);
+    } else if (step.type === 'sentence') {
+        renderUlSentenceCard(step.sentence, step.lessonNum);
+    } else if (step.type === 'speaking') {
+        renderUlSpeakingCard(step.sentence, step.lessonNum);
     } else if (step.type === 'victory') {
         renderUlVictoryCard(step.lessonNum, step.wordCount);
     }
@@ -11801,10 +11833,421 @@ function renderUlWriteCard(word) {
     }
 }
 
-// 4. Victory Card
+// Helper: get dialogue / example sentences for current lesson
+function getLessonDialogueSentences(lessonNum, hskLevel = currentHSK, track = currentLessonTrack) {
+    let sentences = [];
+    if (hskLevel === 1) {
+        const content = (track === 'classic' ? lessonContentData : newHskLessonContentData);
+        if (content && content.lessons) {
+            const l = content.lessons.find(item => item.lessonId === lessonNum);
+            if (l && l.example_sentences && l.example_sentences.length > 0) {
+                sentences = l.example_sentences;
+            }
+        }
+    }
+    if (!sentences || sentences.length === 0) {
+        const normTrack = (hskLevel === 1 ? track : 'classic');
+        const lWords = vocabularyData.filter(w => matchesHskAndTrack(w, hskLevel, normTrack) && w.lesson === lessonNum);
+        const dynamicContent = generateDynamicLessonContent(hskLevel, lessonNum, lWords);
+        if (dynamicContent && dynamicContent.example_sentences) {
+            sentences = dynamicContent.example_sentences;
+        }
+    }
+    return sentences || [];
+}
+
+// Helper: Segment Chinese sentence into natural vocabulary words / tiles
+function segmentChineseSentence(sentenceChinese) {
+    const cleanStr = sentenceChinese.replace(/[^\u4e00-\u9fa5]/g, '');
+    const tokens = [];
+    let remaining = cleanStr;
+
+    const vocabWords = vocabularyData
+        .map(w => w.hanzi.replace(/[^\u4e00-\u9fa5]/g, ''))
+        .filter(h => h.length > 0 && cleanStr.includes(h))
+        .sort((a, b) => b.length - a.length);
+
+    while (remaining.length > 0) {
+        let matched = false;
+        for (const vw of vocabWords) {
+            if (remaining.startsWith(vw)) {
+                tokens.push(vw);
+                remaining = remaining.slice(vw.length);
+                matched = true;
+                break;
+            }
+        }
+        if (!matched) {
+            tokens.push(remaining[0]);
+            remaining = remaining.slice(1);
+        }
+    }
+    return tokens;
+}
+
+// Helper: Fair and strict character-level Chinese speech evaluation
+function evaluateChineseSpeech(targetHanzi, spokenText) {
+    const cleanTarget = targetHanzi.replace(/[^\u4e00-\u9fa5]/g, '');
+    const cleanSpoken = (spokenText || '').replace(/[^\u4e00-\u9fa5]/g, '');
+
+    if (!cleanSpoken) {
+        return {
+            score: 0,
+            accuracy: 0,
+            feedback: "Ovoz aniqlanmadi yoki xitoycha eshitilmadi. Qaytadan urinib ko'ring.",
+            charMatches: cleanTarget.split('').map(ch => ({ char: ch, match: false })),
+            spokenText: ''
+        };
+    }
+
+    if (cleanTarget === cleanSpoken) {
+        return {
+            score: 100,
+            accuracy: 100,
+            feedback: "A'lo darajada! Mukammal xitoycha talaffuz! ⭐⭐⭐",
+            charMatches: cleanTarget.split('').map(ch => ({ char: ch, match: true })),
+            spokenText: cleanSpoken
+        };
+    }
+
+    let matchedCount = 0;
+    const charMatches = [];
+    const spokenArr = cleanSpoken.split('');
+    const targetArr = cleanTarget.split('');
+
+    targetArr.forEach((ch, idx) => {
+        if (spokenArr[idx] === ch || spokenArr.includes(ch)) {
+            matchedCount++;
+            charMatches.push({ char: ch, match: true });
+        } else {
+            charMatches.push({ char: ch, match: false });
+        }
+    });
+
+    const accuracy = Math.min(100, Math.round((matchedCount / targetArr.length) * 100));
+    let feedback = "";
+    if (accuracy >= 80) {
+        feedback = "Juda yaxshi talaffuz! ⭐⭐⭐ (Ajoyib)";
+    } else if (accuracy >= 50) {
+        feedback = "Yaxshi urinish! ⭐⭐ Qizil iyerogliflar talaffuziga yana bir bor e'tibor bering.";
+    } else {
+        feedback = "Talaffuz to'liq mos kelmadi. Namunani tinglab, yana bir bor harakat qilib ko'ring.";
+    }
+
+    return {
+        score: accuracy,
+        accuracy: accuracy,
+        feedback: feedback,
+        charMatches: charMatches,
+        spokenText: cleanSpoken
+    };
+}
+
+// 4. Sentence Builder Card (Gap tuzish)
+let ulPlacedTokens = [];
+let ulAvailableTokens = [];
+
+function renderUlSentenceCard(sentence, lessonNum) {
+    const arena = document.getElementById('ulArena');
+    const cleanTarget = sentence.chinese.replace(/[^\u4e00-\u9fa5]/g, '');
+    const correctTokens = segmentChineseSentence(sentence.chinese);
+
+    // Pick 1-2 realistic distractors from previous/current lesson
+    const distractors = vocabularyData
+        .filter(w => w.lesson <= lessonNum && !cleanTarget.includes(w.hanzi) && w.hanzi.length <= 2)
+        .slice(0, 2)
+        .map(w => w.hanzi);
+
+    // Prepare token pool with unique IDs
+    const rawTokens = [...correctTokens, ...distractors];
+    // Shuffle
+    const shuffled = rawTokens
+        .map((tok, i) => ({ id: `tok_${i}_${tok}`, text: tok }))
+        .sort(() => Math.random() - 0.5);
+
+    ulAvailableTokens = shuffled;
+    ulPlacedTokens = [];
+
+    arena.innerHTML = `
+        <div class="ul-card ul-sentence-card">
+            <div class="ul-card-tag">Gap tuzish · 组句练习</div>
+            <h3 class="ul-sentence-prompt">${trUz(sentence.uzbek)}</h3>
+            ${sentence.pinyin ? `<div class="ul-pinyin-badge" style="font-size: 0.92rem; margin-bottom: 0.85rem;">${sentence.pinyin}</div>` : ''}
+
+            <!-- Target Answer Slot -->
+            <div class="ul-sentence-target-box" id="ulSentenceTargetBox">
+                <span class="ul-sentence-empty-hint" id="ulTargetEmptyHint">So'zlarni tartib bilan tanlang...</span>
+            </div>
+
+            <!-- Options Pool -->
+            <div class="ul-sentence-pool" id="ulSentencePool">
+                ${shuffled.map(t => `<button type="button" class="ul-token-chip" data-token-id="${t.id}">${t.text}</button>`).join('')}
+            </div>
+
+            <div class="ul-bottom-dock">
+                <button type="button" class="ul-primary-btn" id="ulSentenceCheckBtn" disabled>
+                    <span>Tekshirish</span> &rarr;
+                </button>
+            </div>
+        </div>
+    `;
+
+    const targetBox = document.getElementById('ulSentenceTargetBox');
+    const poolBox = document.getElementById('ulSentencePool');
+    const checkBtn = document.getElementById('ulSentenceCheckBtn');
+    const emptyHint = document.getElementById('ulTargetEmptyHint');
+
+    function updateTargetUI() {
+        if (ulPlacedTokens.length > 0) {
+            if (emptyHint) emptyHint.style.display = 'none';
+            if (targetBox) targetBox.classList.add('has-tokens');
+            if (checkBtn) checkBtn.disabled = false;
+        } else {
+            if (emptyHint) emptyHint.style.display = '';
+            if (targetBox) targetBox.classList.remove('has-tokens');
+            if (checkBtn) checkBtn.disabled = true;
+        }
+    }
+
+    // Attach pool click
+    poolBox.querySelectorAll('.ul-token-chip').forEach(btn => {
+        btn.onclick = () => {
+            const tokenId = btn.dataset.tokenId;
+            const tokenObj = ulAvailableTokens.find(t => t.id === tokenId);
+            if (!tokenObj || btn.classList.contains('is-used')) return;
+
+            btn.classList.add('is-used');
+            ulPlacedTokens.push(tokenObj);
+
+            // Add chip to target box
+            const targetChip = document.createElement('button');
+            targetChip.type = 'button';
+            targetChip.className = 'ul-token-chip in-target';
+            targetChip.textContent = tokenObj.text;
+            targetChip.dataset.tokenId = tokenId;
+            targetChip.onclick = () => {
+                // Return back to pool
+                targetChip.remove();
+                btn.classList.remove('is-used');
+                ulPlacedTokens = ulPlacedTokens.filter(t => t.id !== tokenId);
+                updateTargetUI();
+            };
+            targetBox.appendChild(targetChip);
+            updateTargetUI();
+        };
+    });
+
+    if (checkBtn) {
+        checkBtn.onclick = () => {
+            const assembled = ulPlacedTokens.map(t => t.text).join('');
+            const isCorrect = (assembled === cleanTarget);
+            const sheet = document.getElementById('ulFeedbackSheet');
+            const stamp = document.getElementById('ulFeedbackStamp');
+            const title = document.getElementById('ulFeedbackTitle');
+            const sub = document.getElementById('ulFeedbackSub');
+
+            if (isCorrect) {
+                ulEarnedGems += 15;
+                const gemEl = document.getElementById('ulGemCount');
+                if (gemEl) gemEl.textContent = ulEarnedGems;
+
+                if (typeof playSuccessSound === 'function') playSuccessSound();
+                if (typeof speakChineseText === 'function') speakChineseText(sentence.chinese);
+
+                if (sheet) {
+                    sheet.classList.remove('is-incorrect');
+                    sheet.classList.add('is-correct', 'open');
+                    sheet.setAttribute('aria-hidden', 'false');
+                    if (stamp) stamp.innerHTML = '✨';
+                    if (title) title.textContent = "Ajoyib! Barakalla! (非常棒)";
+                    if (sub) sub.textContent = `+15 XP · Gap to'g'ri va ravon tuzildi!`;
+                }
+            } else {
+                if (sheet) {
+                    sheet.classList.remove('is-correct');
+                    sheet.classList.add('is-incorrect', 'open');
+                    sheet.setAttribute('aria-hidden', 'false');
+                    if (stamp) stamp.innerHTML = '💡';
+                    if (title) title.textContent = "To'g'ri tartib:";
+                    if (sub) sub.textContent = `${sentence.chinese} (${sentence.pinyin})`;
+                }
+            }
+        };
+    }
+}
+
+// 5. Speaking Practice Card (Gapirish mashqi)
+let ulSpeakingRecognition = null;
+
+function renderUlSpeakingCard(sentence, lessonNum) {
+    const arena = document.getElementById('ulArena');
+    arena.innerHTML = `
+        <div class="ul-card ul-speaking-card">
+            <div class="ul-card-tag">Talaffuz va gapirish · 语音发音</div>
+            <div class="ul-speaking-hanzi" id="ulSpeakingTargetHanzi">${sentence.chinese}</div>
+            <div class="ul-speaking-pinyin">${sentence.pinyin}</div>
+            <div class="ul-speaking-uzbek">${trUz(sentence.uzbek)}</div>
+
+            <button type="button" class="ul-listen-sample-btn" id="ulListenSampleBtn">
+                <span>🔊 Namuna talaffuzni tinglash</span>
+            </button>
+
+            <div class="ul-mic-section">
+                <button type="button" class="ul-mic-btn" id="ulMicBtn" aria-label="Gapirish uchun bosing">
+                    <span>🎙️</span>
+                </button>
+                <div class="ul-mic-status" id="ulMicStatus">Mikrofonni bosing va ovoz chiqarib ayting</div>
+            </div>
+
+            <!-- Result Box -->
+            <div class="ul-speaking-eval-box" id="ulSpeakingEvalBox" style="display: none;">
+                <div class="ul-speaking-score-row">
+                    <span class="ul-score-badge" id="ulScoreBadge">100%</span>
+                    <span class="ul-score-stars" id="ulScoreStars">⭐⭐⭐</span>
+                </div>
+                <div class="ul-char-breakdown" id="ulCharBreakdown"></div>
+                <p class="ul-eval-feedback" id="ulEvalFeedback"></p>
+            </div>
+
+            <div class="ul-bottom-dock">
+                <button type="button" class="ul-primary-btn" id="ulSpeakingContinueBtn" disabled>
+                    <span>Davom etish</span> &rarr;
+                </button>
+            </div>
+        </div>
+    `;
+
+    const sampleBtn = document.getElementById('ulListenSampleBtn');
+    if (sampleBtn) {
+        sampleBtn.onclick = () => {
+            if (typeof speakChineseText === 'function') speakChineseText(sentence.chinese);
+        };
+    }
+
+    // Auto play once on enter
+    setTimeout(() => {
+        if (typeof speakChineseText === 'function') speakChineseText(sentence.chinese);
+    }, 200);
+
+    const micBtn = document.getElementById('ulMicBtn');
+    const micStatus = document.getElementById('ulMicStatus');
+    const evalBox = document.getElementById('ulSpeakingEvalBox');
+    const scoreBadge = document.getElementById('ulScoreBadge');
+    const scoreStars = document.getElementById('ulScoreStars');
+    const charBreakdown = document.getElementById('ulCharBreakdown');
+    const evalFeedback = document.getElementById('ulEvalFeedback');
+    const continueBtn = document.getElementById('ulSpeakingContinueBtn');
+
+    if (continueBtn) {
+        continueBtn.onclick = () => {
+            advanceUnifiedStep();
+        };
+    }
+
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRec) {
+        if (micStatus) {
+            micStatus.textContent = "Brauzerda ovoz tanish mavjud emas. Namuna audioini tinglang va takrorlang.";
+        }
+        if (continueBtn) continueBtn.disabled = false;
+        return;
+    }
+
+    if (micBtn) {
+        micBtn.onclick = () => {
+            if (ulSpeakingRecognition) {
+                try { ulSpeakingRecognition.stop(); } catch(e) {}
+                ulSpeakingRecognition = null;
+                micBtn.classList.remove('is-recording');
+                micStatus.textContent = "To'xtatildi. Yana bir bor urinib ko'ring.";
+                return;
+            }
+
+            try {
+                const rec = new SpeechRec();
+                ulSpeakingRecognition = rec;
+                rec.lang = 'zh-CN';
+                rec.interimResults = false;
+                rec.maxAlternatives = 5;
+
+                micBtn.classList.add('is-recording');
+                micStatus.textContent = "Tinglanmoqda... Xitoycha gapiring!";
+
+                rec.onresult = (evt) => {
+                    micBtn.classList.remove('is-recording');
+                    ulSpeakingRecognition = null;
+
+                    let bestTranscript = evt.results[0][0].transcript;
+                    for (let i = 0; i < evt.results[0].length; i++) {
+                        const alt = evt.results[0][i].transcript;
+                        if (sentence.chinese.includes(alt) || alt.includes(sentence.chinese)) {
+                            bestTranscript = alt;
+                            break;
+                        }
+                    }
+
+                    const evalResult = evaluateChineseSpeech(sentence.chinese, bestTranscript);
+
+                    // Show evaluation UI
+                    if (evalBox) evalBox.style.display = 'flex';
+                    if (scoreBadge) scoreBadge.textContent = `${evalResult.accuracy}%`;
+                    if (scoreStars) {
+                        if (evalResult.accuracy >= 85) scoreStars.textContent = "⭐⭐⭐";
+                        else if (evalResult.accuracy >= 50) scoreStars.textContent = "⭐⭐";
+                        else scoreStars.textContent = "⭐";
+                    }
+                    if (evalFeedback) evalFeedback.textContent = evalResult.feedback;
+
+                    if (charBreakdown) {
+                        charBreakdown.innerHTML = evalResult.charMatches.map(m => `
+                            <span class="ul-char-chip ${m.match ? 'match' : 'miss'}" title="${m.match ? 'To\'g\'ri' : 'Eshitilmadi'}">${m.char}</span>
+                        `).join('');
+                    }
+
+                    if (evalResult.accuracy >= 50) {
+                        ulEarnedGems += (evalResult.accuracy >= 85 ? 20 : 10);
+                        const gemEl = document.getElementById('ulGemCount');
+                        if (gemEl) gemEl.textContent = ulEarnedGems;
+                        if (typeof playSuccessSound === 'function') playSuccessSound();
+
+                        micStatus.textContent = `Ajoyib! Aniqlik: ${evalResult.accuracy}%`;
+                        if (continueBtn) continueBtn.disabled = false;
+                    } else {
+                        micStatus.textContent = "Yana bir bor sinab ko'ring (yoki davom eting).";
+                        if (continueBtn) continueBtn.disabled = false;
+                    }
+                };
+
+                rec.onerror = (err) => {
+                    micBtn.classList.remove('is-recording');
+                    ulSpeakingRecognition = null;
+                    micStatus.textContent = "Ovoz eshitilmadi. Qaytadan bosing va balandroq gapiring.";
+                    if (continueBtn) continueBtn.disabled = false;
+                };
+
+                rec.onend = () => {
+                    micBtn.classList.remove('is-recording');
+                    ulSpeakingRecognition = null;
+                };
+
+                rec.start();
+            } catch(e) {
+                micBtn.classList.remove('is-recording');
+                ulSpeakingRecognition = null;
+                micStatus.textContent = "Mikrofonni ishga tushirib bo'lmadi.";
+                if (continueBtn) continueBtn.disabled = false;
+            }
+        };
+    }
+}
+
+// 6. Victory Card
 function renderUlVictoryCard(lessonNum, wordCount) {
     const arena = document.getElementById('ulArena');
     const streakNum = (typeof streakData !== 'undefined' && streakData.streak) ? streakData.streak : 1;
+    const nextLesson = lessonNum + 1;
+
     arena.innerHTML = `
         <div class="ul-card ul-victory-card">
             <div class="ul-victory-mascot-wrap">
@@ -11812,7 +12255,7 @@ function renderUlVictoryCard(lessonNum, wordCount) {
             </div>
             <div class="ul-stars-row">&#x2B50; &#x2B50; &#x2B50;</div>
             <h2 class="ul-victory-title">${lessonNum}-dars Yakunlandi!</h2>
-            <p class="ul-victory-sub">Siz barcha yangi so'zlarni a'lo darajada o'rgandingiz!</p>
+            <p class="ul-victory-sub">Siz barcha yangi so'zlarni, gap tuzish va talaffuzni a'lo darajada o'rgandingiz!</p>
             
             <div class="ul-victory-stats-row">
                 <div class="ul-vstat-box">
@@ -11829,22 +12272,46 @@ function renderUlVictoryCard(lessonNum, wordCount) {
                 </div>
             </div>
 
-            <div class="ul-bottom-dock">
-                <button type="button" class="ul-primary-btn" id="ulVictoryFinishBtn">
-                    <span>Xaritaga qaytish</span> &rarr;
+            <div class="ul-bottom-dock" style="display: flex; flex-direction: column; gap: 0.65rem;">
+                <button type="button" class="ul-primary-btn" id="ulVictoryNextBtn">
+                    <span>${nextLesson}-darsni boshlash</span> &rarr;
+                </button>
+                <button type="button" class="ul-secondary-btn" id="ulVictoryFinishBtn">
+                    <span>Xaritaga qaytish</span>
                 </button>
             </div>
         </div>
     `;
 
-    // Award XP and complete step
+    // Complete lesson properly in the core progress engine
+    if (typeof completeCurrentLesson === 'function') {
+        completeCurrentLesson();
+    }
     if (typeof completeLessonFlowStep === 'function') {
         completeLessonFlowStep('learning');
         completeLessonFlowStep('flashcards');
         completeLessonFlowStep('quiz');
         completeLessonFlowStep('writing');
     }
+
+    // Register all words from this lesson as learned
+    const normTrack = currentHSK === 1 ? (currentLessonTrack || 'new') : 'new';
+    const lWords = vocabularyData.filter(w => matchesHskAndTrack(w, currentHSK, normTrack) && w.lesson === lessonNum);
+    lWords.forEach(w => {
+        if (!learnedWords.includes(w.id)) learnedWords.push(w.id);
+    });
+    saveProgress();
+
+    if (typeof updateLessonsHeader === 'function') updateLessonsHeader();
+    if (typeof generateLessonsGrid === 'function') generateLessonsGrid();
     if (typeof playSuccessSound === 'function') playSuccessSound();
+
+    const nextBtn = document.getElementById('ulVictoryNextBtn');
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            startUnifiedLesson(nextLesson);
+        };
+    }
 
     const finishBtn = document.getElementById('ulVictoryFinishBtn');
     if (finishBtn) {
