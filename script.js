@@ -2059,8 +2059,18 @@ function populateLeaderboard() {
 let isNavigatingBack = false;
 
 function updateBottomNavForView(viewId) {
+    const bottomNav = document.querySelector('.bottom-nav');
+    if (viewId === 'lesson') {
+        document.body.classList.add('in-lesson-view');
+        if (bottomNav) bottomNav.style.setProperty('display', 'none', 'important');
+        return;
+    } else {
+        document.body.classList.remove('in-lesson-view');
+        if (bottomNav) bottomNav.style.removeProperty('display');
+    }
+
     let activeNav = 'home';
-    if (viewId === 'dashboard' || viewId === 'lessons' || viewId === 'lesson') {
+    if (viewId === 'dashboard' || viewId === 'lessons') {
         activeNav = 'home';
     } else if (viewId === 'practice' || viewId === 'practiceFlashcards' || viewId === 'toneLab' || viewId === 'survivalPhrases' || viewId === 'pinyinChart' || viewId === 'radicalsLab' || viewId === 'canvas' || viewId === 'aiLaoshi') {
         activeNav = 'practice';
@@ -3902,16 +3912,26 @@ function initOrientalQuizListeners() {
         });
     }
 
+    const sheet = document.getElementById('orientalFeedbackSheet');
+    if (sheet && !sheet.dataset.listenerBound) {
+        sheet.dataset.listenerBound = 'true';
+        sheet.addEventListener('click', () => {
+            sheet.classList.remove('open');
+            sheet.setAttribute('aria-hidden', 'true');
+            setTimeout(() => nextQuiz(), 150);
+        });
+    }
+
     const continueBtn = document.getElementById('feedbackContinueBtn');
     if (continueBtn && !continueBtn.dataset.listenerBound) {
         continueBtn.dataset.listenerBound = 'true';
-        continueBtn.addEventListener('click', () => {
-            const sheet = document.getElementById('orientalFeedbackSheet');
+        continueBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             if (sheet) {
                 sheet.classList.remove('open');
                 sheet.setAttribute('aria-hidden', 'true');
             }
-            setTimeout(() => nextQuiz(), 200);
+            setTimeout(() => nextQuiz(), 150);
         });
     }
 
@@ -11460,6 +11480,10 @@ let ulWritingWriter = null;
 
 function startUnifiedLesson(lessonNumber) {
     currentLesson = lessonNumber;
+    document.body.classList.add('in-lesson-view');
+    const bottomNav = document.querySelector('.bottom-nav');
+    if (bottomNav) bottomNav.style.setProperty('display', 'none', 'important');
+
     showView(lesson);
 
     const normTrack = currentHSK === 1 ? (currentLessonTrack || 'new') : 'new';
@@ -11485,14 +11509,26 @@ function startUnifiedLesson(lessonNumber) {
     const exitBtn = document.getElementById('ulExitBtn');
     if (exitBtn) {
         exitBtn.onclick = () => {
+            document.body.classList.remove('in-lesson-view');
+            const bNav = document.querySelector('.bottom-nav');
+            if (bNav) bNav.style.removeProperty('display');
             showLessonsView();
+        };
+    }
+
+    const sheet = document.getElementById('ulFeedbackSheet');
+    if (sheet) {
+        sheet.onclick = () => {
+            sheet.classList.remove('open', 'is-correct', 'is-incorrect');
+            sheet.setAttribute('aria-hidden', 'true');
+            advanceUnifiedStep();
         };
     }
 
     const continueBtn = document.getElementById('ulFeedbackContinueBtn');
     if (continueBtn) {
-        continueBtn.onclick = () => {
-            const sheet = document.getElementById('ulFeedbackSheet');
+        continueBtn.onclick = (e) => {
+            e.stopPropagation();
             if (sheet) {
                 sheet.classList.remove('open', 'is-correct', 'is-incorrect');
                 sheet.setAttribute('aria-hidden', 'true');
@@ -11813,10 +11849,35 @@ function renderUlVictoryCard(lessonNum, wordCount) {
     const finishBtn = document.getElementById('ulVictoryFinishBtn');
     if (finishBtn) {
         finishBtn.onclick = () => {
+            document.body.classList.remove('in-lesson-view');
+            const bNav = document.querySelector('.bottom-nav');
+            if (bNav) bNav.style.removeProperty('display');
             showLessonsView();
         };
     }
 }
+
+// Global keyboard helper: Press Enter or Space to advance open feedback sheet
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ' || e.code === 'Space') {
+        const ulSheet = document.getElementById('ulFeedbackSheet');
+        if (ulSheet && ulSheet.classList.contains('open')) {
+            e.preventDefault();
+            ulSheet.classList.remove('open', 'is-correct', 'is-incorrect');
+            ulSheet.setAttribute('aria-hidden', 'true');
+            advanceUnifiedStep();
+            return;
+        }
+        const qSheet = document.getElementById('orientalFeedbackSheet');
+        if (qSheet && qSheet.classList.contains('open')) {
+            e.preventDefault();
+            qSheet.classList.remove('open');
+            qSheet.setAttribute('aria-hidden', 'true');
+            if (typeof nextQuiz === 'function') nextQuiz();
+            return;
+        }
+    }
+});
 
 // Intercept showLessonView to run Unified Lesson Journey
 const _oldShowLessonView = (typeof showLessonView === 'function') ? showLessonView : null;
